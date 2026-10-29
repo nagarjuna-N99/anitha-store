@@ -1,11 +1,9 @@
-# One-click deploy of the owner app + assistant server on Render (render.com): New > Blueprint > pick this repository.
-# The owner app is then at  https://<your-service>.onrender.com/admin
 services:
   - type: web
     name: anitha-store-server
     runtime: node
+    plan: starter
     rootDir: server
-    plan: starter            # the shop's data lives on the disk below; free plans have no disk and would lose it on every restart
     buildCommand: npm install --omit=dev
     startCommand: node server.mjs
     healthCheckPath: /health
@@ -16,16 +14,16 @@ services:
       sizeGB: 1
     envVars:
       - key: NODE_VERSION
-        value: "20"
+        value: 20.18.0
       - key: DATA_DIR
         value: /var/data
-      - key: ADMIN_SETUP_TOKEN        # generated for you: copy it from Render > Environment, use it once at /admin, then you may delete it
+      - key: ADMIN_SETUP_TOKEN
         generateValue: true
-      - key: PUBLIC_URL               # type your service address here after the first deploy, e.g. https://anitha-store-server.onrender.com
+      - key: PUBLIC_URL
         sync: false
-      - key: ALLOWED_ORIGINS          # the public website that may read the shop data
+      - key: ALLOWED_ORIGINS
         value: https://nagarjuna-n99.github.io
       - key: SITE_URL
         value: https://nagarjuna-n99.github.io/anitha-store
-      - key: ANTHROPIC_API_KEY        # optional: Claude for the AI helpers and the WhatsApp assistant
+      - key: ANTHROPIC_API_KEY
         sync: false
