@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Assistant test chat</title>
+<style>
+:root{--bg:#efeae2;--out:#d9fdd3;--in:#fff;--ink:#1f2933;--accent:#a67c52}
+*{box-sizing:border-box}body{margin:0;font:15px/1.45 system-ui,sans-serif;background:#d8d3ca;color:var(--ink);display:flex;justify-content:center}
+.phone{width:100%;max-width:440px;height:100dvh;background:var(--bg);display:flex;flex-direction:column}
+header{background:#075e54;color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}header small{opacity:.8;display:block;font-size:11px}
+header button{background:none;border:1px solid #ffffff88;color:#fff;border-radius:14px;padding:5px 12px;font-size:12px}
+#log{flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:6px}
+.b{max-width:82%;padding:8px 11px;border-radius:10px;white-space:pre-wrap;word-wrap:break-word;box-shadow:0 1px 1px #0002}
+.me{align-self:flex-end;background:var(--out)}.bot{align-self:flex-start;background:var(--in)}.sys{align-self:center;font-size:12px;background:#fff8c5;color:#665}
+.bot img{max-width:100%;border-radius:6px;display:block;margin-bottom:4px}
+form{display:flex;gap:8px;padding:10px;background:#f0f0f0}input{flex:1;padding:12px 14px;border:1px solid #ccc;border-radius:22px;font-size:16px}
+form button{background:#075e54;color:#fff;border:none;border-radius:22px;padding:0 20px;font-size:15px}
+#gate{padding:30px 20px;background:#fff;margin:auto;max-width:360px;border-radius:12px;box-shadow:0 4px 18px #0003}
+#gate input{width:100%;margin:10px 0}#gate button{width:100%;padding:12px;background:#075e54;color:#fff;border:none;border-radius:8px;font-size:15px}
+.hint{font-size:12px;color:#666;padding:6px 12px;text-align:center}
+</style></head><body>
+<div id="gate"><h3 style="margin-top:0">Test the assistant</h3><p style="font-size:14px;color:#555">Chat exactly as a customer would. Nothing is sent to WhatsApp, and orders or hand-overs made here are marked as tests.</p><input id="tok" type="password" placeholder="Admin token" autocomplete="current-password"><button id="go">Open chat</button><div id="gerr" style="color:#b00;font-size:13px;margin-top:8px"></div></div>
+<div class="phone" id="app" style="display:none">
+<header><div>Anitha Pemmasani <small id="st">test mode · nothing is sent to WhatsApp</small></div><button id="reset">New chat</button></header>
+<div id="log"></div>
+<div class="hint">Try: “show me red silk sarees under 30000” · “is it pure silk?” · “I want to order” · “my saree is damaged”</div>
+<form id="f"><input id="m" placeholder="Type a message" autocomplete="off" maxlength="1000"><button>Send</button></form>
+</div>
+<script>
+const $=id=>document.getElementById(id);let csrfTok='',tok=sessionStorage.getItem('wa_tok')||'',sess=sessionStorage.getItem('wa_sess')||('s'+Math.random().toString(36).slice(2,8));sessionStorage.setItem('wa_sess',sess);
+const add=(cls,t,img)=>{const d=document.createElement('div');d.className='b '+cls;if(img){const i=document.createElement('img');i.src=img;i.alt='';d.appendChild(i)}d.appendChild(document.createTextNode(t));$('log').appendChild(d);$('log').scrollTop=1e9};
+async function api(p,b){const r=await fetch(p,{method:'POST',headers:{...(tok==='session'?{'X-CSRF-Token':csrfTok}:{Authorization:'Bearer '+tok}),'Content-Type':'application/json'},body:JSON.stringify(b)});if(r.status===401)throw new Error('Wrong admin token');return r.json()}
+function addBtns(x){add('bot',x.text);const d=document.createElement('div');d.style.cssText='display:flex;gap:6px;flex-wrap:wrap;align-self:flex-start';x.buttons.forEach(b=>{const e=document.createElement('button');e.textContent=b.title;e.style.cssText='border:1px solid #075e54;color:#075e54;background:#fff;border-radius:16px;padding:7px 12px;font-size:14px';e.onclick=async()=>{add('me',b.title);try{const r=await api('/api/test-chat',{session:sess,message:b.title,buttonId:b.id});(r.replies||[]).forEach(y=>y.type==='buttons'?addBtns(y):add('bot',y.text||y.caption||''))}catch(err){add('sys',err.message)}};d.appendChild(e)});$('log').appendChild(d);$('log').scrollTop=1e9}
+async function open(){try{const r=await fetch('/api/status',{headers:{...(tok==='session'?{'X-CSRF-Token':csrfTok}:{Authorization:'Bearer '+tok})}});if(r.status===401)throw new Error('Wrong admin token')}catch(e){$('gerr').textContent=e.message;return}sessionStorage.setItem('wa_tok',tok);$('gate').style.display='none';$('app').style.display='flex';add('sys','You are chatting as a new customer. Say hello!')}
+$('go').onclick=()=>{tok=$('tok').value;open()};$('tok').onkeydown=e=>{if(e.key==='Enter')$('go').click()};
+$('f').onsubmit=async e=>{e.preventDefault();const t=$('m').value.trim();if(!t)return;$('m').value='';add('me',t);const ty=document.createElement('div');ty.className='b bot';ty.textContent='…';$('log').appendChild(ty);
+ try{const r=await api('/api/test-chat',{session:sess,message:t});ty.remove();(r.replies||[]).forEach(x=>x.type==='image'?add('bot',x.caption||'',x.url):x.type==='document'?add('bot','📄 '+x.filename+'\n'+(x.caption||'')):x.type==='buttons'?addBtns(x):add('bot',x.text));const rs=r.result||{};if(rs.order)add('sys','Order request recorded (test)');if(rs.handoff)add('sys','Handed over to the owner (test). The bot now stays quiet in this chat.');if(rs.error)add('sys','Assistant problem: '+rs.error+' (see server log)')}catch(err){ty.remove();add('sys',err.message)}};
+$('reset').onclick=async()=>{await api('/api/test-reset',{session:sess});$('log').innerHTML='';add('sys','New chat started.')};
+if(tok){$('tok').value=tok;open()}
+
+(async()=>{try{const s=await (await fetch('/admin/api/state')).json();if(s.signedIn){csrfTok=s.csrf;tok='session';open()}}catch(e){}})();
+</script></body></html>

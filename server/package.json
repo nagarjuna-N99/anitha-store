@@ -1,0 +1,13 @@
+{
+  "name": "wa-assistant",
+  "version": "1.0.0",
+  "description": "WhatsApp sales assistant for the Anitha Pemmasani saree store (Claude API + WhatsApp Business Cloud API)",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node tests/run.mjs"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": { "@anthropic-ai/sdk": "^0.135.0" }
+}
