@@ -1,10 +1,9 @@
-# Anitha Pemmasani: handloom saree store (demo)
+# Anitha Pemmasani: handloom saree store (demo website)
 
 **Live demo:** https://nagarjuna-n99.github.io/anitha-store/
 
-- **Customers' view:** the shop (best on a phone). Browse sarees and accessories, add to cart, wishlist, FAQ.
-- **Owner view:** on a phone, menu (☰) → **Owner login**; on a computer, the **Switch to Admin** button. Demo PIN: `1234` (change it in Settings).
-- This is a **demo**: everything is saved only in the visitor's own browser. Orders, WhatsApp, payments and the AI helpers need the assistant server and are not connected here.
-- The page is marked *noindex* so Google does not list it.
+This is the **customers' website only**. It has no admin screens and no PIN: the owner manages the shop in a separate, password-protected app on a server (`/admin`), so nobody can reach it from this page.
 
-The whole shop is one file, `index.html`.
+- This GitHub copy is a **demo**: it shows sample sarees and saves everything only in the visitor's own browser.
+- Orders, WhatsApp, payments, Instagram posting and the AI helpers run on the server and are not connected here.
+- Marked *noindex* so Google does not list this demo.

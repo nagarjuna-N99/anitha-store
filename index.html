@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta name="robots" content="noindex, nofollow">
+<head><meta name="robots" content="noindex, nofollow"><script>window.__BUILD='site';window.__SHOP_API="";</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#2c2c2c">
@@ -888,6 +887,19 @@ button, a, [onclick], input, select, summary, label { touch-action: manipulation
 .dd-top { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 6px; } .dd-img { width: 84px; height: 106px; object-fit: cover; border-radius: 6px; flex: none; } .dd-fields { flex: 1; min-width: 0; } .dd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .dd-ai { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 12px; align-items: center; } .dd-ai select { padding: 9px; border: 1px solid var(--border); border-radius: 6px; background: #fff; font-size: 13px; }
 .dd-status { padding: 10px 12px; border-radius: 8px; font-size: 13px; margin: 4px 0 12px; } .dd-status.ok { background: #e8f5ec; color: #2c6e45; } .dd-status.warn { background: #fdf3df; color: #8a5a00; } .dd-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; } .dd-actions .btn-full:disabled { opacity: .45; }
 @media (max-width: 640px) { .dd-grid { grid-template-columns: 1fr; } }
+
+/* ---- owner app: sign-in screen, save badge, Instagram ---- */
+#admGate { position: fixed; inset: 0; z-index: 100000; display: none; align-items: center; justify-content: center; background: #2E2D29; padding: 16px; overflow: auto; }
+.adm-box { background: #F7F4EC; width: 100%; max-width: 400px; border-radius: 14px; padding: 28px 24px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 30px 80px rgba(0,0,0,.45); }
+.adm-box h1 { font-family: 'Cormorant Garamond', serif; font-size: 30px; margin: 0; } .adm-sub { color: #8a6b1f; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin: -6px 0 6px; }
+.adm-box label { display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: #555; } .adm-box input { font-size: 16px; padding: 12px; border: 1px solid #d8cfba; border-radius: 8px; background: #fff; }
+.adm-btn { background: #2E2D29; color: #fff; border: none; border-radius: 8px; padding: 14px; font-size: 14px; letter-spacing: 1px; cursor: pointer; min-height: 48px; font-family: inherit; } .adm-btn:disabled { opacity: .5; }
+.adm-err { color: #a33; font-size: 13px; min-height: 18px; margin: 0; } .adm-note { background: #fbf1d9; color: #6b4a14; font-size: 12px; padding: 10px; border-radius: 8px; margin: 0; line-height: 1.5; } .adm-foot { font-size: 11px; color: #999; margin: 0; text-align: center; }
+#admSync { position: fixed; left: 12px; bottom: 12px; z-index: 5000; background: #2E2D29; color: #fff; font-size: 12px; padding: 7px 12px; border-radius: 16px; opacity: .88; max-width: calc(100vw - 24px); } #admSync.bad { background: #a33; }
+.adm-key { font-family: monospace; font-size: 17px; letter-spacing: 2px; background: #fff; padding: 10px; border-radius: 6px; word-break: break-all; }
+body.adm-app #storefrontView, body.adm-app #view-toggle, body.adm-app .owner-entry { display: none !important; }
+.ig-photos { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; } .ig-ph { position: relative; cursor: pointer; } .ig-ph input { position: absolute; top: 6px; left: 6px; z-index: 2; width: 20px; height: 20px; } .ig-ph img { width: 84px; height: 105px; object-fit: cover; border-radius: 6px; border: 2px solid transparent; } .ig-ph input:checked + img { border-color: var(--gold); }
+.ig-when { display: flex; flex-direction: column; gap: 8px; } .ig-opt { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 13px; background: #fff; min-height: 44px; } .ig-opt small { color: #777; } .ig-opt input[type=datetime-local] { font-size: 14px; padding: 6px; border: 1px solid var(--border); border-radius: 6px; }
 /* storefront extras */
 .shop-bar{box-sizing:border-box;max-width:100%}.shop-search{min-width:0;box-sizing:border-box;max-width:100%}
 .occ-section,.recent-section{padding:30px 20px;max-width:1200px;margin:0 auto}.recent-section:empty{display:none;padding:0}
@@ -909,7 +921,7 @@ button, a, [onclick], input, select, summary, label { touch-action: manipulation
 <body>
 <noscript><p style="padding:20px;">Anitha Pemmasani – pure handloom sarees from Hyderabad. Please enable JavaScript to browse and shop, or call +91 98496 46440.</p></noscript>
 
-<button id="view-toggle" onclick="toggleView()">Switch to Admin</button>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- HAMBURGER MENUS -->
@@ -928,39 +940,11 @@ button, a, [onclick], input, select, summary, label { touch-action: manipulation
     <li onclick="openAccount(); closeStoreNav();">👤 My account</li>
     <li onclick="openCart(); closeStoreNav();">🛒 Cart (<span id="mobileCartCount">0</span>)</li>
     <li onclick="navigateTo('faq'); closeStoreNav();">❓ FAQ</li>
-    <li class="owner-entry" onclick="closeStoreNav(); toggleView();">🔐 Owner login</li>
   </ul>
 </div>
 
 <div class="mobile-nav-overlay" id="adminNavOverlay" onclick="closeAdminNav()"></div>
-<div class="admin-mobile-nav" id="adminMobileNav">
-  <div class="mobile-nav-header">
-    <div><h3>Anitha Pemmasani</h3><p style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);">Admin Portal V7.1</p></div>
-    <button class="mobile-nav-close" onclick="closeAdminNav()">×</button>
-  </div>
-  <ul class="mobile-nav-list" id="adminMobileNavList">
-    <li class="owner-entry" onclick="closeAdminNav(); toggleView();">🏬 View store</li>
-    <li data-tab="dashboard" class="active" onclick="switchAdminTab('dashboard'); closeAdminNav();">📊 Dashboard</li>
-    <li data-tab="home" onclick="switchAdminTab('home'); closeAdminNav();">🏠 Home Page</li>
-    <li data-tab="products" onclick="switchAdminTab('products'); closeAdminNav();">📦 Products</li>
-    <li data-tab="categories" onclick="switchAdminTab('categories'); closeAdminNav();">🏷️ Categories</li>
-    <li data-tab="studio" onclick="switchAdminTab('studio'); closeAdminNav();">🎨 Image Studio</li>
-    <li data-tab="drafts" onclick="switchAdminTab('drafts'); closeAdminNav();">📝 Saved Drafts</li>
-    <li data-tab="orders" onclick="switchAdminTab('orders'); closeAdminNav();">📋 Orders</li>
-    <li data-tab="reviews" onclick="switchAdminTab('reviews'); closeAdminNav();">⭐ Reviews<span class="nav-count" data-nc="reviews"></span></li>
-    <li data-tab="delivery" onclick="switchAdminTab('delivery'); closeAdminNav();">🚚 Delivery &amp; Gifting</li>
-    <li data-tab="whatsapp" onclick="switchAdminTab('whatsapp'); closeAdminNav();">💬 WhatsApp Assistant</li>
-    <li data-tab="alerts" onclick="switchAdminTab('alerts'); closeAdminNav();">🔔 Stock Alerts<span class="nav-count" data-nc="alerts"></span></li>
-    <li data-tab="invoices" onclick="switchAdminTab('invoices'); closeAdminNav();">🧾 Invoices</li>
-    <li data-tab="customers" onclick="switchAdminTab('customers'); closeAdminNav();">👥 Customers</li>
-    <li data-tab="statements" onclick="switchAdminTab('statements'); closeAdminNav();">📈 Statements</li>
-    <li data-tab="coupons" onclick="switchAdminTab('coupons'); closeAdminNav();">🎟️ Coupons</li>
-    <li data-tab="bundles" onclick="switchAdminTab('bundles'); closeAdminNav();">🎁 Bundles</li>
-    <li data-tab="ai" onclick="switchAdminTab('ai'); closeAdminNav();">✨ AI Helper</li>
-    <li data-tab="logs" onclick="switchAdminTab('logs'); closeAdminNav();">📜 Audit Logs</li>
-    <li data-tab="settings" onclick="switchAdminTab('settings'); closeAdminNav();">⚙️ Settings</li>
-  </ul>
-</div>
+
 
 <!-- ================= STOREFRONT ================= -->
 <div id="storefrontView" class="store-view">
@@ -1125,7 +1109,7 @@ button, a, [onclick], input, select, summary, label { touch-action: manipulation
     <div class="footer-grid">
       <div><div class="footer-brand">Anitha Pemmasani</div><p class="footer-desc">Curating legacy-worthy pure handloom sarees for the modern woman. Based in Hyderabad, shipping worldwide.</p></div>
       <div><div class="footer-title">Shop</div><ul class="footer-links"><li><a onclick="navigateTo('shop')">New Arrivals</a></li><li><a onclick="filterAndShowShop('Tussar')">Tussar Silk</a></li><li><a onclick="filterAndShowShop('Banarasi')">Banarasi</a></li></ul></div>
-      <div><div class="footer-title">Support</div><ul class="footer-links"><li><a onclick="openAccount()">My Account &amp; Orders</a></li><li><a onclick="navigateTo('faq')">FAQ</a></li><li class="owner-foot"><a onclick="toggleView()">Owner login</a></li><li><a onclick="openLegal('terms','shipping')">Shipping Policy</a></li><li><a onclick="openLegal('terms','returns')">Returns &amp; Exchanges</a></li><li><a onclick="openLegal('terms')">Terms &amp; Conditions</a></li><li><a onclick="openLegal('privacy')">Privacy Policy</a></li><li><a onclick="navigateTo('care')">Saree Care Guide</a></li></ul></div>
+      <div><div class="footer-title">Support</div><ul class="footer-links"><li><a onclick="openAccount()">My Account &amp; Orders</a></li><li><a onclick="navigateTo('faq')">FAQ</a></li><li><a onclick="openLegal('terms','shipping')">Shipping Policy</a></li><li><a onclick="openLegal('terms','returns')">Returns &amp; Exchanges</a></li><li><a onclick="openLegal('terms')">Terms &amp; Conditions</a></li><li><a onclick="openLegal('privacy')">Privacy Policy</a></li><li><a onclick="navigateTo('care')">Saree Care Guide</a></li></ul></div>
       <div><div class="footer-title">Contact</div><ul class="footer-links"><li><a>Hyderabad, Telangana, India</a></li><li><a href="tel:+919849646440">+91 98496 46440</a></li><li><a id="footWa" href="https://wa.me/919849646440">WhatsApp Support</a></li></ul></div>
     </div>
     <div class="footer-bottom"><div>© 2026 Anitha Pemmasani. All rights reserved.</div><div><a class="fl" onclick="openLegal('terms')">Terms</a> · <a class="fl" onclick="openLegal('privacy')">Privacy</a> · Visa · Mastercard · UPI · Razorpay</div></div>
@@ -1140,49 +1124,7 @@ button, a, [onclick], input, select, summary, label { touch-action: manipulation
 </div>
 
 <!-- ================= ADMIN VIEW ================= -->
-<div id="adminView" class="admin-view">
-  <aside class="admin-sidebar" id="adminSidebarDesktop">
-    <div class="admin-sidebar-header"><h1>Anitha Pemmasani</h1><p>Admin Portal V7.1</p></div>
-    <ul class="admin-nav">
-      <li class="admin-nav-item active" data-tab="dashboard" onclick="switchAdminTab('dashboard')">📊 Dashboard</li>
-      <li class="admin-nav-item" data-tab="home" onclick="switchAdminTab('home')">🏠 Home Page</li>
-      <li class="admin-nav-item" data-tab="products" onclick="switchAdminTab('products')">📦 Products</li>
-      <li class="admin-nav-item" data-tab="categories" onclick="switchAdminTab('categories')">🏷️ Categories</li>
-      <li class="admin-nav-item" data-tab="studio" onclick="switchAdminTab('studio')">🎨 Image Studio</li>
-      <li class="admin-nav-item" data-tab="drafts" onclick="switchAdminTab('drafts')">📝 Saved Drafts</li>
-      <li class="admin-nav-item" data-tab="orders" onclick="switchAdminTab('orders')">📋 Orders</li>
-      <li class="admin-nav-item" data-tab="reviews" onclick="switchAdminTab('reviews')">⭐ Reviews<span class="nav-count" data-nc="reviews"></span></li>
-      <li class="admin-nav-item" data-tab="delivery" onclick="switchAdminTab('delivery')">🚚 Delivery &amp; Gifting</li>
-      <li class="admin-nav-item" data-tab="whatsapp" onclick="switchAdminTab('whatsapp')">💬 WhatsApp Assistant</li>
-      <li class="admin-nav-item" data-tab="alerts" onclick="switchAdminTab('alerts')">🔔 Stock Alerts<span class="nav-count" data-nc="alerts"></span></li>
-      <li class="admin-nav-item" data-tab="invoices" onclick="switchAdminTab('invoices')">🧾 Invoices</li>
-      <li class="admin-nav-item" data-tab="customers" onclick="switchAdminTab('customers')">👥 Customers</li>
-      <li class="admin-nav-item" data-tab="statements" onclick="switchAdminTab('statements')">📈 Statements</li>
-      <li class="admin-nav-item" data-tab="coupons" onclick="switchAdminTab('coupons')">🎟️ Coupons</li>
-      <li class="admin-nav-item" data-tab="bundles" onclick="switchAdminTab('bundles')">🎁 Bundles</li>
-      <li class="admin-nav-item" data-tab="ai" onclick="switchAdminTab('ai')">✨ AI Helper</li>
-      <li class="admin-nav-item" data-tab="logs" onclick="switchAdminTab('logs')">📜 Audit Logs</li>
-      <li class="admin-nav-item" data-tab="settings" onclick="switchAdminTab('settings')">⚙️ Settings</li>
-    </ul>
-    <div style="margin-top:auto;padding-top:20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:12px;">
-      <div style="width:32px;height:32px;border-radius:50%;background:var(--charcoal);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;">AP</div>
-      <div><div style="font-size:13px;font-weight:500;">Admin User</div><div style="font-size:10px;color:#888;">admin@anitapemmasani.com</div></div>
-    </div>
-  </aside>
-  <main class="admin-main">
-    <div class="admin-header">
-      <div style="display:flex;align-items:center;gap:15px;">
-        <button class="hamburger-btn" id="adminHamburger" onclick="toggleAdminNav()" aria-label="Admin menu"><span></span><span></span><span></span></button>
-        <h2 id="adminPageTitle">Dashboard</h2>
-      </div>
-      <div class="admin-header-actions">
-        <div class="api-status">Local demo data</div>
-        <button class="btn-sm btn-danger-sm" onclick="resetData()">Reset Data</button>
-      </div>
-    </div>
-    <div id="adminContent"></div>
-  </main>
-</div>
+
 
 <!-- Drawers & Modals -->
 <div class="overlay" id="overlay" onclick="closeAllDrawers()"></div>
@@ -1255,9 +1197,13 @@ function getTimestamp() { return new Date().toLocaleString('sv-SE', { timeZone: 
 function csvCell(v) { let s = String(v ?? ''); if (/^[=+\-@\t\r]/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; }
 function safeParse(key, fallback) { try { const v = JSON.parse(localStorage.getItem(key)); return v ?? fallback; } catch (e) { return fallback; } }
 
+// ================= BUILD =================
+// dev: one file with everything (demo + tests). site: the public website (no admin screens, no PIN). admin: the owner app, served by the server behind a real login.
+const BUILD = window.__BUILD || 'dev';
+
 // ================= DATABASE =================
 const defaultDB = {
-  settings: { businessName: 'Anitha Pemmasani', gstNumber: '36AABCU9603R1ZM', address: 'Hyderabad, Telangana, India', phone: '+91 98496 46440', email: 'admin@anitapemmasani.com', bankName: 'HDFC Bank', accountNumber: '50100123456789', ifscCode: 'HDFC0001234', invoicePrefix: 'AP-INV', gstRate: 5, adminPin: '1234', siteUrl: '', metaDescription: 'Anitha Pemmasani – pure handloom sarees from Hyderabad: Tussar, Maheshwari, Banarasi, Kanjeevaram, Paithani, Mysore silk and Ponduru Khadi. Free shipping above ₹10,000.', aiEndpoint: '', otpEndpoint: '', autoApproveReviews: false, waNumber: '', waChatOn: true, waGreeting: '', assistantUrl: '', waAutoPublish: false, delivery: null, giftWrapFee: 0, waPolicies: { shipping: 'Free shipping on orders above ₹10,000.', returns: '', payment: '', care: '', timings: '', custom: '' }, dispatchTime: '3–7 business days', returnDays: 7, grievanceOfficer: '', selectedTemplate: 'template-1', templateCustom: { headerText: 'Thank you for your purchase!', footerText: 'Computer-generated invoice.', termsText: 'Goods once sold will not be taken back.', primaryColor: '#A67C52', secondaryColor: '#2C2C2C', showLogo: true, showBankDetails: true, showGstBreakdown: true, signatureLine: true, signatureName: 'Anitha Pemmasani', signatureTitle: 'Proprietor' } },
+  settings: { businessName: 'Anitha Pemmasani', gstNumber: '36AABCU9603R1ZM', address: 'Hyderabad, Telangana, India', phone: '+91 98496 46440', email: 'admin@anitapemmasani.com', bankName: '', accountNumber: '', ifscCode: '', invoicePrefix: 'AP-INV', gstRate: 5, adminPin: '', siteUrl: '', metaDescription: 'Anitha Pemmasani – pure handloom sarees from Hyderabad: Tussar, Maheshwari, Banarasi, Kanjeevaram, Paithani, Mysore silk and Ponduru Khadi. Free shipping above ₹10,000.', aiEndpoint: '', otpEndpoint: '', autoApproveReviews: false, waNumber: '', waChatOn: true, waGreeting: '', assistantUrl: '', waAutoPublish: false, delivery: null, giftWrapFee: 0, waPolicies: { shipping: 'Free shipping on orders above ₹10,000.', returns: '', payment: '', care: '', timings: '', custom: '' }, dispatchTime: '3–7 business days', returnDays: 7, grievanceOfficer: '', selectedTemplate: 'template-1', templateCustom: { headerText: 'Thank you for your purchase!', footerText: 'Computer-generated invoice.', termsText: 'Goods once sold will not be taken back.', primaryColor: '#A67C52', secondaryColor: '#2C2C2C', showLogo: true, showBankDetails: true, showGstBreakdown: true, signatureLine: true, signatureName: 'Anitha Pemmasani', signatureTitle: 'Proprietor' } },
   categories: ['Tussar', 'Maheswari', 'Banarasi', 'Kanjeevaram', 'Ponduru Khadi', 'Paithani', 'Mysore Silk'],
   // Accessories are ordinary products whose category is listed here (see isAccessory)
   accessoryCategories: ['Jewellery', 'Blouses & Fabric', 'Bags & Potlis'],
@@ -1325,7 +1271,10 @@ function normalizeDB(d) {
   return d;
 }
 
-let db = normalizeDB(safeParse('ap_db_v70', null) || JSON.parse(JSON.stringify(defaultDB)));
+let db = normalizeDB((BUILD === 'admin' ? null : safeParse('ap_db_v70', null)) || JSON.parse(JSON.stringify(defaultDB)));
+// The hosted builds never carry the demo PIN or bank details; the public site never carries demo customers or orders either.
+if (BUILD !== 'dev') { ['adminPin', 'bankName', 'accountNumber', 'ifscCode', 'otpEndpoint', 'aiEndpoint', 'assistantUrl'].forEach(k => { delete db.settings[k]; }); delete db.settings.ai; }
+if (BUILD === 'site') { const fresh = !safeParse('ap_db_v70', null); if (fresh) { db.users = []; db.orders = []; db.invoices = []; db.logs = []; } }
 let cart = safeParse('ap_cart', []);
 let favourites = safeParse('ap_favourites', []);
 if (!Array.isArray(cart)) cart = [];
@@ -1338,12 +1287,13 @@ let pendingDraftId = null;
 
 
 function saveDB() {
+  if (BUILD === 'admin') { admQueueSave(); if (typeof waAutoSoon === 'function') waAutoSoon(); return true; }   // the owner app saves to the server, never to this browser
   try { localStorage.setItem('ap_db_v70', JSON.stringify(db)); if (typeof waAutoSoon === 'function') waAutoSoon(); return true; }
   catch (e) { showToast('Storage is full - changes could not be saved. Delete drafts or large images.', 'error'); return false; }
 }
 function saveCart() { try { localStorage.setItem('ap_cart', JSON.stringify(cart)); } catch (e) {} if (typeof cartTouch === 'function') { cartTouch(); cartSyncSoon(); cartRemRow(); } }
 function saveFavs() { try { localStorage.setItem('ap_favourites', JSON.stringify(favourites)); } catch (e) {} }
-function resetData() { if (confirm('Reset all demo data?')) { db = normalizeDB(JSON.parse(JSON.stringify(defaultDB))); cart = []; favourites = []; saveDB(); saveCart(); saveFavs(); location.reload(); } }
+function resetData() { if (BUILD === 'admin') { alert('Resetting is switched off in the owner app: it would erase the real shop. Use Security & backup → Download backup / Import instead.'); return; } if (confirm('Reset all demo data?')) { db = normalizeDB(JSON.parse(JSON.stringify(defaultDB))); cart = []; favourites = []; saveDB(); saveCart(); saveFavs(); location.reload(); } }
 
 let toastTimer = null;
 function showToast(msg, type = '') {
@@ -1382,6 +1332,8 @@ function closeAdminNav() {
 // NOTE: this PIN gate only keeps casual visitors out. It is client-side, so it is NOT real security.
 // Real admin access control needs a backend with authentication.
 function adminAuthed() {
+  if (BUILD === 'site') return false;                 // the public website has no admin at all
+  if (BUILD === 'admin') return ADM.signedIn;         // the owner app: only after the server has accepted the password
   try { if (sessionStorage.getItem('ap_admin') === '1') return true; } catch (e) {}
   const pin = prompt('Enter admin PIN');
   if (pin === null) return false;
@@ -1985,7 +1937,7 @@ function switchCareTab(tabName, btn) {
 }
 
 // ================= ADMIN LOGIC =================
-const ADMIN_TITLES = { dashboard: 'Dashboard', home: 'Home Page', reviews: 'Customer Reviews', whatsapp: 'WhatsApp Assistant', delivery: 'Delivery & Gifting', alerts: 'Back-in-stock Alerts', products: 'Products Catalog', categories: 'Category Manager', studio: 'Image Studio', drafts: 'Saved Drafts', orders: 'Orders Management', invoices: 'Invoice Management', customers: 'Customer Database', statements: 'Financial Statements', coupons: 'Coupon Manager', bundles: 'Bundles', ai: 'AI Helper', logs: 'Audit Logs', settings: 'Business Settings' };
+const ADMIN_TITLES = { dashboard: 'Dashboard', home: 'Home Page', reviews: 'Customer Reviews', whatsapp: 'WhatsApp Assistant', delivery: 'Delivery & Gifting', alerts: 'Back-in-stock Alerts', products: 'Products Catalog', categories: 'Category Manager', studio: 'Image Studio', drafts: 'Saved Drafts', orders: 'Orders Management', invoices: 'Invoice Management', customers: 'Customer Database', statements: 'Financial Statements', coupons: 'Coupon Manager', bundles: 'Bundles', ai: 'AI Helper', social: 'Instagram', logs: 'Audit Logs', settings: 'Business Settings' };
 function switchAdminTab(tab) {
   homeFlush();
   currentAdminTab = tab;
@@ -2023,7 +1975,7 @@ function renderAdminContent(tab) {
       <div class="admin-card" style="overflow-x:auto;">
         <table class="admin-table" style="min-width:860px;">
           <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>SEO</th><th>Actions</th></tr></thead>
-          <tbody>${db.products.map(p => `<tr><td><div style="display:flex;align-items:center;gap:12px;"><div class="thumb-wrap"><img src="${esc(p.image)}" alt="" style="width:40px;height:50px;object-fit:cover;border-radius:4px;">${(p.images || []).length > 1 ? `<span class="thumb-n">${p.images.length}</span>` : ''}</div><div><div style="font-weight:500;">${esc(p.name)}</div><div style="font-size:11px;color:#888;font-family:monospace;">${esc(p.sku)}${(videoInfo(p.video) || {}).type ? ' · ▶ video' : ''}</div></div></div></td><td>${esc(p.category)}</td><td style="font-weight:600;">${formatCurrency(p.price)}</td><td><span class="status-pill ${p.stock === 0 ? 'status-inactive' : p.stock <= p.threshold ? 'status-placed' : 'status-active'}">${p.stock} units</span>${waitingCount(p.id) ? `<div class="cchip ok" style="margin-top:4px;display:inline-block;">🔔 ${waitingCount(p.id)} waiting</div>` : ''}</td><td>${seoBadge(p)}</td><td><div class="action-buttons"><button class="btn-sm btn-info-sm" onclick="openProductForm('${p.id}')">Edit</button><button class="btn-sm btn-info-sm" onclick="openPreview(db.products.find(x=>x.id==='${p.id}'))">Preview</button><button class="btn-sm btn-info-sm status-img-btn" title="Make a WhatsApp status / Instagram image" onclick="openStatusImage('${p.id}')">📲 Status</button><button class="btn-sm btn-danger-sm" onclick="deleteProduct('${p.id}')">Delete</button></div></td></tr>`).join('')}</tbody>
+          <tbody>${db.products.map(p => `<tr><td><div style="display:flex;align-items:center;gap:12px;"><div class="thumb-wrap"><img src="${esc(p.image)}" alt="" style="width:40px;height:50px;object-fit:cover;border-radius:4px;">${(p.images || []).length > 1 ? `<span class="thumb-n">${p.images.length}</span>` : ''}</div><div><div style="font-weight:500;">${esc(p.name)}</div><div style="font-size:11px;color:#888;font-family:monospace;">${esc(p.sku)}${(videoInfo(p.video) || {}).type ? ' · ▶ video' : ''}</div></div></div></td><td>${esc(p.category)}</td><td style="font-weight:600;">${formatCurrency(p.price)}</td><td><span class="status-pill ${p.stock === 0 ? 'status-inactive' : p.stock <= p.threshold ? 'status-placed' : 'status-active'}">${p.stock} units</span>${waitingCount(p.id) ? `<div class="cchip ok" style="margin-top:4px;display:inline-block;">🔔 ${waitingCount(p.id)} waiting</div>` : ''}</td><td>${seoBadge(p)}</td><td><div class="action-buttons"><button class="btn-sm btn-info-sm" onclick="openProductForm('${p.id}')">Edit</button><button class="btn-sm btn-info-sm" onclick="openPreview(db.products.find(x=>x.id==='${p.id}'))">Preview</button><button class="btn-sm btn-info-sm ig-btn" title="Post this on Instagram" onclick="igOffer(db.products.find(x=>x.id==='${p.id}'),{force:true})">📸</button><button class="btn-sm btn-info-sm status-img-btn" title="Make a WhatsApp status / Instagram image" onclick="openStatusImage('${p.id}')">📲 Status</button><button class="btn-sm btn-danger-sm" onclick="deleteProduct('${p.id}')">Delete</button></div></td></tr>`).join('')}</tbody>
         </table>
       </div>
       ${db.drafts.length ? draftsByCategoryHTML(true) : ''}
@@ -2147,6 +2099,7 @@ function renderAdminContent(tab) {
 
   if (tab === 'bundles') { renderBundlesAdmin(content); return; }
   if (tab === 'ai') { renderAiHelper(content); return; }
+  if (tab === 'social') { if (BUILD === 'admin') renderSocialAdmin(content); else content.innerHTML = '<div class="admin-card"><h3>📸 Instagram</h3><p class="note">Instagram posting and scheduling work in the <b>owner app</b> (admin.html on your server), where the server can post for you. See HOW-IT-WORKS/17.</p></div>'; return; }
 
   if (tab === 'coupons') {
     content.innerHTML = `
@@ -2223,10 +2176,10 @@ function renderAdminContent(tab) {
             <div class="form-group"><label>Template</label><select id="s-template"><option value="template-1" ${s.selectedTemplate === 'template-1' ? 'selected' : ''}>Classic</option><option value="template-2" ${s.selectedTemplate === 'template-2' ? 'selected' : ''}>Elegant</option><option value="template-3" ${s.selectedTemplate === 'template-3' ? 'selected' : ''}>Modern</option></select></div>
           </div>
         </div>
-        <div class="admin-card">
+        ${BUILD !== 'dev' ? '<div class="admin-card"><h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:15px;">Admin access</h4><p class="note">Sign-in is managed by the server (password, optional 2-step code). Change it in <strong>Security &amp; backup</strong> below. There is no PIN.</p></div>' : `<div class="admin-card">
           <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:15px;">Admin Access</h4>
           <div class="form-group"><label>Admin PIN (client-side only - not real security)</label><input type="text" id="s-pin" value="${esc(s.adminPin)}" autocomplete="off"></div>
-        </div>
+        </div>`}
         <div class="admin-card">
           <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:15px;">Customer login &amp; policies</h4>
           <div class="form-group"><label>WhatsApp login service URL</label><input type="text" id="s-otp" value="${esc(s.otpEndpoint)}" placeholder="https://your-server.com/api"></div>
@@ -2250,8 +2203,10 @@ function renderAdminContent(tab) {
           <div class="note">Leave empty to use the built-in writer (category knowledge + colours detected in your photos). If set, the form POSTs {name, category, sku, price, colours, brand} and expects {description, tags[], seoTitle, metaDescription, altText}; if it fails, the built-in writer is used. Never put an API key in this page.</div>
         </div>
         <button class="btn-full" onclick="saveSettings()">Save Settings</button>
+        ${admSecurityHTML()}
       </div>
     `;
+    if (BUILD === 'admin') admLoadAudit();
     return;
   }
 }
@@ -3226,7 +3181,7 @@ function pfSave(e) {
   }
   if (!saveDB()) { if (!q.id) db.products.pop(); return; }
   closeModal('adminModal'); refreshAdmin(); renderProducts(); buildScrollTrack(); updateBadges(); seoRefreshHome();
-  showToast('Product saved!', 'success');
+  showToast('Product saved!', 'success'); if (!q.id) { const np = db.products[db.products.length - 1]; setTimeout(() => igOffer(np), 400); }
   if (restockedNow) afterRestock(db.products.find(x => x.id === q.id));
   if (restockedNow || !q.id) { const np = q.id ? db.products.find(x => x.id === q.id) : db.products[db.products.length - 1]; const ns = notifySimilar(np); if (ns) showToast(`✨ ${ns} customer${ns > 1 ? 's' : ''} asked about similar sarees and ${ns > 1 ? 'were' : 'was'} queued for a WhatsApp message`, 'success'); }
 }
@@ -3467,10 +3422,10 @@ function saveSettings() {
   const v = id => document.getElementById(id).value;
   const rate = parseFloat(v('s-gstrate'));
   if (isNaN(rate) || rate < 0) { alert('GST rate must be a non-negative number'); return; }
-  if (!v('s-pin').trim()) { alert('Admin PIN cannot be empty'); return; }
+  if (document.getElementById('s-pin') && !v('s-pin').trim()) { alert('Admin PIN cannot be empty'); return; }
   if (v('s-otp').trim() && !/^https:\/\//i.test(v('s-otp').trim())) { alert('The WhatsApp login service URL must start with https://'); return; }
   if (v('s-site').trim() && !/^https?:\/\/[^\s/]+/i.test(v('s-site').trim())) { alert('Website address must start with https://'); return; }
-  Object.assign(db.settings, { businessName: v('s-name'), gstNumber: v('s-gst'), address: v('s-addr'), phone: v('s-phone'), email: v('s-email'), bankName: v('s-bank'), accountNumber: v('s-acc'), ifscCode: v('s-ifsc'), invoicePrefix: v('s-prefix'), gstRate: rate, selectedTemplate: v('s-template'), adminPin: v('s-pin').trim(), siteUrl: v('s-site').trim().replace(/\/$/, ''), metaDescription: v('s-metadesc').trim(), aiEndpoint: v('s-ai').trim(), otpEndpoint: v('s-otp').trim().replace(/\/$/, ''), dispatchTime: v('s-dispatch').trim() || '3–7 business days', returnDays: Math.max(0, parseInt(v('s-returndays'), 10) || 0), grievanceOfficer: v('s-grievance').trim() });
+  Object.assign(db.settings, { businessName: v('s-name'), gstNumber: v('s-gst'), address: v('s-addr'), phone: v('s-phone'), email: v('s-email'), bankName: v('s-bank'), accountNumber: v('s-acc'), ifscCode: v('s-ifsc'), invoicePrefix: v('s-prefix'), gstRate: rate, selectedTemplate: v('s-template'), ...(document.getElementById('s-pin') ? { adminPin: v('s-pin').trim() } : {}), siteUrl: v('s-site').trim().replace(/\/$/, ''), metaDescription: v('s-metadesc').trim(), aiEndpoint: v('s-ai').trim(), otpEndpoint: v('s-otp').trim().replace(/\/$/, ''), dispatchTime: v('s-dispatch').trim() || '3–7 business days', returnDays: Math.max(0, parseInt(v('s-returndays'), 10) || 0), grievanceOfficer: v('s-grievance').trim() });
   addLog('settings_updated', 'Business Settings', '-', 0, 0, 0, 'Settings updated'); SEO_DEFAULT.desc = db.settings.metaDescription || SEO_DEFAULT.desc; seoReset(); seoRefreshHome(); if (saveDB()) showToast('Settings saved!', 'success');
 }
 
@@ -4226,8 +4181,8 @@ const waNumber = () => { const n = String(db.settings.waNumber || db.settings.ph
 const waOrdersOn = () => db.settings.waOrdersOn !== false;
 const waChatEnabled = () => db.settings.waChatOn !== false && waNumber().length >= 11;
 const waGreeting = () => db.settings.waGreeting || "Hi! I'm interested in {name} (₹{price}). {link}";
-const waServer = () => String(db.settings.assistantUrl || '').trim().replace(/\/+$/, '');
-const waTok = () => { try { return sessionStorage.getItem('wa_admin_tok') || ''; } catch (e) { return ''; } };
+const waServer = () => BUILD === 'admin' ? location.origin : String(db.settings.assistantUrl || '').trim().replace(/\/+$/, '');
+const waTok = () => { if (BUILD === 'admin') return ADM.signedIn ? 'session' : ''; try { return sessionStorage.getItem('wa_admin_tok') || ''; } catch (e) { return ''; } };
 function waChatLink(p) {
   const msg = waGreeting().replace('{name}', p ? p.name : 'your sarees').replace('{price}', p ? money(p.price) : '').replace('{link}', p ? (richLink(p) || storeLink(p)) : '').replace(/\s+\n/g, '\n').trim();
   return `https://wa.me/${waNumber()}?text=${encodeURIComponent(msg)}`;
@@ -4256,8 +4211,8 @@ const waCatHash = () => waHash(buildAssistantCatalogue());
 function waStatus(msg, kind) { const e = document.getElementById('wa-status'); if (e) { e.textContent = msg; e.style.color = kind === 'error' ? 'var(--red)' : kind === 'ok' ? '#2e7d46' : '#666'; } }
 async function waCall(path, opts) {
   const url = waServer(); if (!/^https:\/\//i.test(url) && !/^http:\/\/(localhost|127\.0\.0\.1)(:|\/|$)/.test(url)) throw new Error('Enter the assistant address first (it must start with https://)');
-  const r = await fetch(url + path, { ...opts, headers: { Authorization: 'Bearer ' + waTok(), 'Content-Type': 'application/json' } });
-  if (r.status === 401) throw new Error('The admin token was not accepted by the assistant');
+  const r = await fetch(url + path, { ...opts, credentials: 'same-origin', headers: BUILD === 'admin' ? { 'X-CSRF-Token': ADM.csrf, 'Content-Type': 'application/json' } : { Authorization: 'Bearer ' + waTok(), 'Content-Type': 'application/json' } });
+  if (r.status === 401) { if (BUILD === 'admin') { ADM.signedIn = false; admGate('expired'); } throw new Error(BUILD === 'admin' ? 'Please sign in again.' : 'The admin token was not accepted by the assistant'); }
   const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.error || 'The assistant answered with an error (' + r.status + ')');
   return j;
 }
@@ -4311,13 +4266,14 @@ function renderWaAdmin(container) {
     <div class="admin-card"><h3>2 · What the assistant may tell customers</h3>
       <p class="note" style="margin-bottom:12px;">The assistant only states policies written here. If a question is not covered it says it will check with you instead of guessing. Prices, stock, fabric and colours come straight from your products.</p>
       ${WA_POLICY_FIELDS.map(([k, l, ph]) => `<div class="form-group"><label>${l}</label><textarea rows="2" placeholder="${esc(ph)}" oninput="waSetPol('${k}',this.value)">${esc(pol[k])}</textarea></div>`).join('')}</div>
-    <div class="admin-card"><h3>3 · Connect the assistant</h3>
+    ${BUILD === 'admin' ? `<div class="admin-card"><h3>3 · The assistant</h3><p class="note" style="margin-bottom:10px;">This owner app runs on the same server as the assistant, so it is already connected and signed in. Nothing to type.</p><div class="pf-actions"><button class="btn-sm btn-primary-sm" onclick="waPublish(false)">📤 Send sarees &amp; policies to assistant</button><button class="btn-sm btn-info-sm" onclick="waOpen('/test')">💬 Try the assistant (test chat)</button><button class="btn-sm btn-info-sm" onclick="waOpen('/inbox')">📥 Open inbox</button></div><div id="wa-fresh" style="margin-top:10px;"></div><div id="wa-status" class="note" style="margin-top:8px;"></div></div>` : `<div class="admin-card"><h3>3 · Connect the assistant</h3>
       <div class="form-group" style="max-width:520px;"><label>Assistant address</label><input id="wa-url" value="${esc(s.assistantUrl || '')}" placeholder="https://assistant.yourshop.com" oninput="waSet('assistantUrl',this.value.trim())"></div>
       <div class="form-group" style="max-width:520px;"><label>Admin token <span class="pf-sub">(kept only until you close this tab, never saved with your shop data)</span></label><input id="wa-tok" type="password" autocomplete="off" value="${esc(waTok())}" oninput="waSetTok(this.value)"></div>
       <div class="pf-actions"><button class="btn-sm btn-info-sm" onclick="waCheck()">Check connection</button><button class="btn-sm btn-primary-sm" onclick="waPublish(false)">📤 Send sarees &amp; policies to assistant</button><button class="btn-sm btn-info-sm" onclick="waDownloadCatalogue()">⬇ Download catalogue.json</button></div>
       <div id="wa-fresh" style="margin-top:10px;"></div><div id="wa-status" class="note" style="margin-top:8px;"></div>
       <label class="chk-line" style="margin-top:12px;"><input type="checkbox" ${s.waAutoPublish ? 'checked' : ''} onchange="waSet('waAutoPublish',this.checked);waAutoSoon()"> Send updates automatically when I change a product or stock (while this tab is open)</label>
       <div class="pf-actions" style="margin-top:14px;"><button class="btn-sm btn-info-sm" onclick="waOpen('/test')">💬 Try the assistant (test chat)</button><button class="btn-sm btn-info-sm" onclick="waOpen('/inbox')">📥 Open inbox (hand-overs &amp; order requests)</button></div></div>
+    </div>`}
     ${waCartCardHTML()}
     ${waOrdersCardHTML()}
     <div class="admin-card"><h3>Setup checklist</h3><ol style="line-height:1.9;font-size:14px;padding-left:20px;">
@@ -5650,7 +5606,7 @@ function draftPostNow(id) {
   const imgs = draftImages(d), p = { id: 'p' + generateId(), sku: d.sku, name: d.name.trim(), category: d.category || catFromSku(d.sku), price: Math.round(d.price), stock: draftStock(d), threshold: 2, images: imgs, image: imgs[0], video: d.video || '', fabric: d.fabric || '', colours: (d.colours || []).slice(), description: d.description.trim(), tags: (d.tags || []).slice(), seoTitle: d.seoTitle || '', metaDescription: d.metaDescription || '', altText: d.altText || '', slug: uniqueSlug(d.slug || d.name), rating: 0, reviews: 0, isNew: true };
   db.products.push(p); db.drafts.splice(i, 1); addLog('product_created', p.name, p.sku, 0, 0, p.stock, 'Posted from a draft');
   if (!saveDB()) { db.products.pop(); db.drafts.splice(i, 0, d); return false; }
-  refreshAdmin(); renderProducts(); buildScrollTrack(); updateBadges(); seoRefreshHome(); showToast(`🚀 ${p.name} is live in the shop`, 'success'); const n = notifySimilar(p); if (n) showToast(`✨ ${n} customer${n > 1 ? 's' : ''} asked about similar sarees and ${n > 1 ? 'were' : 'was'} queued for a message`, 'success');
+  refreshAdmin(); renderProducts(); buildScrollTrack(); updateBadges(); seoRefreshHome(); showToast(`🚀 ${p.name} is live in the shop`, 'success'); setTimeout(() => igOffer(p), 400); const n = notifySimilar(p); if (n) showToast(`✨ ${n} customer${n > 1 ? 's' : ''} asked about similar sarees and ${n > 1 ? 'were' : 'was'} queued for a message`, 'success');
   if (currentAdminTab === 'drafts' || currentAdminTab === 'products') renderAdminContent(currentAdminTab); return true;
 }
 function draftsPostAllReady() { const ids = db.drafts.filter(d => draftReady(d).ok).map(d => d.id); if (!ids.length) { showToast('No drafts are ready yet', 'error'); return; } if (!confirm(`Post ${ids.length} ready draft${ids.length > 1 ? 's' : ''} to the shop now?`)) return; let n = 0; ids.forEach(id => { if (draftPostNow(id)) n++; }); showToast(`🚀 ${n} product${n === 1 ? '' : 's'} posted`, 'success'); }
@@ -5661,7 +5617,175 @@ async function draftsFillAll() {
   saveDB(); renderAdminContent(currentAdminTab); showToast(n ? `✨ AI filled ${n} draft${n > 1 ? 's' : ''}. Only the price is left to add.` : 'Nothing to fill. Name your drafts first.', n ? 'success' : '');
 }
 function draftSetFilter(v) { DRAFT_FILTER.v = v; renderAdminContent(currentAdminTab); }
+// ================= HOSTED BUILDS (30 Oct 2026) =================
+// site: the public website reads what the owner published from the server (read-only).
+// admin: the owner app. Sign-in, saving, security and Instagram all go through the server, never through this browser's storage.
+const SHOP_API = () => String(window.__SHOP_API || ((document.querySelector('meta[name="shop-api"]') || {}).content) || '').replace(/\/+$/, '');
+async function shopSync() {
+  const api = SHOP_API(); if (!api) return;
+  try {
+    const r = await fetch(api + '/public/shop', { cache: 'no-cache' }); if (!r.ok) throw new Error('shop ' + r.status); const p = await r.json(); if (p.empty) return;
+    db.settings = Object.assign({}, db.settings, p.settings); db.categories = p.categories; db.accessoryCategories = p.accessoryCategories; db.products = p.products; if (p.home) db.home = p.home; db.bundles = p.bundles; db.coupons = p.coupons; db.accessorySeeded = true;
+    const u = currentUser(), mine = u ? (db.reviews || []).filter(x => x.userId === u.id && x.status !== 'approved') : []; db.reviews = [...p.reviews, ...mine];
+    try { localStorage.setItem('ap_db_v70', JSON.stringify(db)); } catch (e) { /* storage full: the page still works from memory */ }
+    ensureProductFields(); syncHomeCats(); pruneCart(); renderProducts(); buildScrollTrack(); renderHome(); updateBadges(); updateFavBadge(); seoRefreshHome();
+  } catch (e) { /* offline or server down: keep showing the last copy */ }
+}
+
+const ADM = { ready: false, signedIn: false, csrf: '', version: 0, state: null, dirty: false, inflight: false, timer: 0, poll: 0, ig: false, claude: false, igJobs: [] };
+async function admApi(method, path, body) {
+  const r = await fetch(path, { method, credentials: 'same-origin', headers: { 'Content-Type': 'application/json', ...(ADM.csrf ? { 'X-CSRF-Token': ADM.csrf } : {}) }, body: body === undefined ? undefined : JSON.stringify(body) });
+  const j = await r.json().catch(() => ({})); if (r.status === 401 && ADM.signedIn) { ADM.signedIn = false; admGate('expired'); }
+  if (!r.ok) throw Object.assign(new Error(j.error || 'Something went wrong (' + r.status + ')'), { status: r.status, data: j }); return j;
+}
+// ---- the sign-in screen (the only thing the page shows until the server says yes) ----
+function admGate(mode, msg) {
+  let g = document.getElementById('admGate');
+  if (!g) { g = document.createElement('div'); g.id = 'admGate'; g.setAttribute('role', 'dialog'); g.setAttribute('aria-modal', 'true'); document.body.appendChild(g); }
+  const st = ADM.state || {}, setup = mode === 'setup', twofa = st.twoFactor;
+  g.innerHTML = `<form class="adm-box" onsubmit="return admSubmit(event,'${mode}')" autocomplete="off">
+    <h1>Anitha Pemmasani</h1><p class="adm-sub">Owner admin</p>
+    ${mode === 'expired' ? '<p class="adm-note">Your session ended. Sign in again. Your changes are kept and will be saved.</p>' : ''}${mode === 'loading' ? '<p class="adm-sub">Connecting…</p>' : ''}${mode === 'error' ? `<p class="adm-err">${esc(msg || 'Cannot reach the server.')}</p><button type="button" class="adm-btn" onclick="admBoot()">Try again</button>` : ''}
+    ${mode === 'loading' || mode === 'error' ? '' : `${setup ? '<p class="adm-note">First time here. Choose your password. You need the <b>setup token</b> from the server settings (ADMIN_SETUP_TOKEN).</p><label>Setup token<input id="adm-token" type="password" autocomplete="off" required></label>' : ''}
+    <label>${setup ? 'New password (12+ characters)' : 'Password'}<input id="adm-pw" type="password" autocomplete="${setup ? 'new-password' : 'current-password'}" required minlength="${setup ? 12 : 1}" autofocus></label>
+    ${setup ? '<label>Repeat password<input id="adm-pw2" type="password" autocomplete="new-password" required></label>' : ''}
+    ${!setup && twofa ? '<label>6-digit code from your authenticator app<input id="adm-code" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" autocomplete="one-time-code" required></label>' : ''}
+    <p id="adm-msg" class="adm-err" role="alert">${esc(msg || '')}</p><button class="adm-btn" id="adm-go" type="submit">${setup ? 'Create my account' : 'Sign in'}</button>
+    <p class="adm-foot">Not listed on Google. Every sign-in attempt is recorded.</p>`}</form>`;
+  g.style.display = 'flex'; const f = g.querySelector('input'); if (f) setTimeout(() => f.focus(), 50);
+}
+async function admSubmit(e, mode) {
+  e.preventDefault(); const v = id => (document.getElementById(id) || { value: '' }).value, msg = t => { document.getElementById('adm-msg').textContent = t; }, btn = document.getElementById('adm-go'); btn.disabled = true; msg('');
+  try {
+    if (mode === 'setup') { if (v('adm-pw') !== v('adm-pw2')) { msg('The two passwords are not the same.'); btn.disabled = false; return false; } await admApi('POST', '/admin/api/setup', { setupToken: v('adm-token'), password: v('adm-pw') }); ADM.state = await admApi('GET', '/admin/api/state'); admGate('login', 'Account created. Now sign in.'); return false; }
+    const r = await admApi('POST', '/admin/api/login', { password: v('adm-pw'), code: v('adm-code') }); ADM.csrf = r.csrf; ADM.signedIn = true;
+    if (ADM.ready) { document.getElementById('admGate').style.display = 'none'; if (ADM.dirty) admSaveNow(); else admPoll(); return false; }   // the session had ended: keep what was typed, it is saved now
+    await admEnter();
+  } catch (err) { msg(err.status === 429 && err.data && err.data.retryAfter ? `Too many wrong attempts. Try again in ${Math.ceil(err.data.retryAfter / 60)} minutes.` : err.message); btn.disabled = false; const p = document.getElementById('adm-pw'); if (p) { p.value = ''; p.focus(); } }
+  return false;
+}
+async function admBoot() {
+  admGate('loading');
+  try { ADM.state = await admApi('GET', '/admin/api/state'); ADM.ig = !!ADM.state.instagram; ADM.claude = !!ADM.state.claude; if (ADM.state.signedIn) { ADM.csrf = ADM.state.csrf; ADM.signedIn = true; await admEnter(); } else admGate(ADM.state.configured ? 'login' : 'setup'); }
+  catch (e) { admGate('error', 'Cannot reach the server: ' + e.message); }
+}
+async function admEnter() {
+  const g = await admApi('GET', '/admin/api/db'); ADM.version = g.version;
+  const demo = !g.db; const fresh = normalizeDB(g.db || JSON.parse(JSON.stringify(defaultDB)));
+  ['adminPin', 'otpEndpoint', 'aiEndpoint', 'assistantUrl'].forEach(k => { delete fresh.settings[k]; }); for (const k of Object.keys(db)) delete db[k]; Object.assign(db, fresh);
+  ADM.ready = true; document.getElementById('admGate').style.display = 'none'; init();
+  isAdminView = true; document.getElementById('storefrontView').classList.add('hidden'); document.getElementById('adminView').classList.add('active'); document.body.classList.add('admin-on', 'adm-app'); switchAdminTab(currentAdminTab || 'dashboard');
+  if (demo) { ADM.dirty = true; admSetBadge('Starting with demo data. Import your own in Settings → Security & backup, or just edit this.'); admQueueSave(); }
+  clearInterval(ADM.poll); ADM.poll = setInterval(admPoll, 20_000); admSetBadge();
+}
+// ---- saving: debounced, merged on the server, never overwrites newer changes made elsewhere ----
+function admSetBadge(t) { let b = document.getElementById('admSync'); if (!b) { b = document.createElement('div'); b.id = 'admSync'; b.setAttribute('role', 'status'); document.body.appendChild(b); } b.textContent = t || (ADM.dirty || ADM.inflight ? 'Saving…' : '✓ Saved to the server'); b.className = (t && /not saved|offline/i.test(t)) ? 'bad' : ''; }
+function admQueueSave() { ADM.dirty = true; clearTimeout(ADM.timer); ADM.timer = setTimeout(admSaveNow, 700); admSetBadge(); }
+async function admSaveNow() {
+  if (ADM.inflight) { ADM.timer = setTimeout(admSaveNow, 500); return; } if (!ADM.signedIn) return; ADM.inflight = true; ADM.dirty = false; admSetBadge('Saving…');
+  try {
+    const r = await admApi('PUT', '/admin/api/db', { db, baseVersion: ADM.version }); ADM.version = r.version;
+    if (r.merged) { const keep = Object.keys(db); for (const k of keep) delete db[k]; Object.assign(db, normalizeDB(r.db)); admRefreshView(); }
+    ADM.inflight = false; admSetBadge();
+  } catch (e) {
+    ADM.inflight = false; ADM.dirty = true;
+    if (e.status === 409) { admSetBadge('Not saved: the shop changed a lot elsewhere. Reload this page.'); showToast('Reload the page: the shop changed elsewhere.', 'error'); }
+    else if (e.status === 401) admSetBadge('Not saved yet: sign in again.'); else { admSetBadge('Not saved: offline. Retrying…'); ADM.timer = setTimeout(admSaveNow, 5000); }
+  }
+}
+function admRefreshView() { if (document.querySelector('.modal.active') || currentAdminTab === 'studio') return; const a = document.activeElement; if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) && a.closest('#adminContent')) return;   // never redraw under someone who is typing
+  try { renderAdminContent(currentAdminTab); } catch (e) { /* the tab is not drawn yet */ } }
+async function admPoll() {
+  if (!ADM.signedIn || ADM.dirty || ADM.inflight) return;
+  try { const v = await admApi('GET', '/admin/api/version'); if (v.version > ADM.version) { const g = await admApi('GET', '/admin/api/db'); if (ADM.dirty || ADM.inflight) return; ADM.version = g.version; for (const k of Object.keys(db)) delete db[k]; Object.assign(db, normalizeDB(g.db)); admRefreshView(); admSetBadge('Updated: a new order or change arrived'); setTimeout(() => admSetBadge(), 4000); } } catch (e) { /* try again next time */ }
+}
+// ---- Settings → Security & backup ----
+function admSecurityHTML() {
+  if (BUILD !== 'admin') return '';
+  const tf = ADM.state && ADM.state.twoFactor;
+  return `<div class="admin-card" id="adm-security"><h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:12px;">Security &amp; backup</h4>
+    <div class="ai-row"><label>Current password<input id="sec-cur" type="password" autocomplete="current-password"></label><label>New password (12+ characters)<input id="sec-new" type="password" autocomplete="new-password"></label></div>
+    <button class="btn-sm btn-primary-sm" onclick="admChangePw()">Change password (signs out other devices)</button><div id="sec-pw-msg" class="note"></div>
+    <h4 class="dash-h4">2-step sign-in ${tf ? '<span class="status-pill status-active">ON</span>' : '<span class="status-pill status-inactive">OFF</span>'}</h4>
+    <p class="note">${tf ? 'A 6-digit code from your authenticator app is needed at every sign-in.' : 'Strongly recommended: sign-in also needs a 6-digit code from an authenticator app (Google Authenticator, Microsoft Authenticator…).'}</p>
+    ${tf ? '<div class="ai-row"><label>Password to switch it off<input id="sec-2off" type="password" autocomplete="current-password"></label></div><button class="btn-sm btn-danger-sm" onclick="admTwoFactorOff()">Switch off 2-step sign-in</button>' : '<div class="ai-row"><label>Your password<input id="sec-2pw" type="password" autocomplete="current-password"></label></div><button class="btn-sm btn-primary-sm" onclick="admTwoFactorStart()">Set up 2-step sign-in</button>'}
+    <div id="sec-2fa" class="note"></div>
+    <h4 class="dash-h4">Backup</h4><div class="pf-actions"><button class="btn-sm btn-info-sm" onclick="admDownloadBackup()">⬇ Download a backup of the whole shop</button><label class="btn-sm btn-info-sm" style="cursor:pointer;">⬆ Import a data file<input type="file" accept="application/json,.json" hidden onchange="admImport(this)"></label></div><div id="sec-bk" class="note"></div>
+    <h4 class="dash-h4">Recent sign-in activity</h4><div id="sec-audit" class="note">Loading…</div>
+    <div class="pf-actions" style="margin-top:14px;"><button class="btn-sm btn-danger-sm" onclick="admSignOut()">Sign out</button></div></div>`;
+}
+async function admLoadAudit() { const e = document.getElementById('sec-audit'); if (!e) return; try { const r = await admApi('GET', '/admin/api/audit'); e.innerHTML = r.events.slice(0, 12).map(x => `<div class="dd-row"><span>${x.ok ? '✅' : '⚠️'} ${esc(x.ev)}<small> · ${esc(new Date(x.t).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }))} IST · ${esc(x.ip)}${x.extra ? ' · ' + esc(x.extra) : ''}</small></span></div>`).join('') || 'Nothing yet.'; } catch (err) { e.textContent = err.message; } }
+async function admChangePw() { const m = document.getElementById('sec-pw-msg'); try { await admApi('POST', '/admin/api/password', { current: document.getElementById('sec-cur').value, next: document.getElementById('sec-new').value }); m.textContent = '✓ Password changed. Other devices were signed out.'; document.getElementById('sec-cur').value = document.getElementById('sec-new').value = ''; } catch (e) { m.textContent = e.message; } }
+async function admTwoFactorStart() { const m = document.getElementById('sec-2fa'); try { const r = await admApi('POST', '/admin/api/2fa/start', { password: document.getElementById('sec-2pw').value }); m.innerHTML = `<p>In your authenticator app choose <b>Enter a setup key</b> and type this key:</p><p class="adm-key">${esc(r.secret.match(/.{1,4}/g).join(' '))}</p><p><a href="${esc(r.uri)}">Open in my authenticator app</a> (on a phone)</p><div class="ai-row"><label>Then type the 6-digit code it shows<input id="sec-2code" inputmode="numeric" maxlength="6"></label></div><button class="btn-sm btn-primary-sm" onclick="admTwoFactorConfirm()">Turn on</button><div id="sec-2err" class="adm-err" role="alert"></div>`; } catch (e) { m.textContent = e.message; } }
+async function admTwoFactorConfirm() { const m = document.getElementById('sec-2fa'); try { await admApi('POST', '/admin/api/2fa/confirm', { code: document.getElementById('sec-2code').value }); ADM.state.twoFactor = true; showToast('2-step sign-in is ON', 'success'); renderAdminContent('settings'); } catch (e) { document.getElementById('sec-2err').textContent = e.message; } }
+async function admTwoFactorOff() { try { await admApi('POST', '/admin/api/2fa/off', { password: document.getElementById('sec-2off').value }); ADM.state.twoFactor = false; showToast('2-step sign-in is OFF', ''); renderAdminContent('settings'); } catch (e) { document.getElementById('sec-2fa').textContent = e.message; } }
+async function admDownloadBackup() { try { const g = await admApi('GET', '/admin/api/db'), a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(g.db, null, 2)], { type: 'application/json' })); a.download = 'anitha-store-backup-' + ymd(new Date()) + '.json'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 3000); } catch (e) { document.getElementById('sec-bk').textContent = e.message; } }
+function admImport(inp) {
+  const f = inp.files && inp.files[0]; if (!f) return; const r = new FileReader();
+  r.onload = async () => { try { const d = JSON.parse(r.result); if (!confirm('This replaces everything in the shop with the contents of this file. Continue?')) return; const x = await admApi('POST', '/admin/api/import', { db: d }); ADM.version = x.version; const g = await admApi('GET', '/admin/api/db'); for (const k of Object.keys(db)) delete db[k]; Object.assign(db, normalizeDB(g.db)); ADM.version = g.version; renderAdminContent('settings'); showToast('✅ Data imported', 'success'); } catch (e) { document.getElementById('sec-bk').textContent = 'Import failed: ' + e.message; } };
+  r.readAsText(f);
+}
+async function admSignOut() { try { await admApi('POST', '/admin/api/logout', {}); } catch (e) { /* already out */ } ADM.signedIn = false; location.reload(); }
+
+// ================= INSTAGRAM (owner app) =================
+// Post a product to Instagram right when you publish it, or at a time recommended by Claude. The server does the posting
+// (Instagram's official API) and keeps the schedule, so it works even when this page is closed.
+function igPrepJpeg(src, max = 1440) {
+  return new Promise((res, rej) => {
+    const im = new Image(); if (/^https?:/i.test(src)) im.crossOrigin = 'anonymous';
+    im.onload = () => {
+      let w = im.naturalWidth, h = im.naturalHeight, cw = w, ch = h; const r = w / h;
+      if (r < 0.8) cw = Math.round(h * 0.8); else if (r > 1.91) ch = Math.round(w / 1.91);   // Instagram only accepts 4:5 to 1.91:1
+      const k = Math.min(1, max / Math.max(cw, ch)), c = document.createElement('canvas'); c.width = Math.round(cw * k); c.height = Math.round(ch * k); const x = c.getContext('2d');
+      x.fillStyle = '#F7F4EC'; x.fillRect(0, 0, c.width, c.height); x.drawImage(im, Math.round((cw - w) / 2 * k), Math.round((ch - h) / 2 * k), Math.round(w * k), Math.round(h * k));
+      try { res(c.toDataURL('image/jpeg', 0.9)); } catch (e) { rej(new Error('This photo is hosted on another website and cannot be sent to Instagram. Open the product and upload the photo into it.')); }
+    };
+    im.onerror = () => rej(new Error('A photo could not be read.')); im.src = src;
+  });
+}
+const igWhen = iso => new Date(iso).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
+let IGD = null;
+async function igOffer(p, opts) {
+  if (!p) return; if (BUILD !== 'admin' || !ADM.ig) { if (opts && opts.force) showToast(BUILD === 'admin' ? 'Instagram is not connected on the server yet (see Instagram tab).' : 'Instagram posting works in the owner app on your server.', 'error'); return; }
+  IGD = { p, plan: null }; openModal(`<h3 style="font-family:'Cormorant Garamond',serif;font-size:26px;margin-bottom:4px;">📸 Share on Instagram</h3><div id="ig-body" class="ai-busy">✨ Claude is planning the caption and the best times…</div>`);
+  try { IGD.plan = await admApi('POST', '/admin/api/social/plan', { product: { name: p.name, category: p.category, fabric: p.fabric, colours: p.colours, price: p.price, description: p.description, occasions: occasionsOf(p), oneOfAKind: oneOfAKind(p), lang: 'en' } }); } catch (e) { document.getElementById('ig-body').innerHTML = `<div class="ai-err">${esc(e.message)}</div>`; return; }
+  const pl = IGD.plan, imgs = (p.images || [p.image]).filter(Boolean).slice(0, 10), caption = pl.caption + (pl.hashtags.length ? '\n\n' + pl.hashtags.map(h => '#' + h).join(' ') : '');
+  document.getElementById('ig-body').className = ''; document.getElementById('ig-body').innerHTML = `
+    <p class="note">${pl.via === 'claude' ? '✨ Written and timed by Claude' : 'Built-in suggestion (connect Claude for a personal caption)'}. Times are suggestions based on typical Indian Instagram habits: Claude cannot see your account's own statistics.</p>
+    <div class="ig-photos">${imgs.map((s, i) => `<label class="ig-ph"><input type="checkbox" class="ig-pick" value="${i}" ${i === 0 ? 'checked' : ''}><img src="${esc(s)}" alt="Photo ${i + 1}"></label>`).join('')}</div>
+    <div class="form-group"><label>Caption <span class="pf-sub" id="ig-count"></span></label><textarea id="ig-cap" rows="7" oninput="igCount()">${esc(caption)}</textarea></div>
+    <div class="form-group"><label>When to post</label><div class="ig-when">
+      <label class="ig-opt"><input type="radio" name="ig-when" value="now"> <b>Post now</b></label>
+      ${pl.slots.map((s, i) => `<label class="ig-opt"><input type="radio" name="ig-when" value="${esc(s.iso)}" ${i === 0 ? 'checked' : ''}> <b>${esc(igWhen(s.iso))}</b> <small>${i === 0 ? '⭐ recommended · ' : ''}${esc(s.why)}</small></label>`).join('')}
+      <label class="ig-opt"><input type="radio" name="ig-when" value="custom"> <b>Pick a time</b> <input type="datetime-local" id="ig-custom" onfocus="document.querySelector('input[name=ig-when][value=custom]').checked=true"></label></div></div>
+    <div id="ig-msg" class="note"></div><div class="dd-actions"><button class="btn-sm btn-info-sm" onclick="closeModal('adminModal')">Not now</button><button class="btn-full" id="ig-go" style="margin:0;flex:1;" onclick="igSubmit()">📸 Post / Schedule</button></div>`;
+  igCount();
+}
+function igCount() { const t = document.getElementById('ig-cap').value, tags = (t.match(/#[\p{L}\p{N}_]+/gu) || []).length, e = document.getElementById('ig-count'); if (e) { e.textContent = `${t.length}/2200 characters · ${tags}/30 hashtags`; e.style.color = t.length > 2200 || tags > 30 ? '#b04a4a' : ''; } }
+async function igSubmit() {
+  const p = IGD.p, msg = t => { document.getElementById('ig-msg').textContent = t; }, btn = document.getElementById('ig-go'), picks = [...document.querySelectorAll('.ig-pick:checked')].map(x => +x.value), sel = document.querySelector('input[name=ig-when]:checked');
+  if (!picks.length) { msg('Choose at least one photo.'); return; } if (!sel) { msg('Choose when to post.'); return; }
+  let when = sel.value; if (when === 'custom') { const v = document.getElementById('ig-custom').value; if (!v) { msg('Pick a date and time.'); return; } when = new Date(v).toISOString(); }
+  btn.disabled = true; msg('Preparing photos…');
+  try {
+    const imgs = (p.images || [p.image]).filter(Boolean), ids = []; for (const i of picks) { const jpg = await igPrepJpeg(imgs[i]); ids.push((await admApi('POST', '/admin/api/social/media', { dataUrl: jpg })).id); msg(`Uploaded ${ids.length} of ${picks.length}…`); }
+    const r = await admApi('POST', '/admin/api/social/post', { mediaIds: ids, caption: document.getElementById('ig-cap').value, when, productId: p.id, productName: p.name }), j = r.job;
+    closeModal('adminModal'); if (j.status === 'posted') showToast('📸 Posted on Instagram', 'success'); else if (j.status === 'queued' && when !== 'now') showToast('🗓 Scheduled for ' + igWhen(j.when) + ' (IST)', 'success'); else showToast('Instagram: ' + (j.error || j.status), 'error');
+    if (currentAdminTab === 'social') renderSocialAdmin(document.getElementById('adminContent'));
+  } catch (e) { msg(e.message); btn.disabled = false; }
+}
+const IG_ST = { queued: ['🗓', 'Scheduled'], publishing: ['⏳', 'Posting…'], posted: ['✅', 'Posted'], failed: ['⚠️', 'Failed'], check: ['❓', 'Please check Instagram'], cancelled: ['✖', 'Cancelled'] };
+async function renderSocialAdmin(c) {
+  if (!c) return; c.innerHTML = '<div class="ai-busy">Loading…</div>'; let s;
+  try { s = await admApi('GET', '/admin/api/social/status'); } catch (e) { c.innerHTML = `<div class="ai-err">${esc(e.message)}</div>`; return; } ADM.igJobs = s.jobs;
+  c.innerHTML = `<div class="admin-card ai-status ${s.connected ? 'on' : ''}"><h3 style="margin:0;">📸 Instagram</h3><p class="note" style="margin:0;">${s.connected ? `🟢 Connected to account ${esc(s.account)}. Posted today: ${s.postedToday} of ${s.dailyCap}.` : '🟡 Not connected. On the server set IG_USER_ID and IG_ACCESS_TOKEN (see HOW-IT-WORKS/17). You need an Instagram professional account linked to a Facebook page and a Meta developer app.'}${s.connected && !s.httpsOk ? ' <b>PUBLIC_URL must be the https address of this server, or Instagram cannot fetch the photos.</b>' : ''}</p>
+    ${s.connected ? `<div class="ai-row"><label>Post a product<select id="ig-prod">${db.products.filter(p => (p.images || []).length).map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')}</select></label></div><button class="btn-sm btn-primary-sm" onclick="igOffer(db.products.find(x => x.id === document.getElementById('ig-prod').value), { force: true })">📸 Plan a post</button>` : ''}</div>
+    <div class="admin-card"><h3>Posts</h3>${s.jobs.length ? s.jobs.map(j => { const [ic, lb] = IG_ST[j.status] || ['', j.status]; return `<div class="ai-idea ig-job" data-id="${esc(j.id)}"><span class="ai-tag">${ic} ${lb}</span><b>${esc(j.productName || 'Post')}</b><small>${j.status === 'posted' ? 'Posted ' + esc(igWhen(j.postedAt)) : j.status === 'queued' ? 'For ' + esc(igWhen(j.when)) + ' IST' : esc(igWhen(j.when))} · ${j.mediaIds.length} photo${j.mediaIds.length > 1 ? 's' : ''}</small><small>${esc(j.caption.slice(0, 140))}${j.caption.length > 140 ? '…' : ''}</small>${j.error ? `<small style="color:#b04a4a;">${esc(j.error)}</small>` : ''}<div class="ai-act">${j.permalink ? `<a class="btn-sm btn-info-sm" target="_blank" rel="noopener" href="${esc(j.permalink)}">View on Instagram</a>` : ''}${j.status === 'queued' ? `<button class="btn-sm btn-primary-sm" onclick="igAct('now','${esc(j.id)}')">Post now</button><button class="btn-sm btn-danger-sm" onclick="igAct('cancel','${esc(j.id)}')">Cancel</button>` : ''}${j.status === 'failed' ? `<button class="btn-sm btn-primary-sm" onclick="igAct('retry','${esc(j.id)}')">Try again</button><button class="btn-sm btn-info-sm" onclick="igAct('cancel','${esc(j.id)}')">Dismiss</button>` : ''}${j.status === 'check' ? `<button class="btn-sm btn-info-sm" onclick="if(confirm('Only do this if the post is NOT on Instagram. Post it again?'))igAct('retry','${esc(j.id)}',true)">It is not there: post again</button><button class="btn-sm btn-info-sm" onclick="igAct('cancel','${esc(j.id)}')">It is there: dismiss</button>` : ''}</div></div>`; }).join('') : '<div class="dash-empty">No posts yet. Publish a product, or plan one above.</div>'}</div>`;
+  clearTimeout(ADM.igTimer); ADM.igTimer = setTimeout(() => { if (currentAdminTab === 'social' && !document.querySelector('.modal.active')) renderSocialAdmin(document.getElementById('adminContent')); }, 15000);
+}
+async function igAct(what, id, force) { try { await admApi('POST', '/admin/api/social/' + what, { id, force: !!force }); } catch (e) { showToast(e.message, 'error'); } renderSocialAdmin(document.getElementById('adminContent')); }
 function init() {
+  if (BUILD === 'admin' && !ADM.ready) { admBoot(); return; }
   if (ensureProductFields() | syncHomeCats() | recalcRatings()) saveDB();
   initShopToolbar();
   pruneCart(); saveCart();
@@ -5677,6 +5801,7 @@ function init() {
   updateAcctIcon();
   routeFromHash();
   document.body.classList.add('ready');
+  if (BUILD === 'site') shopSync();
 }
 
 window.addEventListener('click', e => {
