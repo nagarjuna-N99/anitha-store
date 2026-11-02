@@ -14,7 +14,7 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
   const ipOf = req => String(req.socket.remoteAddress || '').replace(/^::ffff:/, '');   // never trust X-Forwarded-For for security decisions
   const send = (res, r, extra = {}) => json(res, r.code || 200, r.code && r.code >= 400 ? { error: r.error, retryAfter: r.retryAfter } : r, { ...SEC, ...extra });
   const body = async (req, limit = 200_000) => { try { return JSON.parse((await readBody(req, limit)).toString('utf8') || '{}'); } catch (e) { throw Object.assign(new Error(e.code === 413 ? 'Too large.' : 'Bad request.'), { code: e.code === 413 ? 413 : 400 }); } };
-  let keyTries = [];
+  let keyTries = [], reviewTries = [];
   const mask = s => s ? s.slice(0, 3) + '…' + s.slice(-3) : '';
 
   return async function handle(req, res, url, route) {
@@ -68,9 +68,14 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       // ---------- Instagram ----------
       if (route === 'GET /admin/api/social/status') { send(res, { code: 200, connected: ig.configured, account: mask(cfg.ig.userId), httpsOk: /^https:\/\//.test(cfg.payments.publicUrl || ''), postedToday: social.postedToday(), dailyCap: cfg.ig.dailyCap, jobs: social.list() }); return true; }
       if (route === 'POST /admin/api/social/media') { const b = await body(req, 12_000_000); const r = media.save(b.dataUrl); send(res, { code: 200, id: r.id }); return true; }
-      if (route === 'POST /admin/api/video/upload') { const r = await videos.upload(req); wrote('video-upload', `${Math.round(r.bytes / 1e6)}MB ${Math.round(r.duration)}s`); send(res, { code: 200, ...r }); return true; }
-      if (route === 'POST /admin/api/video/render') { const b = await body(req, 6_500_000); const job = videos.start({ id: String(b.id || ''), edl: b.edl, hookPng: b.hookPng, logoPng: b.logoPng }); wrote('video-render', job.id); send(res, { code: 200, jobId: job.id }); return true; }
+      if (route === 'POST /admin/api/video/upload') { const r = await videos.upload(req); const job = videos.start(r.id, r); wrote('video-upload', `${Math.round(r.bytes / 1e6)}MB ${Math.round(r.duration)}s`); send(res, { code: 200, id: r.id, jobId: job.id, duration: r.duration, width: r.width, height: r.height, bytes: r.bytes }); return true; }
       if (route === 'GET /admin/api/video/job') { const j = videos.job(url.searchParams.get('id')); if (!j) return send(res, { code: 404, error: 'Not found.' }), true; send(res, { code: 200, state: j.state, progress: j.progress, error: j.error, result: j.result }); return true; }
+      if (route === 'POST /admin/api/video/review') {
+        const b = await body(req, 2_000), j = [...videos.jobs.values()].find(x => x.videoId === String(b.id || '') && x.state === 'done'); if (!j) return send(res, { code: 404, error: 'Analyse the video first.' }), true;
+        if (!cfg.anthropicKey || cfg.anthropicKey === 'missing') return send(res, { code: 503, error: 'Add your Claude key (Settings → Security & backup) to get a review of the frames.' }), true;
+        const now = Date.now(); reviewTries = reviewTries.filter(t => now - t < 60_000); if (reviewTries.length >= 6) return send(res, { code: 429, error: 'Too many tries. Wait a minute.' }), true; reviewTries.push(now);
+        try { const r = await runAi({ cfg, client, task: 'videoreview', input: { images: j.result.frames, facts: j.result.facts } }); send(res, { code: 200, review: r.data }); } catch (e) { send(res, { code: [400, 413, 422].includes(e.code) ? e.code : 502, error: e.message }); } return true;
+      }
       if (route === 'POST /admin/api/social/plan') {
         const b = await body(req, 20_000), now = Date.now(), existing = social.s.jobs.filter(j => j.status === 'queued').map(j => j.when), input = { ...(b.product || {}), nowIso: istIso(now), existing };
         let plan, via = 'built-in';
@@ -79,7 +84,8 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       }
       if (route === 'POST /admin/api/social/post') {
         const b = await body(req, 20_000); if (!ig.configured) return send(res, { code: 503, error: 'Instagram is not connected on the server yet.' }), true;
-        const job = social.add({ kind: b.kind === 'reel' ? 'reel' : 'photo', videoId: b.videoId, coverId: b.coverId, mediaIds: b.mediaIds, caption: b.caption, when: b.when === 'now' ? 'now' : String(b.when || ''), productId: b.productId, productName: b.productName }); wrote('ig-queue', job.id);
+        let vid = { videoId: b.videoId, coverId: b.coverId }; if (b.kind === 'reel' && b.analysedId) vid = videos.promote(String(b.analysedId), b.coverIndex);
+        const job = social.add({ kind: b.kind === 'reel' ? 'reel' : 'photo', videoId: vid.videoId, coverId: vid.coverId, mediaIds: b.mediaIds, caption: b.caption, when: b.when === 'now' ? 'now' : String(b.when || ''), productId: b.productId, productName: b.productName }); wrote('ig-queue', job.id);
         if (b.when === 'now') await social.postNow(job.id); send(res, { code: 200, job }); return true;
       }
       if (route === 'POST /admin/api/social/cancel') { const r = social.cancel(String((await body(req, 2_000)).id)); if (r.code === 200) wrote('ig-cancel', r.job.id); send(res, r); return true; }

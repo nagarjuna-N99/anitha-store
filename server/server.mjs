@@ -20,7 +20,7 @@ import { MediaStore } from './src/media.mjs';
 import { IgClient, SocialQueue } from './src/instagram.mjs';
 import { adminRoutes } from './src/adminroutes.mjs';
 import { SecretStore } from './src/secrets.mjs';
-import { VideoStudio } from './src/video.mjs';
+import { VideoLab } from './src/video.mjs';
 
 const sha = s => crypto.createHash('sha256').update(String(s)).digest();
 const safeEq = (a, b) => crypto.timingSafeEqual(sha(a), sha(b));
@@ -46,7 +46,7 @@ export function createApp(overrides = {}, deps = {}) {
   let aiHits = [];
   const auth = deps.auth || new AdminAuth({ dir: cfg.dataDir, setupToken: cfg.adminSetupToken, secureCookie: cfg.cookieSecure, ...(deps.authOpts || {}) });
   const shop = deps.shop || new ShopData(cfg.dataDir), media = deps.media || new MediaStore(cfg.dataDir), ig = deps.ig || new IgClient(cfg, deps.fetch);
-  const videos = deps.videos || new VideoStudio({ dir: cfg.dataDir, media });
+  const videos = deps.videos || new VideoLab({ dir: cfg.dataDir, media });
   const social = deps.social || new SocialQueue({ dir: cfg.dataDir, ig, media, cfg, now: deps.now });
   const waSink = { send: (to, m) => m.type === 'image' ? wa.sendImage(to, m.url, m.caption) : m.type === 'document' ? wa.sendDocument(to, m.url, m.filename, m.caption) : m.type === 'buttons' ? wa.sendButtons(to, m.text, m.buttons) : wa.sendText(to, m.text) };
   const pipeline = new Pipeline({ cfg, store, client, wa, defaultSink: waSink });

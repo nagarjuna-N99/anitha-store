@@ -71,6 +71,11 @@ export const TASKS = {
     build: i => ({ system: `${RULES}\nYou draft ONE short WhatsApp message (max 55 words, plain text, at most one emoji, no markdown) from the shop owner to a returning customer. Segment: ${({ dormant: 'a past buyer who has not ordered for a while: say hello, mention that new pieces have arrived, invite them to look', newarrival: 'a past buyer of this kind of saree: a new similar piece has arrived, invite them to look', review: 'a recent buyer whose saree was delivered: ask warmly how they liked it and invite a short review, no pressure' })[i.segment] || 'a past buyer: a warm hello'}. Start with "Hi <first name>" only if a first name is given. Never offer discounts or promise anything not in the facts. End with a polite opt-out line: "Reply STOP if you prefer not to get messages." Language: ${lang(i.lang)}.`,
       user: `Facts:\n${wrap({ firstName: str(i.firstName, 30), items: arr(i.items, 3, 80), category: str(i.category, 60), daysSince: Number(i.daysSince) || undefined, siteUrl: str(i.siteUrl, 120) })}` }),
   },
+  videoreview: {
+    json: true, max: 900, images: true,
+    build: i => ({ system: `${RULES}\nYou review a short vertical video for Instagram Reels and WhatsApp status of a handloom saree shop. You are shown only FOUR STILL FRAMES (start, early, middle, late) and some measured facts. You cannot hear the sound or see movement: say so if it matters. Judge only what is visible. Answer with JSON only: {"hook": {"rating": 1-5, "note": string (max 25 words: would the first frame stop a scroll?)}, "product": {"rating": 1-5, "note": string (is the saree the clear, centred subject; are the border, pallu and weave shown?)}, "text": {"rating": 1-5, "note": string (is there readable on-screen text? if none say so)}, "light": {"rating": 1-5, "note": string (lighting and whether the colour looks true)}, "background": {"rating": 1-5, "note": string (clutter, distractions)}, "do": string[] (3 to 5 short, clear instructions in the imperative, most important first, specific to these frames, e.g. "Open on the pallu being flicked, not on the full drape"), "captionIdea": string (max 20 words, a first line for the caption using only what is visible)}. Never invent fabric, origin or price. Be honest and kind; do not give a high rating by default.`,
+      user: `Measured facts:\n${wrap(i.facts || {})}\nThe four frames follow, in order.` }),
+  },
   translate: {
     json: false, max: 1200,
     build: i => ({ system: `${RULES}\nTranslate the text into ${lang(i.to)}. Keep numbers, prices (₹), SKUs, product and brand names, hashtags, URLs and emojis exactly as they are. Output only the translation.`,
@@ -86,9 +91,14 @@ export function parseModelJson(t) {
 export async function runAi({ cfg, client, task, input }) {
   const T = TASKS[task]; if (!T) { const e = new Error('Unknown AI task'); e.code = 400; throw e; }
   input = input && typeof input === 'object' ? input : {};
-  if (JSON.stringify(input).length > (T.image ? 2_200_000 : 60_000)) { const e = new Error('Input too large'); e.code = 413; throw e; }
+  if (JSON.stringify(input).length > (T.image ? 2_200_000 : T.images ? 4_500_000 : 60_000)) { const e = new Error('Input too large'); e.code = 413; throw e; }
   const { system, user } = T.build(input);
   let content = user;
+  if (T.images) {
+    const list = (Array.isArray(input.images) ? input.images : []).slice(0, 4), blocks = [];
+    for (const d of list) { const m = IMG.exec(String(d || '')); if (!m || m[2].length > 900_000) { const e = new Error('A frame is not a valid small photo'); e.code = 400; throw e; } blocks.push({ type: 'image', source: { type: 'base64', media_type: `image/${m[1]}`, data: m[2] } }); }
+    if (!blocks.length) { const e = new Error('No frames to look at'); e.code = 400; throw e; } content = [...blocks, { type: 'text', text: user }];
+  }
   if (T.image) {
     const m = IMG.exec(String(input.image || '')); if (!m || m[2].length > 1_800_000) { const e = new Error('Send a JPEG/PNG/WebP photo under 1.3 MB'); e.code = 400; throw e; }
     content = [{ type: 'image', source: { type: 'base64', media_type: `image/${m[1]}`, data: m[2] } }, { type: 'text', text: user }];
