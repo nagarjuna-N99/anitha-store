@@ -76,6 +76,11 @@ export const TASKS = {
     build: i => ({ system: `${RULES}\nYou review a short vertical video for Instagram Reels and WhatsApp status of a handloom saree shop. You are shown only FOUR STILL FRAMES (start, early, middle, late) and some measured facts. You cannot hear the sound or see movement: say so if it matters. Judge only what is visible. Answer with JSON only: {"hook": {"rating": 1-5, "note": string (max 25 words: would the first frame stop a scroll?)}, "product": {"rating": 1-5, "note": string (is the saree the clear, centred subject; are the border, pallu and weave shown?)}, "text": {"rating": 1-5, "note": string (is there readable on-screen text? if none say so)}, "light": {"rating": 1-5, "note": string (lighting and whether the colour looks true)}, "background": {"rating": 1-5, "note": string (clutter, distractions)}, "do": string[] (3 to 5 short, clear instructions in the imperative, most important first, specific to these frames, e.g. "Open on the pallu being flicked, not on the full drape"), "captionIdea": string (max 20 words, a first line for the caption using only what is visible)}. Never invent fabric, origin or price. Be honest and kind; do not give a high rating by default.`,
       user: `Measured facts:\n${wrap(i.facts || {})}\nThe four frames follow, in order.` }),
   },
+  weeklyplan: {
+    json: true, max: 450,
+    build: i => ({ system: `${RULES}\nYou write the opening of the weekly growth email to the shop owner. Use ONLY the numbers in <data>; never invent a number, never promise views or sales. Answer with JSON only: {"headline": string (max 9 words, plain and true to the numbers, no hype), "summary": string (max 70 words: what happened in sales, website visits and Instagram compared with the previous period, then the one most important next step, which is named in topAction)}.`,
+      user: `Numbers:\n${wrap(i)}` }),
+  },
   translate: {
     json: false, max: 1200,
     build: i => ({ system: `${RULES}\nTranslate the text into ${lang(i.to)}. Keep numbers, prices (₹), SKUs, product and brand names, hashtags, URLs and emojis exactly as they are. Output only the translation.`,

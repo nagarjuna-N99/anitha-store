@@ -22,9 +22,9 @@ export class SecretStore {
     try { const d = crypto.createDecipheriv('aes-256-gcm', this.key, Buffer.from(r.iv, 'base64')); d.setAuthTag(Buffer.from(r.tag, 'base64')); return Buffer.concat([d.update(Buffer.from(r.data, 'base64')), d.final()]).toString('utf8'); }
     catch { return ''; }   // wrong key (token changed) or damaged file: behave as "not set"
   }
-  set(name, value) {
+  set(name, value, { last4 = true } = {}) {
     const iv = crypto.randomBytes(12), c = crypto.createCipheriv('aes-256-gcm', this.key, iv), data = Buffer.concat([c.update(String(value), 'utf8'), c.final()]);
-    const all = this.read(); all[name] = { iv: iv.toString('base64'), tag: c.getAuthTag().toString('base64'), data: data.toString('base64'), last4: String(value).slice(-4), updatedAt: new Date().toISOString() }; this.write(all);
+    const all = this.read(); all[name] = { iv: iv.toString('base64'), tag: c.getAuthTag().toString('base64'), data: data.toString('base64'), last4: last4 ? String(value).slice(-4) : '', updatedAt: new Date().toISOString() }; this.write(all);
   }
   remove(name) { const all = this.read(); delete all[name]; this.write(all); }
   meta(name) { const r = this.read()[name]; return r ? { set: true, last4: r.last4 || '', updatedAt: r.updatedAt || null } : { set: false }; }

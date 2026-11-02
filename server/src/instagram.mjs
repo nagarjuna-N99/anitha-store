@@ -24,6 +24,25 @@ export class IgClient {
     let permalink = ''; try { permalink = (await this.call('GET', pub.id, { fields: 'permalink' })).permalink || ''; } catch { /* live anyway */ }
     return { postId: pub.id, permalink };
   }
+  // ---- insights (needs the instagram_manage_insights permission on the token; every number is optional) ----
+  async insights(days, now = Date.now(), withMedia = true) {
+    if (!this.configured) throw new Error('Instagram is not connected on the server.'); const u = this.cfg.ig.userId, errors = {}, totals = {}, until = Math.floor(now / 1000), since = until - days * 86400;
+    const acc = await this.call('GET', u, { fields: 'username,followers_count,follows_count,media_count' });
+    for (const m of ['reach', 'views', 'profile_views', 'accounts_engaged', 'total_interactions', 'likes', 'comments', 'shares', 'saves', 'website_clicks']) {
+      try { const r = await this.call('GET', `${u}/insights`, { metric: m, period: 'day', metric_type: 'total_value', since, until }); const v = r.data && r.data[0] && r.data[0].total_value ? r.data[0].total_value.value : null; totals[m] = Number.isFinite(+v) ? +v : null; }
+      catch (e) { totals[m] = null; errors[m] = String(e.message).replace(/^Instagram said: /, '').slice(0, 140); }
+    }
+    let media = [];
+    if (withMedia) try {
+      const list = await this.call('GET', `${u}/media`, { fields: 'id,caption,media_type,media_product_type,timestamp,permalink,like_count,comments_count,thumbnail_url,media_url', limit: '30' });
+      for (const m of (list.data || [])) {
+        const t = Date.parse(m.timestamp); if (!Number.isFinite(t) || t < now - (days * 2 + 3) * 86400_000) continue; const row = { id: m.id, type: m.media_product_type === 'REELS' ? 'REEL' : m.media_type === 'CAROUSEL_ALBUM' ? 'CAROUSEL' : m.media_type === 'VIDEO' ? 'VIDEO' : 'PHOTO', at: m.timestamp, url: m.permalink, caption: String(m.caption || '').slice(0, 140), likes: m.like_count ?? null, comments: m.comments_count ?? null, thumb: m.thumbnail_url || m.media_url || '' };
+        for (const set of [['reach', 'saved', 'shares', 'total_interactions', 'views'], ['reach', 'saved']]) { try { const r = await this.call('GET', `${m.id}/insights`, { metric: set.join(',') }); for (const d of (r.data || [])) row[d.name === 'saved' ? 'saves' : d.name] = d.values && d.values[0] ? d.values[0].value : d.total_value ? d.total_value.value : null; break; } catch (e) { errors.media = String(e.message).replace(/^Instagram said: /, '').slice(0, 140); } }
+        media.push(row);
+      }
+    } catch (e) { errors.media = String(e.message).replace(/^Instagram said: /, '').slice(0, 140); }
+    return { account: { username: acc.username || '', followers: acc.followers_count ?? null, follows: acc.follows_count ?? null, media: acc.media_count ?? null }, totals, media, errors };
+  }
   async publish({ imageUrls, caption }) {
     if (!this.configured) throw new Error('Instagram is not connected on the server.'); const u = this.cfg.ig.userId; let creation;
     if (imageUrls.length === 1) { creation = (await this.call('POST', `${u}/media`, { image_url: imageUrls[0], caption })).id; }

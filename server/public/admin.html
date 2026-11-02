@@ -73,6 +73,12 @@
   .soc-wa{background:#0b0b0b;color:#fff}.soc-wa-bar{position:absolute;top:6px;left:8px;right:8px;height:3px;background:rgba(255,255,255,.3);border-radius:2px;z-index:2}.soc-wa-bar i{display:block;width:40%;height:100%;background:#fff;border-radius:2px}
   .soc-wa-h{position:absolute;top:14px;left:8px;display:flex;gap:6px;align-items:center;z-index:2}.soc-wa-h small{display:block;opacity:.8}.soc-wa-cap{position:absolute;left:0;right:0;bottom:34px;padding:18px 12px 10px;background:linear-gradient(transparent,rgba(0,0,0,.7));font-size:12px;z-index:2}.soc-wa-reply{position:absolute;bottom:6px;left:0;right:0;text-align:center;opacity:.8;z-index:2}
   .soc-rules{border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin:10px 0;background:#fcfbf8}.soc-rules-h{margin-bottom:6px}.soc-rule{display:flex;gap:8px;font-size:12.5px;padding:4px 0}.soc-rule span{font-weight:700;width:16px;flex:none}.soc-rule.ok span{color:#3f8a4f}.soc-rule.bad{color:#9a2f2f}.soc-rule.bad span{color:#c0392b}.soc-rule.warn span{color:#c27b00}.soc-passed summary{cursor:pointer;font-size:12px;color:#666;margin:4px 0}
+  .grow-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.grow-remind{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap;background:#fff4e0;border:1px solid #f0d9a8;border-radius:8px;padding:10px 14px;margin-bottom:14px}
+  .g-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}.g-tile{border:1px solid var(--border);border-radius:8px;padding:8px 10px;background:#fcfbf8}.g-tile small{display:block;color:#888;font-size:11px}.g-tile b{font-size:20px;display:block}.g-tile span{font-size:11px}.g-up{color:#2f7a40}.g-down{color:#b03227}.g-flat{color:#888}
+  .g-funnel{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:14px 0;font-size:12px}.g-funnel div{border:1px solid var(--border);border-radius:8px;padding:6px 10px;background:#fff;text-align:center}.g-funnel b{display:block;font-size:18px}.g-funnel small{color:#888}.g-funnel i{font-style:normal;color:#C96A11}
+  .g-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.g-two h5{margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#888}
+  .g-act{border:1px solid #eadfcb;background:#fffaf0;border-radius:8px;padding:10px 12px;margin:10px 0}.g-act-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.g-p{font-size:11px;border-radius:10px;padding:1px 8px}.g-p1{background:#f8d5d0;color:#b03227}.g-p2{background:#fdebc4;color:#a15f00}.g-p3{background:#e5e5e5;color:#555}.g-steps{margin:6px 0 6px 18px;padding:0;font-size:13.5px}.g-steps li{margin:3px 0}.g-goal{font-size:12px;color:#1f5c2e;margin-bottom:6px}
+  .g-posts{display:grid;gap:10px}.g-post{display:flex;gap:10px;color:inherit;text-decoration:none}.g-post img{width:64px;height:64px;object-fit:cover;border-radius:6px}.g-prev{width:100%;height:520px;border:1px solid var(--border);border-radius:6px;background:#fff}
   .va-top{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}.va-vid video{width:150px;aspect-ratio:9/16;background:#000;border-radius:10px;object-fit:cover}.va-score{display:flex;gap:14px;align-items:center;flex:1;min-width:240px}
   .va-ring{--p:50;--c:#c27b00;width:92px;height:92px;border-radius:50%;background:conic-gradient(var(--c) calc(var(--p)*1%),#eee 0);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;flex:none}.va-ring::before{content:'';position:absolute;inset:9px;background:#fff;border-radius:50%}.va-ring b,.va-ring small{position:relative;line-height:1}.va-ring b{font-size:28px}.va-ring small{font-size:11px;color:#888}
   .va-verdict{font-weight:700;font-size:17px}.va-do{border:1px solid #f0d9a8;background:#fff9ea;border-radius:8px;padding:10px 12px;margin:12px 0}.va-do.ok{background:#eef6ee;border-color:#cfe5d2}.va-do h4,.va-h{margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#777}.va-h{margin-top:16px}
@@ -997,6 +1003,7 @@ body.adm-app #storefrontView, body.adm-app #view-toggle, body.adm-app .owner-ent
     <li data-tab="bundles" onclick="switchAdminTab('bundles'); closeAdminNav();">🎁 Bundles</li>
     <li data-tab="ai" onclick="switchAdminTab('ai'); closeAdminNav();">✨ AI Helper</li>
     <li data-tab="social" onclick="switchAdminTab('social'); closeAdminNav();">📸 Instagram</li>
+    <li data-tab="growth" onclick="switchAdminTab('growth'); closeAdminNav();">📈 Growth</li>
     <li data-tab="logs" onclick="switchAdminTab('logs'); closeAdminNav();">📜 Audit Logs</li>
     <li data-tab="settings" onclick="switchAdminTab('settings'); closeAdminNav();">⚙️ Settings</li>
   </ul>
@@ -1202,6 +1209,7 @@ body.adm-app #storefrontView, body.adm-app #view-toggle, body.adm-app .owner-ent
       <li class="admin-nav-item" data-tab="bundles" onclick="switchAdminTab('bundles')">🎁 Bundles</li>
       <li class="admin-nav-item" data-tab="ai" onclick="switchAdminTab('ai')">✨ AI Helper</li>
       <li class="admin-nav-item" data-tab="social" onclick="switchAdminTab('social')">📸 Instagram</li>
+      <li class="admin-nav-item" data-tab="growth" onclick="switchAdminTab('growth')">📈 Growth</li>
       <li class="admin-nav-item" data-tab="logs" onclick="switchAdminTab('logs')">📜 Audit Logs</li>
       <li class="admin-nav-item" data-tab="settings" onclick="switchAdminTab('settings')">⚙️ Settings</li>
     </ul>
@@ -1454,6 +1462,17 @@ function toggleView() {
 }
 
 // ================= STOREFRONT NAVIGATION =================
+// ---- anonymous visit counting for the public website (no cookies, nothing personal; off with Do Not Track) ----
+const TRK = { last: '', at: 0 };
+function trackHit(t, o) {
+  if (BUILD !== 'site') return; o = o || {};
+  try {
+    if (navigator.doNotTrack === '1' || navigator.webdriver || !window.__SHOP_API) return; const key = t + '|' + (o.p || '') + '|' + (o.id || ''), now = Date.now(); if (key === TRK.last && now - TRK.at < 1500) return; TRK.last = key; TRK.at = now;
+    const u = new URLSearchParams(location.search).get('utm_source') || '';
+    fetch(String(window.__SHOP_API).replace(/\/+$/, '') + '/public/hit', { method: 'POST', body: JSON.stringify({ t, p: o.p || '', id: o.id || '', r: document.referrer || '', u, m: window.matchMedia('(max-width:820px)').matches ? 1 : 0 }), keepalive: true, credentials: 'omit', mode: 'cors', headers: { 'content-type': 'text/plain' } }).catch(() => {});
+  } catch (e) { /* counting must never break the shop */ }
+}
+if (BUILD === 'site') document.addEventListener('click', e => { const a = e.target && e.target.closest && e.target.closest('a[href^="https://wa.me/"]'); if (a) trackHit('wa', {}); }, true);
 function navigateTo(pageName) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + pageName).classList.add('active');
@@ -1461,7 +1480,7 @@ function navigateTo(pageName) {
   if (pageName === 'favourites') renderFavourites();
   if (pageName === 'faq') renderFaq();
   if (LEGAL_PAGES[pageName]) renderLegal(pageName);
-  setPageSeo(pageName);
+  setPageSeo(pageName); trackHit('view', { p: ['home', 'shop', 'journal', 'care', 'faq', 'favourites'].includes(pageName) ? pageName : 'other' });
 }
 function filterAndShowShop(category) { navigateTo('shop'); shopResetFilters(); filterProducts(category); }
 
@@ -1563,7 +1582,7 @@ function filterProducts(category) {
 
 function openProductDetail(id) {
   const p = db.products.find(x => x.id === id); if (!p) return;
-  recentAdd(id);
+  recentAdd(id); trackHit('view', { p: 'product' }); trackHit('product', { id });
   RV.open = false; RV.draft = null; RV.shown = 5; RV.photosOnly = false; RV.sort = 'new';
   renderProductModal(p);
   document.getElementById('productModal').classList.add('active');
@@ -1581,7 +1600,7 @@ function pruneCart() {
 }
 function addToCart(id) {
   const p = db.products.find(x => x.id === id);
-  if (!p || p.stock === 0) return;
+  if (!p || p.stock === 0) return; trackHit('cart', { id });
   const existing = cart.find(c => c.id === id);
   if (existing) {
     if (existing.qty >= p.stock) { showToast(`Only ${p.stock} available`, 'error'); openCart(); return; }
@@ -1828,6 +1847,7 @@ async function authVerify() {
 
 // ---- checkout (needs a verified WhatsApp profile, accepted terms, optional message permissions) ----
 function openCheckout() {
+  trackHit('checkout');
   pruneCart(); saveCart(); updateBadges();
   if (!cartLines().length) { showToast('Your cart is empty', 'error'); return; }
   closeAllDrawers();
@@ -1989,7 +2009,7 @@ function legalPrivacy() {
   const c = legalCtx();
   return `<p class="legal-meta">Version ${LEGAL_VERSION}</p>
   <p>${esc(c.brand)} ("we") respects your privacy. This policy explains what personal data we collect when you use our store, why, and the choices and rights you have, in line with the Digital Personal Data Protection Act, 2023 and other applicable Indian law.</p>
-  ${legalSec('p-collect', '1. What we collect', `<ul><li><strong>Identity &amp; contact:</strong> your name, WhatsApp/mobile number, and email (optional).</li><li><strong>Delivery details:</strong> address, city, state and pincode.</li><li><strong>Orders:</strong> what you bought, amounts, order status and invoices. Payments are handled by our payment partner; we do not store card or UPI details.</li><li><strong>Your choices:</strong> whether you agreed to the Terms and to each kind of WhatsApp message, with the date and the version you agreed to.</li><li><strong>Gifts and addresses:</strong> your saved addresses, and for gifts the recipient's name, phone and address, which we use only to deliver the parcel and keep for your future orders if you choose "save this address".</li><li><strong>Cart:</strong> if you agree to cart reminders, we keep the sarees in your cart together with your number and name so our system can send you up to two reminders. Withdraw this in My Account or by replying STOP and we delete the saved cart from our reminder system.</li><li><strong>WhatsApp chats:</strong> if you message our WhatsApp number, we keep the conversation (your number, name shown on WhatsApp, and what you write or send) to help you and handle your order. Replies may be written by an automated AI assistant; a person takes over for complaints, refunds and orders. To write replies, your messages and our product details are processed by our AI provider (Anthropic) and WhatsApp (Meta). Send STOP at any time and we will not message you again.</li><li><strong>Reviews and alerts:</strong> reviews you write (rating, text, photos and the name you choose to show) and any back-in-stock alerts you ask for.</li><li><strong>On your device:</strong> your cart, favourites and login session are kept in your browser's local storage so the store works. We do not use advertising or tracking cookies.</li></ul>`)}
+  ${legalSec('p-collect', '1. What we collect', `<ul><li><strong>Identity &amp; contact:</strong> your name, WhatsApp/mobile number, and email (optional).</li><li><strong>Delivery details:</strong> address, city, state and pincode.</li><li><strong>Orders:</strong> what you bought, amounts, order status and invoices. Payments are handled by our payment partner; we do not store card or UPI details.</li><li><strong>Your choices:</strong> whether you agreed to the Terms and to each kind of WhatsApp message, with the date and the version you agreed to.</li><li><strong>Gifts and addresses:</strong> your saved addresses, and for gifts the recipient's name, phone and address, which we use only to deliver the parcel and keep for your future orders if you choose "save this address".</li><li><strong>Cart:</strong> if you agree to cart reminders, we keep the sarees in your cart together with your number and name so our system can send you up to two reminders. Withdraw this in My Account or by replying STOP and we delete the saved cart from our reminder system.</li><li><strong>WhatsApp chats:</strong> if you message our WhatsApp number, we keep the conversation (your number, name shown on WhatsApp, and what you write or send) to help you and handle your order. Replies may be written by an automated AI assistant; a person takes over for complaints, refunds and orders. To write replies, your messages and our product details are processed by our AI provider (Anthropic) and WhatsApp (Meta). Send STOP at any time and we will not message you again.</li><li><strong>Reviews and alerts:</strong> reviews you write (rating, text, photos and the name you choose to show) and any back-in-stock alerts you ask for.</li><li><strong>On your device:</strong> your cart, favourites and login session are kept in your browser's local storage so the store works. We do not use advertising or tracking cookies.</li><li><strong>Visit counts:</strong> we count visits to this website anonymously (which page, phone or computer, and where the visitor came from, for example Instagram). This uses no cookies and does not store your IP address, name or any personal detail, and it is switched off if your browser sends “Do Not Track”.</li></ul>`)}
   ${legalSec('p-why', '2. Why we use it', `<ul><li>To create and secure your profile and sign you in with a one-time code on WhatsApp.</li><li>To process, ship, invoice and support your orders, and to meet tax and accounting laws.</li><li>To send order updates on WhatsApp <em>only if you agreed</em>.</li><li>To send offers and new-arrival messages on WhatsApp <em>only if you separately agreed</em>.</li><li>To prevent fraud and keep the store secure.</li></ul><p>We rely on your consent and on what is needed to fulfil your order.</p>`)}
   ${legalSec('p-wa', '3. WhatsApp messages and your permission', `<p>We ask for two separate permissions, and neither is ticked by default: (a) order updates, and (b) offers and new arrivals. Saying no does not stop you buying. Login codes are sent when you ask to sign in. You can change either permission at any time in <strong>My Account</strong>, or reply STOP to any message; the change takes effect immediately and is recorded with its date. If you ask to be told when a sold-out saree is back, you give a separate permission for that single message, and cancelling the alert withdraws it.</p>`)}
   ${legalSec('p-share', '4. Who we share it with', `<p>We do not sell your data. We share only what is needed with: our payment partner (to take payment), courier partners (to deliver), the WhatsApp Business messaging provider (to send messages you asked for) and our website hosting and technology providers. They may only use it for those purposes. If you post a review, your review, photos and the name you choose are shown publicly on our store. We may disclose data if the law requires.</p>`)}
@@ -2038,7 +2058,7 @@ function switchCareTab(tabName, btn) {
 }
 
 // ================= ADMIN LOGIC =================
-const ADMIN_TITLES = { dashboard: 'Dashboard', home: 'Home Page', reviews: 'Customer Reviews', whatsapp: 'WhatsApp Assistant', delivery: 'Delivery & Gifting', alerts: 'Back-in-stock Alerts', products: 'Products Catalog', categories: 'Category Manager', studio: 'Image Studio', drafts: 'Saved Drafts', orders: 'Orders Management', invoices: 'Invoice Management', customers: 'Customer Database', statements: 'Financial Statements', coupons: 'Coupon Manager', bundles: 'Bundles', ai: 'AI Helper', social: 'Instagram', logs: 'Audit Logs', settings: 'Business Settings' };
+const ADMIN_TITLES = { growth: 'Growth & Insights', dashboard: 'Dashboard', home: 'Home Page', reviews: 'Customer Reviews', whatsapp: 'WhatsApp Assistant', delivery: 'Delivery & Gifting', alerts: 'Back-in-stock Alerts', products: 'Products Catalog', categories: 'Category Manager', studio: 'Image Studio', drafts: 'Saved Drafts', orders: 'Orders Management', invoices: 'Invoice Management', customers: 'Customer Database', statements: 'Financial Statements', coupons: 'Coupon Manager', bundles: 'Bundles', ai: 'AI Helper', social: 'Instagram', logs: 'Audit Logs', settings: 'Business Settings' };
 function switchAdminTab(tab) {
   homeFlush();
   currentAdminTab = tab;
@@ -2202,6 +2222,7 @@ function renderAdminContent(tab) {
   if (tab === 'bundles') { renderBundlesAdmin(content); return; }
   if (tab === 'ai') { renderAiHelper(content); return; }
   if (tab === 'social') { if (BUILD === 'admin') renderSocialAdmin(content); else content.innerHTML = '<div class="admin-card"><h3>📸 Instagram</h3><p class="note">Instagram posting and scheduling work in the <b>owner app</b> (admin.html on your server), where the server can post for you. See HOW-IT-WORKS/17.</p></div>'; return; }
+  if (tab === 'growth') { renderGrowth(content); return; }
 
   if (tab === 'coupons') {
     content.innerHTML = `
@@ -5284,7 +5305,7 @@ function similarRequestSend(pid) {
   if (v.min !== '' && v.max !== '' && +v.min > +v.max) { showToast('Budget “from” is more than “to”', 'error'); return; }
   const text = similarRequestText(p, v), num = waNumber();
   if (num.length < 11) { el_('sr-note-msg').innerHTML = 'WhatsApp number is not set up yet. Please copy this message and send it to us:<pre style="white-space:pre-wrap;margin-top:6px;">' + esc(text) + '</pre>'; return; }
-  window.__lastSimilarRequest = text;
+  window.__lastSimilarRequest = text; trackHit('wa', {});
   const w = window.open(`https://wa.me/${num}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
   closeModal('alertModal'); showToast('Opening WhatsApp…', 'success');
 }
@@ -5417,7 +5438,7 @@ function renderDashboardPro(content) {
       ${kpi('cust', 'Customers', cur.customers, `<span class="dl flat">${cur.newCust} new · ${repeat} returning</span>`, spk('orders'), 'var(--gold)', 'customers', 'People who ordered in this period; new = joined in this period; returning = ordered before this period too')}
       ${kpi('disc', 'Discounts given', formatCurrency(cur.discount), `<span class="dl flat">${cur.gifts} gift order${cur.gifts === 1 ? '' : 's'}</span>`, spk('orders'), '#B04A4A', 'coupons', 'Coupons and bundle offers deducted from orders in this period')}
     </div>
-    <section class="admin-card" id="dash-weekly" style="margin-bottom:16px;"></section>
+    ${igReminderHTML()}<section class="admin-card" id="dash-weekly" style="margin-bottom:16px;"></section>
     <div class="dash-grid">
       <section class="admin-card dash-chart"><div class="dash-chart-h"><h3>${metricName} over time</h3><div class="seg" role="tablist" aria-label="Metric">${[['revenue', 'Revenue'], ['orders', 'Orders'], ['units', 'Pieces']].map(([k, l]) => `<button type="button" class="${DASH.metric === k ? 'on' : ''}" onclick="dashSet('metric','${k}')">${l}</button>`).join('')}</div></div>
         ${ser.vals.some(v => v) ? `<svg class="dchart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${metricName} chart"><line x1="${padL}" x2="${W - padL}" y1="${padT + ch}" y2="${padT + ch}" class="axis"/>${bars}${xl}</svg><p class="hint">Tap or hover a bar for details${DASH.sel !== null ? '' : ''}.</p>` : `<div class="dash-empty">No orders in this period yet. Try a longer period.</div>`}
@@ -6184,6 +6205,60 @@ function igRulesRefresh(keepOverride) {
 }
 function igGateUpdate() { const b = document.getElementById('ig-go'); if (!b || !IGD.rules) return; const o = document.getElementById('ig-override'), g = socialGate(IGD.rules, o && o.checked); b.disabled = !g.ok; b.title = g.ok ? '' : g.blocks.length ? 'Fix the red items first' : 'Tick “post anyway” or follow the advice'; }
 function igPreviewToggle() { const d = document.getElementById('ig-prev'); if (d && d.open) igRulesRefresh(true); }
+// ================= Growth & insights (owner app) =================
+// Live numbers from Instagram, website visits and orders, suggestions built from those numbers, and the weekly email.
+const GROW = { days: 7, r: null, email: null, busy: false };
+function igReminderHTML() {
+  if (BUILD !== 'admin' || ADM.ig) return ''; const u = db.settings.igRemindUntil; if (u && Date.now() < Date.parse(u)) return '';
+  return `<div class="grow-remind"><div><b>📸 Connect Instagram</b><div class="note" style="margin:2px 0 0;">Without it, views, likes, followers and the best-post analysis stay empty. It takes about 20 minutes once.</div></div><div class="pf-actions"><button type="button" class="btn-sm btn-primary-sm" onclick="switchAdminTab('social')">How to connect</button><button type="button" class="btn-sm btn-info-sm" onclick="growRemind(3)">Remind me in 3 days</button><button type="button" class="btn-sm btn-info-sm" onclick="growRemind(7)">Next week</button></div></div>`;
+}
+function growRemind(days) { db.settings.igRemindUntil = new Date(Date.now() + days * 86400_000).toISOString(); saveDB(); showToast(`OK, I will remind you again in ${days} days.`, 'success'); const c = el_('adminContent'); if (currentAdminTab === 'growth') renderGrowth(c); else if (currentAdminTab === 'dashboard') renderAdminContent('dashboard'); }
+const gN = n => n == null ? '–' : new Intl.NumberFormat('en-IN').format(Math.round(n));
+const gD = (a, b) => { if (a == null || b == null) return ''; if (b === 0) return a > 0 ? '<span class="g-up">new</span>' : ''; const d = Math.round((a - b) / b * 100); return d === 0 ? '<span class="g-flat">no change</span>' : d > 0 ? `<span class="g-up">▲ ${d}%</span>` : `<span class="g-down">▼ ${-d}%</span>`; };
+const gTile = (label, v, d, hint) => `<div class="g-tile" ${hint ? `title="${esc(hint)}"` : ''}><small>${esc(label)}</small><b>${v}</b><span>${d || '&nbsp;'}</span></div>`;
+async function renderGrowth(c, fresh) {
+  if (!c) return; if (BUILD !== 'admin') { c.innerHTML = '<div class="admin-card"><h3>📈 Growth</h3><p class="note">Growth numbers and the weekly email work in the owner app on your server.</p></div>'; return; }
+  c.innerHTML = `${igReminderHTML()}<div class="ai-busy">Reading your live numbers…</div>`;
+  try { GROW.r = await admApi('GET', `/admin/api/growth?days=${GROW.days}${fresh ? '&fresh=1' : ''}`); GROW.email = await admApi('GET', '/admin/api/email'); } catch (e) { c.innerHTML = `<div class="ai-err">${esc(e.message)}</div>`; return; }
+  const r = GROW.r, w = r.web, s = r.sales, ig = r.ig, T = ig.totals || {}, P = ig.prevTotals || {}, f = r.funnel;
+  const igTiles = ig.connected && !ig.error ? [gTile('Followers', gN(ig.followers), ig.followersChange == null ? '<span class="g-flat">tracking starts now</span>' : `<span class="${ig.followersChange > 0 ? 'g-up' : ig.followersChange < 0 ? 'g-down' : 'g-flat'}">${ig.followersChange >= 0 ? '+' : ''}${ig.followersChange}</span>`), gTile('Views', gN(T.views), gD(T.views, P.views), 'Times your posts and Reels were played or shown'), gTile('Accounts reached', gN(T.reach), gD(T.reach, P.reach)), gTile('Likes', gN(T.likes), gD(T.likes, P.likes)), gTile('Comments', gN(T.comments), gD(T.comments, P.comments)), gTile('Saves', gN(T.saves), gD(T.saves, P.saves)), gTile('Shares', gN(T.shares), gD(T.shares, P.shares)), gTile('Profile visits', gN(T.profile_views), gD(T.profile_views, P.profile_views)), gTile('Engagement', ig.engagementRate == null ? '–' : ig.engagementRate + '%', '', 'Likes, comments, saves and shares as a share of accounts reached')].join('') : `<p class="note" style="grid-column:1/-1">${ig.error ? esc('Instagram could not be read: ' + ig.error) : 'Instagram is not connected, so these numbers are empty.'}</p>`;
+  const src = Object.entries(w.sources || {}).sort((a, b) => b[1] - a[1]), igErr = ig.errors && Object.entries(ig.errors).filter(([, v]) => v);
+  c.innerHTML = `${igReminderHTML()}<div class="admin-card"><div class="grow-head"><h3 style="margin:0;">📈 Growth &amp; insights</h3><div class="pf-actions"><select onchange="GROW.days=+this.value;renderGrowth(el_('adminContent'))">${[[7, 'Last 7 days'], [30, 'Last 30 days'], [90, 'Last 90 days']].map(([v, l]) => `<option value="${v}" ${GROW.days === v ? 'selected' : ''}>${l}</option>`).join('')}</select><button type="button" class="btn-sm btn-info-sm" onclick="renderGrowth(el_('adminContent'),true)">↻ Refresh</button></div></div><p class="note" style="margin:4px 0 0;">${esc(r.period.from)} to ${esc(r.period.to)} · compared with the ${r.period.days} days before · read at ${new Date(r.generatedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</p></div>
+    <div class="admin-card"><h4 class="va-h" style="margin-top:0;">Instagram ${ig.username ? '· @' + esc(ig.username) : ''}</h4><div class="g-tiles">${igTiles}</div>${igErr && igErr.length ? `<details class="soc-passed"><summary>${igErr.length} number(s) Instagram did not give</summary>${igErr.map(([k, v]) => `<div class="note">${esc(k)}: ${esc(v)}</div>`).join('')}<p class="note">Usually the token is missing the permission <b>instagram_manage_insights</b>, or the account is not a Business/Creator account.</p></details>` : ''}</div>
+    <div class="admin-card"><h4 class="va-h" style="margin-top:0;">Website &amp; sales</h4>${w.days < 3 ? `<p class="note">Website counting has run for only ${w.trackedDays} day(s), so these numbers are still small.</p>` : ''}<div class="g-tiles">${gTile('Visitors', gN(w.visitors), gD(w.visitors, w.prev.visitors), 'Counted once a day, anonymously')}${gTile('Saree views', gN(w.productViews), gD(w.productViews, w.prev.productViews))}${gTile('WhatsApp taps', gN(w.waClicks), gD(w.waClicks, w.prev.waClicks))}${gTile('Add to cart', gN(w.carts), gD(w.carts, w.prev.carts))}${gTile('Checkouts opened', gN(w.checkouts), gD(w.checkouts, w.prev.checkouts))}${gTile('Orders', gN(s.orders), gD(s.orders, s.prev.orders))}${gTile('Revenue', '₹' + gN(s.revenue), gD(s.revenue, s.prev.revenue))}${gTile('Average order', '₹' + gN(s.aov), '')}${gTile('New / returning', `${s.newCustomers} / ${s.repeatCustomers}`, '')}</div>
+      <div class="g-funnel"><div><b>${gN(f.visitors)}</b><small>visitors</small></div><i>→ ${f.productViewRate ?? '–'}%</i><div><b>${gN(f.productViews)}</b><small>saree views</small></div><i>→ ${f.contactRate ?? '–'}%</i><div><b>${gN(f.contacts)}</b><small>WhatsApp taps + carts</small></div><i>→</i><div><b>${gN(f.orders)}</b><small>orders</small></div></div>
+      <div class="g-two"><div><h5>Most viewed sarees</h5>${w.topProducts.length ? w.topProducts.map(p => `<div class="note">${esc(p.name)} · ${p.views} views</div>`).join('') : '<div class="note">No views counted yet.</div>'}</div><div><h5>Where visitors came from</h5>${src.length ? src.map(([k, v]) => `<div class="note">${esc(k)} · ${v}</div>`).join('') : '<div class="note">Nothing counted yet.</div>'}</div>${s.topCategories.length ? `<div><h5>Best-selling categories</h5>${s.topCategories.map(x => `<div class="note">${esc(x.name)} · ₹${gN(x.amount)}</div>`).join('')}</div>` : ''}</div>
+      <p class="note">Website orders placed on the public site are not connected to this app yet (stage 2), so “Orders” and “Revenue” count what is in your shop data: orders you add or import (for example paid WhatsApp orders). Visitors, saree views, WhatsApp taps and carts are counted live from the website.</p></div>
+    <div class="admin-card"><h4 class="va-h" style="margin-top:0;">What to do this week <span class="pf-sub">(built from the numbers above, right now)</span></h4>${r.actions.length ? r.actions.map(a => `<div class="g-act"><div class="g-act-h"><span class="g-p g-p${a.priority}">${a.priority === 1 ? 'Do first' : a.priority === 2 ? 'Next' : 'When you can'}</span><b>${esc(a.title)}</b></div><div class="note">Because: ${esc(a.evidence)}</div><ol class="g-steps">${a.steps.map(x => `<li>${esc(x)}</li>`).join('')}</ol><div class="g-goal">Goal: ${esc(a.goal)}</div><div class="pf-actions"><button type="button" class="btn-sm btn-primary-sm" onclick="growDone('${esc(a.id)}',this)">✓ I did this: measure it next week</button></div></div>`).join('') : '<p class="note">Nothing urgent right now: keep posting, and answer enquiries within 15 minutes.</p>'}</div>
+    ${r.followups.length ? `<div class="admin-card"><h4 class="va-h" style="margin-top:0;">Did the last changes work?</h4>${r.followups.map(x => `<div class="note">${esc(x.title)} (done ${esc(x.doneOn)}): ${x.change == null ? 'not enough data yet' : x.change > 0 ? `<b class="g-up">up by ${gN(x.change)}</b>` : x.change < 0 ? `<b class="g-down">down by ${gN(-x.change)}</b>` : 'no change'} · was ${gN(x.baseline)}, now ${gN(x.now)}</div>`).join('')}</div>` : ''}
+    ${ig.topPosts && ig.topPosts.length ? `<div class="admin-card"><h4 class="va-h" style="margin-top:0;">Your best posts</h4><div class="g-posts">${ig.topPosts.map(m => `<a href="${esc(m.url)}" target="_blank" rel="noopener" class="g-post">${m.thumb ? `<img src="${esc(m.thumb)}" alt="" loading="lazy">` : ''}<div><b>${esc(m.type)}</b><div class="note">${esc(m.caption.slice(0, 60))}</div><div class="note">♥ ${gN(m.likes)} · 💬 ${gN(m.comments)} · 🔖 ${gN(m.saves)} · reach ${gN(m.reach)}</div></div></a>`).join('')}</div></div>` : ''}
+    ${growEmailHTML()}
+    <details class="soc-passed"><summary>How these numbers are measured</summary><p class="note">Instagram numbers come from Instagram and can lag by a day; followers growth is counted from the day you connected. Website visits are counted by the public website itself: once per visitor per day, with no cookies and no personal data, and not at all if the visitor’s browser says “Do Not Track”. Suggestions are made fresh from these figures each time; they quote the figure that triggered them. They can improve your chances, but nobody can promise views or sales.</p></details>`;
+}
+async function growDone(id, btn) { btn.disabled = true; try { await admApi('POST', '/admin/api/growth/done', { id, days: GROW.days }); btn.textContent = '✓ Saved. I will compare next week.'; } catch (e) { showToast(aiMsg(e), 'error'); btn.disabled = false; } }
+function growEmailHTML() {
+  const e = GROW.email || {}, v = (k, d = '') => esc(e[k] ?? d);
+  return `<div class="admin-card" id="grow-email"><h4 class="va-h" style="margin-top:0;">📧 Weekly report by email ${e.configured ? '<span class="status-pill status-active">ON</span>' : '<span class="status-pill status-inactive">OFF</span>'}</h4>
+    <p class="note">Every <b>Monday morning (about 8 to 9 am IST)</b> the full report arrives in your inbox: the numbers compared with the week before, the steps to do this week with the reason for each, and whether last week's steps worked. ${e.configured && e.lastReport && e.lastReport.week ? `Last: ${esc(e.lastReport.week)} (${esc(e.lastReport.state || '')}).` : ''}</p>
+    <div class="pf-actions"><button type="button" class="btn-sm btn-info-sm" onclick="growPreset('smtp.gmail.com',465,true)">Gmail</button><button type="button" class="btn-sm btn-info-sm" onclick="growPreset('smtp.zoho.in',465,true)">Zoho</button><button type="button" class="btn-sm btn-info-sm" onclick="growPreset('smtp-mail.outlook.com',587,false)">Outlook</button></div>
+    <div class="ai-row"><label>Mail server<input id="em-host" value="${v('host')}" placeholder="smtp.gmail.com"></label><label>Port<input id="em-port" type="number" value="${v('port', 465)}" style="width:90px"></label><label class="chk" style="align-self:flex-end"><input type="checkbox" id="em-secure" ${e.secure !== false ? 'checked' : ''}><span>Secure (SSL, port 465)</span></label></div>
+    <div class="ai-row"><label>Your email (username)<input id="em-user" value="${v('user')}" autocomplete="off" placeholder="you@gmail.com"></label><label>Password<input id="em-pass" type="password" autocomplete="new-password" placeholder="${e.hasPass ? 'saved (leave empty to keep)' : 'app password'}"></label></div>
+    <div class="ai-row"><label>Send the report to<input id="em-to" value="${v('to')}" placeholder="you@gmail.com"></label><label>Sent from (optional)<input id="em-from" value="${v('from')}" placeholder="Shop &lt;you@gmail.com&gt;"></label></div>
+    <p class="note">Gmail needs an <b>App Password</b>, not your normal password: Google account → Security → 2-Step Verification → App passwords. The password is stored encrypted on your server and never shown again.</p>
+    <div class="pf-actions"><button type="button" class="btn-sm btn-primary-sm" id="em-save" onclick="growEmailSave()">Save &amp; check the connection</button>${e.configured ? `<button type="button" class="btn-sm btn-info-sm" onclick="growEmailAct('test')">Send a test email</button><button type="button" class="btn-sm btn-info-sm" onclick="growPreview()">👁 Preview this week's report</button><button type="button" class="btn-sm btn-info-sm" onclick="growEmailAct('report')">Send this week's report now</button><button type="button" class="btn-sm btn-danger-sm" onclick="growEmailAct('remove')">Remove</button>` : ''}</div><div id="em-msg" class="note"></div><div id="em-prev"></div></div>`;
+}
+function growPreset(h, p, s) { el_('em-host').value = h; el_('em-port').value = p; el_('em-secure').checked = s; }
+async function growEmailSave() {
+  const m = el_('em-msg'), b = el_('em-save'); b.disabled = true; m.textContent = 'Checking the mail server…';
+  try { GROW.email = await admApi('POST', '/admin/api/email', { host: el_('em-host').value, port: +el_('em-port').value, secure: el_('em-secure').checked, user: el_('em-user').value, pass: el_('em-pass').value, from: el_('em-from').value, to: el_('em-to').value }); showToast('Email settings saved and checked', 'success'); const x = el_('grow-email'); if (x) x.outerHTML = growEmailHTML(); const m2 = el_('em-msg'); if (m2) m2.textContent = 'Saved. Send a test email to be sure it reaches your inbox.'; }
+  catch (e) { m.textContent = e.message; b.disabled = false; }
+}
+async function growEmailAct(what) {
+  const m = el_('em-msg'); m.textContent = 'Working…';
+  try { if (what === 'test') { await admApi('POST', '/admin/api/email/test', {}); m.textContent = 'Test email sent. Check your inbox (and spam).'; } else if (what === 'report') { const r = await admApi('POST', '/admin/api/report/send', {}); m.textContent = `This week's report was sent${r.via === 'claude' ? ' (opening written by Claude)' : ''}. Check your inbox.`; } else { if (!confirm('Remove the email settings? The weekly report will stop.')) { m.textContent = ''; return; } GROW.email = await admApi('POST', '/admin/api/email/remove', {}); const x = el_('grow-email'); if (x) x.outerHTML = growEmailHTML(); } }
+  catch (e) { m.textContent = e.message; }
+}
+async function growPreview() { const b = el_('em-prev'); busy('em-prev', 'preparing the report…'); try { const p = await admApi('GET', '/admin/api/report/preview'); b.innerHTML = `<p class="note"><b>Subject:</b> ${esc(p.subject)}</p><iframe class="g-prev" sandbox srcdoc="${esc(p.html)}" title="Preview"></iframe>`; } catch (e) { outBox('em-prev', `<div class="ai-err">${esc(e.message)}</div>`); } }
 // ---- Video analyzer ----
 // The owner edits the video in a phone app, uploads it here, and gets a score, what was found and exactly what to change.
 // Nothing is edited here. The score is about the things you control; nobody can predict views.
@@ -6299,7 +6374,7 @@ function init() {
   updateAcctIcon();
   routeFromHash();
   document.body.classList.add('ready');
-  if (BUILD === 'site') shopSync();
+  if (BUILD === 'site') { shopSync(); if (!TRK.last) trackHit('view', { p: 'home' }); }
 }
 
 window.addEventListener('click', e => {

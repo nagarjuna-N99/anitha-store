@@ -8,7 +8,7 @@ import path from 'node:path';
 import { publicView } from './shopdata.mjs';
 import { runAi, cleanPlan, localPlan, istIso } from './aihelper.mjs';
 
-export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, json, readBody, ROOT }) {
+export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, json, readBody, ROOT }) {
   const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY', 'Cross-Origin-Resource-Policy': 'same-origin', 'Cache-Control': 'no-store', ...(auth.secure ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' } : {}) };
   const CSP = "default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'";
   const ipOf = req => String(req.socket.remoteAddress || '').replace(/^::ffff:/, '');   // never trust X-Forwarded-For for security decisions
@@ -38,6 +38,16 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       const size = fs.statSync(f).size, rg = /^bytes=(\d*)-(\d*)$/.exec(String(req.headers.range || '')), H = { 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=86400', 'X-Content-Type-Options': 'nosniff', 'Cross-Origin-Resource-Policy': 'cross-origin' };
       if (rg && (rg[1] || rg[2])) { let a = rg[1] ? +rg[1] : size - +rg[2], z = rg[1] && rg[2] ? +rg[2] : size - 1; if (a > z || a >= size) { res.writeHead(416, { 'Content-Range': `bytes */${size}` }); res.end(); return true; } z = Math.min(z, size - 1); res.writeHead(206, { ...H, 'Content-Range': `bytes ${a}-${z}/${size}`, 'Content-Length': z - a + 1 }); fs.createReadStream(f, { start: a, end: z }).pipe(res); return true; }
       res.writeHead(200, { ...H, 'Content-Length': size }); fs.createReadStream(f).pipe(res); return true;
+    }
+    // ---------- website counting (no cookies, nothing personal is stored) ----------
+    if (route === 'OPTIONS /public/hit' || route === 'POST /public/hit') {
+      const o = req.headers.origin, okO = !!o && cfg.allowedOrigins.includes(o), cors = okO ? { 'Access-Control-Allow-Origin': o, 'Vary': 'Origin' } : {};
+      if (req.method === 'OPTIONS') { res.writeHead(204, { ...cors, 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Headers': 'content-type', 'Access-Control-Max-Age': '86400' }); res.end(); return true; }
+      if (!okO) { res.writeHead(403); res.end(); return true; }
+      let b = {}; try { b = JSON.parse((await readBody(req, 2_000)).toString('utf8') || '{}'); } catch { /* ignore */ }
+      const xff = String(req.headers['x-forwarded-for'] || '').split(',').map(x => x.trim()).filter(Boolean), ip = xff.length ? xff[xff.length - 1] : ipOf(req);   // the address the nearest proxy saw; only used to count a visitor once a day, never stored
+      analytics.hit({ type: String(b.t || ''), page: String(b.p || ''), productId: b.id, ref: String(b.r || '').slice(0, 300), utm: b.u, mobile: !!b.m, ua: req.headers['user-agent'], ip, host: (() => { try { return new URL(o).hostname; } catch { return ''; } })() });
+      res.writeHead(204, cors); res.end(); return true;
     }
     if (!url.pathname.startsWith('/admin/api/')) return false;
 
@@ -76,6 +86,15 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
         const now = Date.now(); reviewTries = reviewTries.filter(t => now - t < 60_000); if (reviewTries.length >= 6) return send(res, { code: 429, error: 'Too many tries. Wait a minute.' }), true; reviewTries.push(now);
         try { const r = await runAi({ cfg, client, task: 'videoreview', input: { images: j.result.frames, facts: j.result.facts } }); send(res, { code: 200, review: r.data }); } catch (e) { send(res, { code: [400, 413, 422].includes(e.code) ? e.code : 502, error: e.message }); } return true;
       }
+      if (route === 'GET /admin/api/growth') { const d = [7, 30, 90].includes(+url.searchParams.get('days')) ? +url.searchParams.get('days') : 7, r = await growth.build(d, url.searchParams.get('fresh') === '1'); send(res, { code: 200, ...r }); return true; }
+      if (route === 'POST /admin/api/growth/plan') { const b = await body(req, 1_000), d = [7, 30, 90].includes(+b.days) ? +b.days : 7, r = await growth.build(d, false); send(res, { code: 200, ...(await growth.plan(r)) }); return true; }
+      if (route === 'POST /admin/api/growth/done') { const b = await body(req, 1_000), d = [7, 30, 90].includes(+b.days) ? +b.days : 7, r = await growth.build(d, false), a = r.actions.find(x => x.id === String(b.id || '')); if (!a) return send(res, { code: 404, error: 'That suggestion is no longer in the list.' }), true; analytics.markDone({ id: a.id, title: a.title, metric: a.metric, baseline: a.baseline }); analytics.save(); wrote('growth-done', a.id); send(res, { code: 200, ok: true }); return true; }
+      if (route === 'GET /admin/api/email') { send(res, { code: 200, ...smtpMeta(), lastReport: reportState() }); return true; }
+      if (route === 'POST /admin/api/email') { const now = Date.now(); keyTries = keyTries.filter(t => now - t < 60_000); if (keyTries.length >= 5) return send(res, { code: 429, error: 'Too many tries. Wait a minute.' }), true; keyTries.push(now); await smtpSave(await body(req, 3_000)); wrote('email-set'); send(res, { code: 200, ...smtpMeta() }); return true; }
+      if (route === 'POST /admin/api/email/remove') { smtpRemove(); wrote('email-removed'); send(res, { code: 200, ...smtpMeta() }); return true; }
+      if (route === 'POST /admin/api/email/test') { await smtpSendTest(); wrote('email-test'); send(res, { code: 200, ok: true }); return true; }
+      if (route === 'POST /admin/api/report/send') { const r = await growth.mail(true); wrote('report-sent'); send(res, { code: 200, ok: true, ...r }); return true; }
+      if (route === 'GET /admin/api/report/preview') { send(res, { code: 200, ...(await growth.preview()) }); return true; }
       if (route === 'POST /admin/api/social/plan') {
         const b = await body(req, 20_000), now = Date.now(), existing = social.s.jobs.filter(j => j.status === 'queued').map(j => j.when), input = { ...(b.product || {}), nowIso: istIso(now), existing };
         let plan, via = 'built-in';
@@ -104,6 +123,6 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
         if (r.sent) wrote('tracking-msg', id); send(res, { code: 200, ...r }); return true;
       }
       return send(res, { code: 404, error: 'not found' }), true;
-    } catch (e) { send(res, { code: [400, 404, 413, 415, 422, 429].includes(e.code) ? e.code : 500, error: e.code && e.code < 500 ? e.message : 'Something went wrong.' }); return true; }
+    } catch (e) { send(res, { code: [400, 404, 413, 415, 422, 429].includes(e.code) ? e.code : e.smtpUser ? 422 : 500, error: (e.code && e.code < 500) || e.smtpUser ? e.message : 'Something went wrong.' }); return true; }
   };
 }
