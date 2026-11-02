@@ -18,7 +18,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Store","name":"Anitha Pemmasani","description":"Pure handloom sarees from Hyderabad","telephone":"+91 98496 46440","address":{"@type":"PostalAddress","addressLocality":"Hyderabad","addressRegion":"Telangana","addressCountry":"IN"},"priceRange":"₹₹₹"}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+Telugu:wght@400;600&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --ivory: #FAF9F6; --charcoal: #2C2C2C; --gold: #A67C52; --gold-light: #D4C4A8;
@@ -73,6 +73,9 @@
   .soc-wa{background:#0b0b0b;color:#fff}.soc-wa-bar{position:absolute;top:6px;left:8px;right:8px;height:3px;background:rgba(255,255,255,.3);border-radius:2px;z-index:2}.soc-wa-bar i{display:block;width:40%;height:100%;background:#fff;border-radius:2px}
   .soc-wa-h{position:absolute;top:14px;left:8px;display:flex;gap:6px;align-items:center;z-index:2}.soc-wa-h small{display:block;opacity:.8}.soc-wa-cap{position:absolute;left:0;right:0;bottom:34px;padding:18px 12px 10px;background:linear-gradient(transparent,rgba(0,0,0,.7));font-size:12px;z-index:2}.soc-wa-reply{position:absolute;bottom:6px;left:0;right:0;text-align:center;opacity:.8;z-index:2}
   .soc-rules{border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin:10px 0;background:#fcfbf8}.soc-rules-h{margin-bottom:6px}.soc-rule{display:flex;gap:8px;font-size:12.5px;padding:4px 0}.soc-rule span{font-weight:700;width:16px;flex:none}.soc-rule.ok span{color:#3f8a4f}.soc-rule.bad{color:#9a2f2f}.soc-rule.bad span{color:#c0392b}.soc-rule.warn span{color:#c27b00}.soc-passed summary{cursor:pointer;font-size:12px;color:#666;margin:4px 0}
+  #noticeBody[lang=te], #noticeBody[lang=te] h2 { font-family: 'Noto Sans Telugu', 'Gautami', 'Nirmala UI', system-ui, sans-serif; letter-spacing: normal; } #noticeBody[lang=hi], #noticeBody[lang=hi] h2 { font-family: 'Noto Sans Devanagari', 'Nirmala UI', system-ui, sans-serif; letter-spacing: normal; }
+  .nt-tabs{display:flex;gap:6px;flex-wrap:wrap}.nt-tabs button{border:1px solid var(--border);background:#fff;border-radius:16px;padding:4px 12px;cursor:pointer;font-size:13px}.nt-tabs button.active{background:#2c2c2c;color:#fff;border-color:#2c2c2c}.nt-item{margin:10px 0}.nt-item p{margin:2px 0 0;font-size:14px;line-height:1.6}
+  .priv-late{border-color:#e9a39b;background:#fff3f1}
   .grow-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.grow-remind{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap;background:#fff4e0;border:1px solid #f0d9a8;border-radius:8px;padding:10px 14px;margin-bottom:14px}
   .g-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}.g-tile{border:1px solid var(--border);border-radius:8px;padding:8px 10px;background:#fcfbf8}.g-tile small{display:block;color:#888;font-size:11px}.g-tile b{font-size:20px;display:block}.g-tile span{font-size:11px}.g-up{color:#2f7a40}.g-down{color:#b03227}.g-flat{color:#888}
   .g-funnel{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:14px 0;font-size:12px}.g-funnel div{border:1px solid var(--border);border-radius:8px;padding:6px 10px;background:#fff;text-align:center}.g-funnel b{display:block;font-size:18px}.g-funnel small{color:#888}.g-funnel i{font-style:normal;color:#C96A11}
@@ -1004,6 +1007,7 @@ body.adm-app #storefrontView, body.adm-app #view-toggle, body.adm-app .owner-ent
     <li data-tab="ai" onclick="switchAdminTab('ai'); closeAdminNav();">✨ AI Helper</li>
     <li data-tab="social" onclick="switchAdminTab('social'); closeAdminNav();">📸 Instagram</li>
     <li data-tab="growth" onclick="switchAdminTab('growth'); closeAdminNav();">📈 Growth</li>
+    <li data-tab="privacy" onclick="switchAdminTab('privacy'); closeAdminNav();">🛡️ Privacy</li>
     <li data-tab="logs" onclick="switchAdminTab('logs'); closeAdminNav();">📜 Audit Logs</li>
     <li data-tab="settings" onclick="switchAdminTab('settings'); closeAdminNav();">⚙️ Settings</li>
   </ul>
@@ -1172,7 +1176,7 @@ body.adm-app #storefrontView, body.adm-app #view-toggle, body.adm-app .owner-ent
     <div class="footer-grid">
       <div><div class="footer-brand"><img class="brand-logo foot" id="footLogo" alt="Anitha Pemmasani Clothing Studio"></div><p class="footer-desc">Curating legacy-worthy pure handloom sarees for the modern woman. Based in Hyderabad, shipping worldwide.</p></div>
       <div><div class="footer-title">Shop</div><ul class="footer-links"><li><a onclick="navigateTo('shop')">New Arrivals</a></li><li><a onclick="filterAndShowShop('Tussar')">Tussar Silk</a></li><li><a onclick="filterAndShowShop('Banarasi')">Banarasi</a></li></ul></div>
-      <div><div class="footer-title">Support</div><ul class="footer-links"><li><a onclick="openAccount()">My Account &amp; Orders</a></li><li><a onclick="navigateTo('faq')">FAQ</a></li><li><a onclick="openLegal('terms','shipping')">Shipping Policy</a></li><li><a onclick="openLegal('terms','returns')">Returns &amp; Exchanges</a></li><li><a onclick="openLegal('terms')">Terms &amp; Conditions</a></li><li><a onclick="openLegal('privacy')">Privacy Policy</a></li><li><a onclick="navigateTo('care')">Saree Care Guide</a></li></ul></div>
+      <div><div class="footer-title">Support</div><ul class="footer-links"><li><a onclick="openAccount()">My Account &amp; Orders</a></li><li><a onclick="navigateTo('faq')">FAQ</a></li><li><a onclick="openNotice()">Privacy notice</a></li><li><a onclick="openRights()">Your privacy rights</a></li><li><a onclick="openLegal('terms','shipping')">Shipping Policy</a></li><li><a onclick="openLegal('terms','returns')">Returns &amp; Exchanges</a></li><li><a onclick="openLegal('terms')">Terms &amp; Conditions</a></li><li><a onclick="openLegal('privacy')">Privacy Policy</a></li><li><a onclick="navigateTo('care')">Saree Care Guide</a></li></ul></div>
       <div><div class="footer-title">Contact</div><ul class="footer-links"><li><a>Hyderabad, Telangana, India</a></li><li><a href="tel:+919849646440">+91 98496 46440</a></li><li><a id="footWa" href="https://wa.me/919849646440">WhatsApp Support</a></li></ul></div>
     </div>
     <div class="footer-bottom"><div>© 2026 Anitha Pemmasani. All rights reserved.</div><div><a class="fl" onclick="openLegal('terms')">Terms</a> · <a class="fl" onclick="openLegal('privacy')">Privacy</a> · Visa · Mastercard · UPI · Razorpay</div></div>
@@ -1210,6 +1214,7 @@ body.adm-app #storefrontView, body.adm-app #view-toggle, body.adm-app .owner-ent
       <li class="admin-nav-item" data-tab="ai" onclick="switchAdminTab('ai')">✨ AI Helper</li>
       <li class="admin-nav-item" data-tab="social" onclick="switchAdminTab('social')">📸 Instagram</li>
       <li class="admin-nav-item" data-tab="growth" onclick="switchAdminTab('growth')">📈 Growth</li>
+      <li class="admin-nav-item" data-tab="privacy" onclick="switchAdminTab('privacy')">🛡️ Privacy</li>
       <li class="admin-nav-item" data-tab="logs" onclick="switchAdminTab('logs')">📜 Audit Logs</li>
       <li class="admin-nav-item" data-tab="settings" onclick="switchAdminTab('settings')">⚙️ Settings</li>
     </ul>
@@ -1266,7 +1271,8 @@ body.adm-app #storefrontView, body.adm-app #view-toggle, body.adm-app .owner-ent
   <div class="checkout-summary" id="checkoutSummary"></div>
   <div class="loyalty-msg" id="loyaltyMsg">You will earn 0 Loyalty Points!</div>
   <div class="consent-box" id="chk-terms-row">
-    <label class="chk"><input type="checkbox" id="chk-terms"><span>I have read and agree to the <a onclick="event.preventDefault();event.stopPropagation();openLegalModal('terms')">Terms &amp; Conditions</a> and <a onclick="event.preventDefault();event.stopPropagation();openLegalModal('privacy')">Privacy Policy</a>. <em>(required)</em></span></label>
+    <label class="chk" id="chk-age-row"><input type="checkbox" id="chk-age"><span>I am <strong>18 years or older</strong>. <em>(required)</em></span></label>
+    <label class="chk"><input type="checkbox" id="chk-terms"><span>I have read and agree to the <a onclick="event.preventDefault();event.stopPropagation();openLegalModal('terms')">Terms &amp; Conditions</a> and <a onclick="event.preventDefault();event.stopPropagation();openLegalModal('privacy')">Privacy Policy</a>, and I have seen the <a onclick="event.preventDefault();event.stopPropagation();openNotice()">privacy notice</a>. <em>(required)</em></span></label>
     <div class="consent-sub">WhatsApp messages — optional, not pre-selected, change any time</div>
     <label class="chk"><input type="checkbox" id="chk-wa-orders"><span>Send me <strong>order updates</strong> (confirmation, shipping, delivery) on WhatsApp.</span></label>
     <label class="chk" id="chk-wa-cart-row"><input type="checkbox" id="chk-wa-cart"><span>Remind me on WhatsApp <strong>if I leave sarees in my cart</strong> (at most 2 messages). Reply STOP any time.</span></label>
@@ -1285,6 +1291,8 @@ body.adm-app #storefrontView, body.adm-app #view-toggle, body.adm-app .owner-ent
 <div class="modal" id="accountModal" style="z-index:1050;"><div class="modal-content" style="max-width:940px;"><button class="modal-close" onclick="closeModal('accountModal')" aria-label="Close">×</button><div id="accountBody" style="padding:36px 40px;"></div></div></div>
 <div class="modal" id="legalModal" style="z-index:1200;"><div class="modal-content" style="max-width:820px;"><button class="modal-close" onclick="closeModal('legalModal')" aria-label="Close">×</button><div id="legalModalBody" style="padding:10px 20px 24px;"></div></div></div>
 
+<div class="modal" id="noticeModal" style="z-index:1200;"><div class="modal-content" style="max-width:620px;"><button class="modal-close" onclick="closeModal('noticeModal')" aria-label="Close">×</button><div style="padding:30px 34px;" id="noticeBody"></div></div></div>
+<div class="modal" id="rightsModal" style="z-index:1200;"><div class="modal-content" style="max-width:540px;"><button class="modal-close" onclick="closeModal('rightsModal')" aria-label="Close">×</button><div style="padding:30px 34px;" id="rightsBody"></div></div></div>
 <div class="modal" id="trackModal" style="z-index:1100;"><div class="modal-content" style="max-width:480px;"><button class="modal-close" onclick="closeModal('trackModal')" aria-label="Close">×</button><div id="trackBody" style="padding:30px 26px;"></div></div></div>
 <div class="modal" id="alertModal" style="z-index:1100;"><div class="modal-content" style="max-width:440px;"><button class="modal-close" onclick="closeModal('alertModal')" aria-label="Close">×</button><div id="alertBody" style="padding:32px;"></div></div></div>
 <div class="modal" id="lightboxModal" style="z-index:1300;background:rgba(0,0,0,0.92);"><button class="modal-close" onclick="closeModal('lightboxModal')" style="position:fixed;top:18px;right:18px;" aria-label="Close photo">×</button><div id="lightboxBody" class="lb-body"></div></div>
@@ -1695,7 +1703,7 @@ function applyCoupon() {
   updateCheckoutTotal();
 }
 // ================= SHARE, WHATSAPP OTP LOGIN, PROFILE, CONSENT, LEGAL =================
-const LEGAL_VERSION = '1.5 (24 Oct 2026)';
+const LEGAL_VERSION = '2.0 (10 Nov 2026)';
 const el_ = id => document.getElementById(id);
 
 // ---- share link for every item ----
@@ -1760,10 +1768,12 @@ function recordConsent(u, type, granted, source, ref) {
   const at = new Date().toISOString();
   db.consentLog.push({ id: Date.now() + Math.random(), userId: u.id, phone: u.phone, type, granted, version: LEGAL_VERSION, source, at, ...(ref ? { ref } : {}) });
   if (type === 'terms') { u.termsAcceptedAt = at; u.termsVersion = LEGAL_VERSION; }
+  else if (type === 'age18') { u.ageConfirmedAt = at; }
+  else if (type === 'notice') { u.noticeVersion = NOTICE_VERSION; u.noticeAt = at; }
   else if (type === 'orderUpdates' || type === 'marketing' || type === 'cartReminder') { u.consents[type] = granted; u.consents.updatedAt = at; }
   addLog('consent', u.name || u.phone, '-', 0, 0, 0, `${type}: ${granted ? 'granted' : 'withdrawn'} (${source})`);
 }
-const consentLabel = { terms: 'Terms & Privacy accepted', orderUpdates: 'WhatsApp order updates', marketing: 'WhatsApp offers & new arrivals', stockAlert: 'WhatsApp back-in-stock alert', cartReminder: 'WhatsApp cart reminders', reviewPublic: 'Public review & photos' };
+const consentLabel = { age18: 'Age 18+ confirmed', notice: 'Privacy notice seen', terms: 'Terms & Privacy accepted', orderUpdates: 'WhatsApp order updates', marketing: 'WhatsApp offers & new arrivals', stockAlert: 'WhatsApp back-in-stock alert', cartReminder: 'WhatsApp cart reminders', reviewPublic: 'Public review & photos' };
 function consentChips(u) {
   const c = u.consents || {};
   return `<div class="cchips">${u.phoneVerified ? '<span class="cchip ok">✓ WhatsApp verified</span>' : ''}<span class="cchip ${c.orderUpdates ? 'ok' : ''}">Orders ${c.orderUpdates ? '✓' : '✗'}</span><span class="cchip ${c.marketing ? 'ok' : ''}">Offers ${c.marketing ? '✓' : '✗'}</span></div>`;
@@ -1774,7 +1784,7 @@ function consentChips(u) {
 //   POST {url}/otp/send    {phone, channel:'whatsapp'}  → 200 {ok:true}                or {ok:false,error}
 //   POST {url}/otp/verify  {phone, code}                → 200 {ok:true, token}        or {ok:false,error}
 // Demo mode (no URL): the code is generated in the browser and shown on screen. That is for trying the flow only – it is NOT secure.
-const AUTH = { cb: null, step: 'phone', cc: '+91', phone: '', err: '', busy: false, timer: null, demo: null, resendAt: 0, sends: {} };
+const AUTH = { age: false, cb: null, step: 'phone', cc: '+91', phone: '', err: '', busy: false, timer: null, demo: null, resendAt: 0, sends: {} };
 async function otpPost(path, body) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 12000);
   try { const r = await fetch(otpEndpoint() + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctl.signal }); const j = await r.json().catch(() => ({})); if (!r.ok || j.ok === false) throw new Error(j.error || 'Something went wrong. Please try again.'); return j; }
@@ -1790,7 +1800,8 @@ function renderAuth() {
       <p class="auth-sub">Enter your WhatsApp number and we'll send a 6-digit code. New here? Your profile is created automatically.</p>
       <div class="auth-phone"><select id="auth-cc" aria-label="Country code">${[['+91', '🇮🇳 +91'], ['+1', '🇺🇸 +1'], ['+44', '🇬🇧 +44'], ['+971', '🇦🇪 +971'], ['+65', '🇸🇬 +65'], ['+61', '🇦🇺 +61']].map(([v, l]) => `<option value="${v}" ${AUTH.cc === v ? 'selected' : ''}>${l}</option>`).join('')}</select><input id="auth-phone" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="98765 43210" maxlength="14" value="${esc(AUTH.phone)}" onkeydown="if(event.key==='Enter')authSend()"></div>
       ${err}<button class="btn-full" id="auth-send" onclick="authSend()" ${AUTH.busy ? 'disabled' : ''}>${AUTH.busy ? 'Sending…' : 'Send code on WhatsApp'}</button>
-      <p class="auth-fine">By continuing you agree to our <a onclick="openLegalModal('terms')">Terms &amp; Conditions</a> and <a onclick="openLegalModal('privacy')">Privacy Policy</a>.</p>
+      <label class="chk" style="margin:10px 0 0;"><input type="checkbox" id="auth-age" ${AUTH.age ? 'checked' : ''}><span>I am <strong>18 years or older</strong>. <em>(required)</em></span></label>
+      <p class="auth-fine">By continuing you agree to our <a onclick="openLegalModal('terms')">Terms &amp; Conditions</a> and <a onclick="openLegalModal('privacy')">Privacy Policy</a>. <a onclick="openNotice()">Read the privacy notice</a> (English · తెలుగు · हिन्दी)</p>
       ${demo ? '<div class="demo-note">Demo mode: WhatsApp is not connected yet, so no message will be sent.</div>' : ''}`;
   } else {
     box.innerHTML = `<div class="auth-ic">🔐</div><h2>Enter the code</h2>
@@ -1812,7 +1823,7 @@ function authTick() {
 function authBack() { AUTH.step = 'phone'; AUTH.err = ''; clearInterval(AUTH.timer); renderAuth(); }
 async function authSend(resend) {
   if (AUTH.busy) return;
-  if (!resend) { AUTH.cc = el_('auth-cc').value; AUTH.phone = el_('auth-phone').value; }
+  if (!resend) { AUTH.cc = el_('auth-cc').value; AUTH.phone = el_('auth-phone').value; AUTH.age = !!(el_('auth-age') && el_('auth-age').checked); if (!AUTH.age) { AUTH.err = 'Please confirm that you are 18 years or older.'; renderAuth(); return; } }
   const phone = resend ? AUTH.full : normPhone(AUTH.cc, AUTH.phone);
   if (!phone) { AUTH.err = AUTH.cc === '+91' ? 'Enter a valid 10-digit Indian mobile number.' : 'Enter a valid phone number.'; renderAuth(); return; }
   const now = Date.now(), hist = (AUTH.sends[phone] = (AUTH.sends[phone] || []).filter(t => now - t < 600000));
@@ -1840,8 +1851,9 @@ async function authVerify() {
       if (code !== d.code) { d.attempts++; throw new Error(`That code is not right. ${5 - d.attempts} attempt(s) left.`); }
     }
     AUTH.demo = null; const cb = AUTH.cb, { u, isNew } = loginUser(AUTH.full, token);
+    if (AUTH.age && !u.ageConfirmedAt) recordConsent(u, 'age18', true, 'login'); if (isNew) recordConsent(u, 'notice', true, 'login'); saveDB();
     closeAuth(); showToast(isNew ? '🎉 Profile created — you are signed in' : `Welcome back${u.name ? ', ' + u.name.split(' ')[0] : ''}!`, 'success');
-    if (cb) cb();
+    if (cb) cb(); if (!isNew) maybeUpdatedNotice();
   } catch (e) { AUTH.busy = false; AUTH.err = e.message; renderAuth(); }
 }
 
@@ -1858,7 +1870,7 @@ function openCheckout() {
   const a = u.addr || {}, set = (id, v) => { el_(id).value = v || ''; el_(id).classList.remove('invalid'); };
   set('chk-name', u.name); set('chk-phone', u.phone); set('chk-email', u.email); set('chk-address', a.street); set('chk-pin', a.pincode); set('chk-city', a.city); set('chk-state', a.state);
   el_('chk-verified-phone').textContent = maskPhone(u.phone);
-  el_('chk-terms').checked = u.termsVersion === LEGAL_VERSION; el_('chk-terms-row').classList.remove('invalid');
+  el_('chk-terms').checked = u.termsVersion === LEGAL_VERSION; el_('chk-age').checked = !!u.ageConfirmedAt; el_('chk-terms-row').classList.remove('invalid');
   el_('chk-wa-orders').checked = !!(u.consents && u.consents.orderUpdates); el_('chk-wa-promos').checked = !!(u.consents && u.consents.marketing); el_('chk-wa-cart').checked = !!(u.consents && u.consents.cartReminder); el_('chk-wa-cart-row').style.display = waServer() ? '' : 'none';
   giftReset(GIFT_PRESET); GIFT_PRESET = false; abRenderChips(u); el_('chk-save-addr').checked = true; chkPinCheck();
   el_('checkoutModal').classList.add('active');
@@ -1881,6 +1893,7 @@ function processPayment() {
   document.querySelectorAll('#checkoutModal input').forEach(i => i.classList.remove('invalid')); el_('chk-terms-row').classList.remove('invalid');
   const bad = rules.find(r => !r[1]);
   if (bad) { const e = el_(bad[0]); e.classList.add('invalid'); e.focus(); showToast(bad[2], 'error'); return; }
+  if (!el_('chk-age').checked) { el_('chk-terms-row').classList.add('invalid'); showToast('Please confirm that you are 18 years or older', 'error'); return; }
   if (!el_('chk-terms').checked) { el_('chk-terms-row').classList.add('invalid'); showToast('Please accept the Terms & Conditions and Privacy Policy to continue', 'error'); return; }
   const short = lines.find(l => l.qty > l.stock);
   if (short) { showToast(`${short.name}: only ${short.stock} in stock`, 'error'); return; }
@@ -1899,6 +1912,7 @@ function processPayment() {
   // profile + consents (each change is logged as its own dated row)
   Object.assign(u, { name, email, addr: { street: v('chk-address'), city: v('chk-city'), state: v('chk-state'), pincode: v('chk-pin') }, address: `${v('chk-address')}, ${v('chk-city')}` });
   if (u.termsVersion !== LEGAL_VERSION) recordConsent(u, 'terms', true, 'checkout');
+  if (!u.ageConfirmedAt) recordConsent(u, 'age18', true, 'checkout'); if (u.noticeVersion !== NOTICE_VERSION) recordConsent(u, 'notice', true, 'checkout');
   const firstAsk = !u.consents.updatedAt; // the very first answer is recorded even when it is "no"
   [['orderUpdates', 'chk-wa-orders'], ['marketing', 'chk-wa-promos'], ...(waServer() ? [['cartReminder', 'chk-wa-cart']] : [])].forEach(([type, id]) => { const want = el_(id).checked; if (!!u.consents[type] !== want || firstAsk) recordConsent(u, type, want, 'checkout'); });
   const order = {
@@ -1932,7 +1946,7 @@ function processPayment() {
 }
 
 // ---- My Account ----
-function openAccount() { const u = currentUser(); if (!u) { openAuth(() => openAccount()); return; } renderAccount(); el_('accountModal').classList.add('active'); }
+function openAccount() { const u = currentUser(); if (!u) { openAuth(() => openAccount()); return; } renderAccount(); el_('accountModal').classList.add('active'); maybeUpdatedNotice(); }
 function renderAccount() {
   const u = currentUser(); if (!u) { closeModal('accountModal'); return; }
   const a = u.addr || {}, c = u.consents || {}, orders = db.orders.filter(o => o.userId === u.id).sort((x, y) => y.date.localeCompare(x.date));
@@ -1957,10 +1971,10 @@ function renderAccount() {
         <div class="note">Your choice applies immediately. You can change it at any time, or reply STOP to any message. ${c.updatedAt ? 'Last changed ' + esc(new Date(c.updatedAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })) + ' IST.' : ''} Login codes are always sent on WhatsApp when you sign in.</div>
         <h4 class="acct-h" style="margin-top:22px;">My orders</h4>
         ${orders.length ? orders.map(o => `<div class="acct-order"><div><div style="font-family:monospace;font-size:12px;font-weight:600;">${esc(o.id)}</div><div style="font-size:11px;color:#888;">${esc(o.date)} · ${o.items.length} item${o.items.length > 1 ? 's' : ''}</div></div><div style="text-align:right;"><div style="font-weight:600;font-size:13px;">${formatCurrency(o.total)}</div><span class="status-pill ${getStatusClass(o.status)}" style="font-size:9px;">${esc(prettyStatus(o.status))}</span><div><button class="linkbtn" onclick="openTrackOrder('${esc(o.id)}')">Track</button></div></div></div>`).join('') : '<p style="font-size:13px;color:#888;">No orders yet.</p>'}
-        ${abAccountHTML(u)}${acctExtraHTML(u)}
+        ${abAccountHTML(u)}${acctExtraHTML(u)}${acctRightsHTML(u)}
       </div>
     </div>
-    <div class="acct-foot"><a onclick="openLegalModal('terms')">Terms &amp; Conditions</a> · <a onclick="openLegalModal('privacy')">Privacy Policy</a> · <a onclick="acctDelete()" style="color:var(--red);">Request account deletion</a><span style="flex:1"></span><button class="btn-sm btn-danger-sm" onclick="logout()">Sign out</button></div>`;
+    <div class="acct-foot"><a onclick="openLegalModal('terms')">Terms &amp; Conditions</a> · <a onclick="openLegalModal('privacy')">Privacy Policy</a> · <a onclick="openNotice()">Privacy notice</a> · <a onclick="acctDelete()" style="color:var(--red);">Erase my account</a><span style="flex:1"></span><button class="btn-sm btn-danger-sm" onclick="logout()">Sign out</button></div>`;
 }
 function acctSave() {
   const u = currentUser(); if (!u) return; const g = id => el_(id).value.trim();
@@ -1975,12 +1989,101 @@ function acctConsent(type, elx) {
   elx.classList.toggle('active', granted); elx.setAttribute('aria-checked', granted);
   showToast(granted ? `✓ ${consentLabel[type]} turned on` : `${consentLabel[type]} turned off`, granted ? 'success' : '');
 }
-function acctDelete() {
-  const u = currentUser(); if (!u) return;
-  if (!confirm('Request deletion of your account and personal data? We will delete it within 30 days, except records we must keep by law (such as invoices).')) return;
-  u.deletionRequestedAt = new Date().toISOString(); addLog('deletion_request', u.name || u.phone, '-', 0, 0, 0, 'Customer requested account deletion'); saveDB();
-  showToast('Request recorded — we will confirm by WhatsApp or email', 'success'); logout();
+// ================= Privacy notice and rights (DPDP Act 2023) =================
+const NOTICE_VERSION = '2.0';
+const NOTICE = {
+  en: { tab: 'English', title: 'Privacy notice', intro: 'This tells you, in plain words, what we do with your personal data. Please read it before you continue.', age: 'This shop is for people who are 18 years or older.',
+    items: [['What we collect', 'Your name, WhatsApp/mobile number, delivery address, PIN code and (optional) email; what you order and pay; the messages you send to our WhatsApp assistant; reviews and photos you post; your choices about messages. We count visits to the website anonymously, with no cookies and no personal details.'],
+      ['Why we use it', 'To create your profile and sign you in with a WhatsApp code; to take, pack, deliver and invoice your orders; to answer your questions; to send order updates, offers and cart reminders only if you agreed; to follow tax and accounting law; to keep the shop safe.'],
+      ['Who it goes to', 'WhatsApp (Meta) to send messages; our payment partner (Razorpay) for payments; couriers and India Post to deliver; our website hosting company; an AI service (Anthropic, outside India) that helps us draft replies (your phone number is not sent). We never sell your data.'],
+      ['How long we keep it', 'Your profile until you ask us to erase it; WhatsApp chats about 90 days after the last message; carts 30 days; order and invoice records as long as tax law requires (about 6 years), then they are erased. If you ask us to stop messaging you, we keep only your number on a do-not-message list.'],
+      ['Your rights', 'You can see a summary of your data, correct it, ask us to erase it, withdraw your consent, nominate someone to act for you, and complain. Use My Account → Your privacy rights, or the "Your privacy rights" form on this site. We reply within 30 days.'],
+      ['Complaints', 'Write to our grievance contact shown below. If we do not solve it, you can complain to the Data Protection Board of India.']] },
+  te: { tab: 'తెలుగు', title: 'గోప్యతా నోటీసు', intro: 'మీ వ్యక్తిగత సమాచారంతో మేము ఏమి చేస్తామో ఇక్కడ సులభంగా చెప్పాము. కొనసాగే ముందు దయచేసి చదవండి.', age: 'ఈ దుకాణం 18 ఏళ్లు నిండిన వారి కోసం.',
+    items: [['మేము ఏ సమాచారం తీసుకుంటాము', 'మీ పేరు, వాట్సాప్/మొబైల్ నంబర్, డెలివరీ చిరునామా, పిన్ కోడ్, (ఐచ్ఛికంగా) ఈమెయిల్; మీరు ఆర్డర్ చేసినవి, చెల్లింపు వివరాలు; మా వాట్సాప్ అసిస్టెంట్‌కు మీరు పంపిన సందేశాలు; మీరు రాసిన రివ్యూలు, ఫోటోలు; సందేశాల గురించి మీ ఎంపికలు. వెబ్‌సైట్ సందర్శనలను కుకీలు లేకుండా, పేరు లేకుండా లెక్కిస్తాము.'],
+      ['ఎందుకు వాడతాము', 'మీ ప్రొఫైల్ సృష్టించడానికి, వాట్సాప్ కోడ్‌తో సైన్ ఇన్ చేయడానికి; మీ ఆర్డర్లను స్వీకరించి, ప్యాక్ చేసి, పంపి, ఇన్‌వాయిస్ ఇవ్వడానికి; మీ ప్రశ్నలకు సమాధానం ఇవ్వడానికి; మీరు అంగీకరిస్తే మాత్రమే ఆర్డర్ అప్‌డేట్లు, ఆఫర్లు, కార్ట్ రిమైండర్లు పంపడానికి; పన్ను, అకౌంటింగ్ చట్టాలను పాటించడానికి.'],
+      ['ఎవరికి వెళ్తుంది', 'సందేశాల కోసం వాట్సాప్ (మెటా); చెల్లింపుల కోసం పేమెంట్ భాగస్వామి (Razorpay); డెలివరీ కోసం కొరియర్లు, ఇండియా పోస్ట్; మా హోస్టింగ్ సంస్థ; సమాధానాల డ్రాఫ్ట్ రాయడంలో సహాయపడే AI సేవ (Anthropic, భారతదేశం వెలుపల; మీ ఫోన్ నంబర్ పంపము). మీ సమాచారాన్ని మేము ఎప్పుడూ అమ్మము.'],
+      ['ఎంతకాలం ఉంచుతాము', 'మీరు తొలగించమని అడిగే వరకు మీ ప్రొఫైల్; వాట్సాప్ చాట్లు చివరి సందేశం తర్వాత సుమారు 90 రోజులు; కార్ట్ 30 రోజులు; ఆర్డర్, ఇన్‌వాయిస్ రికార్డులు పన్ను చట్టం కోరినంత కాలం (సుమారు 6 సంవత్సరాలు), తర్వాత తొలగిస్తాము. సందేశాలు ఆపమని మీరు అడిగితే, మీ నంబర్‌ను మాత్రమే "సందేశాలు పంపకూడదు" జాబితాలో ఉంచుతాము.'],
+      ['మీ హక్కులు', 'మీ సమాచార సారాంశం చూడవచ్చు, సరిదిద్దవచ్చు, తొలగించమని అడగవచ్చు, సమ్మతిని ఉపసంహరించవచ్చు, మీ తరఫున మరొకరిని నియమించవచ్చు, ఫిర్యాదు చేయవచ్చు. My Account → "మీ గోప్యతా హక్కులు" లేదా ఈ సైట్‌లోని "మీ గోప్యతా హక్కులు" ఫారం వాడండి. 30 రోజుల్లో సమాధానం ఇస్తాము.'],
+      ['ఫిర్యాదులు', 'దిగువ ఉన్న మా ఫిర్యాదుల సంప్రదింపు వ్యక్తికి రాయండి. మేము పరిష్కరించకపోతే, భారత డేటా ప్రొటెక్షన్ బోర్డుకు ఫిర్యాదు చేయవచ్చు.']] },
+  hi: { tab: 'हिन्दी', title: 'गोपनीयता सूचना', intro: 'हम आपकी निजी जानकारी के साथ क्या करते हैं, यह यहाँ सरल शब्दों में बताया गया है। आगे बढ़ने से पहले कृपया पढ़ें।', age: 'यह दुकान 18 वर्ष या उससे अधिक आयु के लोगों के लिए है।',
+    items: [['हम क्या जानकारी लेते हैं', 'आपका नाम, WhatsApp/मोबाइल नंबर, डिलीवरी का पता, पिन कोड, (वैकल्पिक) ईमेल; आपके ऑर्डर और भुगतान का विवरण; हमारे WhatsApp असिस्टेंट को भेजे आपके संदेश; आपकी रिव्यू और फ़ोटो; संदेशों के बारे में आपकी पसंद। वेबसाइट की विज़िट हम बिना कुकी और बिना नाम के गिनते हैं।'],
+      ['हम इसका उपयोग क्यों करते हैं', 'आपकी प्रोफ़ाइल बनाने और WhatsApp कोड से साइन इन कराने के लिए; आपके ऑर्डर लेने, पैक करने, भेजने और इनवॉइस देने के लिए; आपके सवालों के जवाब के लिए; ऑर्डर अपडेट, ऑफ़र और कार्ट रिमाइंडर केवल तभी जब आप सहमत हों; कर और लेखा कानूनों के पालन के लिए।'],
+      ['यह किसे जाती है', 'संदेश भेजने के लिए WhatsApp (Meta); भुगतान के लिए पेमेंट पार्टनर (Razorpay); डिलीवरी के लिए कूरियर और इंडिया पोस्ट; हमारी होस्टिंग कंपनी; जवाब का ड्राफ़्ट लिखने में मदद करने वाली AI सेवा (Anthropic, भारत के बाहर; आपका फ़ोन नंबर नहीं भेजा जाता)। हम आपका डेटा कभी नहीं बेचते।'],
+      ['कितने समय रखते हैं', 'प्रोफ़ाइल तब तक जब तक आप मिटाने को न कहें; WhatsApp चैट आख़िरी संदेश के लगभग 90 दिन बाद तक; कार्ट 30 दिन; ऑर्डर और इनवॉइस रिकॉर्ड जितने समय कर कानून माँगता है (लगभग 6 साल), फिर मिटा दिए जाते हैं। यदि आप संदेश बंद करने को कहते हैं, तो हम केवल आपका नंबर "संदेश न भेजें" सूची में रखते हैं।'],
+      ['आपके अधिकार', 'आप अपने डेटा का सार देख सकते हैं, सुधार सकते हैं, मिटाने को कह सकते हैं, सहमति वापस ले सकते हैं, अपनी ओर से किसी को नामित कर सकते हैं और शिकायत कर सकते हैं। My Account → "आपके गोपनीयता अधिकार" या इस साइट के "आपके गोपनीयता अधिकार" फ़ॉर्म का उपयोग करें। हम 30 दिनों में जवाब देंगे।'],
+      ['शिकायतें', 'नीचे दिए हमारे शिकायत संपर्क को लिखें। समाधान न होने पर आप भारत के डेटा प्रोटेक्शन बोर्ड में शिकायत कर सकते हैं।']] }
+};
+const RIGHTS_LABEL = { access: 'See a summary of my data', correct: 'Correct my data', erase: 'Erase my data', withdraw: 'Withdraw my consent', nominate: 'Nominate someone to act for me', grievance: 'Make a complaint or ask a question' };
+let NOTICE_UI = { lang: 'en', update: false };
+function noticeHTML(lang) {
+  const n = NOTICE[lang] || NOTICE.en, c = legalCtx();
+  return `<div class="nt-tabs" role="tablist">${Object.entries(NOTICE).map(([k, v]) => `<button type="button" class="${k === lang ? 'active' : ''}" onclick="noticeLang('${k}')">${v.tab}</button>`).join('')}</div>
+    <p class="note" style="margin:6px 0 10px;">${esc(n.intro)}</p>${n.items.map(([h, b]) => `<div class="nt-item"><b>${esc(h)}</b><p>${esc(b)}</p></div>`).join('')}
+    <div class="nt-item"><b>${esc(NOTICE.en.items[5][0])} · ${esc(n.items[5][0])}</b><p>${esc(c.officer)} · ${esc(c.email)} · ${esc(c.phone)}</p></div>
+    <p class="note"><b>${esc(n.age)}</b></p><p class="note">Version ${NOTICE_VERSION}. <a onclick="closeModal('noticeModal');openLegalModal('privacy')">Read the full Privacy Policy</a> · <a onclick="closeModal('noticeModal');openRights()">Your privacy rights</a></p>`;
 }
+function openNotice(lang, update) {
+  NOTICE_UI = { lang: lang || NOTICE_UI.lang || 'en', update: !!update }; renderNotice(); el_('noticeModal').classList.add('active');
+}
+function noticeLang(l) { NOTICE_UI.lang = l; renderNotice(); }
+function renderNotice() {
+  el_('noticeBody').lang = NOTICE_UI.lang;
+  const u = currentUser(), c = (u && u.consents) || {}, upd = NOTICE_UI.update && u;
+  el_('noticeBody').innerHTML = `<h2 style="font-family:'Cormorant Garamond',serif;font-size:28px;margin:0 0 4px;">${upd ? 'We have updated our privacy notice' : esc((NOTICE[NOTICE_UI.lang] || NOTICE.en).title)}</h2>${noticeHTML(NOTICE_UI.lang)}
+    ${upd ? `<div class="consent-box" id="nt-box">${!u.ageConfirmedAt ? '<label class="chk"><input type="checkbox" id="nt-age"><span>I am <strong>18 years or older</strong>. <em>(required)</em></span></label>' : ''}<div class="consent-sub">WhatsApp messages: your choice, change any time</div>
+      <label class="chk"><input type="checkbox" id="nt-orders" ${c.orderUpdates ? 'checked' : ''}><span>Send me <strong>order updates</strong> on WhatsApp.</span></label>
+      <label class="chk"><input type="checkbox" id="nt-promos" ${c.marketing ? 'checked' : ''}><span>Send me <strong>offers &amp; new arrivals</strong> on WhatsApp.</span></label></div>
+      <button class="btn-full" onclick="noticeAck()">I have read this notice</button>` : ''}`;
+}
+function noticeAck() {
+  const u = currentUser(); if (!u) return; const ageBox = el_('nt-age');
+  if (ageBox && !ageBox.checked) { el_('nt-box').classList.add('invalid'); showToast('Please confirm you are 18 or older', 'error'); return; }
+  if (ageBox) recordConsent(u, 'age18', true, 'notice');
+  [['orderUpdates', 'nt-orders'], ['marketing', 'nt-promos']].forEach(([t, id]) => { const want = el_(id).checked; if (!!u.consents[t] !== want) recordConsent(u, t, want, 'notice'); });
+  recordConsent(u, 'notice', true, 'notice'); if (saveDB()) { closeModal('noticeModal'); showToast('Thank you. Your choices are saved.', 'success'); }
+}
+function maybeUpdatedNotice() { const u = currentUser(); if (u && u.noticeVersion !== NOTICE_VERSION) setTimeout(() => openNotice('en', true), 400); }
+// ---- rights requests: a numbered request that reaches the shop, with a 30-day promise ----
+function openRights(type) {
+  const u = currentUser(); el_('rightsBody').innerHTML = `<h2 style="font-family:'Cormorant Garamond',serif;font-size:28px;margin:0 0 4px;">Your privacy rights</h2>
+    <p class="note">Ask to see, correct or erase your data, withdraw your consent, nominate someone to act for you, or make a complaint. We reply within <strong>30 days</strong>. <a onclick="closeModal('rightsModal');openNotice()">Read the privacy notice</a></p>
+    <div class="form-group"><label>What would you like to do?</label><select id="rt-type" onchange="rightsHint()">${Object.entries(RIGHTS_LABEL).map(([k, l]) => `<option value="${k}" ${k === type ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+    <div class="form-group"><label>Your name *</label><input id="rt-name" value="${esc(u ? u.name || '' : '')}" autocomplete="name"></div>
+    <div class="form-group"><label>Phone or email where we can reach you *</label><input id="rt-contact" value="${esc(u ? u.phone || '' : '')}" autocomplete="tel"></div>
+    <div class="form-group"><label id="rt-msg-l">Details (optional)</label><textarea id="rt-msg" rows="4" maxlength="1500"></textarea></div>
+    <p class="note" id="rt-hint"></p><div id="rt-out"></div><button class="btn-full" id="rt-go" onclick="rightsSubmit()">Send my request</button>`;
+  rightsHint(); el_('rightsModal').classList.add('active');
+}
+function rightsHint() {
+  const t = el_('rt-type').value, h = { access: 'We will send you a summary of the data we hold about you and who it was shared with.', correct: 'Tell us what is wrong and what it should say. You can also edit your details in My Account.', erase: 'We will erase your profile and personal details. We must keep invoices for the period tax law requires; those keep only what the law needs and are erased afterwards.', withdraw: 'Tell us which messages to stop. You can also switch them off in My Account or reply STOP.', nominate: 'Write the name and phone number of the person who may use your rights if you cannot.', grievance: 'Tell us what went wrong.' }[t];
+  el_('rt-hint').textContent = h; el_('rt-msg-l').textContent = t === 'nominate' ? 'Name and phone number of the person *' : 'Details (optional)';
+}
+async function rightsSubmit() {
+  const b = el_('rt-go'), out = el_('rt-out'), body = { type: el_('rt-type').value, name: el_('rt-name').value.trim(), contact: el_('rt-contact').value.trim(), message: el_('rt-msg').value.trim() };
+  if (!body.name) { out.innerHTML = '<div class="auth-err">Please tell us your name.</div>'; return; } if (!/@/.test(body.contact) && body.contact.replace(/\D/g, '').length < 7) { out.innerHTML = '<div class="auth-err">Please give a phone number or email.</div>'; return; } if (body.type === 'nominate' && !body.message) { out.innerHTML = '<div class="auth-err">Please write the name and phone number of the person.</div>'; return; }
+  b.disabled = true; out.innerHTML = '<div class="note">Sending…</div>';
+  try {
+    let j; const api = window.__SHOP_API ? String(window.__SHOP_API).replace(/\/+$/, '') : '';
+    if (api) { const r = await fetch(api + '/public/rights', { method: 'POST', body: JSON.stringify(body), credentials: 'omit', headers: { 'content-type': 'text/plain' } }); j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.error || 'Could not send. Please contact us directly.'); }
+    else { db.rightsDemo = db.rightsDemo || []; j = { id: 'DEMO-' + String(db.rightsDemo.length + 1).padStart(4, '0'), due: new Date(Date.now() + 30 * 86400_000).toISOString() }; db.rightsDemo.push({ ...body, ...j, at: new Date().toISOString() }); saveDB(); }
+    const u = currentUser(); if (u) { u.rightsRequests = [...(u.rightsRequests || []), { id: j.id, type: body.type, at: new Date().toISOString() }].slice(-20); if (body.type === 'nominate') u.nominee = { text: body.message.slice(0, 200), at: new Date().toISOString() }; if (body.type === 'erase') u.deletionRequestedAt = new Date().toISOString(); saveDB(); }
+    out.innerHTML = `<div class="demo-box"><strong>Thank you. Your request number is ${esc(j.id)}.</strong><br>We will reply by ${esc(new Date(j.due).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }))}. Please keep this number.${api ? '' : '<br><em>Demo: on the live site this reaches the shop owner.</em>'}</div>`; b.style.display = 'none';
+    if (body.type === 'erase' && u) { setTimeout(() => { closeModal('rightsModal'); closeModal('accountModal'); logout(); }, 2500); }
+  } catch (e) { out.innerHTML = `<div class="auth-err">${esc(e.message)}</div>`; b.disabled = false; }
+}
+function acctDownload() {
+  const u = currentUser(); if (!u) return; const mine = x => x.userId === u.id;
+  const data = { about: 'A copy of the data this shop holds about you on this device/site. Chat history on our WhatsApp assistant is held by the shop: ask for it with "See a summary of my data".', exportedAt: new Date().toISOString(), profile: u, orders: db.orders.filter(mine), reviews: db.reviews.filter(mine), stockAlerts: db.stockAlerts.filter(mine), similarAlerts: db.similarAlerts.filter(mine), consentHistory: db.consentLog.filter(mine), noticeVersion: u.noticeVersion || null };
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })); a.download = 'my-data.json'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); showToast('Your data was downloaded', 'success');
+}
+function acctRightsHTML(u) {
+  const reqs = (u.rightsRequests || []).slice(-3).reverse();
+  return `<h4 class="acct-h" style="margin-top:22px;">Your privacy rights</h4><div class="note">See, correct or erase your data, withdraw consent, nominate someone, or complain. We reply within 30 days.</div>
+    <div class="pf-actions" style="margin-top:8px;"><button type="button" class="btn-sm btn-info-sm" onclick="acctDownload()">⬇ Download my data</button><button type="button" class="btn-sm btn-info-sm" onclick="openRights('access')">See what you hold</button><button type="button" class="btn-sm btn-info-sm" onclick="openRights('nominate')">Nominate someone</button><button type="button" class="btn-sm btn-info-sm" onclick="openRights('grievance')">Complain / ask</button><button type="button" class="btn-sm btn-info-sm" onclick="openNotice()">Privacy notice (EN / తెలుగు / हिन्दी)</button></div>
+    ${u.nominee ? `<div class="note" style="margin-top:6px;">Nominee: ${esc(u.nominee.text)}</div>` : ''}${reqs.length ? `<div class="note" style="margin-top:6px;">Your requests: ${reqs.map(r => `${esc(r.id)} (${esc(r.type)})`).join(', ')}</div>` : ''}`;
+}
+function acctDelete() { openRights('erase'); }
 
 // ---- Terms & Conditions / Privacy Policy ----
 const legalSec = (id, title, body) => `<section id="${id}"><h3>${title}</h3>${body}</section>`;
@@ -2012,12 +2115,12 @@ function legalPrivacy() {
   ${legalSec('p-collect', '1. What we collect', `<ul><li><strong>Identity &amp; contact:</strong> your name, WhatsApp/mobile number, and email (optional).</li><li><strong>Delivery details:</strong> address, city, state and pincode.</li><li><strong>Orders:</strong> what you bought, amounts, order status and invoices. Payments are handled by our payment partner; we do not store card or UPI details.</li><li><strong>Your choices:</strong> whether you agreed to the Terms and to each kind of WhatsApp message, with the date and the version you agreed to.</li><li><strong>Gifts and addresses:</strong> your saved addresses, and for gifts the recipient's name, phone and address, which we use only to deliver the parcel and keep for your future orders if you choose "save this address".</li><li><strong>Cart:</strong> if you agree to cart reminders, we keep the sarees in your cart together with your number and name so our system can send you up to two reminders. Withdraw this in My Account or by replying STOP and we delete the saved cart from our reminder system.</li><li><strong>WhatsApp chats:</strong> if you message our WhatsApp number, we keep the conversation (your number, name shown on WhatsApp, and what you write or send) to help you and handle your order. Replies may be written by an automated AI assistant; a person takes over for complaints, refunds and orders. To write replies, your messages and our product details are processed by our AI provider (Anthropic) and WhatsApp (Meta). Send STOP at any time and we will not message you again.</li><li><strong>Reviews and alerts:</strong> reviews you write (rating, text, photos and the name you choose to show) and any back-in-stock alerts you ask for.</li><li><strong>On your device:</strong> your cart, favourites and login session are kept in your browser's local storage so the store works. We do not use advertising or tracking cookies.</li><li><strong>Visit counts:</strong> we count visits to this website anonymously (which page, phone or computer, and where the visitor came from, for example Instagram). This uses no cookies and does not store your IP address, name or any personal detail, and it is switched off if your browser sends “Do Not Track”.</li></ul>`)}
   ${legalSec('p-why', '2. Why we use it', `<ul><li>To create and secure your profile and sign you in with a one-time code on WhatsApp.</li><li>To process, ship, invoice and support your orders, and to meet tax and accounting laws.</li><li>To send order updates on WhatsApp <em>only if you agreed</em>.</li><li>To send offers and new-arrival messages on WhatsApp <em>only if you separately agreed</em>.</li><li>To prevent fraud and keep the store secure.</li></ul><p>We rely on your consent and on what is needed to fulfil your order.</p>`)}
   ${legalSec('p-wa', '3. WhatsApp messages and your permission', `<p>We ask for two separate permissions, and neither is ticked by default: (a) order updates, and (b) offers and new arrivals. Saying no does not stop you buying. Login codes are sent when you ask to sign in. You can change either permission at any time in <strong>My Account</strong>, or reply STOP to any message; the change takes effect immediately and is recorded with its date. If you ask to be told when a sold-out saree is back, you give a separate permission for that single message, and cancelling the alert withdraws it.</p>`)}
-  ${legalSec('p-share', '4. Who we share it with', `<p>We do not sell your data. We share only what is needed with: our payment partner (to take payment), courier partners (to deliver), the WhatsApp Business messaging provider (to send messages you asked for) and our website hosting and technology providers. They may only use it for those purposes. If you post a review, your review, photos and the name you choose are shown publicly on our store. We may disclose data if the law requires.</p>`)}
-  ${legalSec('p-keep', '5. How long we keep it', `<p>We keep your profile until you ask us to delete it. Order and invoice records are kept for as long as tax and accounting laws require. Consent records are kept so we can show what you agreed to.</p>`)}
-  ${legalSec('p-rights', '6. Your rights', `<p>You may ask to access a summary of your data, correct it, update it, have it erased, withdraw consent, and nominate someone to exercise these rights for you. Edit your details or request deletion in <strong>My Account</strong>, or write to us. We will respond within a reasonable time and in any case within the period the law sets.</p>`)}
-  ${legalSec('p-sec', '7. Security', `<p>We use reasonable safeguards to protect your data, including one-time-code login and access controls for our team. No online service can be completely risk-free; if a breach affecting you occurs we will tell you as the law requires.</p>`)}
-  ${legalSec('p-kids', '8. Children', `<p>Our store is intended for adults. We do not knowingly collect data from children without a parent or guardian's consent.</p>`)}
-  ${legalSec('p-grievance', '9. Grievances and contact', `<p>For questions, complaints or to exercise your rights, contact our grievance officer: <strong>${esc(c.officer)}</strong>, ${esc(c.email)}, ${esc(c.phone)}, ${esc(c.addr)}. If you are not satisfied with our response you may approach the Data Protection Board of India.</p>`)}
+  ${legalSec('p-share', '4. Who we share it with', `<p>We do not sell your data. We share only what is needed with the people who help us run the shop, and only for that purpose: <strong>WhatsApp (Meta)</strong> to send the messages you asked for; our payment partner (<strong>Razorpay</strong>) to take payment; <strong>couriers and India Post</strong> to deliver; our website <strong>hosting</strong> provider; and an <strong>AI service (Anthropic, outside India)</strong> that helps us write replies and reports: we do not send your phone number or address to it, only the text of a message or review we are replying to. If you post a review, your review, photos and the name you choose are shown publicly on our store. We may disclose data if the law requires.</p>`)}
+  ${legalSec('p-keep', '5. How long we keep it', `<ul><li><strong>Your profile:</strong> until you ask us to erase it.</li><li><strong>WhatsApp chats with our assistant:</strong> about 90 days after the last message, then erased.</li><li><strong>Carts you left:</strong> 30 days.</li><li><strong>Orders and invoices:</strong> as long as tax and accounting laws require (about 6 years). After erasure of your profile they keep only what the law needs, and are then anonymised.</li><li><strong>Consent records:</strong> kept (without your phone number once you erase your profile) so we can show what you agreed to.</li><li><strong>Do-not-message list:</strong> if you ask us to stop messaging you, we keep only your number so that we never message you again.</li></ul>`)}
+  ${legalSec('p-rights', '6. Your rights and how to use them', `<p>You may <strong>see a summary of your data</strong> and who it was shared with, <strong>correct</strong> it, <strong>erase</strong> it, <strong>withdraw consent</strong> at any time (as easily as you gave it), <strong>nominate someone</strong> to exercise these rights for you if you die or cannot, and <strong>complain</strong>. Use <strong>My Account → Your privacy rights</strong> (you can also download your data there), or the <a onclick="openRights()">“Your privacy rights” form</a> on this site if you cannot sign in. Every request gets a number, and we answer within <strong>30 days</strong>. We may keep records the law requires, and will tell you if so.</p>`)}
+  ${legalSec('p-sec', '7. Security', `<p>We use reasonable safeguards: one-time-code login for customers, password and 2-step sign-in for our team, encrypted connections, encrypted storage of passwords and keys, encrypted backups, activity logs, and limited access. No online service can be completely risk-free. <strong>If a breach affecting you occurs</strong>, we will tell you without delay, say what happened and what you can do, and report it to the Data Protection Board of India as the law requires.</p>`)}
+  ${legalSec('p-kids', '8. Age', `<p>Our store is for people who are <strong>18 years or older</strong>, and we ask you to confirm this. We do not knowingly collect data from children. If we learn that someone under 18 has an account, we will erase it. We do not track children or target them with marketing.</p>`)}
+  ${legalSec('p-grievance', '9. Grievances and contact', `<p>For questions, complaints or to exercise your rights, contact our grievance officer: <strong>${esc(c.officer)}</strong>, ${esc(c.email)}, ${esc(c.phone)}, ${esc(c.addr)}. We reply within 30 days. If we do not solve your complaint you may complain to the <strong>Data Protection Board of India</strong>.</p>`)}
   ${legalSec('p-change', '10. Changes', `<p>If we change this policy we will update the version above and, where the change is important, ask for your consent again.</p>`)}`;
 }
 const LEGAL_PAGES = { terms: { title: 'Terms & Conditions', html: legalTerms }, privacy: { title: 'Privacy Policy', html: legalPrivacy } };
@@ -2058,7 +2161,7 @@ function switchCareTab(tabName, btn) {
 }
 
 // ================= ADMIN LOGIC =================
-const ADMIN_TITLES = { growth: 'Growth & Insights', dashboard: 'Dashboard', home: 'Home Page', reviews: 'Customer Reviews', whatsapp: 'WhatsApp Assistant', delivery: 'Delivery & Gifting', alerts: 'Back-in-stock Alerts', products: 'Products Catalog', categories: 'Category Manager', studio: 'Image Studio', drafts: 'Saved Drafts', orders: 'Orders Management', invoices: 'Invoice Management', customers: 'Customer Database', statements: 'Financial Statements', coupons: 'Coupon Manager', bundles: 'Bundles', ai: 'AI Helper', social: 'Instagram', logs: 'Audit Logs', settings: 'Business Settings' };
+const ADMIN_TITLES = { privacy: 'Privacy & DPDP', growth: 'Growth & Insights', dashboard: 'Dashboard', home: 'Home Page', reviews: 'Customer Reviews', whatsapp: 'WhatsApp Assistant', delivery: 'Delivery & Gifting', alerts: 'Back-in-stock Alerts', products: 'Products Catalog', categories: 'Category Manager', studio: 'Image Studio', drafts: 'Saved Drafts', orders: 'Orders Management', invoices: 'Invoice Management', customers: 'Customer Database', statements: 'Financial Statements', coupons: 'Coupon Manager', bundles: 'Bundles', ai: 'AI Helper', social: 'Instagram', logs: 'Audit Logs', settings: 'Business Settings' };
 function switchAdminTab(tab) {
   homeFlush();
   currentAdminTab = tab;
@@ -2168,7 +2271,7 @@ function renderAdminContent(tab) {
     return;
   }
 
-  if (tab === 'customers') {
+  if (tab === 'customers') { if (BUILD === 'admin') admApi('POST', '/admin/api/privacy/log', { event: 'customers-viewed' }).catch(() => {});
     content.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
         <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;margin:0;">Customer Database</h3>
@@ -2223,6 +2326,7 @@ function renderAdminContent(tab) {
   if (tab === 'ai') { renderAiHelper(content); return; }
   if (tab === 'social') { if (BUILD === 'admin') renderSocialAdmin(content); else content.innerHTML = '<div class="admin-card"><h3>📸 Instagram</h3><p class="note">Instagram posting and scheduling work in the <b>owner app</b> (admin.html on your server), where the server can post for you. See HOW-IT-WORKS/17.</p></div>'; return; }
   if (tab === 'growth') { renderGrowth(content); return; }
+  if (tab === 'privacy') { renderPrivacyAdmin(content); return; }
 
   if (tab === 'coupons') {
     content.innerHTML = `
@@ -5438,7 +5542,7 @@ function renderDashboardPro(content) {
       ${kpi('cust', 'Customers', cur.customers, `<span class="dl flat">${cur.newCust} new · ${repeat} returning</span>`, spk('orders'), 'var(--gold)', 'customers', 'People who ordered in this period; new = joined in this period; returning = ordered before this period too')}
       ${kpi('disc', 'Discounts given', formatCurrency(cur.discount), `<span class="dl flat">${cur.gifts} gift order${cur.gifts === 1 ? '' : 's'}</span>`, spk('orders'), '#B04A4A', 'coupons', 'Coupons and bundle offers deducted from orders in this period')}
     </div>
-    ${igReminderHTML()}<section class="admin-card" id="dash-weekly" style="margin-bottom:16px;"></section>
+    ${twoFaBannerHTML()}${igReminderHTML()}<section class="admin-card" id="dash-weekly" style="margin-bottom:16px;"></section>
     <div class="dash-grid">
       <section class="admin-card dash-chart"><div class="dash-chart-h"><h3>${metricName} over time</h3><div class="seg" role="tablist" aria-label="Metric">${[['revenue', 'Revenue'], ['orders', 'Orders'], ['units', 'Pieces']].map(([k, l]) => `<button type="button" class="${DASH.metric === k ? 'on' : ''}" onclick="dashSet('metric','${k}')">${l}</button>`).join('')}</div></div>
         ${ser.vals.some(v => v) ? `<svg class="dchart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${metricName} chart"><line x1="${padL}" x2="${W - padL}" y1="${padT + ch}" y2="${padT + ch}" class="axis"/>${bars}${xl}</svg><p class="hint">Tap or hover a bar for details${DASH.sel !== null ? '' : ''}.</p>` : `<div class="dash-empty">No orders in this period yet. Try a longer period.</div>`}
@@ -6028,7 +6132,7 @@ function admSecurityHTML() {
     <p class="note">Switches on the ✨ AI helpers. Get a key at console.anthropic.com → API keys. It is stored <b>encrypted on your server</b>, is never shown again (only the last 4 characters), and is only used to talk to Anthropic. Pasting a new key replaces the old one.</p>
     <div class="ai-row"><label style="flex:1;">Anthropic API key<input id="sec-aikey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-…"></label></div>
     <div class="pf-actions"><button class="btn-sm btn-primary-sm" id="sec-ai-save" onclick="admSaveAiKey()">Save &amp; check key</button><button class="btn-sm btn-danger-sm" id="sec-ai-rm" onclick="admRemoveAiKey()" style="display:none;">Remove key</button></div><div id="sec-ai-msg" class="note"></div>
-    <h4 class="dash-h4">Backup</h4><div class="pf-actions"><button class="btn-sm btn-info-sm" onclick="admDownloadBackup()">⬇ Download a backup of the whole shop</button><label class="btn-sm btn-info-sm" style="cursor:pointer;">⬆ Import a data file<input type="file" accept="application/json,.json" hidden onchange="admImport(this)"></label></div><div id="sec-bk" class="note"></div>
+    <h4 class="dash-h4">Backup</h4><div class="pf-actions"><button class="btn-sm btn-info-sm" onclick="admDownloadBackup()">⬇ Download an encrypted backup of the whole shop</button><label class="btn-sm btn-info-sm" style="cursor:pointer;">⬆ Import a data file<input type="file" accept="application/json,.json" hidden onchange="admImport(this)"></label></div><div id="sec-bk" class="note"></div>
     <h4 class="dash-h4">Recent sign-in activity</h4><div id="sec-audit" class="note">Loading…</div>
     <div class="pf-actions" style="margin-top:14px;"><button class="btn-sm btn-danger-sm" onclick="admSignOut()">Sign out</button></div></div>`;
 }
@@ -6055,10 +6159,19 @@ async function admChangePw() { const m = document.getElementById('sec-pw-msg'); 
 async function admTwoFactorStart() { const m = document.getElementById('sec-2fa'); try { const r = await admApi('POST', '/admin/api/2fa/start', { password: document.getElementById('sec-2pw').value }); m.innerHTML = `<p>In your authenticator app choose <b>Enter a setup key</b> and type this key:</p><p class="adm-key">${esc(r.secret.match(/.{1,4}/g).join(' '))}</p><p><a href="${esc(r.uri)}">Open in my authenticator app</a> (on a phone)</p><div class="ai-row"><label>Then type the 6-digit code it shows<input id="sec-2code" inputmode="numeric" maxlength="6"></label></div><button class="btn-sm btn-primary-sm" onclick="admTwoFactorConfirm()">Turn on</button><div id="sec-2err" class="adm-err" role="alert"></div>`; } catch (e) { m.textContent = e.message; } }
 async function admTwoFactorConfirm() { const m = document.getElementById('sec-2fa'); try { await admApi('POST', '/admin/api/2fa/confirm', { code: document.getElementById('sec-2code').value }); ADM.state.twoFactor = true; showToast('2-step sign-in is ON', 'success'); renderAdminContent('settings'); } catch (e) { document.getElementById('sec-2err').textContent = e.message; } }
 async function admTwoFactorOff() { try { await admApi('POST', '/admin/api/2fa/off', { password: document.getElementById('sec-2off').value }); ADM.state.twoFactor = false; showToast('2-step sign-in is OFF', ''); renderAdminContent('settings'); } catch (e) { document.getElementById('sec-2fa').textContent = e.message; } }
-async function admDownloadBackup() { try { const g = await admApi('GET', '/admin/api/db'), a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(g.db, null, 2)], { type: 'application/json' })); a.download = 'anitha-store-backup-' + ymd(new Date()) + '.json'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 3000); } catch (e) { document.getElementById('sec-bk').textContent = e.message; } }
+async function admDownloadBackup() {
+  const m = () => document.getElementById('sec-bk');
+  try {
+    const g = await admApi('GET', '/admin/api/db'); let pass = prompt('A backup holds every customer\'s name, phone and address, so it is locked with a password.\n\nChoose a backup password (at least 8 characters). You need it to restore the backup, and it cannot be recovered if you forget it.'); if (pass === null) return;
+    let out, name;
+    if (pass.length >= 8) { out = await encJson(g.db, pass); name = 'anitha-store-backup-encrypted-' + ymd(new Date()) + '.json'; db.settings.lastEncBackup = new Date().toISOString(); saveDB(); }
+    else { if (!confirm('That password is too short, so the backup would NOT be locked and anyone who gets the file could read your customers\' details.\n\nDownload an unlocked backup anyway?')) return; out = g.db; name = 'anitha-store-backup-UNLOCKED-' + ymd(new Date()) + '.json'; }
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(out)], { type: 'application/json' })); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 3000); admApi('POST', '/admin/api/privacy/log', { event: 'backup-downloaded' }).catch(() => {});
+  } catch (e) { if (m()) m().textContent = e.message; }
+}
 function admImport(inp) {
   const f = inp.files && inp.files[0]; if (!f) return; const r = new FileReader();
-  r.onload = async () => { try { const d = JSON.parse(r.result); if (!confirm('This replaces everything in the shop with the contents of this file. Continue?')) return; const x = await admApi('POST', '/admin/api/import', { db: d }); ADM.version = x.version; const g = await admApi('GET', '/admin/api/db'); for (const k of Object.keys(db)) delete db[k]; Object.assign(db, normalizeDB(g.db)); ADM.version = g.version; renderAdminContent('settings'); showToast('✅ Data imported', 'success'); } catch (e) { document.getElementById('sec-bk').textContent = 'Import failed: ' + e.message; } };
+  r.onload = async () => { try { let d = JSON.parse(r.result); if (d && d.enc === 'aes-gcm-pbkdf2') { const pw = prompt('This backup is locked. Enter its password:'); if (pw === null) return; d = await decJson(d, pw); } if (!confirm('This replaces everything in the shop with the contents of this file. Continue?')) return; const x = await admApi('POST', '/admin/api/import', { db: d }); ADM.version = x.version; const g = await admApi('GET', '/admin/api/db'); for (const k of Object.keys(db)) delete db[k]; Object.assign(db, normalizeDB(g.db)); ADM.version = g.version; renderAdminContent('settings'); showToast('✅ Data imported', 'success'); } catch (e) { document.getElementById('sec-bk').textContent = 'Import failed: ' + e.message; } };
   r.readAsText(f);
 }
 async function admSignOut() { try { await admApi('POST', '/admin/api/logout', {}); } catch (e) { /* already out */ } ADM.signedIn = false; location.reload(); }
@@ -6270,6 +6383,77 @@ async function growEmailAct(what) {
   catch (e) { m.textContent = e.message; }
 }
 async function growPreview() { const b = el_('em-prev'); busy('em-prev', 'preparing the report…'); try { const p = await admApi('GET', '/admin/api/report/preview?kind=' + encodeURIComponent((el_('em-kind') || {}).value || 'weekly')); b.innerHTML = `<p class="note"><b>Subject:</b> ${esc(p.subject)}</p><iframe class="g-prev" sandbox srcdoc="${esc(p.html)}" title="Preview"></iframe>`; } catch (e) { outBox('em-prev', `<div class="ai-err">${esc(e.message)}</div>`); } }
+// ================= Privacy & DPDP (owner app) =================
+// What the law asks of the shop, in one place: requests from customers, finding / exporting / erasing a customer, the clean-up of
+// old data, the breach register, who handles the data, and a checklist of what is still missing.
+const PRIV = { data: null, lastErase: null };
+const PROCESSORS = [['wa', 'WhatsApp Business (Meta)', 'phone numbers and messages', 'Meta'], ['ig', 'Instagram (Meta)', 'only what you post publicly', 'Meta'], ['pay', 'Razorpay (payments)', 'name, phone, amount', 'Razorpay'], ['ai', 'Anthropic (AI helpers)', 'text of messages and reviews you ask it about; no phone numbers; outside India', 'Anthropic'], ['host', 'Hosting company (Render, or your new host)', 'all shop data', 'your host'], ['courier', 'Couriers and India Post', 'name, address and phone for delivery', 'the courier'], ['mail', 'Your email provider', 'the reports sent to you', 'your provider']];
+const last10 = p => String(p || '').replace(/\D/g, '').slice(-10);
+const todayY = () => ymd(new Date());
+const plusYears = (ymdS, n) => { const d = new Date(ymdS + 'T12:00:00'); d.setFullYear(d.getFullYear() + n); return ymd(d); };
+const b64 = u8 => { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
+const unb64 = t => Uint8Array.from(atob(t), c => c.charCodeAt(0));
+async function encKey(pass, salt, iter, usage) { const km = await crypto.subtle.importKey('raw', new TextEncoder().encode(pass), 'PBKDF2', false, ['deriveKey']); return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: iter, hash: 'SHA-256' }, km, { name: 'AES-GCM', length: 256 }, false, [usage]); }
+async function encJson(obj, pass) { const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12)), key = await encKey(pass, salt, 250000, 'encrypt'), ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(JSON.stringify(obj))); return { enc: 'aes-gcm-pbkdf2', iter: 250000, salt: b64(salt), iv: b64(iv), data: b64(new Uint8Array(ct)) }; }
+async function decJson(box, pass) { try { const key = await encKey(pass, unb64(box.salt), +box.iter || 250000, 'decrypt'); return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(box.iv) }, key, unb64(box.data)))); } catch (e) { throw new Error('That password does not open this backup.'); } }
+function twoFaBannerHTML() { return BUILD === 'admin' && ADM.state && !ADM.state.twoFactor ? '<div class="grow-remind" style="background:#fde8e6;border-color:#f3b8b0;"><div><b>🔐 Turn on 2-step sign-in</b><div class="note" style="margin:2px 0 0;">Your customers\' phone numbers and addresses are kept here. A password alone is not enough protection. It takes 2 minutes: Settings → Security &amp; backup.</div></div><div class="pf-actions"><button type="button" class="btn-sm btn-primary-sm" onclick="switchAdminTab(\'settings\')">Open Settings</button></div></div>' : ''; }
+function privNoticeBack() { return ''; }
+async function renderPrivacyAdmin(c) {
+  if (!c) return; if (BUILD !== 'admin') { c.innerHTML = '<div class="admin-card"><h3>🛡️ Privacy &amp; DPDP</h3><p class="note">Privacy requests, erasing customers, the breach register and the checklist work in the owner app on your server.</p></div>'; return; }
+  c.innerHTML = `${twoFaBannerHTML()}<div class="ai-busy">Loading…</div>`;
+  try { PRIV.data = await admApi('GET', '/admin/api/privacy'); } catch (e) { c.innerHTML = `<div class="ai-err">${esc(e.message)}</div>`; return; }
+  const d = PRIV.data, s = db.settings, today = todayY(), open = d.tickets.filter(t => t.status === 'new' || t.status === 'working'), late = open.filter(t => t.due < new Date().toISOString()), proc = s.processors || {};
+  const hold = db.orders.filter(o => o.legalHold && o.retainUntil && o.retainUntil <= today).length, lastEnc = s.lastEncBackup ? Math.floor((Date.now() - Date.parse(s.lastEncBackup)) / 86400000) : null, plan = s.breachPlanReviewed ? Math.floor((Date.now() - Date.parse(s.breachPlanReviewed)) / 86400000) : null;
+  const chk = [[!!(s.grievanceOfficer || '').trim(), 'A grievance officer is named (name, e-mail, phone shown on the site)', 'Settings → Grievance officer'], [d.twoFactor, '2-step sign-in is on', 'Settings → Security & backup'], [d.email, 'Email is set up, so you are told at once about a new request', 'Growth → Weekly report by email'], [PROCESSORS.every(p => proc[p[0]]), 'You have accepted the data terms of every company that handles the data (tick them below)', 'Below: Who handles the data'], [!!(d.retention.lastSweep), 'The daily clean-up has run' + (d.retention.lastSweep ? ' (last: ' + d.retention.lastSweep + ')' : ''), 'It runs by itself every day; press "Run clean-up now"'], [lastEnc != null && lastEnc <= 30, 'An encrypted backup was downloaded in the last 30 days', 'Settings → Security & backup → Download an encrypted backup'], [plan != null && plan <= 365, 'The breach plan was read in the last 12 months', 'Below: tick "I have read the breach steps"'], [late.length === 0, 'No request is past its reply date', 'Answer the late requests below'], [hold === 0, 'No old invoice details are waiting to be anonymised', 'Below: Old records']];
+  const done = chk.filter(x => x[0]).length;
+  c.innerHTML = `${twoFaBannerHTML()}<div class="admin-card"><h3 style="margin:0 0 4px;">🛡️ Privacy &amp; DPDP checklist <span class="pf-sub">${done} of ${chk.length} done</span></h3><p class="note">India's Digital Personal Data Protection Act asks every shop that keeps customers' details to do these things. This page does the work; it is not legal advice, so also ask your lawyer or CA. The main duties start around May 2027.</p>${chk.map(([ok, t, fix]) => `<div class="va-row"><span class="va-i ${ok ? 'ok' : 'warn'}">${ok ? '✓' : '!'}</span><div>${esc(t)}${ok ? '' : `<div class="note" style="margin:0">${esc(fix)}</div>`}</div></div>`).join('')}</div>
+    <div class="admin-card"><h4 class="va-h" style="margin-top:0;">Requests from customers <span class="pf-sub">${open.length} open${late.length ? `, <b style="color:#b03227">${late.length} late</b>` : ''}</span></h4>${d.tickets.length ? d.tickets.slice(0, 30).map(t => `<div class="g-act ${t.due < new Date().toISOString() && (t.status === 'new' || t.status === 'working') ? 'priv-late' : ''}"><div class="g-act-h"><span class="g-p ${t.status === 'new' ? 'g-p1' : t.status === 'working' ? 'g-p2' : 'g-p3'}">${esc(t.status)}</span><b>${esc(t.id)} · ${esc(RIGHTS_LABEL[t.type] || t.type)}</b></div><div class="note">${esc(t.name)} · ${esc(t.contact)} · received ${esc(t.createdAt.slice(0, 10))} · <b>reply by ${esc(t.due.slice(0, 10))}</b></div>${t.message ? `<div class="note" style="white-space:pre-wrap">${esc(t.message)}</div>` : ''}${t.notes.map(n => `<div class="note">📝 ${esc(n.at.slice(0, 10))}: ${esc(n.text)}</div>`).join('')}<div class="pf-actions">${t.status === 'new' ? `<button type="button" class="btn-sm btn-info-sm" onclick="privTicket('${esc(t.id)}','working')">Started</button>` : ''}${t.status === 'new' || t.status === 'working' ? `<button type="button" class="btn-sm btn-primary-sm" onclick="privTicket('${esc(t.id)}','done')">Done (add a note)</button><button type="button" class="btn-sm btn-info-sm" onclick="privTicket('${esc(t.id)}','refused')">Cannot do (say why)</button>` : ''}<button type="button" class="btn-sm btn-info-sm" onclick="el_('pv-q').value='${esc(last10(t.contact))}';privFind()">Find this customer</button></div></div>`).join('') : '<p class="note">No requests yet. Customers send them from My Account → Your privacy rights, or the "Your privacy rights" link in the footer.</p>'}</div>
+    <div class="admin-card"><h4 class="va-h" style="margin-top:0;">Find a customer: see, export or erase their data</h4><div class="ai-row"><label style="flex:1;">Phone number or name<input id="pv-q" placeholder="e.g. 9876543210" onkeydown="if(event.key==='Enter')privFind()"></label></div><button type="button" class="btn-sm btn-primary-sm" onclick="privFind()">Find</button><div id="pv-found"></div><p class="note">Erasing removes the profile, reviews, alerts and chat. Invoices keep only what tax law needs (name and address) until the end of the period, and are then anonymised. Someone who said STOP stays on the do-not-message list.</p></div>
+    <div class="admin-card"><h4 class="va-h" style="margin-top:0;">Old records and the daily clean-up</h4><p class="note">Every day the server erases WhatsApp chats older than <b>${d.retention.chatDays} days</b>, carts older than <b>${d.retention.cartDays} days</b> and order contact details older than <b>${d.retention.orderYears} years</b>.${d.retention.last ? ` Last clean-up: ${esc(d.retention.lastSweep)} (chats ${d.retention.last.chats}, carts ${d.retention.last.carts}, orders ${d.retention.last.orders}).` : ''}</p><div class="pf-actions"><button type="button" class="btn-sm btn-info-sm" onclick="privSweep()">Run the clean-up now</button><button type="button" class="btn-sm btn-info-sm" onclick="privAnonymise()">Anonymise invoices past their legal period (${hold})</button></div><div id="pv-sweep" class="note"></div></div>
+    <div class="admin-card"><h4 class="va-h" style="margin-top:0;">If something goes wrong: breach register</h4><p class="note">A breach is when personal data is lost, stolen or seen by someone who should not (a lost phone, a wrong email, a hacked account). The law asks you to tell the people affected without delay and to report to the Data Protection Board of India <b>within 72 hours</b>. Record it here: the notices are written for you.</p><label class="chk"><input type="checkbox" ${plan != null && plan <= 365 ? 'checked' : ''} onchange="privPlan(this.checked)"><span>I have read these breach steps (${plan != null ? 'read ' + plan + ' days ago' : 'not yet'})</span></label>
+      <div class="ai-row"><label style="flex:1;">What happened?<input id="br-what" placeholder="e.g. A backup file was emailed to the wrong person"></label><label>People affected<input id="br-n" type="number" min="0" style="width:90px"></label></div><div class="ai-row"><label style="flex:1;">What data was involved (comma separated)<input id="br-types" placeholder="names, phone numbers, addresses"></label><label style="flex:1;">Likely cause<input id="br-cause"></label></div><button type="button" class="btn-sm btn-primary-sm" onclick="privBreachAdd()">Record a breach</button><div id="br-msg" class="note"></div>
+      ${d.breaches.map(b => `<div class="g-act"><div class="g-act-h"><span class="g-p ${b.status === 'open' ? 'g-p1' : 'g-p3'}">${esc(b.status)}</span><b>${esc(b.id)}</b> ${esc(b.what)}</div><div class="note">Found ${esc(b.detectedAt.slice(0, 16).replace('T', ' '))} UTC · report to the Board by <b>${esc(b.boardDue.slice(0, 16).replace('T', ' '))} UTC</b> · people told: ${b.principalsNotifiedAt ? '✓ ' + esc(b.principalsNotifiedAt.slice(0, 10)) : '✗ not yet'} · Board told: ${b.boardReportedAt ? '✓ ' + esc(b.boardReportedAt.slice(0, 10)) : '✗ not yet'}</div>${b.steps.map(x => `<div class="note">• ${esc(x.text)}</div>`).join('')}<details class="soc-passed"><summary>Notices to copy</summary><textarea rows="6" readonly style="width:100%">${esc(b.notices.customer)}</textarea><textarea rows="9" readonly style="width:100%;margin-top:6px">${esc(b.notices.board)}</textarea></details><div class="pf-actions"><button type="button" class="btn-sm btn-info-sm" onclick="privBreach('${esc(b.id)}','principalsNotified')">Customers told</button><button type="button" class="btn-sm btn-info-sm" onclick="privBreach('${esc(b.id)}','boardReported')">Reported to the Board</button><button type="button" class="btn-sm btn-info-sm" onclick="privBreach('${esc(b.id)}','step')">Add a step taken</button>${b.status === 'open' ? `<button type="button" class="btn-sm btn-primary-sm" onclick="privBreach('${esc(b.id)}','close')">Close</button>` : `<button type="button" class="btn-sm btn-info-sm" onclick="privBreach('${esc(b.id)}','reopen')">Reopen</button>`}</div></div>`).join('')}</div>
+    <div class="admin-card"><h4 class="va-h" style="margin-top:0;">Who handles the data</h4><p class="note">Companies that handle your customers' data for you. Tick each one once you have accepted its data terms (in its account settings). They are named in the privacy notice customers see.</p>${PROCESSORS.map(p => `<label class="chk"><input type="checkbox" ${proc[p[0]] ? 'checked' : ''} onchange="privProc('${p[0]}',this.checked)"><span><b>${esc(p[1])}</b>: ${esc(p[2])}${proc[p[0]] ? ` <span class="note">(accepted ${esc(proc[p[0]].date)})</span>` : ''}</span></label>`).join('')}</div>
+    <div class="admin-card"><h4 class="va-h" style="margin-top:0;">What customers see</h4><p class="note">The privacy notice (English, తెలుగు, हिन्दी) is shown at sign-in, at checkout and from the footer, and version ${NOTICE_VERSION} is recorded for each customer. <a onclick="openNotice()" style="cursor:pointer;text-decoration:underline">Preview it</a> · <a onclick="openRights()" style="cursor:pointer;text-decoration:underline">Preview the rights form</a>. The Telugu and Hindi were written with care but have them checked by a native speaker.</p></div>`;
+}
+async function privTicket(id, status) { let note = ''; if (status === 'done' || status === 'refused') { note = prompt(status === 'done' ? 'What did you do? (kept on record; you can leave it empty)' : 'Why can you not do it? (this is kept on record)') || ''; if (status === 'refused' && !note.trim()) { showToast('Please say why', 'error'); return; } } try { await admApi('POST', '/admin/api/privacy/ticket', { id, status, note }); renderPrivacyAdmin(el_('adminContent')); } catch (e) { showToast(aiMsg(e), 'error'); } }
+function privFind() {
+  const q = el_('pv-q').value.trim(), box = el_('pv-found'); if (!q) { box.innerHTML = ''; return; } const d = last10(q), qq = q.toLowerCase();
+  const list = db.users.filter(u => (d.length >= 6 && last10(u.phone) === d) || (!/\d{6}/.test(q) && String(u.name || '').toLowerCase().includes(qq))).slice(0, 10);
+  box.innerHTML = list.length ? list.map(u => `<div class="va-row"><div style="flex:1"><b>${esc(u.name || 'No name')}</b> · ${esc(u.phone)} · ${db.orders.filter(o => o.userId === u.id).length} order(s)${u.deletionRequestedAt ? ' · <b style="color:#b03227">asked to be erased</b>' : ''}</div><button type="button" class="btn-sm btn-info-sm" onclick="privExport('${esc(u.id)}')">⬇ Their data</button><button type="button" class="btn-sm btn-danger-sm" onclick="privErase('${esc(u.id)}')">Erase</button></div>`).join('') : `<p class="note">No saved customer matches. ${d.length >= 6 ? `<button type="button" class="btn-sm btn-info-sm" onclick="privChatOnly('${esc(d)}')">Check chats, carts and orders held by the server for this number</button>` : ''}</p>`;
+}
+async function privCollect(u) {
+  const mine = x => x.userId === u.id; let server = null; try { server = (await admApi('POST', '/admin/api/privacy/access', { phone: u.phone })).data; } catch (e) { /* the server part is optional */ }
+  return { exportedAt: new Date().toISOString(), profile: u, orders: db.orders.filter(mine), invoices: db.invoices.filter(i => db.orders.some(o => o.id === i.orderId && mine(o))), reviews: db.reviews.filter(mine), stockAlerts: db.stockAlerts.filter(mine), similarAlerts: db.similarAlerts.filter(mine), consentHistory: db.consentLog.filter(mine), heldByTheServer: server, sharedWith: PROCESSORS.map(p => p[1]) };
+}
+async function privExport(id) { const u = db.users.find(x => x.id === id); if (!u) return; const data = await privCollect(u), a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })); a.download = 'customer-data-' + (last10(u.phone) || 'export') + '.json'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); admApi('POST', '/admin/api/privacy/log', { event: 'customer-exported' }).catch(() => {}); showToast('Downloaded. Send it to the customer through a private channel.', 'success'); }
+async function privChatOnly(d) { try { const r = await admApi('POST', '/admin/api/privacy/access', { phone: d }), a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(r.data, null, 2)], { type: 'application/json' })); a.download = 'server-data-' + d + '.json'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); } catch (e) { showToast(aiMsg(e), 'error'); } }
+const ANON = '(erased)';
+function anonOrder(o) { o.customer = ANON; o.phone = ''; o.email = ''; o.userId = ''; o.shippingAddress = {}; o.billTo = {}; o.instructions = ''; if (o.gift) o.gift.note = ''; o.legalHold = false; delete o.retainUntil; o.anonymisedAt = new Date().toISOString(); }
+function eraseCustomerData(u) {
+  const id = u.id, ph = u.phone, today = todayY(), kept = [], gone = [];
+  for (const o of db.orders.filter(x => x.userId === id)) {
+    if (o.invoiceGenerated && plusYears(o.date, 6) > today) { o.phone = ''; o.email = ''; o.userId = ''; o.legalHold = true; o.retainUntil = plusYears(o.date, 6); kept.push(o.id); } else { anonOrder(o); gone.push(o.id); }
+  }
+  for (const i of db.invoices) { const o = db.orders.find(x => x.id === i.orderId); if (o && (o.legalHold || o.anonymisedAt)) { i.phone = ''; i.email = ''; if (o.anonymisedAt) i.customer = ANON; } }
+  const nr = db.reviews.length; db.reviews = db.reviews.filter(r => r.userId !== id); db.stockAlerts = db.stockAlerts.filter(a => a.userId !== id); const sa = new Set(db.similarAlerts.filter(a => a.userId === id).map(a => a.id)), sb = new Set(db.stockAlerts.map(a => a.id)); db.similarAlerts = db.similarAlerts.filter(a => a.userId !== id); db.outbox = db.outbox.filter(m => !sa.has(m.alertId) && (m.alertId ? sb.has(m.alertId) || !sa.has(m.alertId) : true));
+  db.consentLog.forEach(x => { if (x.userId === id) x.phone = ''; });   // the proof of what was agreed stays, without the number
+  db.users = db.users.filter(x => x.id !== id); if (typeof recalcRatings === 'function') recalcRatings();
+  addLog('privacy_erase', 'A customer was erased', '-', 0, 0, 0, `Orders kept for law: ${kept.length}, anonymised: ${gone.length}`);
+  return { phone: ph, keptForLaw: kept, anonymised: gone, reviewsRemoved: nr - db.reviews.length };
+}
+async function privErase(id) {
+  const u = db.users.find(x => x.id === id); if (!u) return; if (!confirm(`Erase ${u.name || u.phone} for good?\n\nTheir profile, reviews, alerts and WhatsApp chat are removed. Invoices keep only name and address until the legal period ends. This cannot be undone.`)) return;
+  const r = eraseCustomerData(u), saved = saveDB(); let srv = null; try { srv = (await admApi('POST', '/admin/api/privacy/erase', { phone: r.phone })).erased; } catch (e) { /* nothing held on the server */ } admApi('POST', '/admin/api/privacy/log', { event: 'customer-erased' }).catch(() => {});
+  PRIV.lastErase = { ...r, server: srv, saved }; privFind(); el_('pv-found').insertAdjacentHTML('afterbegin', `<div class="va-do ok"><h4>Erased</h4><p class="note" style="margin:0">${r.anonymised.length} order(s) anonymised, ${r.keptForLaw.length} invoice(s) kept (name and address only) until the legal period ends, ${r.reviewsRemoved} review(s) removed${srv ? `, chat/cart removed on the server (${srv.chats} chat, ${srv.carts} cart, ${srv.orders} order(s) blanked)` : ''}. Now tell the customer it is done, and mark their request Done.</p></div>`);
+}
+function anonymiseExpired(today = todayY()) { const list = db.orders.filter(o => o.legalHold && o.retainUntil && o.retainUntil <= today); list.forEach(o => { anonOrder(o); const i = db.invoices.find(x => x.orderId === o.id); if (i) { i.customer = ANON; i.phone = ''; i.email = ''; } }); return list.length; }
+function privAnonymise() { const today = todayY(), n = db.orders.filter(o => o.legalHold && o.retainUntil && o.retainUntil <= today).length; if (!n) { el_('pv-sweep').textContent = 'Nothing is past its legal period yet.'; return; } if (!confirm(`Anonymise ${n} order(s) and invoice(s) whose legal keeping period has ended?`)) return; anonymiseExpired(today); saveDB(); renderPrivacyAdmin(el_('adminContent')); }
+async function privSweep() { const m = el_('pv-sweep'); m.textContent = 'Working…'; try { const r = (await admApi('POST', '/admin/api/privacy/sweep', {})).erased; m.textContent = `Done: ${r.chats} chat(s), ${r.carts} cart(s) and ${r.orders} order(s) cleaned.`; } catch (e) { m.textContent = e.message; } }
+async function privBreachAdd() { const m = el_('br-msg'); try { await admApi('POST', '/admin/api/privacy/breach', { what: el_('br-what').value, affected: el_('br-n').value === '' ? null : +el_('br-n').value, dataTypes: el_('br-types').value.split(',').map(x => x.trim()).filter(Boolean), cause: el_('br-cause').value }); renderPrivacyAdmin(el_('adminContent')); } catch (e) { m.textContent = e.message; } }
+async function privBreach(id, what) { const o = { id }; if (what === 'step') { const t = prompt('What did you do?'); if (!t) return; o.step = t; } else o[what] = true; try { await admApi('POST', '/admin/api/privacy/breach', o); renderPrivacyAdmin(el_('adminContent')); } catch (e) { showToast(aiMsg(e), 'error'); } }
+function privPlan(on) { db.settings.breachPlanReviewed = on ? new Date().toISOString() : ''; saveDB(); renderPrivacyAdmin(el_('adminContent')); }
+function privProc(k, on) { db.settings.processors = { ...(db.settings.processors || {}), [k]: on ? { date: todayY() } : null }; saveDB(); renderPrivacyAdmin(el_('adminContent')); }
 // ---- Video analyzer ----
 // The owner edits the video in a phone app, uploads it here, and gets a score, what was found and exactly what to change.
 // Nothing is edited here. The score is about the things you control; nobody can predict views.

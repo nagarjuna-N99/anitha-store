@@ -77,7 +77,7 @@ const { chromium } = require(process.env.PW);
   ok('malformed links (#/wishlist/%E0%A4%A, #/product/%E0%A4%A) cause no error', errs.length === before);
   await ev(() => { location.hash = ''; navigateTo('home'); db.users[0].consents = { orderUpdates: false, marketing: false, updatedAt: null }; setSession(db.users[0], null); db.products.find(x => x.id === 'p4').stock = 1; renderHome(); });
   const had = await ev(() => [...document.querySelectorAll('#soldSection .sold-card')].map(c => c.dataset.pid));
-  await ev(() => { cart = [{ id: 'p4', qty: 1 }]; openCheckout(); const s = (i, v) => document.getElementById(i).value = v; s('chk-name', 'T B'); s('chk-email', 't@e.com'); s('chk-pin', '500072'); s('chk-address', '12 MG Road'); s('chk-city', 'Hyderabad'); s('chk-state', 'Telangana'); document.getElementById('chk-terms').checked = true; processPayment(); });
+  await ev(() => { cart = [{ id: 'p4', qty: 1 }]; openCheckout(); const s = (i, v) => document.getElementById(i).value = v; s('chk-name', 'T B'); s('chk-email', 't@e.com'); s('chk-pin', '500072'); s('chk-address', '12 MG Road'); s('chk-city', 'Hyderabad'); s('chk-state', 'Telangana'); document.getElementById('chk-age').checked = true; document.getElementById('chk-terms').checked = true; processPayment(); });
   await p.waitForTimeout(200);
   ok('selling the last piece puts it in Recently sold at once (no reload)', !had.includes('p4') && await ev(() => !!document.querySelector('#soldSection .sold-card[data-pid="p4"]')));
   ok('occasion tile counts follow stock and price edits at once', await ev(() => { const n0 = document.querySelector('#occasionSection').innerText; db.products.find(x => x.id === 'p8').price = 5000; renderProducts(); return !!document.querySelector('[data-occ="gift"]'); }));

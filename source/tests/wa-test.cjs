@@ -27,7 +27,7 @@ const { chromium } = require(process.env.PW);
   ok('invalid number hides the button (never a broken link)', await ev(() => !document.querySelector('#productModalBody a.wa-chat')));
   await ev(() => { db.settings.waNumber = ''; db.settings.waGreeting = ''; closeModal('productModal'); waFooterLink(); });
   ok('footer link points to the chat', await ev(() => /wa\.me\/919849646440/.test(document.getElementById('footWa').href)));
-  ok('legal version 1.5 mentions WhatsApp chats / AI', await ev(() => /^1\.5/.test(LEGAL_VERSION) && /automated AI assistant/.test(legalPrivacy ? (typeof legalPrivacy === 'function' ? legalPrivacy() : legalPrivacy) : '')));
+  ok('legal version 2.0 mentions WhatsApp chats / AI', await ev(() => /^2\.0/.test(LEGAL_VERSION) && /automated AI assistant/.test(legalPrivacy ? (typeof legalPrivacy === 'function' ? legalPrivacy() : legalPrivacy) : '')));
 
   // ---- admin tab ----
   await ev(() => { toggleView(); switchAdminTab('whatsapp'); });

@@ -27,7 +27,7 @@ const { chromium } = require(process.env.PW);
   // consent via the cart checkbox
   await ev(() => { openCart(); });
   await p.check('#cart-rem'); await wait(3000);
-  ok('ticking sends the cart with consent proof (version, time)', syncCalls.length >= 1 && syncCalls.at(-1).consent.granted === true && /^1\.5/.test(syncCalls.at(-1).consent.version) && syncCalls.at(-1).items.length === 2);
+  ok('ticking sends the cart with consent proof (version, time)', syncCalls.length >= 1 && syncCalls.at(-1).consent.granted === true && /^2\.0/.test(syncCalls.at(-1).consent.version) && syncCalls.at(-1).items.length === 2);
   ok('consent logged in the shop data (append-only row, source=cart)', await ev(() => db.consentLog.some(c => c.type === 'cartReminder' && c.granted && c.source === 'cart')));
   const ph = (await ev(() => db.users[0].phone)).replace(/\D/g, '');
   ok('server holds the cart (names validated against catalogue)', app.store.s.carts[ph]?.items.length === 2 && app.store.s.carts[ph].consent.granted);
@@ -37,7 +37,7 @@ const { chromium } = require(process.env.PW);
 
   // order → recovered
   app.store.s.carts[ph].reminders.push({ n: 1, at: Date.now() - 3600000, status: 'sent', template: 't' });
-  await ev(() => { openCheckout(); document.getElementById('chk-name').value = 'Priya R'; document.getElementById('chk-pin').value = '500034'; document.getElementById('chk-address').value = '12 Banjara Hills'; document.getElementById('chk-city').value = 'Hyderabad'; document.getElementById('chk-terms').checked = true; });
+  await ev(() => { openCheckout(); document.getElementById('chk-name').value = 'Priya R'; document.getElementById('chk-pin').value = '500034'; document.getElementById('chk-address').value = '12 Banjara Hills'; document.getElementById('chk-city').value = 'Hyderabad'; document.getElementById('chk-age').checked = true; document.getElementById('chk-terms').checked = true; });
   ok('checkout shows the cart-reminder box, pre-ticked from earlier consent', await ev(() => document.getElementById('chk-wa-cart').checked && document.getElementById('chk-wa-cart-row').style.display !== 'none'));
   syncCalls.length = 0; await ev(() => processPayment()); await wait(3300);
   ok('placing the order tells the server (cart emptied, marked ordered)', syncCalls.some(c => c.ordered === true && c.items.length === 0) && app.store.s.carts[ph].items.length === 0 && app.store.s.carts[ph].ordered?.recovered === true);

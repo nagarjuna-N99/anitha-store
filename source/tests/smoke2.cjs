@@ -20,7 +20,7 @@ const { chromium } = require(process.env.PW || 'playwright');
   await p.fill('#chk-address', '1 Main Road'); await p.fill('#chk-city', 'Hyderabad');
   await p.evaluate(() => processPayment());
   ok('terms required', await p.evaluate(() => db.orders.length === 5));
-  await p.check('#chk-terms');
+  await p.check('#chk-age'); await p.check('#chk-terms');
   await p.evaluate(() => processPayment());
   ok('order created + stock decremented', await p.evaluate(() => db.orders.length === 6 && db.products.find(x=>x.id==='p3').stock === 7));
   // admin

@@ -8,7 +8,7 @@ import path from 'node:path';
 import { publicView } from './shopdata.mjs';
 import { runAi, cleanPlan, localPlan, istIso } from './aihelper.mjs';
 
-export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
+export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
   const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY', 'Cross-Origin-Resource-Policy': 'same-origin', 'Cache-Control': 'no-store', ...(auth.secure ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' } : {}) };
   const CSP = "default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'";
   const ipOf = req => String(req.socket.remoteAddress || '').replace(/^::ffff:/, '');   // never trust X-Forwarded-For for security decisions
@@ -38,6 +38,18 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       const size = fs.statSync(f).size, rg = /^bytes=(\d*)-(\d*)$/.exec(String(req.headers.range || '')), H = { 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=86400', 'X-Content-Type-Options': 'nosniff', 'Cross-Origin-Resource-Policy': 'cross-origin' };
       if (rg && (rg[1] || rg[2])) { let a = rg[1] ? +rg[1] : size - +rg[2], z = rg[1] && rg[2] ? +rg[2] : size - 1; if (a > z || a >= size) { res.writeHead(416, { 'Content-Range': `bytes */${size}` }); res.end(); return true; } z = Math.min(z, size - 1); res.writeHead(206, { ...H, 'Content-Range': `bytes ${a}-${z}/${size}`, 'Content-Length': z - a + 1 }); fs.createReadStream(f, { start: a, end: z }).pipe(res); return true; }
       res.writeHead(200, { ...H, 'Content-Length': size }); fs.createReadStream(f).pipe(res); return true;
+    }
+    // ---------- a customer's privacy request (DPDP): reaches the owner as a numbered request with a deadline ----------
+    if (route === 'OPTIONS /public/rights' || route === 'POST /public/rights') {
+      const o = req.headers.origin, okO = !!o && cfg.allowedOrigins.includes(o), cors = okO ? { 'Access-Control-Allow-Origin': o, 'Vary': 'Origin' } : {};
+      if (req.method === 'OPTIONS') { res.writeHead(204, { ...cors, 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Headers': 'content-type', 'Access-Control-Max-Age': '86400' }); res.end(); return true; }
+      if (!okO) return json(res, 403, { error: 'Not allowed from this website.' }), true;
+      try {
+        let b = {}; try { b = JSON.parse((await readBody(req, 6_000)).toString('utf8') || '{}'); } catch { return json(res, 400, { error: 'Something went wrong. Please try again.' }, cors), true; }
+        const xff = String(req.headers['x-forwarded-for'] || '').split(',').map(x => x.trim()).filter(Boolean), ip = xff.length ? xff[xff.length - 1] : ipOf(req), t = privacy.addTicket(b, ip);
+        notifyOwner(`New privacy request ${t.id}: ${t.type}`, `A customer sent a privacy request.\n\nRequest: ${t.id} (${t.type})\nFrom: ${t.name}, ${t.contact}\nMessage: ${t.message || '(none)'}\n\nPlease reply by ${t.due.slice(0, 10)}. Open the owner app → Privacy tab.`);
+        return json(res, 200, { ok: true, id: t.id, due: t.due }, cors), true;
+      } catch (e) { return json(res, [422, 429, 503].includes(e.code) ? e.code : 500, { error: e.code ? e.message : 'Something went wrong. Please try again.' }, cors), true; }
     }
     // ---------- website counting (no cookies, nothing personal is stored) ----------
     if (route === 'OPTIONS /public/hit' || route === 'POST /public/hit') {
@@ -96,6 +108,13 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       if (route === 'POST /admin/api/report/prefs') { const b = await body(req, 500); savePrefs(b); wrote('report-prefs'); send(res, { code: 200, prefs: prefs() }); return true; }
       if (route === 'POST /admin/api/report/send') { const b = await body(req, 500), kind = ['weekly', 'monthly', 'daily'].includes(b.kind) ? b.kind : 'weekly', r = await growth.mail(kind, true); wrote('report-sent', kind); send(res, { code: 200, ok: true, ...r }); return true; }
       if (route === 'GET /admin/api/report/preview') { const k = url.searchParams.get('kind'); send(res, { code: 200, ...(await growth.preview(['weekly', 'monthly', 'daily'].includes(k) ? k : 'weekly')) }); return true; }
+      if (route === 'GET /admin/api/privacy') { send(res, { code: 200, tickets: privacy.tickets(), breaches: privacy.breaches().map(b => ({ ...b, notices: breachNotices(b, (shop.get().db || {}).settings || {}) })), retention: { ...cfg.privacy, ...privacy.state() }, twoFactor: auth.twoFactorOn, claude: !!cfg.anthropicKey && cfg.anthropicKey !== 'missing', email: smtpMeta().configured, ig: ig.configured }); return true; }
+      if (route === 'POST /admin/api/privacy/ticket') { const b = await body(req, 3_000); const t = privacy.updateTicket(b.id, b); wrote('privacy-ticket', `${t.id} ${t.status}`); send(res, { code: 200, ticket: t }); return true; }
+      if (route === 'POST /admin/api/privacy/breach') { const b = await body(req, 4_000), r = b.id ? privacy.updateBreach(b.id, b) : privacy.addBreach(b); wrote('privacy-breach', r.id); send(res, { code: 200, breach: { ...r, notices: breachNotices(r, (shop.get().db || {}).settings || {}) } }); return true; }
+      if (route === 'POST /admin/api/privacy/access') { const b = await body(req, 1_000), r = Privacy.accessFromStore(store, b.phone); if (!r) return send(res, { code: 422, error: 'Enter the phone number.' }), true; wrote('privacy-access'); send(res, { code: 200, data: r }); return true; }
+      if (route === 'POST /admin/api/privacy/erase') { const b = await body(req, 1_000), r = Privacy.eraseFromStore(store, b.phone); if (!r) return send(res, { code: 422, error: 'Enter the phone number.' }), true; wrote('privacy-erase'); send(res, { code: 200, erased: r }); return true; }
+      if (route === 'POST /admin/api/privacy/sweep') { const r = runSweep(); wrote('privacy-sweep'); send(res, { code: 200, erased: r }); return true; }
+      if (route === 'POST /admin/api/privacy/log') { const b = await body(req, 500); if (['customers-viewed', 'customer-exported', 'backup-downloaded', 'customer-erased'].includes(b.event)) wrote('pii-' + b.event); send(res, { code: 200, ok: true }); return true; }
       if (route === 'POST /admin/api/social/plan') {
         const b = await body(req, 20_000), now = Date.now(), existing = social.s.jobs.filter(j => j.status === 'queued').map(j => j.when), input = { ...(b.product || {}), nowIso: istIso(now), existing };
         let plan, via = 'built-in';

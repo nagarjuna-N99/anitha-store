@@ -17,6 +17,7 @@ Plain-language pages for the owner and for anyone who takes over the project. Ke
 | `11-go-live-checklist.md` | everything to do when the server is ready |
 | `12-troubleshooting.md` | common problems and fixes |
 | `17-owner-app-security-and-instagram.md` | the separate owner app (login, 2-step, lockout, audit), how the public website is separated, hosting steps, and Instagram posting and scheduling |
+| `20-privacy-dpdp.md` | the DPDP Act: what the app does (notice, consent, age, rights, erase, breach, retention) and your routine |
 | `19-developer-handover.md` | **start here if you are a developer or an AI**: layout, commands, rules, routes, settings, lessons |
 | `18-growth-and-weekly-email.md` | Growth tab, visit counting, live suggestions, weekly email, Instagram reminder |
 | `16-data-reference.md` | **every piece of data stored**: where it lives, each collection and its fields, the assistant server's data, what is sent to AI, privacy |

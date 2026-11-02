@@ -11,7 +11,7 @@ const need = (cond, msg) => { if (!cond) problems.push(msg); };
 
 const html = read(path.join(SRC, 'anitha-store.html'));
 const ver = (html.match(/LEGAL_VERSION = '(\d+\.\d+) \(([^)]*)\)'/) || [])[1];
-need(ver && record.includes(`1.${ver.split('.')[1]} (`) || record.includes(`version in the shop:** ${ver}`), `Record does not state the current Terms/Privacy version ${ver}`);
+need(ver && record.includes(`version in the shop:** ${ver}`), `Record does not state the current Terms/Privacy version ${ver}`);
 
 // every browser suite and every assistant source file is described
 for (const f of fs.readdirSync(path.join(SRC, 'tests')).filter(f => /\.cjs$/.test(f))) need(record.includes(f), `Test suite ${f} is not listed in PROJECT_RECORD.md §6`);

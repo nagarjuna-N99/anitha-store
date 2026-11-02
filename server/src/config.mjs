@@ -69,6 +69,8 @@ export function loadConfig(overrides = {}) {
     // Instagram (Instagram Graph API, content publishing). Needs an Instagram professional account linked to a Facebook page.
     ig: { userId: env('IG_USER_ID'), token: env('IG_ACCESS_TOKEN'), graphUrl: env('IG_GRAPH_URL', 'https://graph.facebook.com/v21.0'), dailyCap: +env('IG_DAILY_CAP', '20') },
     siteUrl: env('SITE_URL').replace(/\/+$/, ''),
+    // how long personal data is kept on this server (DPDP: erase when the purpose is over). Order contact details follow the tax-record period.
+    privacy: { chatDays: +env('CHAT_RETENTION_DAYS', '90'), cartDays: +env('CART_RETENTION_DAYS', '30'), orderYears: +env('ORDER_RETENTION_YEARS', '6') },
     allowedOrigins: env('ALLOWED_ORIGINS').split(',').map(s => s.trim()).filter(Boolean),
     dataDir: path.resolve(ROOT, env('DATA_DIR', './data')),
     knowledgeDir: path.join(ROOT, 'knowledge'),

@@ -30,7 +30,7 @@ const { chromium } = require(process.env.PW);
   // use + record
   await ev(() => { db.coupons.push({ code: 'ONE', discount: 100, type: 'flat', active: true, maxUses: 1, oncePerCustomer: true }); });
   r = await tryCode('ONE', nu, ['p3']); ok('code applies', r.applied === 'ONE' && r.disc === 100);
-  await ev(() => { openCheckout(); document.getElementById('couponInput').value = 'ONE'; applyCoupon(); document.getElementById('chk-name').value = 'Fresh Buyer'; document.getElementById('chk-pin').value = '500034'; document.getElementById('chk-address').value = '12 Banjara Hills'; document.getElementById('chk-city').value = 'Hyderabad'; document.getElementById('chk-terms').checked = true; processPayment(); });
+  await ev(() => { openCheckout(); document.getElementById('couponInput').value = 'ONE'; applyCoupon(); document.getElementById('chk-name').value = 'Fresh Buyer'; document.getElementById('chk-pin').value = '500034'; document.getElementById('chk-address').value = '12 Banjara Hills'; document.getElementById('chk-city').value = 'Hyderabad'; document.getElementById('chk-age').checked = true; document.getElementById('chk-terms').checked = true; processPayment(); });
   ok('the order records which code was used', await ev(() => db.orders[0].coupon === 'ONE' && db.orders[0].pricing.discount === 100));
   ok('maxUses reached → the code stops working for everyone', /fully used/.test((await tryCode('ONE', 1, ['p3'])).msg));
   await ev(() => { document.querySelectorAll('.modal.active').forEach(m => m.classList.remove('active')); closeAllDrawers(); db.coupons.push({ code: 'EACH', discount: 50, type: 'flat', active: true, oncePerCustomer: true }); db.orders[0].coupon = 'EACH'; db.orders[0].phone = db.users[1].phone; });

@@ -32,7 +32,7 @@ const { chromium } = require(process.env.PW);
 
   // ===== checkout: PIN checks, saved addresses =====
   await ev(() => { const u = newUser('+919700012345'); u.name = 'Test Buyer'; db.users.push(u); setSession(u, null); cart = [{ id: 'p3', qty: 1 }]; saveCart(); openCheckout(); });
-  await fill({ 'chk-name': 'Test Buyer', 'chk-address': '12 MG Road, Kukatpally', 'chk-city': 'Hyderabad', 'chk-state': 'Telangana', 'chk-pin': '500072', 'chk-terms': true });
+  await fill({ 'chk-name': 'Test Buyer', 'chk-address': '12 MG Road, Kukatpally', 'chk-city': 'Hyderabad', 'chk-state': 'Telangana', 'chk-pin': '500072', 'chk-terms': true, 'chk-age': true });
   ok('checkout: matching PIN/city/state shows the delivery date, no warning', await ev(() => /Delivery by/.test(document.getElementById('chk-pinmsg').innerText) && !document.querySelector('#chk-pinmsg .dc-warn')));
   await fill({ 'chk-state': 'Karnataka' });
   ok('checkout: PIN/state mismatch → friendly warning naming both, NO tick box, order still allowed', await ev(() => /belongs to Telangana/.test(document.getElementById('chk-pinmsg').innerText) && /still place your order/.test(document.getElementById('chk-pinmsg').innerText) && !document.getElementById('chk-pin-ok-row')));
@@ -63,7 +63,7 @@ const { chromium } = require(process.env.PW);
   ok('recipient details are required', await ev(() => db.orders.filter(o => o.phone === '+919700012345').length === 1));
   await fill({ 'gift-name': 'Sarala Devi', 'gift-phone': '9812345678', 'gift-street': '5-4-1 Lakdikapul', 'gift-city': 'Bangalore', 'gift-state': 'Telangana', 'gift-pin': '500004' });
   ok('recipient address gets the same PIN check', /Bangalore is in Karnataka/.test(await ev(() => document.getElementById('gift-pinmsg').innerText)));
-  await ev(() => { if (!document.getElementById('chk-terms').checked) document.getElementById('chk-terms').checked = true; processPayment(); });
+  await ev(() => { if (!document.getElementById('chk-terms').checked) document.getElementById('chk-age').checked = true; document.getElementById('chk-terms').checked = true; processPayment(); });
   const o2 = await ev(() => db.orders.find(o => o.gift && o.gift.toOther));
   ok('...and the order still goes through, flagged for you to double-check', !!o2 && o2.addressCheck.status === 'mismatch' && o2.addressCheck.confirmed === true && o2.shippingAddress.city === 'Bangalore');
 
@@ -127,7 +127,7 @@ const { chromium } = require(process.env.PW);
 
   // ===== a PIN outside the usual areas can still order =====
   await ev(() => { dcSet('blockedPincodes', '500099'); const u = newUser('+919700077777'); u.name = 'Far Buyer'; db.users.push(u); setSession(u, null); storeOn(); cart = [{ id: 'p1', qty: 1 }]; saveCart(); openCheckout(); });
-  await fill({ 'chk-name': 'Far Buyer', 'chk-address': '1 Remote Lane, Somewhere', 'chk-city': 'Hyderabad', 'chk-state': 'Telangana', 'chk-pin': '500099', 'chk-terms': true, 'chk-instr': 'Please add fall & pico. Call before delivery.' }); await ev(() => processPayment());
+  await fill({ 'chk-name': 'Far Buyer', 'chk-address': '1 Remote Lane, Somewhere', 'chk-city': 'Hyderabad', 'chk-state': 'Telangana', 'chk-pin': '500099', 'chk-terms': true, 'chk-age': true, 'chk-instr': 'Please add fall & pico. Call before delivery.' }); await ev(() => processPayment());
   const far = await ev(() => db.orders.find(o => o.phone === '+919700077777'));
   ok('special instructions typed at checkout are saved on the order', !!far && far.instructions === 'Please add fall & pico. Call before delivery.');
   ok('an order for a PIN outside your usual areas is accepted: flagged "unserved", no delivery date', !!far && far.addressCheck.status === 'unserved' && far.delivery === null);
