@@ -223,7 +223,7 @@ export function createApp(overrides = {}, deps = {}) {
           if (route === 'POST /api/ai/reply') {   // the server builds the context itself: the phone number never leaves the server
             const cv = store.s.conversations[String(b.phone || '')]; if (!cv) return json(res, 404, { error: 'chat not found' }, c);
             task = 'reply'; const cat = store.loadCatalogue();
-            input = { messages: (cv.log || []).slice(-12).map(m => ({ dir: m.dir, text: m.text })), policies: cat ? new Catalogue(cat).policiesText('') : '', goal: b.goal };
+            input = { messages: (cv.log || []).slice(-12).map(m => ({ dir: m.dir, text: m.text })), policies: cat ? new Catalogue(cat).policiesText('') : '', goal: b.goal, lang: b.lang };
           }
           try { const r = await runAi({ cfg, client, task, input }); return json(res, 200, { ok: true, ...r }, c); }
           catch (e) { return json(res, [400, 413, 422].includes(e.code) ? e.code : 502, { error: e.message }, c); }

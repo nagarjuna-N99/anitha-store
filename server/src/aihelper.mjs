@@ -23,7 +23,7 @@ export const TASKS = {
   },
   reply: {
     json: false, max: 500,
-    build: i => ({ system: `${RULES}\nYou draft a WhatsApp reply for the owner to edit and send. Plain text, max 90 words, at most one emoji, no markdown. Answer the customer's last message using only the shop policies given. If the answer is not in the policies or product facts, say you will check and come back. Reply in the language the customer used.`,
+    build: i => ({ system: `${RULES}\nYou draft a WhatsApp reply for the owner to edit and send. Plain text, max 90 words, at most one emoji, no markdown. Answer the customer's last message using only the shop policies given. If the answer is not in the policies or product facts, say you will check and come back. ${LANG[i.lang] ? 'Reply in ' + LANG[i.lang] + '.' : 'Reply in the language the customer used.'}`,
       user: `Shop policies and facts:\n${wrap(str(i.policies, 2500))}\nConversation (oldest first):\n${wrap((Array.isArray(i.messages) ? i.messages : []).slice(-12).map(m => `${m.dir === 'out' ? 'Shop' : 'Customer'}: ${str(m.text, 400)}`).join('\n'))}${i.goal ? `\nThe owner wants this reply to: ${str(i.goal, 200)}` : ''}` }),
   },
   write: {
@@ -60,6 +60,16 @@ export const TASKS = {
     json: true, max: 1000,
     build: i => ({ system: `${RULES}\nYou plan an Instagram post for the shop (audience: women in India who buy handloom sarees, mostly on phones). Answer with JSON only: {"caption": string (max 600 chars, warm, 1 short call to action such as "DM or WhatsApp us to order", no price unless given, no emojis overload, NO hashtags inside), "hashtags": string[] (8-15 tags without #, mix of broad like handloomsaree and specific like the fabric, no brand-new invented claims), "slots": [{"iso": string (ISO 8601 with +05:30, in the future), "why": string (max 14 words)}]}. Give exactly 3 posting slots within the next 7 days, at least 90 minutes away from any time in "already_scheduled", between 07:00 and 22:30 IST. Base the times on typical Indian Instagram habits (weekday evenings 19:00-21:30, weekend mornings 10:00-12:00 and evenings, avoid working hours) and say so honestly in "why"; you have no access to this account's own analytics. Language of the caption: ${lang(i.lang)}.`,
       user: `Now (IST): ${str(i.nowIso, 40)}\nProduct facts:\n${wrap({ name: str(i.name, 120), category: str(i.category, 60), fabric: str(i.fabric, 60), colours: arr(i.colours, 8, 30), occasions: arr(i.occasions, 6, 30), description: str(i.description, 400), price: Number(i.price) || undefined, oneOfAKind: !!i.oneOfAKind })}\nalready_scheduled: ${J(arr(i.existing, 30, 40))}` }),
+  },
+  captionpack: {
+    json: true, max: 1400,
+    build: i => ({ system: `${RULES}\nYou write a ready-to-post Instagram and WhatsApp-status pack for ONE product of a handloom saree shop. Answer with JSON only: {"en": {"caption": string (max 450 chars, warm, one soft call to action such as "DM or WhatsApp us to order", no price unless given, NO hashtags inside), "hashtags": string[] (8-12, no # sign, no spaces, mix of broad and specific like handloomsaree, hyderabadsarees)}, "te": {"caption": string (the same message in natural Telugu, తెలుగు script, max 450 chars, no hashtags inside), "hashtags": string[] (6-10, English letters, no # sign)}, "status": {"en": string (max 22 words), "te": string (max 22 words, Telugu script)}}. If oneOfAKind is true you may say it is a single designer piece. Never claim a fabric, origin or certificate that is not in the facts.`,
+      user: `Product facts:\n${wrap({ name: str(i.name, 120), category: str(i.category, 60), fabric: str(i.fabric, 60), colours: arr(i.colours, 8, 30), occasions: arr(i.occasions, 6, 30), description: str(i.description, 400), price: Number(i.price) || undefined, oneOfAKind: !!i.oneOfAKind })}` }),
+  },
+  followup: {
+    json: false, max: 350,
+    build: i => ({ system: `${RULES}\nYou draft ONE short WhatsApp message (max 55 words, plain text, at most one emoji, no markdown) from the shop owner to a returning customer. Segment: ${({ dormant: 'a past buyer who has not ordered for a while: say hello, mention that new pieces have arrived, invite them to look', newarrival: 'a past buyer of this kind of saree: a new similar piece has arrived, invite them to look', review: 'a recent buyer whose saree was delivered: ask warmly how they liked it and invite a short review, no pressure' })[i.segment] || 'a past buyer: a warm hello'}. Start with "Hi <first name>" only if a first name is given. Never offer discounts or promise anything not in the facts. End with a polite opt-out line: "Reply STOP if you prefer not to get messages." Language: ${lang(i.lang)}.`,
+      user: `Facts:\n${wrap({ firstName: str(i.firstName, 30), items: arr(i.items, 3, 80), category: str(i.category, 60), daysSince: Number(i.daysSince) || undefined, siteUrl: str(i.siteUrl, 120) })}` }),
   },
   translate: {
     json: false, max: 1200,

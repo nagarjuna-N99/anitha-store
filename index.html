@@ -62,6 +62,8 @@
   .top-banner { background: var(--charcoal); color: var(--ivory); text-align: center; padding: 10px 20px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
   .top-banner span { color: var(--gold-light); }
   nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 60px; border-bottom: 1px solid var(--border); background: var(--ivory); position: sticky; top: 0; z-index: 100; }
+  .ph-check{margin:6px 0}.ph-row{font-size:12px;padding:5px 8px;border-radius:4px;margin:3px 0;background:#eef6ee}.ph-row.warn{background:#fff6dd}.ph-row.bad{background:#fde8e6}
+  .wk-text{font-size:14px;line-height:1.7;margin:8px 0}.fu-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}.fu-row.done{opacity:.45}.fu-out{flex-basis:100%}.fu-out textarea{width:100%}
   .brand-mark { height: 40px; width: 40px; border-radius: 50%; display: block; margin-right: 8px; flex: none; }
   .nav-brand { display: inline-flex; align-items: center; }
   .brand-logo.foot { height: 110px; width: auto; display: block; background: #fff; border-radius: 10px; padding: 6px 12px; }
@@ -3068,7 +3070,7 @@ function renderProductForm() {
     <form onsubmit="pfSave(event)" novalidate>
       <div class="pf-grid">
         <div>
-          <div class="pf-sec"><h4>Photos <span id="pf-count" class="pf-sub"></span></h4><div id="pf-gallery" class="pf-thumbs"></div><div class="note">The first photo is the cover. Use ‹ › to reorder, × to remove.</div>
+          <div class="pf-sec"><h4>Photos <span id="pf-count" class="pf-sub"></span></h4><div id="pf-photocheck" class="ph-check" aria-live="polite"></div><div id="pf-gallery" class="pf-thumbs"></div><div class="note">The first photo is the cover. Use ‹ › to reorder, × to remove.</div>
             <input type="file" id="pf-files" accept="image/*" multiple hidden onchange="pfAddPhotos(this.files);this.value=''"></div>
           <div class="pf-sec"><h4>Basics</h4>
             <div class="form-group"><label>Product Name *</label><input type="text" id="p-name" value="${esc(q.name)}" oninput="pfSet('name',this.value)"></div>
@@ -3089,7 +3091,7 @@ function renderProductForm() {
           <div class="pf-sec"><h4>Description <span class="pf-sub" id="pf-ai-status"></span></h4>
             <textarea id="p-desc" class="input-field" rows="11" oninput="pfSet('description',this.value)" style="font-size:13px;line-height:1.6;padding:12px;">${esc(q.description)}</textarea>
             <div class="pf-actions"><button type="button" class="btn-sm btn-info-sm" id="pf-gen" onclick="pfGenerate('description')">✨ ${q.description ? 'Regenerate' : 'Generate'} description</button><button type="button" class="btn-sm btn-info-sm" onclick="pfGenerate('all')">✨ Regenerate everything</button></div>
-            <div class="pf-actions pf-claude"><select id="pf-lang" aria-label="Language" onchange="PF.lang=this.value">${AI_LANGS.map(([v, l]) => `<option value="${v}" ${(PF.lang || 'en') === v ? 'selected' : ''}>${l}</option>`).join('')}</select><button type="button" class="btn-sm btn-primary-sm" id="pf-ai-write" onclick="pfAiDescribe()" ${aiOn('describe') ? '' : 'disabled'}>✨ Write with Claude</button><button type="button" class="btn-sm btn-info-sm" onclick="pfAiPhoto()" ${aiOn('photo') ? '' : 'disabled'}>📷 Read photo</button><button type="button" class="btn-sm btn-info-sm" onclick="pfAiTranslate()" ${aiOn('translate') ? '' : 'disabled'}>🌐 Translate</button></div></div>
+            <div class="pf-actions pf-claude"><button type="button" class="btn-sm btn-primary-sm" onclick="pfAiAll()" title="Reads the photo, fills colours, fabric and category, then writes the description, tags and SEO">✨ Fill everything from the photos</button><select id="pf-lang" aria-label="Language" onchange="PF.lang=this.value">${AI_LANGS.map(([v, l]) => `<option value="${v}" ${(PF.lang || 'en') === v ? 'selected' : ''}>${l}</option>`).join('')}</select><button type="button" class="btn-sm btn-primary-sm" id="pf-ai-write" onclick="pfAiDescribe()" ${aiOn('describe') ? '' : 'disabled'}>✨ Write with Claude</button><button type="button" class="btn-sm btn-info-sm" onclick="pfAiPhoto()" ${aiOn('photo') ? '' : 'disabled'}>📷 Read photo</button><button type="button" class="btn-sm btn-info-sm" onclick="pfAiTranslate()" ${aiOn('translate') ? '' : 'disabled'}>🌐 Translate</button></div></div>
           <div class="pf-sec"><h4>Tags <span class="pf-sub">(used for search &amp; SEO keywords)</span></h4><div id="pf-tags" class="chips"></div>
             <div class="pf-actions"><button type="button" class="btn-sm btn-info-sm" onclick="pfGenerate('tags')">✨ Suggest tags</button></div></div>
           <div class="pf-sec"><h4>SEO</h4>
@@ -3133,7 +3135,7 @@ function pfRenderGallery() {
 async function pfAddPhotos(files) {
   const list = [...files].filter(f => /^image\//.test(f.type)); if (!list.length) return;
   try { for (const f of list) PF.images.push(await fileToDataUrl(f)); } catch (e) { showToast('Could not read one of the images', 'error'); }
-  pfRenderGallery(); showToast(`${list.length} photo(s) added`, 'success');
+  pfRenderGallery(); showToast(`${list.length} photo(s) added`, 'success'); pfPhotoCheck();
 }
 function pfMoveImg(i, d) { const j = i + d; if (j < 0 || j >= PF.images.length) return; [PF.images[i], PF.images[j]] = [PF.images[j], PF.images[i]]; pfRenderGallery(); }
 function pfDelImg(i) { PF.images.splice(i, 1); pfRenderGallery(); }
@@ -5074,12 +5076,13 @@ function bulkCommit() {
 }
 
 // ---- status image (WhatsApp status / Instagram story) ----
-const SI = { id: null, fmt: 'story' };
+const SI = { id: null, fmt: 'story', enh: false };
 function openStatusImage(pid) {
   const p = db.products.find(x => x.id === pid); if (!p) return; SI.id = pid; SI.fmt = 'story';
   openModal(`<h3 style="font-family:'Cormorant Garamond',serif;font-size:26px;margin-bottom:6px;">Status image</h3>
     <p style="font-size:12px;color:#888;margin-bottom:10px;">A ready-to-post picture for your WhatsApp status or Instagram story. Download it and post.</p>
-    <div style="display:flex;gap:8px;margin-bottom:10px;"><button class="btn-sm btn-info-sm" id="si-story" onclick="siFmt('story')">Story 9:16</button><button class="btn-sm btn-info-sm" id="si-square" onclick="siFmt('square')">Square 1:1</button></div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;"><button class="btn-sm btn-info-sm" id="si-story" onclick="siFmt('story')">Story 9:16</button><button class="btn-sm btn-info-sm" id="si-square" onclick="siFmt('square')">Square 1:1</button><button class="btn-sm btn-info-sm" id="si-post" onclick="siFmt('post')">Instagram post 4:5</button></div>
+    <label class="chk" style="margin-bottom:8px;"><input type="checkbox" id="si-enh" onchange="SI.enh=this.checked;siDraw()"><span>✨ Brighten &amp; lift colours (gentle auto-fix for dull photos)</span></label>
     <div style="text-align:center;"><canvas id="si-canvas" style="max-width:100%;max-height:60vh;border:1px solid #eee;border-radius:6px;"></canvas></div>
     <div id="si-msg" class="note"></div>
     <button class="btn-full" id="si-dl" style="margin-top:12px;" onclick="siDownload()">⬇ Download image</button>`);
@@ -5094,12 +5097,12 @@ function siWrap(ctx, text, x, y, maxW, lh, maxLines) {
 }
 function siDraw() {
   const p = db.products.find(x => x.id === SI.id), c = el_('si-canvas'); if (!p || !c) return;
-  const W = 1080, H = SI.fmt === 'story' ? 1920 : 1080; c.width = W; c.height = H; const ctx = c.getContext('2d');
-  const photoH = SI.fmt === 'story' ? 1180 : 660;
+  const W = 1080, H = SI.fmt === 'story' ? 1920 : SI.fmt === 'post' ? 1350 : 1080; c.width = W; c.height = H; const ctx = c.getContext('2d');
+  const photoH = SI.fmt === 'story' ? 1180 : SI.fmt === 'post' ? 880 : 660;
   ctx.fillStyle = '#F7F4EC'; ctx.fillRect(0, 0, W, H);
   const draw = img => {
     ctx.fillStyle = '#F7F4EC'; ctx.fillRect(0, 0, W, H);
-    if (img) { const r = Math.max(W / img.width, photoH / img.height), w = img.width * r, h = img.height * r; ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, photoH); ctx.clip(); ctx.drawImage(img, (W - w) / 2, (photoH - h) / 2, w, h); ctx.restore(); }
+    if (img) { const r = Math.max(W / img.width, photoH / img.height), w = img.width * r, h = img.height * r; ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, photoH); ctx.clip(); if (SI.enh && 'filter' in ctx) ctx.filter = 'brightness(1.08) contrast(1.08) saturate(1.1)'; ctx.drawImage(img, (W - w) / 2, (photoH - h) / 2, w, h); ctx.restore(); }
     else { ctx.fillStyle = '#e9dfca'; ctx.fillRect(0, 0, W, photoH); }
     const y0 = photoH + 70; ctx.textAlign = 'center'; ctx.fillStyle = '#C96A11'; ctx.font = '600 34px Montserrat, Arial, sans-serif'; ctx.fillText(String(p.category).toUpperCase(), W / 2, y0);
     ctx.fillStyle = '#2E2D29'; ctx.font = '600 70px "Cormorant Garamond", Georgia, serif'; const yEnd = siWrap(ctx, p.name, W / 2, y0 + 80, W - 140, 78, 2);
@@ -5107,6 +5110,7 @@ function siDraw() {
     const tag = p.stock <= 0 ? 'Sold' : oneOfAKind(p) ? 'One of a kind' : p.stock <= 2 ? `Only ${p.stock} left` : '';
     if (tag) { ctx.font = '600 32px Montserrat, Arial, sans-serif'; ctx.fillStyle = '#2E2D29'; ctx.fillText('✦ ' + tag + ' ✦', W / 2, yEnd + 90); }
     ctx.fillStyle = '#8C8C88'; ctx.font = '500 30px Montserrat, Arial, sans-serif'; ctx.fillText(`${BRAND()} · ${db.settings.phone}`, W / 2, H - 50);
+    { const lg = new Image(); lg.onload = () => { const lw = 300, lh = lw * lg.height / lg.width; ctx.save(); ctx.globalAlpha = .94; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(36, 36, lw + 32, lh + 24, 18) : ctx.rect(36, 36, lw + 32, lh + 24); ctx.fill(); ctx.globalAlpha = 1; ctx.drawImage(lg, 52, 48, lw, lh); ctx.restore(); }; lg.src = LOGO_URI; }
     SI.drawn = true;
   };
   const src = p.image; if (!src) { draw(null); return; }
@@ -5321,6 +5325,7 @@ function renderDashboardPro(content) {
       ${kpi('cust', 'Customers', cur.customers, `<span class="dl flat">${cur.newCust} new · ${repeat} returning</span>`, spk('orders'), 'var(--gold)', 'customers', 'People who ordered in this period; new = joined in this period; returning = ordered before this period too')}
       ${kpi('disc', 'Discounts given', formatCurrency(cur.discount), `<span class="dl flat">${cur.gifts} gift order${cur.gifts === 1 ? '' : 's'}</span>`, spk('orders'), '#B04A4A', 'coupons', 'Coupons and bundle offers deducted from orders in this period')}
     </div>
+    <section class="admin-card" id="dash-weekly" style="margin-bottom:16px;"></section>
     <div class="dash-grid">
       <section class="admin-card dash-chart"><div class="dash-chart-h"><h3>${metricName} over time</h3><div class="seg" role="tablist" aria-label="Metric">${[['revenue', 'Revenue'], ['orders', 'Orders'], ['units', 'Pieces']].map(([k, l]) => `<button type="button" class="${DASH.metric === k ? 'on' : ''}" onclick="dashSet('metric','${k}')">${l}</button>`).join('')}</div></div>
         ${ser.vals.some(v => v) ? `<svg class="dchart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${metricName} chart"><line x1="${padL}" x2="${W - padL}" y1="${padT + ch}" y2="${padT + ch}" class="axis"/>${bars}${xl}</svg><p class="hint">Tap or hover a bar for details${DASH.sel !== null ? '' : ''}.</p>` : `<div class="dash-empty">No orders in this period yet. Try a longer period.</div>`}
@@ -5338,7 +5343,117 @@ function renderDashboardPro(content) {
       <section class="admin-card"><h3>Recent activity</h3>${db.logs.slice(0, 6).map(l => `<div class="dd-row"><span>${esc(l.reason || l.type)}<small> · ${esc(l.product && l.product !== '-' ? l.product : '')} ${esc(l.time || '')}</small></span></div>`).join('') || '<div class="dash-empty">Nothing yet.</div>'}<button type="button" class="linkbtn" onclick="dashGo('logs')">Full history ›</button></section>
     </div>
     <details class="admin-card dash-how"><summary>How are these numbers worked out?</summary><p>Orders count when they are placed and are not cancelled. Revenue is the order total (after discounts, including shipping and gift wrap). "Compared with" uses the same number of days just before this period. "New customers" are people who created an account in the period; "returning" had ordered before it. Stock value is price × pieces in stock. Everything is calculated live from your store data every time you open this page.</p></details>`;
+  setTimeout(dashWeekly, 0);
 }
+
+// ================= AI & photo tools, 4 Nov 2026 =================
+// ---- photo quality + duplicate check (runs in the browser, no AI, no cost) ----
+const PH_CACHE = new Map();
+function phLoad(src) { return new Promise((res, rej) => { const im = new Image(); if (/^https?:/i.test(src)) im.crossOrigin = 'anonymous'; im.onload = () => res(im); im.onerror = () => rej(new Error('load')); im.src = src; }); }
+function phGray(im, cw, ch) { const c = document.createElement('canvas'); c.width = cw; c.height = ch; const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0, cw, ch); const d = x.getImageData(0, 0, cw, ch).data, g = new Float32Array(cw * ch); for (let i = 0; i < g.length; i++) g[i] = 0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2]; return g; }
+async function phAnalyze(src) {
+  if (PH_CACHE.has(src)) return PH_CACHE.get(src);
+  const im = await phLoad(src), w = im.naturalWidth, h = im.naturalHeight, k = Math.min(1, 192 / Math.max(w, h)), cw = Math.max(9, Math.round(w * k)), ch = Math.max(9, Math.round(h * k));
+  const g = phGray(im, cw, ch); let sum = 0; for (let i = 0; i < g.length; i++) sum += g[i];
+  let ls = 0, ls2 = 0, n = 0; for (let y = 1; y < ch - 1; y++) for (let x = 1; x < cw - 1; x++) { const i = y * cw + x, l = 4 * g[i] - g[i - 1] - g[i + 1] - g[i - cw] - g[i + cw]; ls += l; ls2 += l * l; n++; }
+  const blur = n ? ls2 / n - (ls / n) * (ls / n) : 0, hg = phGray(im, 9, 8); let hash = ''; for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) hash += hg[y * 9 + x] > hg[y * 9 + x + 1] ? '1' : '0';
+  const r = { w, h, blur, bright: sum / g.length, hash }; PH_CACHE.set(src, r); return r;
+}
+const phDist = (a, b) => { let d = 0; for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) d++; return d; };
+function phIssues(a, others) {
+  const out = [], mn = Math.min(a.w, a.h);
+  if (mn < 600) out.push(['bad', `Small photo (${a.w}×${a.h}). It will look soft on phones and Instagram. Use at least 1080 px wide.`]); else if (mn < 900) out.push(['warn', `Photo is ${a.w}×${a.h}; 1080 px wide is better for Instagram.`]);
+  if (a.blur < 25) out.push(['bad', 'Looks blurry. Retake it holding the phone steady, in daylight.']); else if (a.blur < 45) out.push(['warn', 'Slightly soft. Check it at full size before posting.']);
+  if (a.bright < 70) out.push(['warn', 'Quite dark. Daylight near a window shows the true colour of a saree.']); else if (a.bright > 225) out.push(['warn', 'Very bright, details may be washed out.']);
+  const dup = others.find(o => phDist(a.hash, o.hash) <= 5); if (dup) out.push(['bad', `Looks the same as ${dup.where}. Is this a duplicate?`]);
+  return out;
+}
+async function phOthers(selfIdx) {
+  const list = [];
+  for (let i = 0; i < PF.images.length; i++) if (i !== selfIdx) { try { list.push({ ...(await phAnalyze(PF.images[i])), where: `your photo ${i + 1} in this product` }); } catch (e) {} }
+  for (const p of db.products) { if (PF.id && p.id === PF.id) continue; for (const src of (p.images || [p.image]).filter(Boolean).slice(0, 2)) { try { list.push({ ...(await phAnalyze(src)), where: `a photo of “${p.name}”` }); } catch (e) {} } }
+  return list;
+}
+async function pfPhotoCheck() {
+  const box = gid_('pf-photocheck'); if (!box) return; if (!PF.images.length) { box.innerHTML = ''; return; }
+  box.innerHTML = '<div class="note">📷 Checking photos…</div>'; const rows = [];
+  for (let i = 0; i < PF.images.length; i++) {
+    try { const a = await phAnalyze(PF.images[i]), iss = phIssues(a, await phOthers(i)); rows.push(`<div class="ph-row ${iss.some(x => x[0] === 'bad') ? 'bad' : iss.length ? 'warn' : 'ok'}"><b>Photo ${i + 1}</b> ${iss.length ? iss.map(x => esc(x[1])).join(' ') : '✓ Sharp, well lit, not a duplicate.'}</div>`); }
+    catch (e) { rows.push(`<div class="ph-row"><b>Photo ${i + 1}</b> could not be checked.</div>`); }
+  }
+  if (gid_('pf-photocheck')) gid_('pf-photocheck').innerHTML = rows.join('');
+}
+// ---- one click: read the photos, then write the whole listing ----
+async function pfAiAll() {
+  if (!PF.images[0]) { showToast('Add a photo first', 'error'); return; }
+  if (!aiReady('photo')) { showToast(aiConnected() ? 'The photo helper is switched off (AI Helper tab).' : 'Claude is not connected yet (WhatsApp Assistant tab).', 'error'); return; }
+  await pfAiPhoto();
+  if (!PF.name.trim()) { const nm = [(PF.colours || [])[0], PF.fabric, PF.category && !isAccessory({ category: PF.category }) ? 'Saree' : PF.category].filter(Boolean).join(' '); if (nm) { PF.name = nm; const n = gid_('p-name'); if (n) n.value = nm; } }
+  if (PF.name.trim() && aiReady('describe')) await pfAiDescribe();
+  pfPhotoCheck();
+}
+// ---- weekly business note on the dashboard ----
+const isoWeekKey = () => { const d = new Date(), t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())), day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day); const y = new Date(Date.UTC(t.getUTCFullYear(), 0, 1)); return t.getUTCFullYear() + '-W' + String(Math.ceil(((t - y) / 86400000 + 1) / 7)).padStart(2, '0'); };
+let WK_BUSY = false, WK_FAILED = false;
+function dashWeeklyShow(w, busyMsg, err) {
+  const box = el_('dash-weekly'); if (!box) return;
+  box.innerHTML = `<h3>🗓️ This week at a glance ${w ? `<span class="pf-sub">${w.via === 'claude' ? '· written by Claude' : '· built-in summary'}</span>` : ''}</h3>${busyMsg ? `<div class="ai-busy">✨ ${esc(busyMsg)}</div>` : ''}${err ? `<div class="ai-err">${esc(err)}</div>` : ''}${w ? `<div class="wk-text">${esc(w.text).replace(/\n/g, '<br>')}</div>` : ''}<div class="ai-act"><button type="button" class="btn-sm btn-info-sm" onclick="dashWeekly(true)" ${WK_BUSY ? 'disabled' : ''}>↻ ${w ? 'Write it again' : 'Write this week’s note'}</button>${w ? `<button type="button" class="btn-sm btn-info-sm" onclick="copyText(db.settings.weekly.text,'Note copied')">Copy</button>` : ''}</div>`;
+}
+async function dashWeekly(force) {
+  if (!el_('dash-weekly')) return; const key = isoWeekKey(), w = db.settings.weekly;
+  if (!force && w && w.key === key) { dashWeeklyShow(w); return; }
+  if (WK_BUSY || (!force && WK_FAILED)) { dashWeeklyShow(w); return; }
+  WK_BUSY = true; dashWeeklyShow(w, 'writing your weekly note…');
+  try { const d = aiShopData(7); let text, via = 'built-in'; if (aiReady('summary')) { text = (await aiCall('summary', { stats: d, lang: 'en' })).text; via = 'claude'; } else text = localSummary(d); db.settings.weekly = { key, text, via, at: nowISO() }; saveDB(); WK_BUSY = false; dashWeeklyShow(db.settings.weekly); }
+  catch (e) { WK_BUSY = false; WK_FAILED = true; dashWeeklyShow(w, null, aiMsg(e)); }
+}
+// ---- follow-ups: returning customers, with a drafted message you send yourself ----
+function fuSent() { db.settings.followups = db.settings.followups || {}; return db.settings.followups; }
+function fuCandidates() {
+  const today = ymd(new Date()), sent = fuSent(), out = [], last = {};
+  db.orders.filter(o => o.status !== 'cancelled' && o.userId).forEach(o => { if (!last[o.userId] || o.date > last[o.userId].date) last[o.userId] = o; });
+  let hidden = 0;
+  Object.values(last).forEach(o => {
+    const u = db.users.find(x => x.id === o.userId); if (!u || !u.phone) return; const c = u.consents || {}, first = String(u.name || o.customer || '').split(/\s+/)[0] || '';
+    const days = Math.round((new Date(today) - new Date(o.date)) / 86400000), recent = k => sent[u.id + '|' + k] && Math.round((new Date(today) - new Date(sent[u.id + '|' + k])) / 86400000) < 30;
+    const items = (o.items || []).map(i => i.name).slice(0, 2), cat = ((o.items || [])[0] || {}).category || '';
+    if (o.status === 'delivered' && days >= 7 && days <= 45 && !db.reviews.some(r => r.orderId === o.id)) { if (!c.orderUpdates) hidden++; else if (!recent('review')) out.push({ uid: u.id, seg: 'review', first, phone: u.phone, items, cat, days, order: o.id }); }
+    else if (days >= 60) { if (!c.marketing) hidden++; else if (!recent('dormant')) out.push({ uid: u.id, seg: 'dormant', first, phone: u.phone, items, cat, days, order: o.id }); }
+  });
+  return { rows: out.sort((a, b) => b.days - a.days).slice(0, 40), hidden };
+}
+function fuHTML() {
+  const { rows, hidden } = fuCandidates(), lab = { review: 'Recently delivered, no review yet', dormant: 'Past buyer, 60+ days ago' };
+  return `<p class="note">Only customers who agreed to WhatsApp messages are listed (order updates for review requests, offers for the rest). ${hidden ? `${hidden} other customer(s) are not listed because they did not agree.` : ''} Anyone you contact is hidden for 30 days. You press send; nothing goes out by itself.</p>
+    ${rows.length ? rows.map((r, i) => `<div class="fu-row" id="fu-${i}"><div><b>${esc(r.first || 'Customer')}</b> · ${esc(lab[r.seg])} · ${r.days} days ago<div class="note" style="margin:0;">${esc(r.items.join(', '))}</div></div><button type="button" class="btn-sm btn-primary-sm" onclick="fuDraft(${i})">✨ Draft message</button><div class="fu-out" id="fu-out-${i}"></div></div>`).join('') : '<p class="note">Nobody to follow up with right now.</p>'}`;
+}
+function fuLocal(r) { const hi = r.first ? `Hi ${r.first}, ` : 'Hello, '; return r.seg === 'review' ? `${hi}we hope you are enjoying your saree from ${BRAND()}. 💛 If you have a minute, a short review (photos welcome) would mean a lot to us.\nReply STOP if you prefer not to get messages.` : `${hi}it has been a while! New handloom pieces have arrived at ${BRAND()}. Message us if you would like to see a few.\nReply STOP if you prefer not to get messages.`; }
+async function fuDraft(i) {
+  const r = fuCandidates().rows[i]; if (!r) return; busy('fu-out-' + i, 'drafting…'); let text;
+  try { text = aiReady('followup') ? (await aiCall('followup', { segment: r.seg, firstName: r.first, items: r.items, category: r.cat, daysSince: r.days, siteUrl: db.settings.siteUrl || '', lang: 'en' })).text.trim() : fuLocal(r); } catch (e) { outBox('fu-out-' + i, `<div class="ai-err">${esc(aiMsg(e))}</div>`); return; }
+  outBox('fu-out-' + i, `<textarea rows="4" id="fu-t-${i}">${esc(text)}</textarea><div class="ai-act"><button type="button" class="btn-sm btn-primary-sm" onclick="fuOpen(${i})" style="background:#25D366;border-color:#25D366;">Open WhatsApp to send</button><button type="button" class="btn-sm btn-info-sm" onclick="copyText(el_('fu-t-${i}').value,'Copied')">Copy</button></div>${aiReady('followup') ? '' : '<p class="note">Built-in wording (connect Claude for a more personal draft).</p>'}`);
+}
+function fuOpen(i) {
+  const r = fuCandidates().rows[i], t = el_('fu-t-' + i); if (!r || !t) return; const ph = waPhone(r.phone); if (!ph) return showToast('No phone number', 'error');
+  fuSent()[r.uid + '|' + r.seg] = ymd(new Date()); saveDB(); window.open('https://wa.me/' + ph + '?text=' + encodeURIComponent(t.value), '_blank', 'noopener');
+  const row = el_('fu-' + i); if (row) row.classList.add('done'); showToast('Marked as contacted. Hidden for 30 days.', 'success');
+}
+// ---- Instagram caption pack: English + Telugu, hashtags, status line ----
+function packLocal(p) {
+  const f = [p.fabric, ...(p.colours || []).slice(0, 2)].filter(Boolean).join(', '), oo = oneOfAKind(p) ? ' A single designer piece.' : '';
+  const base = `${p.name}${f ? ' (' + f + ')' : ''}.${oo} DM or WhatsApp us to order.`;
+  return { en: { caption: base, hashtags: ['handloomsaree', 'hyderabadsarees', 'sareelove', 'designersaree', 'ethnicwear', 'sareesofinstagram'] }, te: { caption: `${p.name}. ఆర్డర్ కోసం మాకు DM లేదా WhatsApp చేయండి.`, hashtags: ['handloomsaree', 'telugusarees', 'sareelove'] }, status: { en: `New: ${p.name}. Message us to order.`, te: `కొత్తగా: ${p.name}. ఆర్డర్ కోసం మెసేజ్ చేయండి.` }, local: true };
+}
+async function igPack() {
+  const p = IGD && IGD.p; if (!p) return; busy('ig-pack', 'writing the English and Telugu pack…'); let d;
+  try { d = aiReady('captionpack') ? (await aiCall('captionpack', { name: p.name, category: p.category, fabric: p.fabric, colours: p.colours, occasions: occasionsOf(p), description: p.description, price: p.price, oneOfAKind: oneOfAKind(p) })).data : packLocal(p); } catch (e) { outBox('ig-pack', `<div class="ai-err">${esc(aiMsg(e))}</div>`); return; }
+  IGD.pack = d; const tags = a => (a || []).map(h => '#' + String(h).replace(/[^\w]/g, '')).filter(h => h.length > 1).join(' ');
+  const card = (k, lab) => `<div class="ai-draft"><b>${lab}</b><textarea rows="4" readonly>${esc((d[k] || {}).caption || '')}\n\n${esc(tags((d[k] || {}).hashtags))}</textarea><div class="ai-act"><button type="button" class="btn-sm btn-primary-sm" onclick="igUsePack('${k}')">Use this caption</button><button type="button" class="btn-sm btn-info-sm" onclick="igCopyPack('${k}')">Copy</button></div></div>`;
+  outBox('ig-pack', `${d.local ? '<p class="note">Built-in wording (connect Claude for a personal pack).</p>' : ''}${card('en', 'English')}${card('te', 'తెలుగు Telugu')}${d.status ? `<div class="ai-draft"><b>WhatsApp status line</b><textarea rows="2" readonly>${esc((d.status.en || '') + '\n' + (d.status.te || ''))}</textarea><div class="ai-act"><button type="button" class="btn-sm btn-info-sm" onclick="copyText(IGD.pack.status.en + '\\n' + IGD.pack.status.te,'Copied')">Copy</button></div></div>` : ''}`);
+}
+const igPackText = k => { const d = (IGD.pack || {})[k] || {}, h = (d.hashtags || []).map(x => '#' + String(x).replace(/[^\w]/g, '')).filter(x => x.length > 1).join(' '); return (d.caption || '') + (h ? '\n\n' + h : ''); };
+function igUsePack(k) { const t = el_('ig-cap'); if (t) { t.value = igPackText(k); igCount(); showToast('Caption replaced. Check it before posting.', 'success'); } }
+function igCopyPack(k) { copyText(igPackText(k), 'Copied'); }
 
 // ---- saved drafts, grouped by category (inside Products, and on the Saved Drafts tab) ----
 function draftCat(d) { return d.category || catFromSku(d.sku) || 'No category yet'; }
@@ -5378,7 +5493,7 @@ function cartAnim(btn) {
 // ================= AI HELPERS for the owner (30 Oct 2026) =================
 // Every helper only DRAFTS: nothing is sent to customers or saved without the owner pressing the button.
 // Connected = the assistant server address + admin token are set (WhatsApp Assistant tab); otherwise built-in drafts are used where they exist.
-const AI_FEATURES = [['describe', 'Product descriptions, tags & SEO'], ['photo', 'Read colours & fabric from a photo'], ['reply', 'WhatsApp reply suggestions (Inbox)'], ['write', 'Festival, offer & caption writer'], ['review', 'Review replies'], ['ask', 'Ask your shop'], ['summary', 'Weekly summary'], ['pricing', 'Pricing & stock ideas'], ['cleanup', 'Data clean-up'], ['translate', 'Translation (Telugu / Hindi / English)']];
+const AI_FEATURES = [['describe', 'Product descriptions, tags & SEO'], ['photo', 'Read colours & fabric from a photo'], ['reply', 'WhatsApp reply suggestions (Inbox)'], ['write', 'Festival, offer & caption writer'], ['review', 'Review replies'], ['ask', 'Ask your shop'], ['summary', 'Weekly summary'], ['pricing', 'Pricing & stock ideas'], ['cleanup', 'Data clean-up'], ['translate', 'Translation (Telugu / Hindi / English)'], ['captionpack', 'Caption & hashtag pack (English + Telugu)'], ['followup', 'Follow-up message drafts']];
 const AI_LANGS = [['en', 'English'], ['te', 'తెలుగు Telugu'], ['hi', 'हिन्दी Hindi']];
 const aiCfg = () => { const c = { master: true, ...(db.settings.ai || {}) }; AI_FEATURES.forEach(([k]) => { if (c[k] === undefined) c[k] = true; }); return c; };
 const aiOn = k => { const c = aiCfg(); return !!c.master && !!c[k]; };
@@ -5484,6 +5599,7 @@ function renderAiHelper(content) {
     ${sec('summary', '🗓️', 'Weekly summary', 'What sold, what changed, what needs you', `<div class="ai-row"><label>Language${langSel('sm-lang')}</label><label>Period<select id="sm-days"><option value="7">Last 7 days</option><option value="30">Last 30 days</option></select></label></div><button class="btn-sm btn-primary-sm" onclick="aiSummary()">Write my summary</button><div id="sm-out" class="ai-out"></div>`)}
     ${sec('pricing', '🏷️', 'Pricing &amp; stock ideas', 'Which pieces to feature, bundle, restock or look at again. Ideas only, you decide', `<button class="btn-sm btn-primary-sm" onclick="aiPricing()">Look at my catalogue</button> ${aiReady('pricing') ? '<span class="note">Claude will refine the ideas.</span>' : '<span class="note">Built-in rules (connect Claude for sharper advice).</span>'}<div id="pr-out" class="ai-out"></div>`)}
     ${sec('clean', '🧹', 'Data clean-up', 'Duplicate customers or products, wrong city/state for a PIN, untidy capitals', `<button class="btn-sm btn-primary-sm" onclick="aiClean()">Scan my data</button> <button class="btn-sm btn-info-sm" onclick="aiCleanAi()" ${aiOn('cleanup') ? '' : 'disabled'}>✨ Ask Claude to check spelling</button><div id="cl-out" class="ai-out"></div>`)}
+    ${sec('followup', '💌', 'Follow-ups', 'Returning customers to say hello to, with a drafted message you send yourself', fuHTML())}
     ${sec('translate', '🌐', 'Translation', 'Telugu, Hindi or English. Prices, names and SKUs stay exactly as written', `<div class="ai-row"><label style="flex:1;">Text<textarea id="tr-text" rows="4" placeholder="Paste a description, offer or message"></textarea></label></div><div class="ai-row"><label>Translate to${langSel('tr-to')}</label></div><button class="btn-sm btn-primary-sm" onclick="aiTranslate()">Translate</button><div id="tr-out" class="ai-out"></div>`)}
     <p class="note" style="margin-top:16px;">Also built in: <b>Products</b> form (✨ Write with Claude, 📷 Read photo, 🌐 Translate), <b>Reviews</b> (✨ Draft reply) and the assistant <b>Inbox</b> (✨ Suggest a reply).</p>`;
 }
@@ -5838,7 +5954,7 @@ async function igOffer(p, opts) {
   document.getElementById('ig-body').className = ''; document.getElementById('ig-body').innerHTML = `
     <p class="note">${pl.via === 'claude' ? '✨ Written and timed by Claude' : 'Built-in suggestion (connect Claude for a personal caption)'}. Times are suggestions based on typical Indian Instagram habits: Claude cannot see your account's own statistics.</p>
     <div class="ig-photos">${imgs.map((s, i) => `<label class="ig-ph"><input type="checkbox" class="ig-pick" value="${i}" ${i === 0 ? 'checked' : ''}><img src="${esc(s)}" alt="Photo ${i + 1}"></label>`).join('')}</div>
-    <div class="form-group"><label>Caption <span class="pf-sub" id="ig-count"></span></label><textarea id="ig-cap" rows="7" oninput="igCount()">${esc(caption)}</textarea></div>
+    <div class="form-group"><label>Caption <span class="pf-sub" id="ig-count"></span></label><textarea id="ig-cap" rows="7" oninput="igCount()">${esc(caption)}</textarea><div class="ai-act"><button type="button" class="btn-sm btn-info-sm" onclick="igPack()">✨ Caption pack: English + తెలుగు + hashtags</button></div><div id="ig-pack"></div></div>
     <div class="form-group"><label>When to post</label><div class="ig-when">
       <label class="ig-opt"><input type="radio" name="ig-when" value="now"> <b>Post now</b></label>
       ${pl.slots.map((s, i) => `<label class="ig-opt"><input type="radio" name="ig-when" value="${esc(s.iso)}" ${i === 0 ? 'checked' : ''}> <b>${esc(igWhen(s.iso))}</b> <small>${i === 0 ? '⭐ recommended · ' : ''}${esc(s.why)}</small></label>`).join('')}
