@@ -1,0 +1,53 @@
+const { chromium } = require(process.env.PW);
+(async () => {
+  const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+  const ctx = await b.newContext({ viewport: { width: 1280, height: 900 } }); const p = await ctx.newPage();
+  const errs = []; p.on('pageerror', e => errs.push(e.message)); p.on('dialog', d => d.accept('1234'));
+  const calls = []; await ctx.route(/^https?:\/\//, r => { const u = r.request().url(); if (/127\.0\.0\.1:9\d{3}\/api\/ai/.test(u)) { calls.push(JSON.parse(r.request().postData() || '{}')); const t = calls.at(-1).task; return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, data: t === 'describe' ? { description: 'Claude wrote this rich tussar saree description for the draft.', tags: ['tussar', 'festive'], seoTitle: 'Claude SEO', metaDescription: 'Claude meta', altText: 'Claude alt' } : { category: 'Banarasi', fabric: 'Banarasi Silk', colours: ['Mint', 'Gold'], border: 'zari border', pattern: '', occasions: ['Wedding'], notes: '' } }) }); } r.abort(); });
+  await p.goto('file://' + process.cwd() + '/anitha-store.html');
+  let fails = 0; const ok = (n, c) => { if (!c) fails++; console.log(c ? 'PASS' : 'FAIL', n); }; const ev = (f, a) => p.evaluate(f, a);
+  const IMG = 'data:image/svg+xml;base64,' + Buffer.from("<svg xmlns='http://www.w3.org/2000/svg' width='80' height='100'><rect width='80' height='100' fill='#9fd8c0'/></svg>").toString('base64');
+  await ev(img => { db.drafts = [{ id: 1001, sku: 'AP-BNR-201', name: 'AP-BNR-201', images: [img], image: img, size: '800x1000', date: '2026-10-29', tags: [] }, { id: 1002, sku: 'AP-TUS-201', name: 'Olive Tussar', category: 'Tussar', price: 24500, stock: 1, description: 'A lovely olive tussar saree with a woven border and soft sheen.', tags: ['tussar'], images: [img], image: img, size: '800x1000', date: '2026-10-29' }, { id: 1003, sku: 'AP-ACC-201', name: 'Bridal Jhumka', category: 'Jewellery', price: 1800, stock: 3, description: 'Handcrafted temple jhumka earrings in antique gold finish.', images: [img], image: img, size: '800x1000', date: '2026-10-29' }]; toggleView(); switchAdminTab('drafts'); }, IMG);
+  ok('drafts show Ready to post or Needs details, with what is missing', await ev(() => { const c = [...document.querySelectorAll('.draft-card')]; return c.length === 3 && c.filter(x => x.classList.contains('is-ready')).length === 2 && /Missing: name, price, description/.test(document.querySelector('.draft-card.needs').textContent); }));
+  ok('summary bar: filters with counts and Post all ready (2)', await ev(() => /Ready 2/.test(document.querySelector('.dbc-bar').textContent) && /Needs details 1/.test(document.querySelector('.dbc-bar').textContent) && /Post all ready \(2\)/.test(document.getElementById('drafts-post-all').textContent)));
+  await ev(() => draftSetFilter('ready')); ok('Ready filter hides the incomplete draft', await ev(() => document.querySelectorAll('.draft-card').length === 2 && !document.querySelector('.draft-card.needs')));
+  await ev(() => draftSetFilter('need')); ok('Needs-details filter shows only that one', await ev(() => document.querySelectorAll('.draft-card').length === 1)); await ev(() => draftSetFilter('all'));
+  // details dialog on the incomplete draft
+  await ev(() => openDraftDetails(1001));
+  ok('details dialog: photo, name, category, price, stock, fabric, colours, description, tags, AI buttons', await ev(() => ['dd-name', 'dd-cat', 'dd-price', 'dd-stock', 'dd-fabric', 'dd-colours', 'dd-desc', 'dd-tags', 'dd-local', 'dd-claude', 'dd-lang'].every(i => document.getElementById(i)) && !!document.querySelector('#adminModalBody .dd-img')));
+  ok('the AP-BNR-201 placeholder is not accepted as a name; category prefilled from the code; Post is disabled', await ev(() => document.getElementById('dd-name').value === '' && document.getElementById('dd-cat').value === 'Banarasi' && document.getElementById('dd-post').disabled && /Still needed/.test(document.getElementById('dd-status').textContent)));
+  await ev(() => { document.getElementById('dd-name').value = 'Mint Banarasi Silk'; ddChanged(); return ddAiLocal(); }); await p.waitForTimeout(300);
+  ok('built-in AI fill writes description, tags, fabric and colours from the photo', await ev(() => document.getElementById('dd-desc').value.length > 60 && /Mint Banarasi/.test(document.getElementById('dd-desc').value) && document.getElementById('dd-tags').value.split(',').length >= 5 && document.getElementById('dd-fabric').value === 'Banarasi Silk' && document.getElementById('dd-colours').value.length > 2));
+  ok('still needs a price (AI never guesses it)', await ev(() => /Still needed: <b>price/.test(document.getElementById('dd-status').innerHTML) && document.getElementById('dd-post').disabled));
+  await ev(() => { document.getElementById('dd-price').value = '38500'; ddChanged(); });
+  ok('with a price the dialog says Ready to post and enables Save & post now', await ev(() => /Ready to post/.test(document.getElementById('dd-status').textContent) && !document.getElementById('dd-post').disabled));
+  await ev(() => ddSave(false));
+  ok('Save details keeps it as a draft, now Ready to post, with SEO and slug filled in', await ev(() => { const d = db.drafts.find(x => x.id === 1001); return draftReady(d).ok && d.price === 38500 && d.stock === 1 && !!d.seoTitle && !!d.metaDescription && !!d.altText && d.slug === 'mint-banarasi-silk' && document.querySelectorAll('.draft-card.is-ready').length === 3; }));
+  // Claude mode
+  await ev(() => { db.settings.assistantUrl = 'http://127.0.0.1:9001'; sessionStorage.setItem('wa_admin_tok', 'tok-abcdefghijkl'); openDraftDetails(1001); document.getElementById('dd-lang').value = 'te'; });
+  await ev(() => ddAiClaude()); await p.waitForTimeout(250);
+  ok('Write with Claude fills the description in the chosen language and sends only product facts', await ev(() => /Claude wrote this/.test(document.getElementById('dd-desc').value)) && calls.at(-1).task === 'describe' && calls.at(-1).input.lang === 'te' && calls.at(-1).input.name === 'Mint Banarasi Silk' && !/\+91|98765/.test(JSON.stringify(calls.at(-1))));
+  await ev(() => { document.getElementById('dd-colours').value = ''; document.getElementById('dd-fabric').value = ''; return ddAiPhoto(); }); await p.waitForTimeout(400);
+  ok('Read photo with Claude suggests colours and fabric', await ev(() => /Mint/.test(document.getElementById('dd-colours').value) && document.getElementById('dd-fabric').value === 'Banarasi Silk') && /^data:image\/jpeg/.test(calls.at(-1).input.image));
+  await ev(() => closeModal('adminModal'));
+  // post now
+  const before = await ev(() => db.products.length);
+  await ev(() => draftPostNow(1002));
+  ok('Post now publishes the draft as a real product with every detail, and removes the draft', await ev(b => { const p = db.products.find(x => x.sku === 'AP-TUS-201'); return db.products.length === b + 1 && p && p.name === 'Olive Tussar' && p.price === 24500 && p.stock === 1 && p.category === 'Tussar' && p.images.length === 1 && !!p.slug && p.isNew && !db.drafts.some(d => d.id === 1002); }, before));
+  ok('it appears in the shop at once', await ev(() => { navigateTo('shop'); return sareeList().some(x => x.sku === 'AP-TUS-201') && /Olive Tussar/.test(document.getElementById('productGrid').textContent); })); await ev(() => { toggleView(); });
+  await ev(() => { toggleView(); db.products.push({ id: 'dup', sku: 'AP-ACC-201', name: 'Same SKU', category: 'Jewellery', price: 1, stock: 1, images: ['x'], image: 'x' }); switchAdminTab('drafts'); draftPostNow(1003); });
+  ok('a clashing SKU is refused with a clear message and the draft is kept', await ev(() => db.drafts.some(d => d.id === 1003) && /already used/.test(document.getElementById('toast').textContent)));
+  await ev(() => { db.products = db.products.filter(x => x.id !== 'dup'); db.drafts.push({ id: 1004, sku: 'AP-KNC-201', name: 'No price yet', category: 'Kanjeevaram', images: ['x'], image: 'x', size: 's', date: 'd' }); draftPostNow(1004); });
+  ok('posting an incomplete draft opens the details dialog instead', await ev(() => document.getElementById('adminModal').classList.contains('active') && /Draft details/.test(document.getElementById('adminModalBody').textContent))); await ev(() => closeModal('adminModal'));
+  await ev(() => draftsPostAllReady());
+  ok('Post all ready publishes every complete draft and leaves the others', await ev(() => !db.drafts.some(d => d.id === 1003) && db.products.some(p => p.sku === 'AP-ACC-201') && db.drafts.some(d => d.id === 1004)));
+  await ev(() => { db.drafts = [{ id: 2001, sku: 'AP-PHT-9', name: 'Ivory Paithani', category: 'Paithani', images: ['x'], image: 'x', size: 's', date: 'd' }, { id: 2002, sku: 'AP-ORG-9', name: 'Coral Organza', category: 'Organza', images: ['x'], image: 'x', size: 's', date: 'd' }]; db.categories.push('Organza'); switchAdminTab('drafts'); });
+  await ev(() => draftsFillAll()); await p.waitForTimeout(500);
+  ok('Fill all with AI writes descriptions, tags and SEO for every named draft; only price is left', await ev(() => db.drafts.every(d => d.description.length > 40 && d.tags.length >= 5 && !!d.seoTitle && draftReady(d).missing.join() === 'price')));
+  await ev(() => { document.querySelectorAll('.draft-card').forEach(c => c); });
+  ok('a phone-width view has no overflow', await (async () => { await p.setViewportSize({ width: 390, height: 800 }); await p.waitForTimeout(150); return ev(() => document.documentElement.scrollWidth <= 391); })());
+  await ev(() => openDraftDetails(2001)); await p.waitForTimeout(200);
+  ok('details dialog fits a phone', await ev(() => document.documentElement.scrollWidth <= 391 && document.getElementById('adminModal').querySelector('.modal-content').getBoundingClientRect().right <= 391));
+  ok('no JS errors', errs.length === 0 || (console.log(errs), false));
+  console.log(fails ? 'FAILED ' + fails : 'ALL PASSED'); await b.close(); process.exit(fails ? 1 : 0);
+})();

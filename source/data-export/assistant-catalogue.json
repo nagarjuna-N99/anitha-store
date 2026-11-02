@@ -1,0 +1,477 @@
+{
+  "shop": {
+    "name": "Anitha Pemmasani",
+    "ordersOn": true,
+    "phone": "+91 98496 46440",
+    "address": "Hyderabad, Telangana, India",
+    "siteUrl": "",
+    "gstNumber": "36AABCU9603R1ZM",
+    "gstRate": 5,
+    "invoicePrefix": "AP-INV"
+  },
+  "policies": {
+    "shipping": "Free shipping on orders above ₹10,000.",
+    "returns": "",
+    "payment": "",
+    "care": "",
+    "timings": "",
+    "custom": ""
+  },
+  "pricing": {
+    "shippingFee": 199,
+    "freeShippingAbove": 10000
+  },
+  "delivery": {
+    "processingDays": 2,
+    "blockedPincodes": "",
+    "zones": [
+      {
+        "name": "Telangana & Andhra Pradesh",
+        "states": [
+          "Telangana",
+          "Andhra Pradesh"
+        ],
+        "minDays": 2,
+        "maxDays": 4,
+        "serviceable": true
+      },
+      {
+        "name": "South India",
+        "states": [
+          "Karnataka",
+          "Tamil Nadu",
+          "Kerala",
+          "Puducherry"
+        ],
+        "minDays": 3,
+        "maxDays": 5,
+        "serviceable": true
+      },
+      {
+        "name": "Remote areas",
+        "states": [
+          "Jammu and Kashmir",
+          "Ladakh",
+          "Arunachal Pradesh",
+          "Meghalaya",
+          "Manipur",
+          "Mizoram",
+          "Nagaland",
+          "Tripura",
+          "Sikkim",
+          "Assam",
+          "Andaman and Nicobar Islands",
+          "Lakshadweep"
+        ],
+        "minDays": 8,
+        "maxDays": 12,
+        "serviceable": true
+      }
+    ],
+    "fallback": {
+      "name": "Rest of India",
+      "minDays": 5,
+      "maxDays": 8,
+      "serviceable": true
+    }
+  },
+  "giftWrapFee": 0,
+  "coupons": [
+    {
+      "code": "WELCOME10",
+      "type": "percent",
+      "discount": 10,
+      "active": true,
+      "description": "10% off your first order",
+      "minOrder": 0,
+      "expiresAt": "",
+      "maxUses": 0,
+      "oncePerCustomer": true,
+      "firstOrderOnly": true,
+      "announce": false,
+      "channel": "all"
+    },
+    {
+      "code": "FESTIVE20",
+      "type": "percent",
+      "discount": 20,
+      "active": true,
+      "description": "20% festive discount",
+      "minOrder": 0,
+      "expiresAt": "",
+      "maxUses": 0,
+      "oncePerCustomer": false,
+      "firstOrderOnly": false,
+      "announce": true,
+      "channel": "all"
+    },
+    {
+      "code": "FLAT500",
+      "type": "flat",
+      "discount": 500,
+      "active": true,
+      "description": "₹500 flat discount",
+      "minOrder": 3000,
+      "expiresAt": "",
+      "maxUses": 0,
+      "oncePerCustomer": false,
+      "firstOrderOnly": false,
+      "announce": false,
+      "channel": "all"
+    }
+  ],
+  "couponUsage": {},
+  "pastBuyers": [
+    "9876543210",
+    "9876543211",
+    "9876543212"
+  ],
+  "products": [
+    {
+      "id": "p1",
+      "type": "saree",
+      "name": "Maroon Kalamkari Tussar",
+      "sku": "AP-TUS-001",
+      "category": "Tussar",
+      "fabric": "Tussar Silk",
+      "colours": [
+        "Maroon"
+      ],
+      "price": 45999,
+      "stock": 5,
+      "description": "Pure handloom Tussar silk with intricate Kalamkari border.",
+      "tags": [
+        "Tussar Saree",
+        "Tussar Silk Saree",
+        "Tussar Saree Online",
+        "Pure Tussar Silk",
+        "Handloom Saree",
+        "Festive Saree",
+        "Wedding Saree",
+        "Party Saree",
+        "Silk Saree Online",
+        "Indian Ethnic Wear",
+        "Hyderabad",
+        "Anitha Pemmasani"
+      ],
+      "image": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=600",
+      "images": [
+        "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=600"
+      ],
+      "link": "",
+      "slug": "maroon-kalamkari-tussar"
+    },
+    {
+      "id": "p2",
+      "type": "saree",
+      "name": "Mustard Peacock Tussar",
+      "sku": "AP-TUS-002",
+      "category": "Tussar",
+      "fabric": "Tussar Silk",
+      "colours": [
+        "Mustard"
+      ],
+      "price": 42500,
+      "stock": 3,
+      "description": "Vibrant mustard Tussar with peacock motif.",
+      "tags": [
+        "Tussar Saree",
+        "Tussar Silk Saree",
+        "Tussar Saree Online",
+        "Pure Tussar Silk",
+        "Handloom Saree",
+        "Festive Saree",
+        "Wedding Saree",
+        "Party Saree",
+        "Silk Saree Online",
+        "Indian Ethnic Wear",
+        "Hyderabad",
+        "Anitha Pemmasani"
+      ],
+      "image": "https://images.unsplash.com/photo-1596205849889-98e400c784c1?q=80&w=600",
+      "images": [
+        "https://images.unsplash.com/photo-1596205849889-98e400c784c1?q=80&w=600"
+      ],
+      "link": "",
+      "slug": "mustard-peacock-tussar"
+    },
+    {
+      "id": "p3",
+      "type": "saree",
+      "name": "Pure Maheswari Silk",
+      "sku": "AP-MHS-001",
+      "category": "Maheswari",
+      "fabric": "Silk Cotton",
+      "colours": [],
+      "price": 18500,
+      "stock": 8,
+      "description": "Classic Maheswari silk with custom blouse piece.",
+      "tags": [
+        "Maheswari Saree",
+        "Maheshwari Saree",
+        "Maheshwari Silk Saree",
+        "Lightweight Silk Saree",
+        "Handloom Saree",
+        "Office Saree",
+        "Festive Saree",
+        "Party Saree",
+        "Silk Saree Online",
+        "Indian Ethnic Wear",
+        "Hyderabad",
+        "Anitha Pemmasani"
+      ],
+      "image": "https://images.unsplash.com/photo-1583391733958-e04f9715d184?q=80&w=600",
+      "images": [
+        "https://images.unsplash.com/photo-1583391733958-e04f9715d184?q=80&w=600"
+      ],
+      "link": "",
+      "slug": "pure-maheswari-silk"
+    },
+    {
+      "id": "p4",
+      "type": "saree",
+      "name": "Reddish Orange Banarasi",
+      "sku": "AP-BNR-001",
+      "category": "Banarasi",
+      "fabric": "Banarasi Silk",
+      "colours": [
+        "Orange"
+      ],
+      "price": 37999,
+      "stock": 1,
+      "description": "Rich Banarasi silk with cutwork Jamdani.",
+      "tags": [
+        "Banarasi Saree",
+        "Banarasi Silk Saree",
+        "Zari Saree",
+        "Handloom Saree",
+        "Wedding Saree",
+        "Festive Saree",
+        "Bridal Saree",
+        "Silk Saree Online",
+        "Indian Ethnic Wear",
+        "Hyderabad",
+        "Anitha Pemmasani"
+      ],
+      "image": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=600",
+      "images": [
+        "https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=600"
+      ],
+      "link": "",
+      "slug": "reddish-orange-banarasi"
+    },
+    {
+      "id": "p5",
+      "type": "saree",
+      "name": "Royal Red Kanjeevaram",
+      "sku": "AP-KNC-001",
+      "category": "Kanjeevaram",
+      "fabric": "Kanjeevaram Silk",
+      "colours": [
+        "Red"
+      ],
+      "price": 85000,
+      "stock": 0,
+      "description": "Bridal Kanjeevaram with heavy gold zari.",
+      "tags": [
+        "Kanjeevaram Saree",
+        "Kanchipuram Silk Saree",
+        "Bridal Silk Saree",
+        "Handloom Saree",
+        "Bridal Saree",
+        "Wedding Saree",
+        "Festive Saree",
+        "Silk Saree Online",
+        "Indian Ethnic Wear",
+        "Hyderabad",
+        "Anitha Pemmasani"
+      ],
+      "image": "https://images.unsplash.com/photo-1606293459339-aa5d34a7b0e1?q=80&w=600",
+      "images": [
+        "https://images.unsplash.com/photo-1606293459339-aa5d34a7b0e1?q=80&w=600"
+      ],
+      "link": "",
+      "slug": "royal-red-kanjeevaram"
+    },
+    {
+      "id": "p6",
+      "type": "saree",
+      "name": "Ivory Gold Paithani",
+      "sku": "AP-PHT-001",
+      "category": "Paithani",
+      "fabric": "Paithani Silk",
+      "colours": [
+        "Gold",
+        "Ivory"
+      ],
+      "price": 62000,
+      "stock": 2,
+      "description": "Traditional Paithani silk with peacock motif.",
+      "tags": [
+        "Paithani Saree",
+        "Paithani Silk Saree",
+        "Peacock Motif Saree",
+        "Handloom Saree",
+        "Wedding Saree",
+        "Festive Saree",
+        "Bridal Saree",
+        "Silk Saree Online",
+        "Indian Ethnic Wear",
+        "Hyderabad",
+        "Anitha Pemmasani"
+      ],
+      "image": "https://images.unsplash.com/photo-1610189012906-4b2a8f8e0c9b?q=80&w=600",
+      "images": [
+        "https://images.unsplash.com/photo-1610189012906-4b2a8f8e0c9b?q=80&w=600"
+      ],
+      "link": "",
+      "slug": "ivory-gold-paithani"
+    },
+    {
+      "id": "p7",
+      "type": "saree",
+      "name": "Forest Green Mysore Silk",
+      "sku": "AP-MYS-001",
+      "category": "Mysore Silk",
+      "fabric": "Crepe Silk",
+      "colours": [
+        "Green"
+      ],
+      "price": 28500,
+      "stock": 5,
+      "description": "Classic Mysore silk in deep forest green.",
+      "tags": [
+        "Mysore Silk Saree",
+        "Crepe Silk Saree",
+        "Pure Mysore Silk",
+        "Handloom Saree",
+        "Office Saree",
+        "Festive Saree",
+        "Wedding Saree",
+        "Silk Saree Online",
+        "Indian Ethnic Wear",
+        "Hyderabad",
+        "Anitha Pemmasani"
+      ],
+      "image": "https://images.unsplash.com/photo-1602161490280-093915e84362?q=80&w=600",
+      "images": [
+        "https://images.unsplash.com/photo-1602161490280-093915e84362?q=80&w=600"
+      ],
+      "link": "",
+      "slug": "forest-green-mysore-silk"
+    },
+    {
+      "id": "p8",
+      "type": "saree",
+      "name": "Coral Ponduru Khadi",
+      "sku": "AP-KHD-001",
+      "category": "Ponduru Khadi",
+      "fabric": "Khadi Cotton",
+      "colours": [
+        "Coral"
+      ],
+      "price": 15800,
+      "stock": 7,
+      "description": "Hand-spun Ponduru Khadi cotton in coral pink.",
+      "tags": [
+        "Ponduru Khadi Saree",
+        "Khadi Cotton Saree",
+        "Handspun Saree",
+        "Handloom Saree",
+        "Casual Saree",
+        "Office Saree",
+        "Festive Saree",
+        "Cotton Saree Online",
+        "Indian Ethnic Wear",
+        "Hyderabad",
+        "Anitha Pemmasani"
+      ],
+      "image": "https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?q=80&w=600",
+      "images": [
+        "https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?q=80&w=600"
+      ],
+      "link": "",
+      "slug": "coral-ponduru-khadi"
+    },
+    {
+      "id": "p9",
+      "type": "accessory",
+      "name": "Temple Jhumka Earrings",
+      "sku": "AP-ACC-001",
+      "category": "Jewellery",
+      "fabric": "",
+      "colours": [],
+      "price": 1499,
+      "stock": 12,
+      "description": "Temple Jhumka Earrings - a handpicked accessory to complete your saree look.",
+      "tags": [
+        "accessory"
+      ],
+      "image": "",
+      "images": [],
+      "link": "",
+      "slug": "temple-jhumka-earrings"
+    },
+    {
+      "id": "p10",
+      "type": "accessory",
+      "name": "Antique Gold Bangles (Set of 4)",
+      "sku": "AP-ACC-002",
+      "category": "Jewellery",
+      "fabric": "",
+      "colours": [
+        "Gold"
+      ],
+      "price": 2299,
+      "stock": 6,
+      "description": "Antique Gold Bangles (Set of 4) - a handpicked accessory to complete your saree look.",
+      "tags": [
+        "accessory"
+      ],
+      "image": "",
+      "images": [],
+      "link": "",
+      "slug": "antique-gold-bangles-set-of-4"
+    },
+    {
+      "id": "p11",
+      "type": "accessory",
+      "name": "Readymade Silk Blouse - Maroon",
+      "sku": "AP-ACC-003",
+      "category": "Blouses & Fabric",
+      "fabric": "",
+      "colours": [
+        "Maroon"
+      ],
+      "price": 1899,
+      "stock": 9,
+      "description": "Readymade Silk Blouse - Maroon - a handpicked accessory to complete your saree look.",
+      "tags": [
+        "accessory"
+      ],
+      "image": "",
+      "images": [],
+      "link": "",
+      "slug": "readymade-silk-blouse-maroon"
+    },
+    {
+      "id": "p12",
+      "type": "accessory",
+      "name": "Zari Potli Bag",
+      "sku": "AP-ACC-004",
+      "category": "Bags & Potlis",
+      "fabric": "",
+      "colours": [],
+      "price": 999,
+      "stock": 15,
+      "description": "Zari Potli Bag - a handpicked accessory to complete your saree look.",
+      "tags": [
+        "accessory"
+      ],
+      "image": "",
+      "images": [],
+      "link": "",
+      "slug": "zari-potli-bag"
+    }
+  ]
+}

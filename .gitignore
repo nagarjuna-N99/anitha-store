@@ -2,3 +2,6 @@ node_modules/
 data/
 .env
 *.log
+secrets.json
+.secrets-key
+.last-published.html

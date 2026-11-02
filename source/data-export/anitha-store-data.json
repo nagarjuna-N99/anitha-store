@@ -1,0 +1,1123 @@
+{
+  "settings": {
+    "businessName": "Anitha Pemmasani",
+    "gstNumber": "36AABCU9603R1ZM",
+    "address": "Hyderabad, Telangana, India",
+    "phone": "+91 98496 46440",
+    "email": "admin@anitapemmasani.com",
+    "bankName": "HDFC Bank",
+    "accountNumber": "50100123456789",
+    "ifscCode": "HDFC0001234",
+    "invoicePrefix": "AP-INV",
+    "gstRate": 5,
+    "adminPin": "1234",
+    "siteUrl": "",
+    "metaDescription": "Anitha Pemmasani – pure handloom sarees from Hyderabad: Tussar, Maheshwari, Banarasi, Kanjeevaram, Paithani, Mysore silk and Ponduru Khadi. Free shipping above ₹10,000.",
+    "aiEndpoint": "",
+    "otpEndpoint": "",
+    "autoApproveReviews": false,
+    "waNumber": "",
+    "waChatOn": true,
+    "waGreeting": "",
+    "assistantUrl": "",
+    "waAutoPublish": false,
+    "delivery": null,
+    "giftWrapFee": 0,
+    "waPolicies": {
+      "shipping": "Free shipping on orders above ₹10,000.",
+      "returns": "",
+      "payment": "",
+      "care": "",
+      "timings": "",
+      "custom": ""
+    },
+    "dispatchTime": "3–7 business days",
+    "returnDays": 7,
+    "grievanceOfficer": "",
+    "selectedTemplate": "template-1",
+    "templateCustom": {
+      "headerText": "Thank you for your purchase!",
+      "footerText": "Computer-generated invoice.",
+      "termsText": "Goods once sold will not be taken back.",
+      "primaryColor": "#A67C52",
+      "secondaryColor": "#2C2C2C",
+      "showLogo": true,
+      "showBankDetails": true,
+      "showGstBreakdown": true,
+      "signatureLine": true,
+      "signatureName": "Anitha Pemmasani",
+      "signatureTitle": "Proprietor"
+    }
+  },
+  "categories": [
+    "Tussar",
+    "Maheswari",
+    "Banarasi",
+    "Kanjeevaram",
+    "Ponduru Khadi",
+    "Paithani",
+    "Mysore Silk"
+  ],
+  "accessoryCategories": [
+    "Jewellery",
+    "Blouses & Fabric",
+    "Bags & Potlis"
+  ],
+  "products": [
+    {
+      "id": "p1",
+      "sku": "AP-TUS-001",
+      "name": "Maroon Kalamkari Tussar",
+      "category": "Tussar",
+      "price": 45999,
+      "stock": 5,
+      "threshold": 2,
+      "images": [
+        "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=600"
+      ],
+      "image": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=600",
+      "description": "Pure handloom Tussar silk with intricate Kalamkari border.",
+      "video": "",
+      "rating": 0,
+      "reviews": 0,
+      "isNew": true,
+      "tags": [
+        "Tussar Saree",
+        "Tussar Silk Saree",
+        "Tussar Saree Online",
+        "Pure Tussar Silk",
+        "Handloom Saree",
+        "Festive Saree",
+        "Wedding Saree",
+        "Party Saree",
+        "Silk Saree Online",
+        "Indian Ethnic Wear",
+        "Hyderabad",
+        "Anitha Pemmasani"
+      ],
+      "fabric": "Tussar Silk",
+      "colours": [
+        "Maroon"
+      ],
+      "slug": "maroon-kalamkari-tussar",
+      "seoTitle": "Maroon Kalamkari Tussar | Tussar Saree – Anitha Pemmasani",
+      "metaDescription": "Shop the Maroon Kalamkari Tussar: pure Tussar silk from the weaving clusters of Bhagalpur and Jharkhand. Free shipping above ₹10,000.",
+      "altText": "Maroon Kalamkari Tussar – Tussar saree by Anitha Pemmasani"
+    },
+    {
+      "id": "p2",
+      "sku": "AP-TUS-002",
+      "name": "Mustard Peacock Tussar",
+      "category": "Tussar",
+      "price": 42500,
+      "stock": 3,
+      "threshold": 2,
+      "images": [
+        "https://images.unsplash.com/photo-1596205849889-98e400c784c1?q=80&w=600"
+      ],
+      "image": "https://images.unsplash.com/photo-1596205849889-98e400c784c1?q=80&w=600",
+      "description": "Vibrant mustard Tussar with peacock motif.",
+      "video": "",
+      "rating": 0,
+      "reviews": 0,
+      "isNew": true,
+      "tags": [
+        "Tussar Saree",
+        "Tussar Silk Saree",
+        "Tussar Saree Online",
+        "Pure Tussar Silk",
+        "Handloom Saree",
+        "Festive Saree",
+        "Wedding Saree",
+        "Party Saree",
+        "Silk Saree Online",
+        "Indian Ethnic Wear",
+        "Hyderabad",
+        "Anitha Pemmasani"
+      ],
+      "fabric": "Tussar Silk",
+      "colours": [
+        "Mustard"
+      ],
+      "slug": "mustard-peacock-tussar",
+      "seoTitle": "Mustard Peacock Tussar | Tussar Saree – Anitha Pemmasani",
+      "metaDescription": "Shop the Mustard Peacock Tussar: pure Tussar silk from the weaving clusters of Bhagalpur and Jharkhand. Free shipping above ₹10,000.",
+      "altText": "Mustard Peacock Tussar – Tussar saree by Anitha Pemmasani"
+    },
+    {
+      "id": "p3",
+      "sku": "AP-MHS-001",
+      "name": "Pure Maheswari Silk",
+      "category": "Maheswari",
+      "price": 18500,
+      "stock": 8,
+      "threshold": 2,
+      "images": [
+        "https://images.unsplash.com/photo-1583391733958-e04f9715d184?q=80&w=600"
+      ],
+      "image": "https://images.unsplash.com/photo-1583391733958-e04f9715d184?q=80&w=600",
+      "description": "Classic Maheswari silk with custom blouse piece.",
+      "video": "",
+      "rating": 0,
+      "reviews": 0,
+      "isNew": true,
+      "tags": [
+        "Maheswari Saree",
+        "Maheshwari Saree",
+        "Maheshwari Silk Saree",
+        "Lightweight Silk Saree",
+        "Handloom Saree",
+        "Office Saree",
+        "Festive Saree",
+        "Party Saree",
+        "Silk Saree Online",
+        "Indian Ethnic Wear",
+        "Hyderabad",
+        "Anitha Pemmasani"
+      ],
+      "fabric": "Silk Cotton",
+      "colours": [],
+      "slug": "pure-maheswari-silk",
+      "seoTitle": "Pure Maheswari Silk | Maheswari Saree – Anitha Pemmasani",
+      "metaDescription": "Shop the Pure Maheswari Silk: Maheshwari silk from Maheshwar in Madhya Pradesh. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
+      "altText": "Pure Maheswari Silk – Maheswari saree by Anitha Pemmasani"
+    },
+    {
+      "id": "p4",
+      "sku": "AP-BNR-001",
+      "name": "Reddish Orange Banarasi",
+      "category": "Banarasi",
+      "price": 37999,
+      "stock": 1,
+      "threshold": 2,
+      "images": [
+        "https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=600"
+      ],
+      "image": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=600",
+      "description": "Rich Banarasi silk with cutwork Jamdani.",
+      "video": "",
+      "rating": 0,
+      "reviews": 0,
+      "isNew": true,
+      "tags": [
+        "Banarasi Saree",
+        "Banarasi Silk Saree",
+        "Zari Saree",
+        "Handloom Saree",
+        "Wedding Saree",
+        "Festive Saree",
+        "Bridal Saree",
+        "Silk Saree Online",
+        "Indian Ethnic Wear",
+        "Hyderabad",
+        "Anitha Pemmasani"
+      ],
+      "fabric": "Banarasi Silk",
+      "colours": [
+        "Orange"
+      ],
+      "slug": "reddish-orange-banarasi",
+      "seoTitle": "Reddish Orange Banarasi | Banarasi Saree – Anitha Pemmasani",
+      "metaDescription": "Shop the Reddish Orange Banarasi: Banarasi silk from the looms of Varanasi. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
+      "altText": "Reddish Orange Banarasi – Banarasi saree by Anitha Pemmasani"
+    },
+    {
+      "id": "p5",
+      "sku": "AP-KNC-001",
+      "name": "Royal Red Kanjeevaram",
+      "category": "Kanjeevaram",
+      "price": 85000,
+      "stock": 0,
+      "threshold": 2,
+      "images": [
+        "https://images.unsplash.com/photo-1606293459339-aa5d34a7b0e1?q=80&w=600"
+      ],
+      "image": "https://images.unsplash.com/photo-1606293459339-aa5d34a7b0e1?q=80&w=600",
+      "description": "Bridal Kanjeevaram with heavy gold zari.",
+      "video": "",
+      "rating": 0,
+      "reviews": 0,
+      "isNew": true,
+      "tags": [
+        "Kanjeevaram Saree",
+        "Kanchipuram Silk Saree",
+        "Bridal Silk Saree",
+        "Handloom Saree",
+        "Bridal Saree",
+        "Wedding Saree",
+        "Festive Saree",
+        "Silk Saree Online",
+        "Indian Ethnic Wear",
+        "Hyderabad",
+        "Anitha Pemmasani"
+      ],
+      "fabric": "Kanjeevaram Silk",
+      "colours": [
+        "Red"
+      ],
+      "slug": "royal-red-kanjeevaram",
+      "seoTitle": "Royal Red Kanjeevaram | Kanjeevaram Saree – Anitha Pemmasani",
+      "metaDescription": "Shop the Royal Red Kanjeevaram: Kanjeevaram silk with zari from Kanchipuram, Tamil Nadu. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
+      "altText": "Royal Red Kanjeevaram – Kanjeevaram saree by Anitha Pemmasani"
+    },
+    {
+      "id": "p6",
+      "sku": "AP-PHT-001",
+      "name": "Ivory Gold Paithani",
+      "category": "Paithani",
+      "price": 62000,
+      "stock": 2,
+      "threshold": 2,
+      "images": [
+        "https://images.unsplash.com/photo-1610189012906-4b2a8f8e0c9b?q=80&w=600"
+      ],
+      "image": "https://images.unsplash.com/photo-1610189012906-4b2a8f8e0c9b?q=80&w=600",
+      "description": "Traditional Paithani silk with peacock motif.",
+      "video": "",
+      "rating": 0,
+      "reviews": 0,
+      "isNew": true,
+      "tags": [
+        "Paithani Saree",
+        "Paithani Silk Saree",
+        "Peacock Motif Saree",
+        "Handloom Saree",
+        "Wedding Saree",
+        "Festive Saree",
+        "Bridal Saree",
+        "Silk Saree Online",
+        "Indian Ethnic Wear",
+        "Hyderabad",
+        "Anitha Pemmasani"
+      ],
+      "fabric": "Paithani Silk",
+      "colours": [
+        "Gold",
+        "Ivory"
+      ],
+      "slug": "ivory-gold-paithani",
+      "seoTitle": "Ivory Gold Paithani | Paithani Saree – Anitha Pemmasani",
+      "metaDescription": "Shop the Ivory Gold Paithani: Paithani silk with zari from Paithan in Maharashtra. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
+      "altText": "Ivory Gold Paithani – Paithani saree by Anitha Pemmasani"
+    },
+    {
+      "id": "p7",
+      "sku": "AP-MYS-001",
+      "name": "Forest Green Mysore Silk",
+      "category": "Mysore Silk",
+      "price": 28500,
+      "stock": 5,
+      "threshold": 2,
+      "images": [
+        "https://images.unsplash.com/photo-1602161490280-093915e84362?q=80&w=600"
+      ],
+      "image": "https://images.unsplash.com/photo-1602161490280-093915e84362?q=80&w=600",
+      "description": "Classic Mysore silk in deep forest green.",
+      "video": "",
+      "rating": 0,
+      "reviews": 0,
+      "isNew": true,
+      "tags": [
+        "Mysore Silk Saree",
+        "Crepe Silk Saree",
+        "Pure Mysore Silk",
+        "Handloom Saree",
+        "Office Saree",
+        "Festive Saree",
+        "Wedding Saree",
+        "Silk Saree Online",
+        "Indian Ethnic Wear",
+        "Hyderabad",
+        "Anitha Pemmasani"
+      ],
+      "fabric": "Crepe Silk",
+      "colours": [
+        "Green"
+      ],
+      "slug": "forest-green-mysore-silk",
+      "seoTitle": "Forest Green Mysore Silk – Anitha Pemmasani",
+      "metaDescription": "Shop the Forest Green Mysore Silk: Mysore crepe silk from Karnataka. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
+      "altText": "Forest Green Mysore Silk – Mysore Silk saree by Anitha Pemmasani"
+    },
+    {
+      "id": "p8",
+      "sku": "AP-KHD-001",
+      "name": "Coral Ponduru Khadi",
+      "category": "Ponduru Khadi",
+      "price": 15800,
+      "stock": 7,
+      "threshold": 2,
+      "images": [
+        "https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?q=80&w=600"
+      ],
+      "image": "https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?q=80&w=600",
+      "description": "Hand-spun Ponduru Khadi cotton in coral pink.",
+      "video": "",
+      "rating": 0,
+      "reviews": 0,
+      "isNew": true,
+      "tags": [
+        "Ponduru Khadi Saree",
+        "Khadi Cotton Saree",
+        "Handspun Saree",
+        "Handloom Saree",
+        "Casual Saree",
+        "Office Saree",
+        "Festive Saree",
+        "Cotton Saree Online",
+        "Indian Ethnic Wear",
+        "Hyderabad",
+        "Anitha Pemmasani"
+      ],
+      "fabric": "Khadi Cotton",
+      "colours": [
+        "Coral"
+      ],
+      "slug": "coral-ponduru-khadi",
+      "seoTitle": "Coral Ponduru Khadi | Ponduru Khadi Saree – Anitha Pemmasani",
+      "metaDescription": "Shop the Coral Ponduru Khadi: hand-spun, hand-woven Khadi cotton from Ponduru in Andhra Pradesh. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
+      "altText": "Coral Ponduru Khadi – Ponduru Khadi saree by Anitha Pemmasani"
+    },
+    {
+      "id": "p9",
+      "sku": "AP-ACC-001",
+      "name": "Temple Jhumka Earrings",
+      "category": "Jewellery",
+      "price": 1499,
+      "stock": 12,
+      "threshold": 2,
+      "images": [
+        "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA0MDAgNTAwJz48cmVjdCB3aWR0aD0nNDAwJyBoZWlnaHQ9JzUwMCcgZmlsbD0nI2YzZTNjMycvPjxjaXJjbGUgY3g9JzIwMCcgY3k9JzIzMCcgcj0nOTAnIGZpbGw9J25vbmUnIHN0cm9rZT0nI2E4NzQxYScgc3Ryb2tlLXdpZHRoPScxNCcvPjxjaXJjbGUgY3g9JzIwMCcgY3k9JzE0MCcgcj0nMTgnIGZpbGw9JyNhODc0MWEnLz48L3N2Zz4="
+      ],
+      "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA0MDAgNTAwJz48cmVjdCB3aWR0aD0nNDAwJyBoZWlnaHQ9JzUwMCcgZmlsbD0nI2YzZTNjMycvPjxjaXJjbGUgY3g9JzIwMCcgY3k9JzIzMCcgcj0nOTAnIGZpbGw9J25vbmUnIHN0cm9rZT0nI2E4NzQxYScgc3Ryb2tlLXdpZHRoPScxNCcvPjxjaXJjbGUgY3g9JzIwMCcgY3k9JzE0MCcgcj0nMTgnIGZpbGw9JyNhODc0MWEnLz48L3N2Zz4=",
+      "description": "Temple Jhumka Earrings - a handpicked accessory to complete your saree look.",
+      "tags": [
+        "accessory"
+      ],
+      "video": "",
+      "fabric": "",
+      "colours": [],
+      "slug": "temple-jhumka-earrings",
+      "seoTitle": "Temple Jhumka Earrings | Jewellery Saree – Anitha Pemmasani",
+      "metaDescription": "Shop the Temple Jhumka Earrings: handloom fabric from India's master weaving clusters. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
+      "altText": "Temple Jhumka Earrings – Jewellery saree by Anitha Pemmasani",
+      "reviews": 0,
+      "rating": 0
+    },
+    {
+      "id": "p10",
+      "sku": "AP-ACC-002",
+      "name": "Antique Gold Bangles (Set of 4)",
+      "category": "Jewellery",
+      "price": 2299,
+      "stock": 6,
+      "threshold": 2,
+      "images": [
+        "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA0MDAgNTAwJz48cmVjdCB3aWR0aD0nNDAwJyBoZWlnaHQ9JzUwMCcgZmlsbD0nI2VmZTBkMCcvPjxlbGxpcHNlIGN4PScyMDAnIGN5PScyNTAnIHJ4PScxMTAnIHJ5PSc2MCcgZmlsbD0nbm9uZScgc3Ryb2tlPScjYjQ2OTFiJyBzdHJva2Utd2lkdGg9JzE4Jy8+PGVsbGlwc2UgY3g9JzIwMCcgY3k9JzI1MCcgcng9JzgwJyByeT0nNDAnIGZpbGw9J25vbmUnIHN0cm9rZT0nI2I0NjkxYicgc3Ryb2tlLXdpZHRoPSc4Jy8+PC9zdmc+"
+      ],
+      "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA0MDAgNTAwJz48cmVjdCB3aWR0aD0nNDAwJyBoZWlnaHQ9JzUwMCcgZmlsbD0nI2VmZTBkMCcvPjxlbGxpcHNlIGN4PScyMDAnIGN5PScyNTAnIHJ4PScxMTAnIHJ5PSc2MCcgZmlsbD0nbm9uZScgc3Ryb2tlPScjYjQ2OTFiJyBzdHJva2Utd2lkdGg9JzE4Jy8+PGVsbGlwc2UgY3g9JzIwMCcgY3k9JzI1MCcgcng9JzgwJyByeT0nNDAnIGZpbGw9J25vbmUnIHN0cm9rZT0nI2I0NjkxYicgc3Ryb2tlLXdpZHRoPSc4Jy8+PC9zdmc+",
+      "description": "Antique Gold Bangles (Set of 4) - a handpicked accessory to complete your saree look.",
+      "tags": [
+        "accessory"
+      ],
+      "video": "",
+      "fabric": "",
+      "colours": [
+        "Gold"
+      ],
+      "slug": "antique-gold-bangles-set-of-4",
+      "seoTitle": "Antique Gold Bangles (Set of 4) – Anitha Pemmasani",
+      "metaDescription": "Shop the Antique Gold Bangles (Set of 4): handloom fabric from India's master weaving clusters. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
+      "altText": "Antique Gold Bangles (Set of 4) – Jewellery saree by Anitha Pemmasani",
+      "reviews": 0,
+      "rating": 0
+    },
+    {
+      "id": "p11",
+      "sku": "AP-ACC-003",
+      "name": "Readymade Silk Blouse - Maroon",
+      "category": "Blouses & Fabric",
+      "price": 1899,
+      "stock": 9,
+      "threshold": 2,
+      "images": [
+        "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA0MDAgNTAwJz48cmVjdCB3aWR0aD0nNDAwJyBoZWlnaHQ9JzUwMCcgZmlsbD0nI2YxZDlkOScvPjxwYXRoIGQ9J00xMTAgMTUwIEwxNzAgMTIwIEwyMzAgMTIwIEwyOTAgMTUwIEwyNjAgMzMwIEwxNDAgMzMwIFonIGZpbGw9JyM3YTFmMmInLz48L3N2Zz4="
+      ],
+      "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA0MDAgNTAwJz48cmVjdCB3aWR0aD0nNDAwJyBoZWlnaHQ9JzUwMCcgZmlsbD0nI2YxZDlkOScvPjxwYXRoIGQ9J00xMTAgMTUwIEwxNzAgMTIwIEwyMzAgMTIwIEwyOTAgMTUwIEwyNjAgMzMwIEwxNDAgMzMwIFonIGZpbGw9JyM3YTFmMmInLz48L3N2Zz4=",
+      "description": "Readymade Silk Blouse - Maroon - a handpicked accessory to complete your saree look.",
+      "tags": [
+        "accessory"
+      ],
+      "video": "",
+      "fabric": "",
+      "colours": [
+        "Maroon"
+      ],
+      "slug": "readymade-silk-blouse-maroon",
+      "seoTitle": "Readymade Silk Blouse - Maroon – Anitha Pemmasani",
+      "metaDescription": "Shop the Readymade Silk Blouse - Maroon: handloom fabric from India's master weaving clusters. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
+      "altText": "Readymade Silk Blouse - Maroon – Blouses & Fabric saree by Anitha Pemmasani",
+      "reviews": 0,
+      "rating": 0
+    },
+    {
+      "id": "p12",
+      "sku": "AP-ACC-004",
+      "name": "Zari Potli Bag",
+      "category": "Bags & Potlis",
+      "price": 999,
+      "stock": 15,
+      "threshold": 2,
+      "images": [
+        "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA0MDAgNTAwJz48cmVjdCB3aWR0aD0nNDAwJyBoZWlnaHQ9JzUwMCcgZmlsbD0nI2U0ZWFkZicvPjxyZWN0IHg9JzExMCcgeT0nMjEwJyB3aWR0aD0nMTgwJyBoZWlnaHQ9JzE1MCcgcng9JzE0JyBmaWxsPScjM2Y1ZDNhJy8+PHBhdGggZD0nTTE1MCAyMTAgQzE1MCAxMzAgMjUwIDEzMCAyNTAgMjEwJyBmaWxsPSdub25lJyBzdHJva2U9JyMzZjVkM2EnIHN0cm9rZS13aWR0aD0nMTInLz48L3N2Zz4="
+      ],
+      "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA0MDAgNTAwJz48cmVjdCB3aWR0aD0nNDAwJyBoZWlnaHQ9JzUwMCcgZmlsbD0nI2U0ZWFkZicvPjxyZWN0IHg9JzExMCcgeT0nMjEwJyB3aWR0aD0nMTgwJyBoZWlnaHQ9JzE1MCcgcng9JzE0JyBmaWxsPScjM2Y1ZDNhJy8+PHBhdGggZD0nTTE1MCAyMTAgQzE1MCAxMzAgMjUwIDEzMCAyNTAgMjEwJyBmaWxsPSdub25lJyBzdHJva2U9JyMzZjVkM2EnIHN0cm9rZS13aWR0aD0nMTInLz48L3N2Zz4=",
+      "description": "Zari Potli Bag - a handpicked accessory to complete your saree look.",
+      "tags": [
+        "accessory"
+      ],
+      "video": "",
+      "fabric": "",
+      "colours": [],
+      "slug": "zari-potli-bag",
+      "seoTitle": "Zari Potli Bag | Bags & Potlis Saree – Anitha Pemmasani",
+      "metaDescription": "Shop the Zari Potli Bag: handloom fabric from India's master weaving clusters. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
+      "altText": "Zari Potli Bag – Bags & Potlis saree by Anitha Pemmasani",
+      "reviews": 0,
+      "rating": 0
+    }
+  ],
+  "users": [
+    {
+      "id": "u1",
+      "name": "Priya Ramakrishnan",
+      "phone": "+919876543210",
+      "email": "priya.r@example.com",
+      "joined": "2025-08-12",
+      "status": "VIP",
+      "address": "12 Banjara Hills, Hyderabad"
+    },
+    {
+      "id": "u2",
+      "name": "Meera Krishnamurthy",
+      "phone": "+919876543211",
+      "email": "meera.k@example.com",
+      "joined": "2025-09-05",
+      "status": "VIP",
+      "address": "45 Indiranagar, Bangalore"
+    },
+    {
+      "id": "u3",
+      "name": "Sneha Menon",
+      "phone": "+919876543212",
+      "email": "sneha.m@example.com",
+      "joined": "2026-01-15",
+      "status": "Regular",
+      "address": "78 Edgewater, New Jersey, USA"
+    }
+  ],
+  "orders": [
+    {
+      "id": "AP-20261009-X7K2M",
+      "userId": "u1",
+      "customer": "Priya Ramakrishnan",
+      "phone": "+919876543210",
+      "email": "priya.r@example.com",
+      "total": 46198,
+      "status": "placed",
+      "date": "2026-10-09",
+      "items": [
+        {
+          "productId": "p1",
+          "name": "Maroon Kalamkari Tussar",
+          "sku": "AP-TUS-001",
+          "quantity": 1,
+          "price": 45999,
+          "image": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=100",
+          "category": "Tussar"
+        }
+      ],
+      "shippingAddress": {
+        "name": "Priya Ramakrishnan",
+        "phone": "+919876543210",
+        "street": "12 Banjara Hills Road No. 12",
+        "city": "Hyderabad",
+        "state": "Telangana",
+        "pincode": "500034",
+        "country": "India"
+      },
+      "payment": {
+        "method": "UPI",
+        "provider": "Razorpay",
+        "paymentId": "pay_NxK8mP2qR7vL3w",
+        "status": "paid",
+        "paidAt": "2026-10-09"
+      },
+      "pricing": {
+        "subtotal": 45999,
+        "shipping": 199,
+        "discount": 0,
+        "total": 46198
+      },
+      "timeline": [
+        {
+          "status": "placed",
+          "time": "2026-10-09 10:23",
+          "note": "Order placed successfully"
+        }
+      ],
+      "invoiceGenerated": false
+    },
+    {
+      "id": "AP-20261008-A9B3C",
+      "userId": "u2",
+      "customer": "Meera Krishnamurthy",
+      "phone": "+919876543211",
+      "email": "meera.k@example.com",
+      "total": 85199,
+      "status": "confirmed",
+      "date": "2026-10-08",
+      "items": [
+        {
+          "productId": "p5",
+          "name": "Royal Red Kanjeevaram",
+          "sku": "AP-KNC-001",
+          "quantity": 1,
+          "price": 85000,
+          "image": "https://images.unsplash.com/photo-1606293459339-aa5d34a7b0e1?w=100",
+          "category": "Kanjeevaram"
+        }
+      ],
+      "shippingAddress": {
+        "name": "Meera Krishnamurthy",
+        "phone": "+919876543211",
+        "street": "45 Indiranagar 100ft Road",
+        "city": "Bangalore",
+        "state": "Karnataka",
+        "pincode": "560038",
+        "country": "India"
+      },
+      "payment": {
+        "method": "Credit Card",
+        "provider": "Razorpay",
+        "paymentId": "pay_MxJ7nQ1pS6uK2v",
+        "status": "paid",
+        "paidAt": "2026-10-08"
+      },
+      "pricing": {
+        "subtotal": 85000,
+        "shipping": 199,
+        "discount": 0,
+        "total": 85199
+      },
+      "timeline": [
+        {
+          "status": "placed",
+          "time": "2026-10-08 14:15",
+          "note": "Order placed"
+        },
+        {
+          "status": "confirmed",
+          "time": "2026-10-08 15:30",
+          "note": "Order confirmed by admin"
+        }
+      ],
+      "invoiceGenerated": true,
+      "invoiceId": "AP-INV-001"
+    },
+    {
+      "id": "AP-20260915-M3N4P",
+      "userId": "u1",
+      "customer": "Priya Ramakrishnan",
+      "phone": "+919876543210",
+      "email": "priya.r@example.com",
+      "total": 56499,
+      "status": "delivered",
+      "date": "2026-09-15",
+      "items": [
+        {
+          "productId": "p4",
+          "name": "Reddish Orange Banarasi",
+          "sku": "AP-BNR-001",
+          "quantity": 1,
+          "price": 37999,
+          "image": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=100",
+          "category": "Banarasi"
+        },
+        {
+          "productId": "p3",
+          "name": "Pure Maheswari Silk",
+          "sku": "AP-MHS-001",
+          "quantity": 1,
+          "price": 18500,
+          "image": "https://images.unsplash.com/photo-1583391733958-e04f9715d184?w=100",
+          "category": "Maheswari"
+        }
+      ],
+      "shippingAddress": {
+        "name": "Priya Ramakrishnan",
+        "phone": "+919876543210",
+        "street": "12 Banjara Hills Road No. 12",
+        "city": "Hyderabad",
+        "state": "Telangana",
+        "pincode": "500034",
+        "country": "India"
+      },
+      "payment": {
+        "method": "Credit Card",
+        "provider": "Razorpay",
+        "paymentId": "pay_KxH5lM1nO4pQ2r",
+        "status": "paid",
+        "paidAt": "2026-09-15"
+      },
+      "pricing": {
+        "subtotal": 56499,
+        "shipping": 0,
+        "discount": 0,
+        "total": 56499
+      },
+      "timeline": [
+        {
+          "status": "delivered",
+          "time": "2026-09-18",
+          "note": "Delivered"
+        }
+      ],
+      "invoiceGenerated": true,
+      "invoiceId": "AP-INV-002"
+    },
+    {
+      "id": "AP-20260820-A1B2C",
+      "userId": "u3",
+      "customer": "Sneha Menon",
+      "phone": "+919876543212",
+      "email": "sneha.m@example.com",
+      "total": 42699,
+      "status": "delivered",
+      "date": "2026-08-20",
+      "items": [
+        {
+          "productId": "p2",
+          "name": "Mustard Peacock Tussar",
+          "sku": "AP-TUS-002",
+          "quantity": 1,
+          "price": 42500,
+          "image": "https://images.unsplash.com/photo-1596205849889-98e400c784c1?w=100",
+          "category": "Tussar"
+        }
+      ],
+      "shippingAddress": {
+        "name": "Sneha Menon",
+        "phone": "+919876543212",
+        "street": "78 Edgewater",
+        "city": "New Jersey",
+        "state": "NJ",
+        "pincode": "07020",
+        "country": "USA"
+      },
+      "payment": {
+        "method": "UPI",
+        "provider": "Razorpay",
+        "paymentId": "pay_JwG4kL0mN3oP1q",
+        "status": "paid",
+        "paidAt": "2026-08-20"
+      },
+      "pricing": {
+        "subtotal": 42500,
+        "shipping": 199,
+        "discount": 0,
+        "total": 42699
+      },
+      "timeline": [
+        {
+          "status": "delivered",
+          "time": "2026-08-23",
+          "note": "Delivered"
+        }
+      ],
+      "invoiceGenerated": true,
+      "invoiceId": "AP-INV-003"
+    },
+    {
+      "id": "AP-20260510-D5E6F",
+      "userId": "u2",
+      "customer": "Meera Krishnamurthy",
+      "phone": "+919876543211",
+      "email": "meera.k@example.com",
+      "total": 62199,
+      "status": "delivered",
+      "date": "2026-05-10",
+      "items": [
+        {
+          "productId": "p6",
+          "name": "Ivory Gold Paithani",
+          "sku": "AP-PHT-001",
+          "quantity": 1,
+          "price": 62000,
+          "image": "https://images.unsplash.com/photo-1610189012906-4b2a8f8e0c9b?w=100",
+          "category": "Paithani"
+        }
+      ],
+      "shippingAddress": {
+        "name": "Meera Krishnamurthy",
+        "phone": "+919876543211",
+        "street": "45 Indiranagar",
+        "city": "Bangalore",
+        "state": "Karnataka",
+        "pincode": "560038",
+        "country": "India"
+      },
+      "payment": {
+        "method": "UPI",
+        "provider": "Razorpay",
+        "paymentId": "pay_LwI6mO0oR5tJ1u",
+        "status": "paid",
+        "paidAt": "2026-05-10"
+      },
+      "pricing": {
+        "subtotal": 62000,
+        "shipping": 199,
+        "discount": 0,
+        "total": 62199
+      },
+      "timeline": [
+        {
+          "status": "delivered",
+          "time": "2026-05-13",
+          "note": "Delivered"
+        }
+      ],
+      "invoiceGenerated": true,
+      "invoiceId": "AP-INV-004"
+    }
+  ],
+  "invoices": [
+    {
+      "id": "AP-INV-001",
+      "orderId": "AP-20261008-A9B3C",
+      "customer": "Meera Krishnamurthy",
+      "email": "meera.k@example.com",
+      "phone": "+919876543211",
+      "amount": 85199,
+      "date": "2026-10-08",
+      "status": "sent",
+      "template": "template-1",
+      "items": [
+        {
+          "productId": "p5",
+          "name": "Royal Red Kanjeevaram",
+          "sku": "AP-KNC-001",
+          "quantity": 1,
+          "price": 85000,
+          "image": "https://images.unsplash.com/photo-1606293459339-aa5d34a7b0e1?w=100",
+          "category": "Kanjeevaram"
+        }
+      ],
+      "shippingAddress": {
+        "name": "Meera Krishnamurthy",
+        "phone": "+919876543211",
+        "street": "45 Indiranagar 100ft Road",
+        "city": "Bangalore",
+        "state": "Karnataka",
+        "pincode": "560038",
+        "country": "India"
+      },
+      "pricing": {
+        "subtotal": 85000,
+        "shipping": 199,
+        "discount": 0,
+        "total": 85199
+      }
+    },
+    {
+      "id": "AP-INV-002",
+      "orderId": "AP-20260915-M3N4P",
+      "customer": "Priya Ramakrishnan",
+      "email": "priya.r@example.com",
+      "phone": "+919876543210",
+      "amount": 56499,
+      "date": "2026-09-15",
+      "status": "sent",
+      "template": "template-1",
+      "items": [
+        {
+          "productId": "p4",
+          "name": "Reddish Orange Banarasi",
+          "sku": "AP-BNR-001",
+          "quantity": 1,
+          "price": 37999,
+          "image": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=100",
+          "category": "Banarasi"
+        },
+        {
+          "productId": "p3",
+          "name": "Pure Maheswari Silk",
+          "sku": "AP-MHS-001",
+          "quantity": 1,
+          "price": 18500,
+          "image": "https://images.unsplash.com/photo-1583391733958-e04f9715d184?w=100",
+          "category": "Maheswari"
+        }
+      ],
+      "shippingAddress": {
+        "name": "Priya Ramakrishnan",
+        "phone": "+919876543210",
+        "street": "12 Banjara Hills Road No. 12",
+        "city": "Hyderabad",
+        "state": "Telangana",
+        "pincode": "500034",
+        "country": "India"
+      },
+      "pricing": {
+        "subtotal": 56499,
+        "shipping": 0,
+        "discount": 0,
+        "total": 56499
+      }
+    },
+    {
+      "id": "AP-INV-003",
+      "orderId": "AP-20260820-A1B2C",
+      "customer": "Sneha Menon",
+      "email": "sneha.m@example.com",
+      "phone": "+919876543212",
+      "amount": 42699,
+      "date": "2026-08-20",
+      "status": "sent",
+      "template": "template-1",
+      "items": [
+        {
+          "productId": "p2",
+          "name": "Mustard Peacock Tussar",
+          "sku": "AP-TUS-002",
+          "quantity": 1,
+          "price": 42500,
+          "image": "https://images.unsplash.com/photo-1596205849889-98e400c784c1?w=100",
+          "category": "Tussar"
+        }
+      ],
+      "shippingAddress": {
+        "name": "Sneha Menon",
+        "phone": "+919876543212",
+        "street": "78 Edgewater",
+        "city": "New Jersey",
+        "state": "NJ",
+        "pincode": "07020",
+        "country": "USA"
+      },
+      "pricing": {
+        "subtotal": 42500,
+        "shipping": 199,
+        "discount": 0,
+        "total": 42699
+      }
+    },
+    {
+      "id": "AP-INV-004",
+      "orderId": "AP-20260510-D5E6F",
+      "customer": "Meera Krishnamurthy",
+      "email": "meera.k@example.com",
+      "phone": "+919876543211",
+      "amount": 62199,
+      "date": "2026-05-10",
+      "status": "sent",
+      "template": "template-1",
+      "items": [
+        {
+          "productId": "p6",
+          "name": "Ivory Gold Paithani",
+          "sku": "AP-PHT-001",
+          "quantity": 1,
+          "price": 62000,
+          "image": "https://images.unsplash.com/photo-1610189012906-4b2a8f8e0c9b?w=100",
+          "category": "Paithani"
+        }
+      ],
+      "shippingAddress": {
+        "name": "Meera Krishnamurthy",
+        "phone": "+919876543211",
+        "street": "45 Indiranagar",
+        "city": "Bangalore",
+        "state": "Karnataka",
+        "pincode": "560038",
+        "country": "India"
+      },
+      "pricing": {
+        "subtotal": 62000,
+        "shipping": 199,
+        "discount": 0,
+        "total": 62199
+      }
+    }
+  ],
+  "logs": [
+    {
+      "id": 1,
+      "type": "stock_out",
+      "product": "Royal Red Kanjeevaram",
+      "sku": "AP-KNC-001",
+      "change": -1,
+      "prev": 1,
+      "curr": 0,
+      "reason": "Order AP-20261008-A9B3C",
+      "time": "2026-10-08 15:30"
+    },
+    {
+      "id": 2,
+      "type": "invoice_sent",
+      "product": "AP-INV-001",
+      "sku": "-",
+      "change": 0,
+      "prev": 0,
+      "curr": 0,
+      "reason": "Invoice sent to Meera Krishnamurthy",
+      "time": "2026-10-08 15:30"
+    }
+  ],
+  "coupons": [
+    {
+      "code": "WELCOME10",
+      "discount": 10,
+      "type": "percent",
+      "active": true,
+      "description": "10% off your first order",
+      "firstOrderOnly": true,
+      "oncePerCustomer": true
+    },
+    {
+      "code": "FESTIVE20",
+      "discount": 20,
+      "type": "percent",
+      "active": true,
+      "description": "20% festive discount",
+      "announce": true
+    },
+    {
+      "code": "FLAT500",
+      "discount": 500,
+      "type": "flat",
+      "active": true,
+      "description": "₹500 flat discount",
+      "minOrder": 3000
+    }
+  ],
+  "drafts": [],
+  "consentLog": [],
+  "home": {
+    "hero": {
+      "autoplay": true,
+      "interval": 6,
+      "slides": [
+        {
+          "id": "hs1",
+          "enabled": true,
+          "image": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=2574",
+          "focus": "center",
+          "pos": "left",
+          "overlay": 85,
+          "eyebrow": "Est. Hyderabad",
+          "title": "The Art of Slow Weaving",
+          "subtitle": "Curated pure handloom sarees, honoring the legacy of Indian master artisans.",
+          "btnText": "Explore the Collection",
+          "link": {
+            "type": "shop",
+            "value": ""
+          }
+        }
+      ]
+    },
+    "categories": {
+      "show": true,
+      "items": [
+        {
+          "category": "Tussar",
+          "enabled": true,
+          "image": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=800"
+        },
+        {
+          "category": "Maheswari",
+          "enabled": true,
+          "image": "https://images.unsplash.com/photo-1583391733958-e04f9715d184?q=80&w=800"
+        },
+        {
+          "category": "Banarasi",
+          "enabled": true,
+          "image": "https://images.unsplash.com/photo-1610189012906-4b2a8f8e0c9b?q=80&w=800"
+        },
+        {
+          "category": "Kanjeevaram",
+          "enabled": true,
+          "image": "https://images.unsplash.com/photo-1596205849889-98e400c784c1?q=80&w=800"
+        },
+        {
+          "category": "Ponduru Khadi",
+          "enabled": false,
+          "image": ""
+        },
+        {
+          "category": "Paithani",
+          "enabled": false,
+          "image": ""
+        },
+        {
+          "category": "Mysore Silk",
+          "enabled": false,
+          "image": ""
+        }
+      ]
+    },
+    "announcements": [
+      {
+        "id": "an1",
+        "enabled": true,
+        "text": "Complimentary Shipping on Orders Above ₹10,000 · Authentic Handloom Guarantee",
+        "startAt": "",
+        "endAt": ""
+      }
+    ],
+    "arrivals": {
+      "show": true,
+      "label": "Handpicked",
+      "title": "New Arrivals"
+    },
+    "signature": {
+      "show": true,
+      "label": "Curated Edits",
+      "title": "The Signature Collection",
+      "tiles": [
+        {
+          "id": "sg1",
+          "title": "The Bridal Edit",
+          "subtitle": "Pure Kanjeevaram",
+          "category": "Kanjeevaram",
+          "image": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=1200"
+        },
+        {
+          "id": "sg2",
+          "title": "Maheswari Silk",
+          "subtitle": "Timeless Elegance",
+          "category": "Maheswari",
+          "image": "https://images.unsplash.com/photo-1583391733958-e04f9715d184?q=80&w=800"
+        }
+      ]
+    }
+  },
+  "reviews": [],
+  "stockAlerts": [],
+  "outbox": [],
+  "similarAlerts": [],
+  "bundles": [
+    {
+      "id": "b1",
+      "name": "Tussar + Temple Jhumka",
+      "productIds": [
+        "p1",
+        "p9"
+      ],
+      "type": "percent",
+      "value": 10,
+      "active": true
+    }
+  ],
+  "accessorySeeded": true
+}

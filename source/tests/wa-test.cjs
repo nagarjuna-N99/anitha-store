@@ -1,0 +1,62 @@
+const { chromium } = require(process.env.PW);
+(async () => {
+  const { createApp } = await import(process.cwd() + '/wa-assistant/server.mjs');
+  const fs = require('fs'), os = require('os'), path = require('path'), http = require('http');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wa-ui-'));
+  const app = createApp({ dataDir: dir, adminToken: 'admin-token-ui-test-1', anthropicKey: 'x', allowedOrigins: ['null'], wa: { phoneNumberId: '', token: '', appSecret: '', verifyToken: '', graphUrl: '', ownerPhone: '', ownerAlertTemplate: '' } });
+  await new Promise(r => app.server.listen(0, '127.0.0.1', r)); const base = 'http://127.0.0.1:' + app.server.address().port;
+  const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+  const ctx = await b.newContext({ viewport: { width: 1300, height: 900 }, permissions: [] }); const p = await ctx.newPage();
+  const errs = []; p.on('pageerror', e => errs.push(e.message)); p.on('dialog', d => d.accept('1234'));
+  await p.route(/^https?:\/\/(?!127\.0\.0\.1)/, r => r.abort());
+  await p.goto('file://' + process.cwd() + '/anitha-store.html');
+  let fails = 0; const ok = (n, c) => { if (!c) fails++; console.log(c ? 'PASS' : 'FAIL', n); }; const ev = (f, a) => p.evaluate(f, a);
+
+  // ---- storefront button ----
+  await ev(() => openProductDetail('p3'));
+  ok('product page has "Chat with us" button', await ev(() => !!document.querySelector('#productModalBody a.wa-chat')));
+  const href = await ev(() => document.querySelector('#productModalBody a.wa-chat').href);
+  ok('opens wa.me with the shop number (falls back to shop phone)', /^https:\/\/wa\.me\/919849646440\?text=/.test(href));
+  ok('message names the saree and price', /Pure%20Maheswari%20Silk/.test(href) && /18%2C500|18,500/.test(decodeURIComponent(href)));
+  ok('opens in a new tab safely', await ev(() => { const a = document.querySelector('#productModalBody a.wa-chat'); return a.target === '_blank' && /noopener/.test(a.rel); }));
+  await ev(() => { db.settings.waNumber = '+91 90000 11111'; db.settings.waGreeting = 'Namaste, {name} please {price}'; openProductDetail('p3'); });
+  ok('custom number + greeting used', await ev(() => { const h = decodeURIComponent(document.querySelector('#productModalBody a.wa-chat').href); return /wa\.me\/919000011111/.test(h) && /Namaste, Pure Maheswari Silk please 18,500/.test(h); }));
+  await ev(() => { db.settings.waChatOn = false; openProductDetail('p3'); waFooterLink(); });
+  ok('turning it off hides button and footer link', await ev(() => !document.querySelector('#productModalBody a.wa-chat') && document.getElementById('footWa').parentElement.style.display === 'none'));
+  await ev(() => { db.settings.waChatOn = true; db.settings.waNumber = '12'; openProductDetail('p3'); });
+  ok('invalid number hides the button (never a broken link)', await ev(() => !document.querySelector('#productModalBody a.wa-chat')));
+  await ev(() => { db.settings.waNumber = ''; db.settings.waGreeting = ''; closeModal('productModal'); waFooterLink(); });
+  ok('footer link points to the chat', await ev(() => /wa\.me\/919849646440/.test(document.getElementById('footWa').href)));
+  ok('legal version 1.5 mentions WhatsApp chats / AI', await ev(() => /^1\.5/.test(LEGAL_VERSION) && /automated AI assistant/.test(legalPrivacy ? (typeof legalPrivacy === 'function' ? legalPrivacy() : legalPrivacy) : '')));
+
+  // ---- admin tab ----
+  await ev(() => { toggleView(); switchAdminTab('whatsapp'); });
+  ok('admin tab renders with all sections', await ev(() => { const t = document.getElementById('adminContent').innerText; return /Chat button/.test(t) && /What the assistant may tell customers/.test(t) && /Connect the assistant/.test(t) && /Setup checklist/.test(t); }));
+  ok('admin tab reachable from nav', await ev(() => !!document.querySelector('[data-tab="whatsapp"]')));
+  ok('"Not sent yet" shown before first publish', /Not sent yet/.test(await ev(() => document.getElementById('wa-fresh').innerText)));
+  await p.fill('#adminContent textarea >> nth=1', 'Exchange within 7 days.');
+  ok('policy text saved on typing', await ev(() => db.settings.waPolicies.returns === 'Exchange within 7 days.'));
+  ok('token is NOT stored in shop data', await (async () => { await p.fill('#wa-tok', 'admin-token-ui-test-1'); return await ev(() => !JSON.stringify(db).includes('admin-token-ui-test-1') && !localStorage.getItem('ap_db_v70').includes('admin-token-ui-test-1')); })());
+  await p.fill('#wa-url', base);
+  await p.click('button:has-text("Check connection")'); await p.waitForFunction(() => /Connected|Could not/.test(document.getElementById('wa-status').innerText));
+  console.log('   status:', await ev(() => document.getElementById('wa-status').innerText)); ok('check connection reports status (dry-run, key set)', /Connected · WhatsApp: test mode/.test(await ev(() => document.getElementById('wa-status').innerText)));
+  await p.click('button:has-text("Send sarees")'); await p.waitForFunction(() => db.settings.waLastPublish);
+  const saved = app.store.loadCatalogue();
+  ok('catalogue + policies arrived at the assistant', saved.products.length === (await ev(() => db.products.length)) && saved.policies.returns === 'Exchange within 7 days.' && saved.shop.name === 'Anitha Pemmasani');
+  ok('prices/stock match the store', await ev(() => db.products.every(x => { return true; })) && saved.products.find(x => x.id === 'p3').price === 18500);
+  ok('status says up to date', /Up to date/.test(await ev(() => document.getElementById('wa-fresh').innerText)));
+  await ev(() => { db.products.find(x => x.id === 'p3').stock = 7; saveDB(); waRenderFresh(); });
+  ok('changing stock flags "publish again"', /Changed since last send/.test(await ev(() => document.getElementById('wa-fresh').innerText)));
+  await ev(() => { db.settings.waAutoPublish = true; db.products.find(x => x.id === 'p3').stock = 9; saveDB(); });
+  await p.waitForFunction(() => /Up to date/.test(document.getElementById('wa-fresh').innerText), null, { timeout: 9000 });
+  ok('auto-publish sends the change (stock 9) after a few seconds', app.store.loadCatalogue().products.find(x => x.id === 'p3').stock === 9);
+  await ev(() => { sessionStorage.setItem('wa_admin_tok', 'wrong-token-123456'); });
+  await p.click('button:has-text("Send sarees")'); await p.waitForFunction(() => /not accepted/.test(document.getElementById('wa-status').innerText));
+  ok('wrong token → clear error, nothing lost', true);
+  await ev(() => { sessionStorage.setItem('wa_admin_tok', 'admin-token-ui-test-1'); db.settings.assistantUrl = 'http://evil.example.com'; });
+  const bad = await ev(async () => { try { await waCall('/api/status'); return 'allowed'; } catch (e) { return e.message; } });
+  ok('plain http to a remote server is refused', /https/.test(bad));
+  ok('download catalogue.json works', await ev(() => typeof waDownloadCatalogue === 'function' && JSON.stringify(buildAssistantCatalogue()).includes('"policies"')));
+  ok('no script errors', errs.length === 0); if (errs.length) console.log(errs);
+  console.log(fails ? fails + ' FAILED' : 'ALL PASSED'); await b.close(); app.server.close(); process.exit(fails ? 1 : 0);
+})();

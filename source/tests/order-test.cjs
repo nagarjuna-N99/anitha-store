@@ -1,0 +1,37 @@
+const { chromium } = require(process.env.PW);
+(async () => {
+  const { createApp } = await import(process.cwd() + '/wa-assistant/server.mjs');
+  const fs = require('fs'), os = require('os'), path = require('path');
+  const app = createApp({ dataDir: fs.mkdtempSync(path.join(os.tmpdir(), 'wa-ord-')), adminToken: 'admin-token-ui-test-1', anthropicKey: 'x', allowedOrigins: ['null'], wa: { phoneNumberId: '', token: '', appSecret: '', verifyToken: '', graphUrl: '', ownerPhone: '', ownerAlertTemplate: '' } });
+  await new Promise(r => app.server.listen(0, '127.0.0.1', r)); const base = 'http://127.0.0.1:' + app.server.address().port; app.cfg.payments.publicUrl = base;
+  const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+  const p = await (await b.newContext({ viewport: { width: 1300, height: 900 } })).newPage();
+  const errs = []; p.on('pageerror', e => errs.push(e.message)); p.on('dialog', d => d.accept('1234'));
+  await p.route(/^https?:\/\/(?!127\.0\.0\.1)/, r => r.abort());
+  await p.goto('file://' + process.cwd() + '/anitha-store.html');
+  let fails = 0; const ok = (n, c) => { if (!c) fails++; console.log(c ? 'PASS' : 'FAIL', n); }; const ev = (f, a) => p.evaluate(f, a);
+  await ev(async ([b, t]) => { db.settings.assistantUrl = b; sessionStorage.setItem('wa_admin_tok', t); await waPublish(true); }, [base, 'admin-token-ui-test-1']);
+  ok('store pricing rules reach the server', app.store.loadCatalogue().pricing.shippingFee === 199 && app.store.loadCatalogue().pricing.freeShippingAbove === 10000);
+  const stock0 = await ev(() => ({ p3: db.products.find(x => x.id === 'p3').stock, p4: db.products.find(x => x.id === 'p4').stock }));
+  const users0 = await ev(() => db.users.length);
+  // two WhatsApp orders, created exactly as the bot does, approved and paid through the provider flow
+  const mk = async (phone, name, items) => { const o = app.store.addOrder({ phone, customerName: name, address: '12 MG Road, Hyderabad', pincode: '500072', items, total: 0, pricing: null, source: 'whatsapp-assistant' }); await app.orders.sendLink(o.id); await app.orders.handleEvent({ id: 'e' + o.id, type: 'paid', linkId: o.payment.linkId, orderId: o.id, paymentId: 'pay_' + o.id, amountInr: o.payment.amount }); return o; };
+  const o1 = await mk('919876543210', 'Priya Ramakrishnan', [{ id: 'p3', name: 'Pure Maheswari Silk', sku: 'AP-MHS-001', quantity: 1, price: 18500 }]);
+  const o2 = await mk('919800099999', 'New Customer', [{ id: 'p4', name: 'Reddish Orange Banarasi', sku: 'AP-BNR-001', quantity: 1, price: 37999 }]);
+  ok('server shows both as paid, amounts from the catalogue', o1.status === 'paid' && o1.payment.amount === 18500 + 0 && o2.payment.amount === 37999);
+  await ev(() => { toggleView(); switchAdminTab('whatsapp'); });
+  await p.waitForFunction(() => /to add or update/.test(document.getElementById('wa-orders-box').innerText), null, { timeout: 5000 });
+  ok('admin tab shows 2 paid orders waiting, provider mode and approval mode', /2 WhatsApp orders/.test(await ev(() => document.getElementById('wa-orders-box').innerText)) && /TEST mode/.test(await ev(() => document.getElementById('wa-orders-box').innerText)) && /after you approve/.test(await ev(() => document.getElementById('wa-orders-box').innerText)));
+  await p.click('button:has-text("Add / update WhatsApp orders")'); await p.waitForFunction(id => db.orders.some(o => o.id === id), o2.id, { timeout: 5000 });
+  const r = await ev(([i1, i2, s0]) => ({ a: db.orders.find(o => o.id === i1), b: db.orders.find(o => o.id === i2), p3: db.products.find(x => x.id === 'p3').stock, p4: db.products.find(x => x.id === 'p4').stock, users: db.users.length, priya: db.users.filter(u => u.name.startsWith('Priya')).length, logs: db.logs.filter(l => l.type === 'stock_out' && /WhatsApp order/.test(l.reason || '')).length }), [o1.id, o2.id]);
+  ok('orders added with source whatsapp, paid status, correct totals and payment id', r.a.source === 'whatsapp' && r.a.payment.status === 'paid' && r.a.total === 18500 && r.b.total === 37999 && r.a.payment.paymentId === 'pay_' + o1.id);
+  ok('stock reduced in the store (once each)', r.p3 === stock0.p3 - 1 && r.p4 === stock0.p4 - 1 && r.logs === 2);
+  ok('existing customer matched by phone (no duplicate), new customer created', r.users === users0 + 1 && r.priya === 1 && r.a.userId === (await ev(() => db.users.find(u => u.name.startsWith('Priya')).id)));
+  ok('server: nothing left to import, holds released', (await (await fetch(base + '/api/orders/export', { headers: { Authorization: 'Bearer admin-token-ui-test-1' } })).json()).orders.length === 0 && o1.importedAt);
+  await ev(() => waImportOrders()); await p.waitForTimeout(400);
+  ok('importing again is harmless (no duplicates, no double stock cut)', await ev(([i1, s0]) => db.orders.filter(o => o.id === i1).length === 1 && db.products.find(x => x.id === 'p3').stock === s0.p3 - 1, [o1.id, stock0]));
+  ok('imported orders show in the Orders tab without errors', await ev(() => { switchAdminTab('orders'); return /OR[0-9a-f]+/i.test(document.getElementById('adminContent').innerText); }));
+  ok('customers see the order in My Account', await ev(() => { setSession(db.users.find(u => u.name.startsWith('Priya')), null); openAccount(); const t = document.getElementById('accountModal').innerText; closeModal('accountModal'); return t.includes('OR'); }));
+  ok('no script errors', errs.length === 0); if (errs.length) console.log(errs);
+  console.log(fails ? fails + ' FAILED' : 'ALL PASSED'); await b.close(); app.server.close(); process.exit(fails ? 1 : 0);
+})();

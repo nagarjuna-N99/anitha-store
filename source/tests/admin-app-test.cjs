@@ -1,0 +1,184 @@
+// The real owner app against the real server: sign-in, saving, merging, security panel, Instagram, and the public site.
+const { chromium } = require(process.env.PW); const { spawn } = require('child_process'); const http = require('http'); const fs = require('fs'); const os = require('os'); const path = require('path');
+const ROOT = process.cwd(), SETUP = 'setup-token-0123456789', PW = 'Correct-Horse-9!';
+(async () => {
+  let fails = 0; const ok = (n, c) => { if (!c) fails++; console.log(c ? 'PASS' : 'FAIL', n); };
+  const { totp } = await import('file://' + ROOT + '/wa-assistant/src/adminauth.mjs');
+  const free = () => new Promise(r => { const s = http.createServer(); s.listen(0, '127.0.0.1', () => { const p = s.address().port; s.close(() => r(p)); }); });
+  // mock Instagram Graph API
+  const igHits = []; const ig = http.createServer((req, res) => { let b = ''; req.on('data', c => b += c); req.on('end', () => { const u = new URL(req.url, 'http://x'), p = Object.fromEntries(new URLSearchParams(b || u.search)); igHits.push({ path: u.pathname, p }); const o = (j) => { res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify(j)); }; if (/\/media$/.test(u.pathname)) return o({ id: 'c' + igHits.length }); if (u.searchParams.get('fields') === 'status_code') return o({ status_code: 'FINISHED' }); if (/media_publish/.test(u.pathname)) return o({ id: 'post1' }); if (u.searchParams.get('fields') === 'permalink') return o({ permalink: 'https://www.instagram.com/p/TEST/' }); o({}); }); });
+  await new Promise(r => ig.listen(0, '127.0.0.1', r)); const igPort = ig.address().port;
+  const port = await free(), sitePort = await free(), data = fs.mkdtempSync(path.join(os.tmpdir(), 'admapp-'));
+  let BASE = ''; const site = http.createServer((q, r) => { r.writeHead(200, { 'content-type': 'text/html' }); r.end(fs.readFileSync(ROOT + '/build/site/index.html', 'utf8').replace(/window.__SHOP_API="[^"]*"/, 'window.__SHOP_API="' + BASE + '"')); }); await new Promise(r => site.listen(sitePort, '127.0.0.1', r));
+  const srv = spawn('node', ['server.mjs'], { cwd: ROOT + '/wa-assistant', env: { ...process.env, PORT: String(port), DATA_DIR: data, ADMIN_SETUP_TOKEN: SETUP, COOKIE_SECURE: 'false', PUBLIC_URL: 'https://shop.test', ALLOWED_ORIGINS: `http://127.0.0.1:${sitePort}`, IG_USER_ID: '17841400', IG_ACCESS_TOKEN: 'tok-ig-secret-0000', IG_GRAPH_URL: `http://127.0.0.1:${igPort}`, ANTHROPIC_API_KEY: '', ADMIN_TOKEN: '' }, stdio: 'ignore' });
+  const base = `http://127.0.0.1:${port}`; BASE = base; for (let i = 0; i < 60; i++) { try { if ((await fetch(base + '/health')).ok) break; } catch (e) { } await new Promise(r => setTimeout(r, 200)); }
+  const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' }); const ctx = await b.newContext({ viewport: { width: 1280, height: 900 }, acceptDownloads: true });
+  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, r => r.abort()); const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message)); p.on('dialog', d => d.accept('1234'));
+  const igReady = async () => { await p.waitForFunction(() => typeof IGD !== 'undefined' && IGD && IGD.rules && IGD.rules.length, null, { timeout: 8000 }); await p.evaluate(() => { const o = document.getElementById('ig-override'); if (o && !o.checked) { o.checked = true; igGateUpdate(); } }); await p.waitForFunction(() => !document.getElementById('ig-go').disabled, null, { timeout: 5000 }); };
+  const igReadyRaw = async () => { await p.waitForFunction(() => typeof IGD !== 'undefined' && IGD && IGD.rules && IGD.rules.length, null, { timeout: 8000 }); };
+  const ev = (f, a) => p.evaluate(f, a); const sleep = ms => new Promise(r => setTimeout(r, ms));
+  try {
+    // ---- what a stranger gets ----
+    const raw = await fetch(base + '/admin'), html = await raw.text();
+    ok('the admin page carries strict security headers and no secrets', /frame-ancestors 'none'/.test(raw.headers.get('content-security-policy')) && raw.headers.get('x-frame-options') === 'DENY' && /noindex/.test(html) && !/tok-ig|setup-token|\b1234\b|HDFC/.test(html) && !/Correct-Horse/.test(html));
+    ok('the stranger cannot read shop data without signing in', (await fetch(base + '/admin/api/db')).status === 401);
+    await p.goto(base + '/admin'); await p.waitForSelector('#admGate .adm-box');
+    ok('the first visit shows only the account-creation screen (nothing of the shop)', await ev(() => getComputedStyle(document.getElementById('admGate')).display === 'flex' && /Create my account/.test(document.getElementById('admGate').innerText) && /setup token/i.test(document.getElementById('admGate').innerText)) && await ev(() => !ADM.signedIn && db.products.length === 12 && !document.body.classList.contains('adm-app')));
+    // setup errors
+    const fill = async (sel, v) => { await p.fill(sel, v); };
+    await fill('#adm-token', 'wrong-token-wrong-token'); await fill('#adm-pw', PW); await fill('#adm-pw2', PW); await p.click('#adm-go'); await p.waitForFunction(() => /not right/.test((document.getElementById('adm-msg') || {}).textContent || ''));
+    ok('a wrong setup token is explained', true);
+    await fill('#adm-token', SETUP); await fill('#adm-pw', 'weakpass'); await fill('#adm-pw2', 'weakpass'); await p.evaluate(() => document.getElementById('adm-pw').removeAttribute('minlength')); await p.click('#adm-go'); await p.waitForFunction(() => /12 characters/.test((document.getElementById('adm-msg') || {}).textContent || ''));
+    ok('a weak password is explained', true);
+    await fill('#adm-pw', PW); await fill('#adm-pw2', PW + 'x'); await p.click('#adm-go'); await p.waitForFunction(() => /not the same/.test((document.getElementById('adm-msg') || {}).textContent || ''));
+    ok('two different passwords are caught on the page', true);
+    await fill('#adm-pw2', PW); await p.click('#adm-go'); await p.waitForFunction(() => /Sign in/.test((document.getElementById('adm-go') || {}).textContent || ''));
+    ok('the account is created, then it asks to sign in', await ev(() => /Account created/.test(document.getElementById('adm-msg').textContent)));
+    // ---- sign in ----
+    await fill('#adm-pw', 'not-the-password'); await p.click('#adm-go'); await p.waitForFunction(() => /Wrong password/.test((document.getElementById('adm-msg') || {}).textContent || ''));
+    ok('a wrong password shows one generic message', true);
+    await fill('#adm-pw', PW); await p.click('#adm-go'); await p.waitForFunction(() => document.body.classList.contains('adm-app'));
+    ok('after signing in the owner app opens, with no customer shop and no PIN anywhere', await ev(() => document.getElementById('adminView').classList.contains('active') && getComputedStyle(document.getElementById('storefrontView')).display === 'none' && getComputedStyle(document.getElementById('admGate')).display === 'none' && ADM.signedIn));
+    ok('the browser keeps no copy of the shop (nothing in localStorage)', await ev(() => !localStorage.getItem('ap_db_v70') && !sessionStorage.getItem('ap_admin')));
+    ok('the session cookie cannot be read by page scripts', await ev(() => !document.cookie.includes('adm')));
+    await p.waitForFunction(() => /Saved to the server/.test((document.getElementById('admSync') || {}).textContent || ''), null, { timeout: 8000 });
+    ok('first run starts from demo data and saves it to the server', await ev(() => ADM.version >= 1) && (await (await fetch(base + '/public/shop')).json()).products.length === 12);
+    // ---- editing saves to the server and the public sees it ----
+    await ev(() => { const x = db.products.find(y => y.id === 'p3'); x.price = 19999; x.name = 'Pure Maheswari Silk (new price)'; saveDB(); });
+    await p.waitForFunction(() => /Saved to the server/.test((document.getElementById('admSync') || {}).textContent || '')); await sleep(300);
+    const pub = await (await fetch(base + '/public/shop')).json(); const pp = pub.products.find(x => x.id === 'p3');
+    ok('an edit in the owner app reaches the public data within a second', pp.price === 19999 && /new price/.test(pp.name));
+    ok('the public data has no PIN, bank details, customers or orders', await (async () => { const t = JSON.stringify(pub); return !/adminPin|accountNumber|ifscCode|Priya|"orders"|"users"/.test(t); })());
+    // ---- the public website (another address) ----
+    const sp = await ctx.newPage(); const serrs = []; sp.on('pageerror', e => serrs.push(e.message)); await sp.goto(`http://127.0.0.1:${sitePort}/`); await sp.waitForFunction(() => /new price/.test(document.body.innerText) || document.querySelectorAll('#scrollTrack .scroll-card').length > 0, null, { timeout: 8000 }).catch(() => { });
+    await sp.evaluate(() => navigateTo('shop')); await sp.waitForFunction(() => /new price/i.test((document.getElementById('productGrid') || {}).textContent || ''), null, { timeout: 8000 });
+    ok('the public website shows what the owner published', true);
+    ok('the public website has no admin screens, no switch, no PIN, no demo customers', await sp.evaluate(() => BUILD === 'site' && !document.getElementById('adminView') && !document.getElementById('adminMobileNav') && !document.getElementById('view-toggle') && !document.querySelector('.owner-entry,.owner-foot') && db.settings.adminPin === undefined && db.settings.accountNumber === undefined && db.orders.length === 0 && db.users.length === 0));
+    ok('on the public website the admin cannot be opened from the console either', await sp.evaluate(() => { try { toggleView(); } catch (e) { } return !document.getElementById('storefrontView').classList.contains('hidden') && adminAuthed() === false; }));
+    ok('the public website shows the shop (and no errors)', await sp.evaluate(() => document.querySelectorAll('#productGrid .product-card').length > 0) && serrs.length === 0);
+    await sp.close();
+    // ---- someone else changes the shop while the owner has it open (a new order) ----
+    const tok = await (async () => { const r = await fetch(base + '/admin/api/login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ password: PW }) }); return { cookie: r.headers.get('set-cookie').split(';')[0], csrf: (await r.json()).csrf }; })();
+    const g = await (await fetch(base + '/admin/api/db', { headers: { cookie: tok.cookie } })).json(); const other = JSON.parse(JSON.stringify(g.db)); other.orders.unshift({ id: 'AP-NEW-1', userId: 'u9', customer: 'Walk-in Buyer', phone: '1', total: 500, status: 'placed', date: '2026-10-30', items: [], pricing: {} }); other.products.find(x => x.id === 'p1').stock = 2;
+    await fetch(base + '/admin/api/db', { method: 'PUT', headers: { cookie: tok.cookie, 'x-csrf-token': tok.csrf, 'content-type': 'application/json' }, body: JSON.stringify({ db: other, baseVersion: g.version }) });
+    await ev(() => { db.products.find(y => y.id === 'p2').price = 41111; saveDB(); }); await p.waitForFunction(() => /Saved to the server/.test((document.getElementById('admSync') || {}).textContent || '')); await sleep(300);
+    ok('a save from the open owner app does not wipe a change made elsewhere (merged)', await ev(() => db.orders.some(o => o.id === 'AP-NEW-1') && db.products.find(y => y.id === 'p1').stock === 2 && db.products.find(y => y.id === 'p2').price === 41111));
+    const g2 = await (await fetch(base + '/admin/api/db', { headers: { cookie: tok.cookie } })).json(); const o3 = JSON.parse(JSON.stringify(g2.db)); o3.orders.unshift({ id: 'AP-NEW-2', customer: 'Another', total: 1, status: 'placed', date: '2026-10-30', items: [], pricing: {} });
+    await fetch(base + '/admin/api/db', { method: 'PUT', headers: { cookie: tok.cookie, 'x-csrf-token': tok.csrf, 'content-type': 'application/json' }, body: JSON.stringify({ db: o3, baseVersion: g2.version }) });
+    await ev(() => admPoll()); await p.waitForFunction(() => db.orders.some(o => o.id === 'AP-NEW-2'), null, { timeout: 5000 });
+    ok('a new order made elsewhere appears in the open owner app by itself', true);
+    // ---- session ends ----
+    await ctx.clearCookies(); await ev(() => { db.products.find(y => y.id === 'p4').price = 12345; saveDB(); }); await p.waitForFunction(() => getComputedStyle(document.getElementById('admGate')).display === 'flex', null, { timeout: 8000 });
+    ok('when the session ends the sign-in screen returns and says changes are kept', await ev(() => /session ended/i.test(document.getElementById('admGate').innerText) && !ADM.signedIn));
+    await fill('#adm-pw', PW); await p.click('#adm-go'); await p.waitForFunction(() => getComputedStyle(document.getElementById('admGate')).display === 'none'); await ev(() => admSaveNow()); await p.waitForFunction(() => /Saved to the server/.test((document.getElementById('admSync') || {}).textContent || '')); await sleep(300);
+    ok('...and after signing in again the unsaved change is saved', (await (await fetch(base + '/public/shop')).json()).products.find(x => x.id === 'p4').price === 12345);
+    // ---- security panel ----
+    await ev(() => switchAdminTab('settings')); await p.waitForSelector('#adm-security');
+    ok('Settings has Security & backup and no PIN field', await ev(() => !document.getElementById('s-pin') && /Security & backup/i.test(document.getElementById('adm-security').textContent)));
+    await p.waitForFunction(() => /No key yet|active/.test((document.getElementById('sec-ai-msg') || {}).textContent || ''), null, { timeout: 5000 });
+    ok('Settings has a Claude AI key box: shows OFF with no key, and no Remove button', await ev(() => !!document.getElementById('sec-aikey') && document.getElementById('sec-aikey').type === 'password' && /OFF/.test(document.getElementById('sec-ai-pill').textContent) && document.getElementById('sec-ai-rm').style.display === 'none'));
+    await p.fill('#sec-aikey', 'not-a-key'); await p.click('#sec-ai-save'); await p.waitForFunction(() => /does not look like/.test((document.getElementById('sec-ai-msg') || {}).textContent || ''), null, { timeout: 5000 });
+    ok('a pasted value that is not an Anthropic key is refused with a plain message', true);
+    await p.waitForFunction(() => /login/.test((document.getElementById('sec-audit') || {}).textContent || '')); ok('recent sign-in activity is listed', true);
+    await fill('#sec-2pw', PW); await p.click('#adm-security button:has-text("Set up 2-step")'); await p.waitForSelector('#sec-2code'); const secret = (await ev(() => document.querySelector('.adm-key').textContent)).replace(/\s/g, '');
+    ok('2-step setup shows a key to type into an authenticator app', /^[A-Z2-7]{32}$/.test(secret));
+    await fill('#sec-2code', '000000'); await p.click('button:has-text("Turn on")'); await p.waitForFunction(() => /not right/.test((document.getElementById('sec-2err') || {}).textContent || ''));
+    await fill('#sec-2code', totp(secret, Math.floor(Date.now() / 30000))); await p.click('button:has-text("Turn on")'); await p.waitForFunction(() => /ON/.test((document.querySelector('#adm-security .status-pill') || {}).textContent || ''));
+    ok('a wrong code is refused, the right code turns 2-step sign-in on', true);
+    await fill('#sec-cur', PW); await fill('#sec-new', 'Another-Strong-Pass-5!'); await p.click('button:has-text("Change password")'); await p.waitForFunction(() => /changed/.test((document.getElementById('sec-pw-msg') || {}).textContent || '')); ok('the password can be changed', true);
+    const dl = p.waitForEvent('download'); await p.click('button:has-text("Download a backup")'); const d1 = await dl;
+    ok('a backup of the whole shop downloads as JSON', /anitha-store-backup-.*\.json/.test(d1.suggestedFilename()) && JSON.parse(fs.readFileSync(await d1.path(), 'utf8')).products.length >= 8);
+    // sign out and in with 2-step
+    await p.click('button:has-text("Sign out")'); await p.waitForSelector('#adm-code'); ok('after sign-out the screen asks for password AND the 6-digit code', true);
+    await fill('#adm-pw', 'Another-Strong-Pass-5!'); await fill('#adm-code', '123456'); await p.click('#adm-go'); await p.waitForFunction(() => /Wrong password or code/.test((document.getElementById('adm-msg') || {}).textContent || ''));
+    await fill('#adm-pw', 'Another-Strong-Pass-5!'); await fill('#adm-code', totp(secret, Math.floor(Date.now() / 30000) + 1)); await p.click('#adm-go'); await p.waitForFunction(() => document.body.classList.contains('adm-app'), null, { timeout: 8000 });
+    ok('a wrong code is refused; password + a current code signs in', true);
+    // ---- Instagram ----
+    await ev(() => switchAdminTab('social')); await p.waitForFunction(() => /Connected to account/.test((document.getElementById('adminContent') || {}).textContent || ''));
+    ok('Instagram tab shows the connection (account masked, token never shown)', await ev(() => /178…400/.test(document.getElementById('adminContent').textContent) && !/tok-ig/.test(document.documentElement.innerHTML)));
+    await ev(() => { const c = document.createElement('canvas'); c.width = 1080; c.height = 1350; const x = c.getContext('2d'); x.fillStyle = '#c8a060'; x.fillRect(0, 0, 1080, 1350); for (let i = 0; i < 300; i++) { x.fillStyle = `hsl(${(i * 37) % 360},60%,${30 + (i * 13) % 40}%)`; x.fillRect((i * 97) % 1080, (i * 53) % 1350, 30, 70); } const u = c.toDataURL('image/jpeg', 0.9), q = db.products.find(x => x.id === 'p9'); q.images = [u]; q.image = u; });
+    await ev(() => igOffer(db.products.find(x => x.id === 'p9'), { force: true })); await p.waitForSelector('#ig-cap');
+    ok('the post dialog proposes a caption, hashtags and 3 recommended times with reasons, honest about what they are based on', await ev(() => document.getElementById('ig-cap').value.length > 30 && /#handloomsaree/.test(document.getElementById('ig-cap').value) && document.querySelectorAll('input[name=ig-when]').length === 5 && /recommended/.test(document.querySelector('.ig-opt').nextElementSibling.textContent) && /cannot see your account/.test(document.getElementById('ig-body').textContent)));
+    ok('the recommended times are in the future, evening/weekend hours, in IST', await ev(() => [...document.querySelectorAll('input[name=ig-when]')].map(i => i.value).filter(v => /\+05:30$/.test(v)).every(v => Date.parse(v) > Date.now())));
+    await igReady(); await p.click('#ig-go'); await p.waitForFunction(() => /Scheduled for/.test((document.getElementById('toast') || {}).textContent || ''), null, { timeout: 15000 });
+    ok('choosing the recommended time schedules the post on the server (nothing posted yet)', igHits.every(h => !/media_publish/.test(h.path)) && (await (await fetch(base + '/admin/api/social/status', { headers: { cookie: await ctx.cookies().then(c => c.map(x => x.name + '=' + x.value).join('; ')) } })).json()).jobs.some(j => j.status === 'queued'));
+    await ev(() => renderSocialAdmin(document.getElementById('adminContent'))); await p.waitForSelector('.ig-job');
+    ok('the schedule list shows it with Post now and Cancel', await ev(() => /Scheduled/.test(document.querySelector('.ig-job').textContent) && !!document.querySelector('.ig-job button.btn-danger-sm')));
+    await p.click('.ig-job button:has-text("Post now")'); await p.waitForFunction(() => /Posted/.test((document.querySelector('.ig-job') || {}).textContent || ''), null, { timeout: 15000 });
+    const pubs = igHits.filter(h => /media_publish/.test(h.path)), cont = igHits.find(h => /\/media$/.test(h.path));
+    ok('Post now sends the photo (a JPEG on this server) and caption to Instagram and shows the link', pubs.length === 1 && /^https:\/\/shop\.test\/media\/[0-9a-f]{32}\.jpg$/.test(cont.p.image_url) && /#handloomsaree/.test(cont.p.caption) && await ev(() => /View on Instagram/.test(document.querySelector('.ig-job').textContent)));
+    const jpg = await fetch(base + new URL(cont.p.image_url).pathname); ok('the uploaded photo is a real JPEG that Instagram can fetch', jpg.headers.get('content-type') === 'image/jpeg' && (await jpg.arrayBuffer()).byteLength > 500);
+    // posting a product also offers Instagram
+    await ev(() => { db.drafts = [{ id: 7001, sku: 'AP-ACC-777', name: 'Test Bangle', category: 'Jewellery', price: 999, stock: 2, description: 'A handcrafted antique gold bangle set, ideal for festive wear.', images: [db.products.find(x => x.id === 'p9').image], image: db.products.find(x => x.id === 'p9').image, size: 's', date: 'd' }]; switchAdminTab('drafts'); draftPostNow(7001); });
+    await p.waitForSelector('#ig-cap', { timeout: 8000 }); ok('publishing a product from a draft offers to post it on Instagram right then', await ev(() => /Share on Instagram/.test(document.getElementById('adminModalBody').textContent)));
+    await p.click('input[name=ig-when][value=now]'); await igReady(); await p.click('#ig-go'); await p.waitForFunction(() => /Posted on Instagram/.test((document.getElementById('toast') || {}).textContent || ''), null, { timeout: 15000 });
+    ok('...and "Post now" posts it at the same moment', igHits.filter(h => /media_publish/.test(h.path)).length === 2);
+    await ev(() => closeModal('adminModal'));
+    // ---- posting rules + previews in the Instagram dialog ----
+    await p.setViewportSize({ width: 1280, height: 900 }); await ev(() => igOffer(db.products.find(x => x.id === 'p9'), { force: true })); await p.waitForSelector('#ig-cap'); await igReadyRaw();
+    ok('Instagram dialog: the posting rules box is shown and the post button is locked until the rules pass', await ev(() => !!document.querySelector('#ig-rules .soc-rules') && /Posting rules/.test(document.getElementById('ig-rules').innerText)));
+    await ev(() => { const c = document.getElementById('ig-cap'); c.value = 'like for like follow for follow #a'; c.dispatchEvent(new Event('input')); }); await sleep(700);
+    ok('rules: engagement bait is a red item and locks posting even with "post anyway"', await ev(() => document.getElementById('ig-go').disabled && /engagement bait/.test(document.getElementById('ig-rules').innerText)));
+    await ev(() => { const c = document.getElementById('ig-cap'); c.value = ''; c.dispatchEvent(new Event('input')); }); await sleep(700);
+    ok('rules: an empty caption is red', await ev(() => document.getElementById('ig-go').disabled && /Write a caption/.test(document.getElementById('ig-rules').innerText)));
+    await ev(() => { document.getElementById('ig-prev').open = true; igPreviewToggle(); }); await sleep(800);
+    ok('preview: Instagram feed, grid and story previews appear in the dialog', await ev(() => !!document.querySelector('#ig-prevbox .soc-phone') && document.querySelectorAll('#ig-prevbox .soc-col').length === 3 && /feed/i.test(document.getElementById('ig-prevbox').innerText)));
+    await ev(() => closeModal('adminModal'));
+    // ---- video analyzer: upload an edited video, get a score + directions, post it unchanged as a Reel ----
+    { const { execFileSync } = require('child_process'); const vd = fs.mkdtempSync(path.join(os.tmpdir(), 'va-')), gf = path.join(vd, 'good.mp4'), bf = path.join(vd, 'bad.mp4'), fx = a => execFileSync('ffmpeg', ['-y', '-hide_banner', '-loglevel', 'error', ...a]);
+      fx(['-f', 'lavfi', '-i', 'testsrc2=size=720x1280:rate=30:duration=10', '-f', 'lavfi', '-i', 'sine=frequency=300:duration=10,volume=6', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-b:v', '4M', '-c:a', 'aac', '-shortest', gf]);
+      fx(['-f', 'lavfi', '-i', 'color=c=black:s=640x360:d=1.5:r=25', '-f', 'lavfi', '-i', 'testsrc=size=640x360:rate=25:duration=4', '-filter_complex', '[0:v][1:v]concat=n=2:v=1[v]', '-map', '[v]', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-b:v', '800k', bf]);
+      await ev(() => switchAdminTab('social')); await p.waitForSelector('text=Open the video analyzer'); ok('Instagram tab has the Video analyzer (and no video editor any more)', await ev(() => !document.body.innerText.includes('Video studio') && typeof openVideoStudio === 'undefined' && typeof vsRender === 'undefined'));
+      await ev(() => openVideoAnalyzer()); await p.setInputFiles('#va-file', gf); await p.waitForSelector('.va-ring', { timeout: 60000 });
+      ok('analyzer: a score ring, a verdict and the measured facts are shown', await ev(() => { const r = document.querySelector('.va-ring b'); return +r.textContent > 0 && /Ready to post|Almost there|Fix these/.test(document.querySelector('.va-verdict').textContent) && /720×1280/.test(document.querySelector('.va-score').textContent) && /cannot predict views/.test(document.querySelector('.va-score').textContent); }));
+      ok('analyzer: the four frames, six check groups and both platforms are shown', await ev(() => document.querySelectorAll('.va-frames img').length === 4 && document.querySelectorAll('details.va-g').length === 6 && /Instagram Reel/.test(document.querySelector('.va-plat').textContent) && /WhatsApp status/.test(document.querySelector('.va-plat').textContent)));
+      ok('analyzer: step-by-step WhatsApp status directions are shown', await ev(() => /Post it on WhatsApp status/.test(document.getElementById('va-body').innerText) && /Updates \/ Status/.test(document.getElementById('va-body').innerText)));
+      await ev(() => { document.querySelectorAll('.va-frames button')[2].click(); }); ok('analyzer: tapping a frame chooses it as the cover', await ev(() => VA.cover === 2 && document.querySelectorAll('.va-frames button')[2].classList.contains('sel')));
+      await ev(() => vaReview()); await p.waitForFunction(() => /Claude key|Claude is not connected|looking at the frames|Claude/.test((document.getElementById('va-review') || {}).textContent || ''), null, { timeout: 8000 }); ok('analyzer: asking Claude without a key explains how to add the key', await ev(() => /Claude key|Settings/.test(document.getElementById('va-review').textContent)));
+      await p.waitForSelector('#va-cap'); ok('analyzer: posting is locked until "my own original video" is ticked', await ev(() => document.getElementById('va-postbtn').disabled && /own original video/.test(document.getElementById('va-rules').innerText)));
+      await ev(() => { document.getElementById('va-orig').click(); }); await sleep(400);
+      await ev(() => { const o = document.getElementById('va-override'); if (o) { o.checked = true; socRulesChanged(); } document.querySelector('input[name=va-when][value=now]').click(); }); await sleep(500);
+      const before = igHits.length; await p.click('#va-postbtn'); await p.waitForFunction(() => /Reel posted/.test((document.getElementById('toast') || {}).textContent || ''), null, { timeout: 20000 });
+      ok('analyzer: the video is sent to Instagram unchanged as a Reel (REELS, its address, a cover)', igHits.slice(before).some(h => h.p.media_type === 'REELS' && /\/media\/[0-9a-f]{32}\.mp4$/.test(h.p.video_url) && /\.jpg$/.test(h.p.cover_url) && h.p.share_to_feed === 'true') && igHits.slice(before).some(h => /media_publish/.test(h.path)));
+      ok('analyzer: the post list shows it as a Reel', await ev(async () => { renderSocialAdmin(document.getElementById('adminContent')); await new Promise(r => setTimeout(r, 800)); return /🎬/.test(document.getElementById('adminContent').innerText); }));
+      await ev(() => openVideoAnalyzer()); await p.setInputFiles('#va-file', bf); await p.waitForSelector('.va-ring', { timeout: 60000 });
+      ok('analyzer: a landscape clip with a black start gets "Fix these" and plain directions', await ev(() => /Fix these/.test(document.querySelector('.va-verdict').textContent) && /Ratio → 9:16/.test(document.querySelector('.va-do').textContent) && /Trim the first/.test(document.querySelector('.va-do').textContent + document.getElementById('va-body').innerText)));
+      ok('analyzer: a video that cannot be a Reel is not offered for posting', await ev(() => !document.getElementById('va-postbtn') || document.getElementById('va-postbtn').disabled));
+      const sc = await ev(() => VA.res.score); await ev(() => vaAgain()); ok('analyzer: "upload a new version" remembers the last score to compare', await ev(s => new RegExp('Last score: ' + s).test(document.getElementById('va-body').innerText), sc));
+      await ev(() => closeModal('adminModal')); }
+    // ---- Growth tab: live numbers, suggestions, reminder, email settings ----
+    await ev(() => switchAdminTab('growth')); await p.waitForSelector('.g-tiles', { timeout: 20000 });
+    ok('Growth tab: Instagram, website and sales numbers are shown (Instagram is connected, so no reminder banner)', await ev(() => { const t = document.getElementById('adminContent').innerText; return /instagram/i.test(t) && /visitors/i.test(t) && /saree views/i.test(t) && /orders/i.test(t) && /what to do this week/i.test(t) && !document.querySelector('.grow-remind'); }));
+    ok('Growth tab: every suggestion has its reason, numbered steps, a goal and a "measure it next week" button', await ev(() => { const a = [...document.querySelectorAll('.g-act')]; return a.length > 0 && a.every(x => /Because:/.test(x.innerText) && x.querySelectorAll('.g-steps li').length >= 1 && /Goal:/.test(x.innerText) && /measure it next week/.test(x.innerText)); }));
+    await ev(() => document.querySelector('.g-act button').click()); await p.waitForFunction(() => /Saved\. I will compare next week/.test(document.querySelector('.g-act button').textContent), null, { timeout: 8000 }); ok('Growth tab: "I did this" is saved so next week the report can say whether it worked', true);
+    await ev(() => { ADM.ig = false; db.settings.igRemindUntil = ''; renderGrowth(document.getElementById('adminContent')); }); await p.waitForSelector('.grow-remind', { timeout: 8000 });
+    ok('Instagram reminder: when not connected a banner explains what is missing, with "How to connect" and snooze buttons', await ev(() => /Connect Instagram/.test(document.querySelector('.grow-remind').innerText) && /Remind me in 3 days/.test(document.querySelector('.grow-remind').innerText)));
+    await ev(() => growRemind(3)); await sleep(600); ok('Instagram reminder: "Remind me in 3 days" hides it now and it returns after 3 days', await ev(() => !document.querySelector('.grow-remind') && Math.abs(Date.parse(db.settings.igRemindUntil) - Date.now() - 3 * 86400000) < 60000 && (db.settings.igRemindUntil = new Date(Date.now() - 1000).toISOString(), (igReminderHTML() || '').includes('Connect Instagram'))));
+    await ev(() => { ADM.ig = true; renderGrowth(document.getElementById('adminContent')); }); await p.waitForSelector('#em-host', { timeout: 8000 });
+    await p.fill('#em-host', '127.0.0.1'); await p.fill('#em-port', '1'); await p.fill('#em-user', 'a@b.com'); await p.fill('#em-pass', 'x'); await p.fill('#em-to', 'a@b.com'); await p.click('#em-save'); await p.waitForFunction(() => /Could not connect/.test(document.getElementById('em-msg').textContent), null, { timeout: 15000 });
+    ok('Weekly email form: a wrong mail server gives a plain message and nothing is saved', await ev(() => document.getElementById('grow-email').innerText.includes('OFF')));
+    await ev(() => closeModal('adminModal'));
+    // phone-width
+    await p.setViewportSize({ width: 390, height: 800 }); await ev(() => igOffer(db.products.find(x => x.id === 'p9'), { force: true })); await p.waitForSelector('#ig-cap'); await sleep(200);
+    ok('the Instagram dialog fits a phone', await ev(() => document.documentElement.scrollWidth <= 391 && document.querySelector('#adminModal .modal-content').getBoundingClientRect().right <= 391)); await ev(() => closeModal('adminModal'));
+    // ---- tracking number -> customer WhatsApp message, automatically ----
+    await ev(() => { db.orders.unshift({ id: 'ORD-TRK', customer: 'Track Buyer', phone: '9123456780', date: '2026-11-03', total: 999, status: 'packed', items: [], shippingAddress: {}, timeline: [] }); updateOrderStatus('ORD-TRK', 'shipped'); });
+    await p.waitForSelector('#sh-num'); await p.fill('#sh-num', 'EE123456789IN'); await p.click('#sh-wa');
+    await p.waitForFunction(() => /WhatsApp/.test(document.body.innerText) && !!document.querySelector('.toast, #toast, [class*=toast]'), null, { timeout: 5000 }).catch(() => {});
+    await sleep(600);
+    const rr = await ev(async () => (await fetch('/admin/api/notify-tracking', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': ADM.csrf }, body: JSON.stringify({ orderId: 'ORD-TRK', trackingNo: 'EE123456789IN', phone: '919123456780', customer: 'Track Buyer' }) })).json());
+    ok('saving a tracking number already sent the message once; the same number is never sent twice', rr.sent === false && rr.reason === 'already-sent');
+    const rr2 = await ev(async () => (await fetch('/admin/api/notify-tracking', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': ADM.csrf }, body: JSON.stringify({ orderId: 'ORD-TRK', trackingNo: 'EE999999999IN', phone: '919123456780', customer: 'Track Buyer' }) })).json());
+    ok('a corrected tracking number is sent (dry-run until WhatsApp is connected)', rr2.sent === true && rr2.mode === 'dry-run');
+    const rr3 = await ev(async () => (await fetch('/admin/api/notify-tracking', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': ADM.csrf }, body: JSON.stringify({ orderId: 'X', phone: '12' }) })).status);
+    ok('a bad phone number is rejected', rr3 === 422);
+    const rr4 = await fetch(base + '/admin/api/notify-tracking', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+    ok('a stranger cannot trigger messages', rr4.status === 401 || rr4.status === 403);
+    ok('no JS errors in the owner app', errs.length === 0 || (console.log(errs), false));
+    // ---- lockout last ----
+    const ctx2 = await b.newContext(); const p2 = await ctx2.newPage(); await p2.goto(base + '/admin'); await p2.waitForSelector('#adm-pw'); for (let i = 0; i < 5; i++) { await p2.fill('#adm-pw', 'bad-bad-bad-' + i); if (await p2.$('#adm-code')) await p2.fill('#adm-code', '000000'); await p2.click('#adm-go'); await p2.waitForFunction(() => /Wrong|Too many/.test((document.getElementById('adm-msg') || {}).textContent || '')); await p2.waitForFunction(() => !document.getElementById('adm-go').disabled); }
+    await p2.fill('#adm-pw', 'Another-Strong-Pass-5!'); await p2.fill('#adm-code', totp(secret, Math.floor(Date.now() / 30000) + 2)); await p2.click('#adm-go'); await p2.waitForFunction(() => /Too many wrong attempts/.test((document.getElementById('adm-msg') || {}).textContent || ''));
+    ok('five wrong tries lock the screen; even the right password is refused with "try again in 15 minutes"', await p2.evaluate(() => /15 minutes/.test(document.getElementById('adm-msg').textContent)));
+  } catch (e) { fails++; console.log('FAIL (crash)', e.message.split('\n').slice(0, 4).join(' | ')); }
+  console.log(fails ? 'FAILED ' + fails : 'ALL PASSED'); await b.close(); srv.kill(); ig.close(); site.close(); process.exit(fails ? 1 : 0);
+})();
