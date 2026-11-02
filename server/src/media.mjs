@@ -12,7 +12,12 @@ export class MediaStore {
     if (!(buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff)) throw Object.assign(new Error('That is not a JPEG photo.'), { code: 400 });
     const id = crypto.randomBytes(16).toString('hex'); fs.writeFileSync(path.join(this.dir, id + '.jpg'), buf, { mode: 0o600 }); return { id, bytes: buf.length };
   }
+  // Rendered videos and cover pictures come from our own ffmpeg, so they are moved in as files.
+  saveFile(src, ext) { if (!['mp4', 'jpg'].includes(ext)) throw new Error('bad type'); const id = crypto.randomBytes(16).toString('hex'), to = path.join(this.dir, id + '.' + ext); fs.copyFileSync(src, to); fs.chmodSync(to, 0o600); return id; }
+  path(id, ext = 'jpg') { return /^[0-9a-f]{32}$/.test(String(id)) && ['mp4', 'jpg'].includes(ext) ? path.join(this.dir, id + '.' + ext) : null; }
+  hasFile(id, ext) { const p = this.path(id, ext); return !!p && fs.existsSync(p); }
+  size(id, ext) { try { return fs.statSync(this.path(id, ext)).size; } catch { return 0; } }
   read(id) { if (!/^[0-9a-f]{32}$/.test(String(id))) return null; try { return fs.readFileSync(path.join(this.dir, id + '.jpg')); } catch { return null; } }
   has(id) { return /^[0-9a-f]{32}$/.test(String(id)) && fs.existsSync(path.join(this.dir, id + '.jpg')); }
-  sweep(maxAgeMs = 14 * 86400_000, now = Date.now()) { let n = 0; for (const f of fs.readdirSync(this.dir)) { const p = path.join(this.dir, f); try { if (now - fs.statSync(p).mtimeMs > maxAgeMs) { fs.unlinkSync(p); n++; } } catch { /* gone */ } } return n; }
+  sweep(maxAgeMs = 14 * 86400_000, now = Date.now(), keep = new Set()) { let n = 0; for (const f of fs.readdirSync(this.dir)) { if (keep.has(f.replace(/\.[a-z0-9]+$/, ''))) continue; const p = path.join(this.dir, f); try { if (now - fs.statSync(p).mtimeMs > maxAgeMs) { fs.unlinkSync(p); n++; } } catch { /* gone */ } } return n; }
 }

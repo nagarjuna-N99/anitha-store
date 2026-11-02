@@ -62,6 +62,21 @@
   .top-banner { background: var(--charcoal); color: var(--ivory); text-align: center; padding: 10px 20px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
   .top-banner span { color: var(--gold-light); }
   nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 60px; border-bottom: 1px solid var(--border); background: var(--ivory); position: sticky; top: 0; z-index: 100; }
+  /* social studio */
+  .soc-prev{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;margin:10px 0}.soc-col{width:230px}.soc-col h5{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#888}
+  .soc-phone{position:relative;border:6px solid #1f1f1f;border-radius:22px;background:#fff;overflow:hidden;font-size:11px;line-height:1.4}
+  .soc-ig-h{display:flex;align-items:center;gap:6px;padding:6px 8px}.soc-av{width:24px;height:24px;border-radius:50%;object-fit:cover}.soc-dots{margin-left:auto;color:#888}
+  .soc-img{width:100%;background:#eee;overflow:hidden}.soc-img img{width:100%;height:100%;object-fit:cover;display:block}.soc-ig-a{display:flex;gap:10px;padding:6px 8px;font-size:15px}.soc-ig-c{padding:0 8px 10px}.soc-more{color:#888}
+  .soc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:2px}.soc-grid div{aspect-ratio:3/4;background:#eee;overflow:hidden}.soc-grid img{width:100%;height:100%;object-fit:cover;display:block}.soc-grid .dim{opacity:.45}.soc-grid .me{outline:2px solid #C96A11;outline-offset:-2px}
+  .soc-916{aspect-ratio:9/16;background:#111}.soc-fill{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.soc-contain{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+  .soc-zone{position:absolute;left:0;right:0;background:rgba(200,0,0,.28);color:#fff;font-size:10px;text-align:center;display:flex;align-items:center;justify-content:center;pointer-events:none}.soc-zone.top{top:0;height:12%}.soc-zone.bot{bottom:0;height:22%}
+  .soc-wa{background:#0b0b0b;color:#fff}.soc-wa-bar{position:absolute;top:6px;left:8px;right:8px;height:3px;background:rgba(255,255,255,.3);border-radius:2px;z-index:2}.soc-wa-bar i{display:block;width:40%;height:100%;background:#fff;border-radius:2px}
+  .soc-wa-h{position:absolute;top:14px;left:8px;display:flex;gap:6px;align-items:center;z-index:2}.soc-wa-h small{display:block;opacity:.8}.soc-wa-cap{position:absolute;left:0;right:0;bottom:34px;padding:18px 12px 10px;background:linear-gradient(transparent,rgba(0,0,0,.7));font-size:12px;z-index:2}.soc-wa-reply{position:absolute;bottom:6px;left:0;right:0;text-align:center;opacity:.8;z-index:2}
+  .soc-rules{border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin:10px 0;background:#fcfbf8}.soc-rules-h{margin-bottom:6px}.soc-rule{display:flex;gap:8px;font-size:12.5px;padding:4px 0}.soc-rule span{font-weight:700;width:16px;flex:none}.soc-rule.ok span{color:#3f8a4f}.soc-rule.bad{color:#9a2f2f}.soc-rule.bad span{color:#c0392b}.soc-rule.warn span{color:#c27b00}.soc-passed summary{cursor:pointer;font-size:12px;color:#666;margin:4px 0}
+  .vs-grid{display:grid;grid-template-columns:240px 1fr;gap:18px;margin:10px 0}.vs-stage{position:relative;aspect-ratio:9/16;background:#000;overflow:hidden;border:6px solid #1f1f1f;border-radius:18px}.vs-stage video{position:absolute;max-width:none}.vs-hook{position:absolute;left:9%;right:9%;top:22%;background:rgba(0,0,0,.55);color:#fff;font:700 20px/1.2 'Cormorant Garamond',Georgia,serif;text-align:center;padding:8px;border-radius:10px}.vs-logo{position:absolute;left:4%;top:10%;width:28%;background:rgba(255,255,255,.93);border-radius:6px;padding:2px 4px}
+  .vs-ctl{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;align-content:start}.vs-sl{display:flex;flex-direction:column;font-size:12px;gap:2px}.vs-sl span{color:#888;float:right}.vs-sl input[type=range]{width:100%}
+  .vs-res{display:flex;gap:18px;flex-wrap:wrap}.vs-res h5{margin:0 0 6px}.vs-v{width:200px;max-width:100%;aspect-ratio:9/16;background:#000;border-radius:10px}
+  @media (max-width:700px){.vs-grid{grid-template-columns:1fr}.vs-stage{max-width:240px;margin:0 auto}.soc-col{width:100%;max-width:260px}}
   .ph-check{margin:6px 0}.ph-row{font-size:12px;padding:5px 8px;border-radius:4px;margin:3px 0;background:#eef6ee}.ph-row.warn{background:#fff6dd}.ph-row.bad{background:#fde8e6}
   .wk-text{font-size:14px;line-height:1.7;margin:8px 0}.fu-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}.fu-row.done{opacity:.45}.fu-out{flex-basis:100%}.fu-out textarea{width:100%}
   .brand-mark { height: 40px; width: 40px; border-radius: 50%; display: block; margin-right: 8px; flex: none; }
@@ -2884,9 +2899,10 @@ function gid_(id) { return document.getElementById(id); }
 function pvSet(k, v) { PV[k] = v; renderPreview(); }
 function renderPreview() {
   const p = PV.p, mob = PV.device === 'mobile';
-  const tabs = [['page', '🛍️ Product page'], ['card', '🗂️ Shop grid'], ['search', '🔎 Google & sharing']];
+  const tabs = [['page', '🛍️ Product page'], ['card', '🗂️ Shop grid'], ['search', '🔎 Google & sharing'], ['ig', '📸 Instagram'], ['wa', '💬 WhatsApp status']];
   let body = '';
   if (PV.tab === 'page') body = `<div class="pv-frame ${mob ? 'pv-mobile' : ''}">${productPageHTML(p, 'pv-gal', { preview: true })}</div>`;
+  else if (PV.tab === 'ig' || PV.tab === 'wa') { const im = (p.images || [p.image])[0] || '', lc = (() => { try { const k = packLocal(p); return k.en.caption + '\n\n' + k.en.hashtags.slice(0, 5).map(h => '#' + h).join(' '); } catch (e) { return p.name || ''; } })(); body = (PV.tab === 'ig' ? pvIgHTML({ img: im, caption: lc }) : pvWaHTML({ img: im, caption: lc })) + '<p class="note" style="text-align:center;">Caption shown is a draft; you finish it in <b>📸 Share on Instagram</b>.</p>'; }
   else if (PV.tab === 'card') {
     const others = db.products.filter(x => x.id !== p.id).slice(0, 2);
     body = `<div class="pv-frame pv-noclick ${mob ? 'pv-mobile' : ''}"><div class="pv-grid ${mob ? 'one' : ''}">${[p, ...others].map((x, i) => `<div style="${i === 0 ? 'outline:3px solid var(--gold);outline-offset:3px;border-radius:4px;' : 'opacity:.55;'}">${productCardHTML(x)}</div>`).join('')}</div></div><p class="note" style="text-align:center;">Highlighted card is the new product, shown next to existing ones.</p>`;
@@ -2896,7 +2912,7 @@ function renderPreview() {
     body = `<div class="pv-serp-wrap"><h4>Google search result</h4><div class="serp"><div class="serp-url">${esc(host)} › product › ${esc(p.slug || slugify(p.name))}</div><div class="serp-title">${esc(t)}</div><div class="serp-desc">${esc(m)}</div></div>
       <h4 style="margin-top:22px;">Link shared on WhatsApp / Facebook</h4><div class="og-card">${og ? `<img src="${esc(og)}" alt="">` : ''}<div class="og-body"><div class="og-host">${esc(host.toUpperCase())}</div><div class="og-title">${esc(fitText(t, 70))}</div><div class="og-desc">${esc(fitText(m, 110))}</div></div></div></div>`;
   }
-  gid_('previewBody').innerHTML = `<div class="pv-bar"><div class="pv-tabs">${tabs.map(([k, l]) => `<button class="${PV.tab === k ? 'active' : ''}" onclick="pvSet('tab','${k}')">${l}</button>`).join('')}</div>${PV.tab !== 'search' ? `<div class="pv-tabs"><button class="${!mob ? 'active' : ''}" onclick="pvSet('device','desktop')">🖥 Desktop</button><button class="${mob ? 'active' : ''}" onclick="pvSet('device','mobile')">📱 Mobile</button></div>` : ''}</div>${body}`;
+  gid_('previewBody').innerHTML = `<div class="pv-bar"><div class="pv-tabs">${tabs.map(([k, l]) => `<button class="${PV.tab === k ? 'active' : ''}" onclick="pvSet('tab','${k}')">${l}</button>`).join('')}</div>${PV.tab !== 'search' && PV.tab !== 'ig' && PV.tab !== 'wa' ? `<div class="pv-tabs"><button class="${!mob ? 'active' : ''}" onclick="pvSet('device','desktop')">🖥 Desktop</button><button class="${mob ? 'active' : ''}" onclick="pvSet('device','mobile')">📱 Mobile</button></div>` : ''}</div>${body}`;
 }
 function closePreviewModal() { gid_('previewModal').classList.remove('active'); }
 function previewDraft(i) { const d = db.drafts[i]; if (d) openPreview(draftToProduct(d)); }
@@ -6045,19 +6061,22 @@ async function igOffer(p, opts) {
   const pl = IGD.plan, imgs = (p.images || [p.image]).filter(Boolean).slice(0, 10), caption = pl.caption + (pl.hashtags.length ? '\n\n' + pl.hashtags.map(h => '#' + h).join(' ') : '');
   document.getElementById('ig-body').className = ''; document.getElementById('ig-body').innerHTML = `
     <p class="note">${pl.via === 'claude' ? '✨ Written and timed by Claude' : 'Built-in suggestion (connect Claude for a personal caption)'}. Times are suggestions based on typical Indian Instagram habits: Claude cannot see your account's own statistics.</p>
-    <div class="ig-photos">${imgs.map((s, i) => `<label class="ig-ph"><input type="checkbox" class="ig-pick" value="${i}" ${i === 0 ? 'checked' : ''}><img src="${esc(s)}" alt="Photo ${i + 1}"></label>`).join('')}</div>
-    <div class="form-group"><label>Caption <span class="pf-sub" id="ig-count"></span></label><textarea id="ig-cap" rows="7" oninput="igCount()">${esc(caption)}</textarea><div class="ai-act"><button type="button" class="btn-sm btn-info-sm" onclick="igPack()">✨ Caption pack: English + తెలుగు + hashtags</button></div><div id="ig-pack"></div></div>
+    <div class="ig-photos">${imgs.map((s, i) => `<label class="ig-ph"><input type="checkbox" class="ig-pick" value="${i}" ${i === 0 ? 'checked' : ''} onchange="igRulesRefresh(true)"><img src="${esc(s)}" alt="Photo ${i + 1}"></label>`).join('')}</div>
+    <div class="form-group"><label>Caption <span class="pf-sub" id="ig-count"></span></label><textarea id="ig-cap" rows="7" oninput="igCount();igRulesRefresh(true)">${esc(caption)}</textarea><div class="ai-act"><button type="button" class="btn-sm btn-info-sm" onclick="igPack()">✨ Caption pack: English + తెలుగు + hashtags</button></div><div id="ig-pack"></div></div>
     <div class="form-group"><label>When to post</label><div class="ig-when">
-      <label class="ig-opt"><input type="radio" name="ig-when" value="now"> <b>Post now</b></label>
-      ${pl.slots.map((s, i) => `<label class="ig-opt"><input type="radio" name="ig-when" value="${esc(s.iso)}" ${i === 0 ? 'checked' : ''}> <b>${esc(igWhen(s.iso))}</b> <small>${i === 0 ? '⭐ recommended · ' : ''}${esc(s.why)}</small></label>`).join('')}
-      <label class="ig-opt"><input type="radio" name="ig-when" value="custom"> <b>Pick a time</b> <input type="datetime-local" id="ig-custom" onfocus="document.querySelector('input[name=ig-when][value=custom]').checked=true"></label></div></div>
-    <div id="ig-msg" class="note"></div><div class="dd-actions"><button class="btn-sm btn-info-sm" onclick="closeModal('adminModal')">Not now</button><button class="btn-full" id="ig-go" style="margin:0;flex:1;" onclick="igSubmit()">📸 Post / Schedule</button></div>`;
-  igCount();
+      <label class="ig-opt"><input type="radio" name="ig-when" value="now" onchange="igRulesRefresh(true)"> <b>Post now</b></label>
+      ${pl.slots.map((s, i) => `<label class="ig-opt"><input type="radio" name="ig-when" value="${esc(s.iso)}" ${i === 0 ? 'checked' : ''} onchange="igRulesRefresh(true)"> <b>${esc(igWhen(s.iso))}</b> <small>${i === 0 ? '⭐ recommended · ' : ''}${esc(s.why)}</small></label>`).join('')}
+      <label class="ig-opt"><input type="radio" name="ig-when" value="custom"> <b>Pick a time</b> <input type="datetime-local" id="ig-custom" onchange="igRulesRefresh(true)" onfocus="document.querySelector('input[name=ig-when][value=custom]').checked=true"></label></div></div>
+    <details id="ig-prev" ontoggle="igPreviewToggle()"><summary>👁 Preview: Instagram feed, grid, story and WhatsApp status</summary><div id="ig-prevbox"></div></details>
+    <div id="ig-rules"></div>
+    <div id="ig-msg" class="note"></div><div class="dd-actions"><button class="btn-sm btn-info-sm" onclick="closeModal('adminModal')">Not now</button><button class="btn-full" id="ig-go" style="margin:0;flex:1;" onclick="igSubmit()" disabled>📸 Post / Schedule</button></div>`;
+  igCount(); igRulesRefresh(false);
 }
 function igCount() { const t = document.getElementById('ig-cap').value, tags = (t.match(/#[\p{L}\p{N}_]+/gu) || []).length, e = document.getElementById('ig-count'); if (e) { e.textContent = `${t.length}/2200 characters · ${tags}/30 hashtags`; e.style.color = t.length > 2200 || tags > 30 ? '#b04a4a' : ''; } }
 async function igSubmit() {
   const p = IGD.p, msg = t => { document.getElementById('ig-msg').textContent = t; }, btn = document.getElementById('ig-go'), picks = [...document.querySelectorAll('.ig-pick:checked')].map(x => +x.value), sel = document.querySelector('input[name=ig-when]:checked');
   if (!picks.length) { msg('Choose at least one photo.'); return; } if (!sel) { msg('Choose when to post.'); return; }
+  { const g = socialGate(IGD.rules || [], (document.getElementById('ig-override') || {}).checked); if (!g.ok) { msg(g.blocks.length ? 'Fix the red items in the posting rules first.' : 'Tick “post anyway” or follow the advice first.'); return; } }
   let when = sel.value; if (when === 'custom') { const v = document.getElementById('ig-custom').value; if (!v) { msg('Pick a date and time.'); return; } when = new Date(v).toISOString(); }
   btn.disabled = true; msg('Preparing photos…');
   try {
@@ -6067,13 +6086,207 @@ async function igSubmit() {
     if (currentAdminTab === 'social') renderSocialAdmin(document.getElementById('adminContent'));
   } catch (e) { msg(e.message); btn.disabled = false; }
 }
+// ================= Social studio: posting rules, previews, video (5 Nov 2026) =================
+// The rules follow Instagram's published limits and widely used practice. Nobody can promise views or likes:
+// the app can only stop mistakes that cost reach and make the good habits easy.
+const SOC = { hook: 125, captionMax: 2200, tagsMax: 30 };
+const SOC_BAIT = /\b(l4l|f4f|s4s|like\s*(for|4)\s*like|follow\s*(for|4)\s*follow|share\s*(for|4)\s*share|like\s+(and|&)\s+share\s+to\s+win|tag\s+(\d+|two|three|a few)\s+friends?\s+to\s+win)\b/i;
+const SOC_CTA = /\b(order|dm|whatsapp|message|book|call|link in bio|comment|enquire|inquire|shop|visit)\b/i;
+const capTags = t => String(t || '').match(/#[\p{L}\p{N}_]+/gu) || [];
+const capBody = t => String(t || '').replace(/#[\p{L}\p{N}_]+/gu, '').replace(/\s+/g, ' ').trim();
+const istHour = iso => new Date(new Date(iso).getTime() + 330 * 60_000).getUTCHours();
+function socialRules(o) {
+  const R = [], add = (level, id, ok, pass, fail) => R.push({ level, id, ok, text: ok ? pass : fail });
+  const cap = String(o.caption || ''), tags = capTags(cap), body = capBody(cap), first = cap.trim().slice(0, SOC.hook).replace(/#[\p{L}\p{N}_]+/gu, '').trim();
+  const reel = o.kind === 'reel', imgs = (o.images || []).filter(a => !a.err);
+  // ---- must pass (Instagram's own limits and its "no engagement bait" rule) ----
+  if (reel) {
+    const d = o.video ? o.video.duration : 0; add('block', 'video', !!o.video, 'Video is ready.', 'Make the video first.');
+    if (o.video) { add('block', 'len', d >= 3 && d <= 90, `Length ${d.toFixed(1)} s is allowed (3 to 90 s).`, `Reels from this tool must be 3 to 90 seconds (this one is ${d.toFixed(1)} s).`); add('block', 'vert', true, 'Vertical 9:16, 1080×1920.', ''); }
+    add('block', 'orig', !!o.original, 'Confirmed: your own original video.', 'Tick the box: this is your own original video with no TikTok or other-app watermark. Instagram gives reposted, watermarked clips very little reach.');
+  } else {
+    add('block', 'img', (o.images || []).length > 0, `${(o.images || []).length} photo(s) chosen.`, 'Choose at least one photo.');
+    imgs.forEach((a, i) => { add('block', 'min' + i, Math.min(a.w, a.h) >= 320, `Photo ${i + 1} is big enough.`, `Photo ${i + 1} is too small (${a.w}×${a.h}). Instagram needs at least 320 px.`); const ar = a.w / a.h; add('block', 'ar' + i, ar >= 0.795 && ar <= 1.915, `Photo ${i + 1} has an accepted shape.`, `Photo ${i + 1} is ${a.w}×${a.h}. Instagram's posting service only takes shapes between 4:5 (tall) and 1.91:1 (wide). Crop it in Image Studio.`); });
+  }
+  add('block', 'cap', !!body, 'Caption written.', 'Write a caption.');
+  add('block', 'capmax', cap.length <= SOC.captionMax, 'Caption is within 2,200 characters.', `Caption is ${cap.length} characters; Instagram allows 2,200.`);
+  add('block', 'tagsmax', tags.length <= SOC.tagsMax, `${tags.length} hashtag(s), within the limit of 30.`, `${tags.length} hashtags; Instagram allows at most 30.`);
+  add('block', 'bait', !SOC_BAIT.test(cap), 'No "like for like / tag friends to win" lines.', 'Remove lines like "like for like", "follow for follow" or "tag 3 friends to win". Instagram says it shows engagement bait to fewer people.');
+  // ---- strongly advised (you may tick "post anyway") ----
+  if (reel) {
+    if (o.video) {
+      const d = o.video.duration; add('advice', 'sweet', d >= 7 && d <= 30, `${d.toFixed(0)} s is a good Reel length (about 7 to 30 s is watched to the end most often).`, `${d.toFixed(0)} s. Short Reels (about 7 to 30 s) are usually watched to the end; long ones lose people.`);
+      add('advice', 'hook', !!o.video.hook, 'On-screen hook text in the first seconds.', 'Add a hook line on screen for the first 3 seconds (e.g. "Only 1 piece: Kanchi Pattu"). Most people decide in the first 2 seconds.');
+      add('advice', 'sound', !!o.video.hasAudio || !!o.video.hook, 'Has sound or on-screen text.', 'No sound and no on-screen text: many people watch muted, so add a hook line.');
+    }
+  } else if (imgs[0]) {
+    const a = imgs[0]; add('advice', 'w', imgs.every(x => x.w >= 1080), 'Photos are at least 1080 px wide.', 'Some photos are under 1080 px wide and will look soft on phones.');
+    const r = a.w / a.h; add('advice', 'ratio', r >= 0.74 && r <= 0.86, 'First photo is 4:5 vertical (uses the most screen).', 'The first photo is not 4:5 vertical. 4:5 takes the most room in the feed and usually performs better than square or wide.');
+    add('advice', 'sharp', a.blur >= 45 && a.bright >= 70 && a.bright <= 225, 'First photo is sharp and well lit.', 'The first photo looks blurry, dark or washed out. It is what people judge in half a second. Retake it in daylight.');
+    add('advice', 'dup', !a.dup, 'First photo is not a duplicate.', 'The first photo looks the same as one you already used.');
+  }
+  add('advice', 'hookline', first.length >= 25, 'The first line has real words (it is what shows before “more”).', `Only the first ~${SOC.hook} characters show before “more”. Start with the most interesting words (fabric, colour, occasion), not hashtags.`);
+  add('advice', 'cta', SOC_CTA.test(body), 'There is a call to action.', 'Tell people what to do: "DM or WhatsApp us to order".');
+  add('advice', 'tags', tags.length >= 3 && tags.length <= 8, `${tags.length} hashtags (a few relevant ones is what Instagram recommends).`, tags.length < 3 ? 'Add 3 to 5 relevant hashtags (e.g. #handloomsaree #hyderabadsarees).' : `${tags.length} hashtags. Instagram's advice is a few relevant ones (3 to 5); more has not been shown to help.`);
+  if (o.keywords && o.keywords.length) { const low = body.toLowerCase(); add('advice', 'kw', o.keywords.some(k => low.includes(String(k).toLowerCase())), 'Caption names the product, so Instagram search can find it.', 'Mention the saree name, fabric or colour in the caption: Instagram search reads captions.'); }
+  if (!reel) add('advice', 'alt', !!(o.alt || '').trim(), 'Alt text is set.', 'Add alt text (describes the photo for screen readers and helps search).');
+  if (o.whenIso) { const h = istHour(o.whenIso); add('advice', 'time', (h >= 7 && h < 10) || (h >= 12 && h < 14) || (h >= 18 && h < 22), 'Scheduled at a common busy time.', 'This time is outside the usual busy hours in India (7–10 am, 12–2 pm, 6–10 pm). Instagram does not show your own stats to this app, so these are general hours.'); }
+  if (o.recent && o.recent.length) add('advice', 'space', false, '', 'You already posted or scheduled something within 12 hours of this. Spacing posts out reaches more people than two at once.');
+  return R;
+}
+function socialGate(rules, override) { const blocks = rules.filter(r => r.level === 'block' && !r.ok), adv = rules.filter(r => r.level === 'advice' && !r.ok); return { ok: !blocks.length && (!adv.length || !!override), blocks, adv }; }
+function socialRulesHTML(rules, ovId) {
+  const g = socialGate(rules, false), row = r => `<div class="soc-rule ${r.ok ? 'ok' : r.level === 'block' ? 'bad' : 'warn'}"><span>${r.ok ? '✓' : r.level === 'block' ? '✕' : '⚠'}</span><div>${esc(r.text)}</div></div>`;
+  return `<div class="soc-rules"><div class="soc-rules-h"><b>Posting rules</b> <span class="pf-sub">${g.blocks.length ? `${g.blocks.length} must be fixed` : g.adv.length ? `${g.adv.length} strongly advised` : 'all good'}</span></div>
+    ${rules.filter(r => !r.ok && r.level === 'block').map(row).join('')}${rules.filter(r => !r.ok && r.level === 'advice').map(row).join('')}
+    <details class="soc-passed"><summary>${rules.filter(r => r.ok).length} passed</summary>${rules.filter(r => r.ok).map(row).join('')}</details>
+    ${!g.blocks.length && g.adv.length ? `<label class="chk"><input type="checkbox" id="${ovId}" onchange="socRulesChanged()"><span>I have read the advice and want to post anyway</span></label>` : ''}
+    <p class="note" style="margin:6px 0 0;">Red items stop the post: they are Instagram's own limits or rules that cost reach. Amber items are advice. These rules reduce mistakes; nobody can promise views or likes, and this app cannot see your account's own statistics.</p></div>`;
+}
+// ---- previews: Instagram feed, profile grid, story/reel safe zones, WhatsApp status ----
+const igHandle = () => (db.settings.instagramHandle || BRAND()).toLowerCase().replace(/[^a-z0-9._]/g, '');
+const socCaptionLines = t => { const flat = String(t || '').replace(/\s*\n+\s*/g, ' ').trim(); return flat.length > SOC.hook ? { show: flat.slice(0, SOC.hook).trimEnd(), more: true } : { show: flat, more: false }; };
+function pvIgHTML(o) {
+  const img = o.img || '', cap = socCaptionLines(o.caption), others = db.products.map(p => (p.images || [p.image])[0]).filter(x => x && x !== img).slice(0, 5);
+  const feed = `<div class="soc-col"><h5>Feed</h5><div class="soc-phone"><div class="soc-ig-h"><img class="soc-av" src="${ICON_URI}" alt=""><b>${esc(igHandle())}</b><span class="soc-dots">•••</span></div><div class="soc-img" style="aspect-ratio:4/5">${img ? `<img src="${esc(img)}" alt="">` : ''}</div><div class="soc-ig-a"><span>♡</span><span>💬</span><span>➤</span><span style="margin-left:auto">🔖</span></div><div class="soc-ig-c"><b>${esc(igHandle())}</b> ${esc(cap.show)}${cap.more ? '… <span class="soc-more">more</span>' : ''}</div></div>${cap.more ? `<p class="note">Only the first ~${SOC.hook} characters show before “more”.</p>` : ''}</div>`;
+  const grid = `<div class="soc-col"><h5>Profile grid</h5><div class="soc-phone"><div class="soc-ig-h"><img class="soc-av" src="${ICON_URI}" alt=""><b>${esc(igHandle())}</b></div><div class="soc-grid">${[img, ...others].slice(0, 6).map((s, i) => `<div class="${i ? 'dim' : 'me'}">${s ? `<img src="${esc(s)}" alt="">` : ''}</div>`).join('')}</div></div><p class="note">Instagram shows the grid in 3:4 crops: keep the saree in the middle.</p></div>`;
+  const story = `<div class="soc-col"><h5>Reel / Story</h5><div class="soc-phone soc-916">${img ? `<img class="soc-fill" src="${esc(img)}" alt="">` : ''}<div class="soc-zone top">Instagram bar</div><div class="soc-zone bot">Buttons and caption cover this</div></div><p class="note">Keep text and the saree out of the shaded areas.</p></div>`;
+  return `<div class="soc-prev">${feed}${grid}${story}</div>`;
+}
+function pvWaHTML(o) {
+  const img = o.img || '', cap = String(o.caption || '').replace(/#[\p{L}\p{N}_]+/gu, '').replace(/\s+/g, ' ').trim().slice(0, 140);
+  return `<div class="soc-prev"><div class="soc-col"><h5>WhatsApp status</h5><div class="soc-phone soc-916 soc-wa"><div class="soc-wa-bar"><i></i></div><div class="soc-wa-h"><img class="soc-av" src="${ICON_URI}" alt=""><div><b>My status</b><small>Just now</small></div></div>${img ? `<img class="soc-contain" src="${esc(img)}" alt="">` : ''}${cap ? `<div class="soc-wa-cap">${esc(cap)}</div>` : ''}<div class="soc-wa-reply">↑ Reply</div></div><p class="note">WhatsApp fits the whole picture and shows the caption near the bottom. A status shows for 24 hours. Pictures are best at 9:16 (1080×1920); a video can be up to 30 seconds.</p></div>
+    <div class="soc-col"><h5>What to do</h5><div class="note" style="max-width:260px;">WhatsApp does not let apps post a status for you. Make the picture with <b>📲 Status</b> (Products) or a video in the <b>🎬 Video studio</b> (Instagram tab), then download it or use <b>Share to WhatsApp</b> on your phone.</div></div></div>`;
+}
+
+// ---- rules + previews inside the "Share on Instagram" dialog ----
+let IGR_T = null;
+function socRulesChanged() { if (IGD && document.getElementById('ig-rules')) igRulesRefresh(true); else if (VS.open) vsRulesRefresh(true); }
+function igRulesRefresh(keepOverride) {
+  clearTimeout(IGR_T); IGR_T = setTimeout(async () => {
+    if (!IGD || !document.getElementById('ig-rules')) return; const p = IGD.p, imgs = (p.images || [p.image]).filter(Boolean), picks = [...document.querySelectorAll('.ig-pick:checked')].map(x => +x.value);
+    const ov = document.getElementById('ig-override'), keep = keepOverride && ov && ov.checked, A = [];
+    for (const i of picks) { try { const a = await phAnalyze(imgs[i]), oth = []; for (const q of db.products) { if (q.id === p.id) continue; for (const s of (q.images || [q.image]).filter(Boolean).slice(0, 1)) { try { oth.push(await phAnalyze(s)); } catch (e) {} } } A.push({ ...a, dup: oth.some(o => phDist(a.hash, o.hash) <= 5) }); } catch (e) { A.push({ err: true }); } }
+    const sel = document.querySelector('input[name=ig-when]:checked'); let whenIso = ''; if (sel) { if (sel.value === 'now') whenIso = new Date().toISOString(); else if (sel.value === 'custom') { const v = document.getElementById('ig-custom').value; whenIso = v ? new Date(v).toISOString() : ''; } else whenIso = sel.value; }
+    const recent = (ADM.igJobs || []).filter(j => ['queued', 'posted', 'publishing'].includes(j.status) && whenIso && Math.abs(new Date(j.when || j.postedAt) - new Date(whenIso)) < 12 * 3600_000);
+    const kw = [p.name, p.fabric, ...(p.colours || [])].filter(Boolean).flatMap(x => String(x).split(/\s+/)).filter(w => w.length > 3);
+    const rules = socialRules({ kind: 'photo', images: picks.map((x, k) => A[k]), caption: document.getElementById('ig-cap').value, alt: p.altText || IGD.plan.altText || '', keywords: kw.slice(0, 6), whenIso, recent });
+    const box = document.getElementById('ig-rules'); if (!box) return; box.innerHTML = socialRulesHTML(rules, 'ig-override'); const o2 = document.getElementById('ig-override'); if (o2 && keep) o2.checked = true;
+    IGD.rules = rules; igGateUpdate();
+    const pv = document.getElementById('ig-prevbox'); if (pv && pv.closest('details') && pv.closest('details').open) pv.innerHTML = pvIgHTML({ img: imgs[picks[0]] || '', caption: document.getElementById('ig-cap').value });
+  }, 250);
+}
+function igGateUpdate() { const b = document.getElementById('ig-go'); if (!b || !IGD.rules) return; const o = document.getElementById('ig-override'), g = socialGate(IGD.rules, o && o.checked); b.disabled = !g.ok; b.title = g.ok ? '' : g.blocks.length ? 'Fix the red items first' : 'Tick “post anyway” or follow the advice'; }
+function igPreviewToggle() { const d = document.getElementById('ig-prev'); if (d && d.open) igRulesRefresh(true); }
+// ---- Video studio ----
+const VS = { open: false, info: null, id: '', url: '', edl: null, hook: '', logo: true, res: null, product: null, plan: null };
+const vsDefaults = () => ({ start: 0, end: 0, speed: 1, zoom: 1, panX: 0.5, panY: 0.5, brightness: 0, contrast: 1, saturation: 1, mute: false, fade: true, hookSecs: 3 });
+function openVideoStudio() {
+  if (BUILD !== 'admin') { showToast('The video studio works in the owner app on your server.', 'error'); return; }
+  Object.assign(VS, { open: true, info: null, id: '', url: '', edl: vsDefaults(), hook: '', logo: true, res: null, product: null, plan: null });
+  openModal(`<h3 style="font-family:'Cormorant Garamond',serif;font-size:26px;margin-bottom:4px;">🎬 Video studio</h3><p class="note">Make a vertical video for an <b>Instagram Reel</b> and a <b>WhatsApp status</b>: trim, crop, brighten, add a hook line and your logo. Both files are made for you.</p><div id="vs-body">${vsPickHTML()}</div>`, true);
+}
+function vsPickHTML() {
+  return `<div class="ai-row"><label>About which product? <span class="pf-sub">(optional, fills the caption)</span><select id="vs-prod"><option value="">None</option>${db.products.filter(p => p.stock > 0).map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')}</select></label></div>
+    <label class="btn-sm btn-primary-sm" style="display:inline-block;cursor:pointer;">📁 Choose a video from this device<input type="file" id="vs-file" accept="video/*" hidden onchange="vsChoose(this)"></label>
+    <div id="vs-up" class="note" style="margin-top:8px;"></div>
+    <div class="note"><b>Tips that help reach:</b> film vertically, in daylight; show the saree move and the pallu in the first 2 seconds; 7 to 30 seconds is ideal; hold the phone steady. Up to 150 MB.</div>`;
+}
+function vsUpload(file, onPct) {
+  return new Promise((res, rej) => { const x = new XMLHttpRequest(); x.open('POST', '/admin/api/video/upload'); x.withCredentials = true; x.setRequestHeader('Content-Type', file.type || 'video/mp4'); x.setRequestHeader('X-CSRF-Token', ADM.csrf || '');
+    x.upload.onprogress = e => { if (e.lengthComputable) onPct(Math.round(e.loaded / e.total * 100)); }; x.onload = () => { let j = {}; try { j = JSON.parse(x.responseText); } catch (e) {} x.status === 200 ? res(j) : rej(new Error(j.error || 'Upload failed (' + x.status + ')')); }; x.onerror = () => rej(new Error('Could not reach the server.')); x.send(file); });
+}
+async function vsChoose(inp) {
+  const f = inp.files && inp.files[0]; if (!f) return; const m = el_('vs-up');
+  if (f.size > 150 * 1024 * 1024) { m.textContent = 'That video is over 150 MB. Trim it on your phone first.'; return; }
+  VS.product = db.products.find(p => p.id === el_('vs-prod').value) || null; m.textContent = 'Uploading… 0%';
+  try { const r = await vsUpload(f, pc => { m.textContent = 'Uploading… ' + pc + '%'; }); VS.info = r; VS.id = r.id; VS.url = URL.createObjectURL(f); VS.edl = { ...vsDefaults(), end: +r.duration.toFixed(1) }; VS.edl.end = Math.min(VS.edl.end, 60); VS.hook = VS.product ? vsHookIdeas()[0] : '';
+    el_('vs-body').innerHTML = vsEditHTML(); vsLayout(); }
+  catch (e) { m.textContent = e.message; }
+}
+function vsHookIdeas() { const p = VS.product; if (!p) return ['New arrival']; const f = p.fabric || ''; return [oneOfAKind(p) ? `Only 1 piece: ${p.name}` : `New: ${p.name}`, f ? `${f} for your next occasion` : 'Handloom you will love', `Wait for the pallu 👀`]; }
+const vsOut = () => { const e = VS.edl; return Math.max(0, (e.end - e.start) / e.speed); };
+function vsEditHTML() {
+  const e = VS.edl, d = VS.info.duration, sl = (k, lo, hi, st, lab, fmt) => `<label class="vs-sl">${lab} <span id="vs-v-${k}">${fmt ? fmt(e[k]) : e[k]}</span><input type="range" min="${lo}" max="${hi}" step="${st}" value="${e[k]}" oninput="vsSet('${k}',this.value)"></label>`;
+  return `<div class="vs-grid"><div><div class="vs-stage" id="vs-stage"><video id="vs-video" src="${VS.url}" playsinline muted preload="metadata"></video><div class="vs-hook" id="vs-hookbox"></div><img class="vs-logo" id="vs-logobox" src="${LOGO_URI}" alt=""><div class="soc-zone top">Instagram bar</div><div class="soc-zone bot">Buttons and caption cover this</div></div>
+      <div class="pf-actions"><button type="button" class="btn-sm btn-info-sm" onclick="vsPlay()">▶ Preview</button><span class="note" id="vs-len"></span></div><p class="note">The preview is close to the result. The finished video is made on your server.</p></div>
+    <div class="vs-ctl">
+      <label class="vs-sl">Start <span id="vs-v-start">${e.start.toFixed(1)}s</span><input type="range" min="0" max="${d}" step="0.1" value="${e.start}" oninput="vsSet('start',this.value)"></label>
+      <label class="vs-sl">End <span id="vs-v-end">${e.end.toFixed(1)}s</span><input type="range" min="0" max="${d}" step="0.1" value="${e.end}" oninput="vsSet('end',this.value)"></label>
+      <label class="vs-sl">Speed <select onchange="vsSet('speed',this.value)">${[0.5, 0.75, 1, 1.25, 1.5, 2].map(v => `<option ${v === e.speed ? 'selected' : ''}>${v}</option>`).join('')}</select></label>
+      ${sl('zoom', 1, 3, 0.05, 'Zoom', v => (+v).toFixed(2) + '×')}${sl('panX', 0, 1, 0.01, 'Move left ↔ right', v => Math.round(v * 100) + '%')}${sl('panY', 0, 1, 0.01, 'Move up ↕ down', v => Math.round(v * 100) + '%')}
+      ${sl('brightness', -0.3, 0.3, 0.01, 'Brightness', v => (v >= 0 ? '+' : '') + (+v).toFixed(2))}${sl('contrast', 0.8, 1.4, 0.01, 'Contrast', v => (+v).toFixed(2))}${sl('saturation', 0.7, 1.6, 0.01, 'Colour richness', v => (+v).toFixed(2))}
+      <label class="vs-sl" style="grid-column:1/-1">Hook line on screen <span class="pf-sub">(first seconds; keep it short)</span><input id="vs-hook" maxlength="60" value="${esc(VS.hook)}" oninput="VS.hook=this.value;vsLayout()"></label>
+      <div class="ai-chips" style="grid-column:1/-1">${vsHookIdeas().map(h => `<button type="button" onclick="el_('vs-hook').value=this.textContent;VS.hook=this.textContent;vsLayout()">${esc(h)}</button>`).join('')}</div>
+      <label class="vs-sl">Hook shows for <select onchange="vsSet('hookSecs',this.value)">${[2, 3, 4, 5].map(v => `<option ${v === 3 ? 'selected' : ''} value="${v}">${v} s</option>`).join('')}</select></label>
+      <label class="chk"><input type="checkbox" checked onchange="VS.logo=this.checked;vsLayout()"><span>Logo</span></label><label class="chk"><input type="checkbox" onchange="vsSet('mute',this.checked)"><span>Remove sound</span></label><label class="chk"><input type="checkbox" checked onchange="vsSet('fade',this.checked)"><span>Fade sound in and out</span></label></div></div>
+    <div class="note">Music: Instagram's posting service cannot add trending or licensed songs. If you want one, add it in the Instagram app before you publish, or keep the original sound.</div>
+    <div class="dd-actions"><button class="btn-sm btn-info-sm" onclick="closeModal('adminModal');VS.open=false">Close</button><button class="btn-full" style="margin:0;flex:1;" id="vs-go" onclick="vsRender()">🎬 Make the Reel &amp; status video</button></div><div id="vs-msg" class="note"></div>`;
+}
+function vsSet(k, v) { const e = VS.edl; if (['mute', 'fade'].includes(k)) e[k] = !!v; else e[k] = +v; const d = VS.info.duration;
+  if (k === 'start') { e.start = Math.min(e.start, d - 0.5); if (e.end <= e.start + 0.2) e.end = Math.min(d, e.start + 0.5); const v1 = el_('vs-video'); if (v1) v1.currentTime = e.start; } if (k === 'end') { if (e.end <= e.start + 0.2) e.end = e.start + 0.2; const v1 = el_('vs-video'); if (v1) v1.currentTime = Math.max(e.start, e.end - 0.1); }
+  const lab = el_('vs-v-' + k); if (lab) lab.textContent = k === 'start' || k === 'end' ? e[k].toFixed(1) + 's' : k === 'zoom' ? e[k].toFixed(2) + '×' : k === 'panX' || k === 'panY' ? Math.round(e[k] * 100) + '%' : e[k]; if (k === 'end' || k === 'start') { const o = el_('vs-v-' + (k === 'start' ? 'end' : 'start')); if (o) o.textContent = (k === 'start' ? e.end : e.start).toFixed(1) + 's'; } vsLayout(); }
+function vsLayout() {
+  const st = el_('vs-stage'), v = el_('vs-video'); if (!st || !v || !VS.info) return; const e = VS.edl, W = st.clientWidth, H = st.clientHeight || W * 16 / 9, vw = VS.info.width, vh = VS.info.height, s = Math.max(W / vw, H / vh) * e.zoom, dw = vw * s, dh = vh * s;
+  Object.assign(v.style, { width: dw + 'px', height: dh + 'px', left: -(dw - W) * e.panX + 'px', top: -(dh - H) * e.panY + 'px', filter: `brightness(${1 + e.brightness}) contrast(${e.contrast}) saturate(${e.saturation})` });
+  const hb = el_('vs-hookbox'); if (hb) { hb.textContent = VS.hook; hb.style.display = VS.hook.trim() ? 'block' : 'none'; } const lg = el_('vs-logobox'); if (lg) lg.style.display = VS.logo ? 'block' : 'none';
+  const out = vsOut(), l = el_('vs-len'); if (l) { l.textContent = `Length ${out.toFixed(1)} s` + (out < 3 ? ' (must be at least 3 s)' : out > 90 ? ' (max 90 s)' : out > 30 ? ' (the WhatsApp status copy is cut at 30 s)' : ''); l.style.color = out < 3 || out > 90 ? '#b04a4a' : ''; }
+}
+function vsPlay() { const v = el_('vs-video'), e = VS.edl; if (!v) return; v.currentTime = e.start; v.playbackRate = e.speed; v.muted = true; v.play().catch(() => {}); v.ontimeupdate = () => { if (v.currentTime >= e.end - 0.05) { v.pause(); v.ontimeupdate = null; } }; }
+function vsWrap(ctx, text, maxW) { const w = String(text).split(/\s+/), lines = []; let l = ''; w.forEach(t => { const n = l ? l + ' ' + t : t; if (ctx.measureText(n).width > maxW && l) { lines.push(l); l = t; } else l = n; }); if (l) lines.push(l); return lines.slice(0, 3); }
+function vsHookPng(text) {
+  if (!text.trim()) return null; const c = document.createElement('canvas'); c.width = 1080; c.height = 1920; const x = c.getContext('2d'); x.font = '700 84px "Cormorant Garamond", Georgia, serif'; x.textAlign = 'center';
+  const lines = vsWrap(x, text.trim(), 800), lh = 100, bh = lines.length * lh + 56, top = 430; x.fillStyle = 'rgba(0,0,0,0.55)'; x.beginPath(); (x.roundRect ? x.roundRect(100, top, 880, bh, 28) : x.rect(100, top, 880, bh)); x.fill(); x.fillStyle = '#fff'; lines.forEach((l, i) => x.fillText(l, 540, top + 28 + 78 + i * lh)); return c.toDataURL('image/png');
+}
+function vsLogoPng() { return new Promise(res => { const im = new Image(); im.onload = () => { const c = document.createElement('canvas'); c.width = 1080; c.height = 1920; const x = c.getContext('2d'), lw = 300, lh = lw * im.height / im.width; x.fillStyle = 'rgba(255,255,255,0.93)'; x.beginPath(); (x.roundRect ? x.roundRect(48, 190, lw + 32, lh + 24, 18) : x.rect(48, 190, lw + 32, lh + 24)); x.fill(); x.drawImage(im, 64, 202, lw, lh); res(c.toDataURL('image/png')); }; im.onerror = () => res(null); im.src = LOGO_URI; }); }
+async function vsRender() {
+  const b = el_('vs-go'), m = el_('vs-msg'), out = vsOut(); if (out < 3) { m.textContent = 'The video must be at least 3 seconds after trimming.'; return; } if (out > 90) { m.textContent = 'Reels from this tool are limited to 90 seconds. Trim the clip.'; return; }
+  b.disabled = true; m.textContent = 'Sending your edits…';
+  try {
+    const hookPng = vsHookPng(VS.hook), logoPng = VS.logo ? await vsLogoPng() : null, { jobId } = await admApi('POST', '/admin/api/video/render', { id: VS.id, edl: { ...VS.edl }, hookPng, logoPng });
+    for (let i = 0; i < 400; i++) { await new Promise(r => setTimeout(r, 1200)); const g = await admApi('GET', '/admin/api/video/job?id=' + jobId); m.textContent = g.state === 'queued' ? 'Waiting for the server…' : `Making your video… ${Math.round((g.progress || 0) * 100)}%`; if (g.state === 'error') throw new Error(g.error || 'The video could not be made.'); if (g.state === 'done') { VS.res = g.result; break; } }
+    if (!VS.res) throw new Error('This is taking too long. Try a shorter clip.'); await vsResult();
+  } catch (e) { m.textContent = e.message; b.disabled = false; }
+}
+async function vsResult() {
+  const r = VS.res, p = VS.product; let plan = null;
+  try { plan = await admApi('POST', '/admin/api/social/plan', { product: { name: p ? p.name : 'New arrival', category: p ? p.category : '', fabric: p ? p.fabric : '', colours: p ? p.colours : [], price: p ? p.price : 0, description: p ? p.description : '', occasions: p ? occasionsOf(p) : [], oneOfAKind: p ? oneOfAKind(p) : false, lang: 'en' } }); } catch (e) {} VS.plan = plan;
+  const cap = plan ? plan.caption + (plan.hashtags.length ? '\n\n' + plan.hashtags.slice(0, 5).map(h => '#' + h).join(' ') : '') : '';
+  el_('vs-body').innerHTML = `<div class="vs-res"><div><h5>Instagram Reel</h5><video src="/media/${r.igId}.mp4" controls playsinline preload="metadata" class="vs-v"></video><p class="note">${r.duration} s · ${(r.igBytes / 1e6).toFixed(1)} MB · 1080×1920 · ${r.hasAudio ? 'with sound' : 'no sound'}</p><a class="btn-sm btn-info-sm" href="/media/${r.igId}.mp4" download="reel.mp4">⬇ Download</a></div>
+    <div><h5>WhatsApp status</h5><video src="/media/${r.waId}.mp4" controls playsinline preload="metadata" class="vs-v"></video><p class="note">${r.waDuration} s · ${(r.waBytes / 1e6).toFixed(1)} MB · 720×1280 ${r.waDuration <= 30 && r.waBytes <= 16e6 ? '· ✓ within WhatsApp status limits (30 s, 16 MB)' : ''}</p><div class="pf-actions"><a class="btn-sm btn-info-sm" href="/media/${r.waId}.mp4" download="whatsapp-status.mp4">⬇ Download</a><button type="button" class="btn-sm btn-primary-sm" style="background:#25D366;border-color:#25D366;" onclick="vsShareWA()">Share to WhatsApp</button></div></div></div>
+    <div class="form-group"><label>Instagram caption <span class="pf-sub" id="vs-count"></span></label><textarea id="vs-cap" rows="6" oninput="vsRulesRefresh(true)">${esc(cap)}</textarea><div class="ai-act"><button type="button" class="btn-sm btn-info-sm" onclick="vsPack()">✨ Caption pack: English + తెలుగు + hashtags</button></div><div id="vs-pack"></div></div>
+    <label class="chk"><input type="checkbox" id="vs-orig" onchange="vsRulesRefresh(true)"><span><b>This is my own original video</b> (no TikTok or other-app watermark)</span></label>
+    <div class="form-group"><label>When to post the Reel</label><div class="ig-when"><label class="ig-opt"><input type="radio" name="vs-when" value="now" onchange="vsRulesRefresh(true)"> <b>Post now</b></label>${plan ? plan.slots.map((s, i) => `<label class="ig-opt"><input type="radio" name="vs-when" value="${esc(s.iso)}" ${i === 0 ? 'checked' : ''} onchange="vsRulesRefresh(true)"> <b>${esc(igWhen(s.iso))}</b> <small>${i === 0 ? '⭐ recommended · ' : ''}${esc(s.why)}</small></label>`).join('') : ''}<label class="ig-opt"><input type="radio" name="vs-when" value="custom" ${plan ? '' : 'checked'} onchange="vsRulesRefresh(true)"> <b>Pick a time</b> <input type="datetime-local" id="vs-custom" onchange="vsRulesRefresh(true)" onfocus="document.querySelector('input[name=vs-when][value=custom]').checked=true"></label></div></div>
+    <div id="vs-rules"></div><div id="vs-msg2" class="note"></div><div class="dd-actions"><button class="btn-sm btn-info-sm" onclick="closeModal('adminModal');VS.open=false">Close</button><button class="btn-full" id="vs-post" style="margin:0;flex:1;" onclick="vsPost()" disabled>🎬 Post / Schedule the Reel</button></div>`;
+  vsRulesRefresh(false);
+}
+function vsWhen() { const s = document.querySelector('input[name=vs-when]:checked'); if (!s) return ''; if (s.value === 'now') return 'now'; if (s.value === 'custom') { const v = el_('vs-custom').value; return v ? new Date(v).toISOString() : ''; } return s.value; }
+function vsRulesRefresh(keep) {
+  const cap = el_('vs-cap'); if (!cap || !VS.res) return; const ov = el_('vs-override'), had = keep && ov && ov.checked, w = vsWhen(), p = VS.product, kw = p ? [p.name, p.fabric, ...(p.colours || [])].filter(Boolean).flatMap(x => String(x).split(/\s+/)).filter(x => x.length > 3) : [];
+  const recent = (ADM.igJobs || []).filter(j => ['queued', 'posted', 'publishing'].includes(j.status) && w && Math.abs(new Date(j.when || j.postedAt) - new Date(w === 'now' ? Date.now() : w)) < 12 * 3600_000);
+  const rules = socialRules({ kind: 'reel', video: { duration: VS.res.duration, hook: !!VS.hook.trim(), hasAudio: VS.res.hasAudio }, original: el_('vs-orig').checked, caption: cap.value, keywords: kw.slice(0, 6), whenIso: w === 'now' ? new Date().toISOString() : w, recent });
+  el_('vs-rules').innerHTML = socialRulesHTML(rules, 'vs-override'); const o2 = el_('vs-override'); if (o2 && had) o2.checked = true; VS.rules = rules;
+  const t = cap.value, tg = capTags(t).length, c = el_('vs-count'); if (c) c.textContent = `${t.length}/2200 · ${tg}/30 hashtags`; const g = socialGate(rules, o2 && o2.checked), b = el_('vs-post'); if (b) b.disabled = !g.ok;
+}
+async function vsPack() { const p = VS.product || { name: 'our latest saree', category: '', colours: [] }; busy('vs-pack', 'writing…'); let d; try { d = aiReady('captionpack') ? (await aiCall('captionpack', { name: p.name, category: p.category, fabric: p.fabric, colours: p.colours, occasions: VS.product ? occasionsOf(p) : [], description: p.description, price: p.price, oneOfAKind: VS.product ? oneOfAKind(p) : false })).data : packLocal(p); } catch (e) { outBox('vs-pack', `<div class="ai-err">${esc(aiMsg(e))}</div>`); return; }
+  VS.pack = d; const tx = k => { const x = d[k] || {}; return (x.caption || '') + ((x.hashtags || []).length ? '\n\n' + x.hashtags.slice(0, 5).map(h => '#' + String(h).replace(/[^\w]/g, '')).filter(h => h.length > 1).join(' ') : ''); };
+  outBox('vs-pack', ['en', 'te'].map(k => `<div class="ai-draft"><b>${k === 'en' ? 'English' : 'తెలుగు Telugu'}</b><textarea rows="4" readonly>${esc(tx(k))}</textarea><div class="ai-act"><button type="button" class="btn-sm btn-primary-sm" onclick="el_('vs-cap').value=VS.packText('${k}');vsRulesRefresh(true)">Use this caption</button></div></div>`).join('')); VS.packText = tx; }
+async function vsShareWA() { const r = VS.res; try { const b = await (await fetch(`/media/${r.waId}.mp4`)).blob(), f = new File([b], 'status.mp4', { type: 'video/mp4' }); if (navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f] }); return; } } catch (e) { if (e && e.name === 'AbortError') return; } const a = document.createElement('a'); a.href = `/media/${r.waId}.mp4`; a.download = 'whatsapp-status.mp4'; a.click(); showToast('Downloaded. Open WhatsApp → Status → pick this video.', 'success'); }
+async function vsPost() {
+  const b = el_('vs-post'), m = el_('vs-msg2'), w = vsWhen(); if (!w) { m.textContent = 'Choose when to post.'; return; } const g = socialGate(VS.rules || [], (el_('vs-override') || {}).checked); if (!g.ok) { m.textContent = 'Fix the red items first.'; return; }
+  b.disabled = true; m.textContent = 'Posting…';
+  try { const r = await admApi('POST', '/admin/api/social/post', { kind: 'reel', videoId: VS.res.igId, coverId: VS.res.coverId, caption: el_('vs-cap').value, when: w, productId: VS.product ? VS.product.id : '', productName: (VS.product ? VS.product.name : 'Reel') }), j = r.job;
+    closeModal('adminModal'); VS.open = false; if (j.status === 'posted') showToast('🎬 Reel posted on Instagram', 'success'); else if (j.status === 'queued' && w !== 'now') showToast('🗓 Reel scheduled for ' + igWhen(j.when) + ' (IST)', 'success'); else showToast('Instagram: ' + (j.error || j.status), 'error'); if (currentAdminTab === 'social') renderSocialAdmin(el_('adminContent')); }
+  catch (e) { m.textContent = e.message; b.disabled = false; }
+}
 const IG_ST = { queued: ['🗓', 'Scheduled'], publishing: ['⏳', 'Posting…'], posted: ['✅', 'Posted'], failed: ['⚠️', 'Failed'], check: ['❓', 'Please check Instagram'], cancelled: ['✖', 'Cancelled'] };
 async function renderSocialAdmin(c) {
   if (!c) return; c.innerHTML = '<div class="ai-busy">Loading…</div>'; let s;
   try { s = await admApi('GET', '/admin/api/social/status'); } catch (e) { c.innerHTML = `<div class="ai-err">${esc(e.message)}</div>`; return; } ADM.igJobs = s.jobs;
   c.innerHTML = `<div class="admin-card ai-status ${s.connected ? 'on' : ''}"><h3 style="margin:0;">📸 Instagram</h3><p class="note" style="margin:0;">${s.connected ? `🟢 Connected to account ${esc(s.account)}. Posted today: ${s.postedToday} of ${s.dailyCap}.` : '🟡 Not connected. On the server set IG_USER_ID and IG_ACCESS_TOKEN (see HOW-IT-WORKS/17). You need an Instagram professional account linked to a Facebook page and a Meta developer app.'}${s.connected && !s.httpsOk ? ' <b>PUBLIC_URL must be the https address of this server, or Instagram cannot fetch the photos.</b>' : ''}</p>
+    ${s.connected ? `<div class="admin-card"><h3 style="margin:0 0 6px;">🎬 Video studio</h3><p class="note">Make a vertical video for an Instagram Reel and a WhatsApp status: trim, crop, brighten, hook line, logo.</p><button class="btn-sm btn-primary-sm" onclick="openVideoStudio()">🎬 Open the video studio</button></div>` : ''}
     ${s.connected ? `<div class="ai-row"><label>Post a product<select id="ig-prod">${db.products.filter(p => (p.images || []).length).map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')}</select></label></div><button class="btn-sm btn-primary-sm" onclick="igOffer(db.products.find(x => x.id === document.getElementById('ig-prod').value), { force: true })">📸 Plan a post</button>` : ''}</div>
-    <div class="admin-card"><h3>Posts</h3>${s.jobs.length ? s.jobs.map(j => { const [ic, lb] = IG_ST[j.status] || ['', j.status]; return `<div class="ai-idea ig-job" data-id="${esc(j.id)}"><span class="ai-tag">${ic} ${lb}</span><b>${esc(j.productName || 'Post')}</b><small>${j.status === 'posted' ? 'Posted ' + esc(igWhen(j.postedAt)) : j.status === 'queued' ? 'For ' + esc(igWhen(j.when)) + ' IST' : esc(igWhen(j.when))} · ${j.mediaIds.length} photo${j.mediaIds.length > 1 ? 's' : ''}</small><small>${esc(j.caption.slice(0, 140))}${j.caption.length > 140 ? '…' : ''}</small>${j.error ? `<small style="color:#b04a4a;">${esc(j.error)}</small>` : ''}<div class="ai-act">${j.permalink ? `<a class="btn-sm btn-info-sm" target="_blank" rel="noopener" href="${esc(j.permalink)}">View on Instagram</a>` : ''}${j.status === 'queued' ? `<button class="btn-sm btn-primary-sm" onclick="igAct('now','${esc(j.id)}')">Post now</button><button class="btn-sm btn-danger-sm" onclick="igAct('cancel','${esc(j.id)}')">Cancel</button>` : ''}${j.status === 'failed' ? `<button class="btn-sm btn-primary-sm" onclick="igAct('retry','${esc(j.id)}')">Try again</button><button class="btn-sm btn-info-sm" onclick="igAct('cancel','${esc(j.id)}')">Dismiss</button>` : ''}${j.status === 'check' ? `<button class="btn-sm btn-info-sm" onclick="if(confirm('Only do this if the post is NOT on Instagram. Post it again?'))igAct('retry','${esc(j.id)}',true)">It is not there: post again</button><button class="btn-sm btn-info-sm" onclick="igAct('cancel','${esc(j.id)}')">It is there: dismiss</button>` : ''}</div></div>`; }).join('') : '<div class="dash-empty">No posts yet. Publish a product, or plan one above.</div>'}</div>`;
+    <div class="admin-card"><h3>Posts</h3>${s.jobs.length ? s.jobs.map(j => { const [ic, lb] = IG_ST[j.status] || ['', j.status]; return `<div class="ai-idea ig-job" data-id="${esc(j.id)}"><span class="ai-tag">${ic} ${lb}</span><b>${j.kind === 'reel' ? '🎬 ' : ''}${esc(j.productName || 'Post')}</b><small>${j.status === 'posted' ? 'Posted ' + esc(igWhen(j.postedAt)) : j.status === 'queued' ? 'For ' + esc(igWhen(j.when)) + ' IST' : esc(igWhen(j.when))} · ${j.mediaIds.length} photo${j.mediaIds.length > 1 ? 's' : ''}</small><small>${esc(j.caption.slice(0, 140))}${j.caption.length > 140 ? '…' : ''}</small>${j.error ? `<small style="color:#b04a4a;">${esc(j.error)}</small>` : ''}<div class="ai-act">${j.permalink ? `<a class="btn-sm btn-info-sm" target="_blank" rel="noopener" href="${esc(j.permalink)}">View on Instagram</a>` : ''}${j.status === 'queued' ? `<button class="btn-sm btn-primary-sm" onclick="igAct('now','${esc(j.id)}')">Post now</button><button class="btn-sm btn-danger-sm" onclick="igAct('cancel','${esc(j.id)}')">Cancel</button>` : ''}${j.status === 'failed' ? `<button class="btn-sm btn-primary-sm" onclick="igAct('retry','${esc(j.id)}')">Try again</button><button class="btn-sm btn-info-sm" onclick="igAct('cancel','${esc(j.id)}')">Dismiss</button>` : ''}${j.status === 'check' ? `<button class="btn-sm btn-info-sm" onclick="if(confirm('Only do this if the post is NOT on Instagram. Post it again?'))igAct('retry','${esc(j.id)}',true)">It is not there: post again</button><button class="btn-sm btn-info-sm" onclick="igAct('cancel','${esc(j.id)}')">It is there: dismiss</button>` : ''}</div></div>`; }).join('') : '<div class="dash-empty">No posts yet. Publish a product, or plan one above.</div>'}</div>`;
   clearTimeout(ADM.igTimer); ADM.igTimer = setTimeout(() => { if (currentAdminTab === 'social' && !document.querySelector('.modal.active')) renderSocialAdmin(document.getElementById('adminContent')); }, 15000);
 }
 async function igAct(what, id, force) { try { await admApi('POST', '/admin/api/social/' + what, { id, force: !!force }); } catch (e) { showToast(e.message, 'error'); } renderSocialAdmin(document.getElementById('adminContent')); }

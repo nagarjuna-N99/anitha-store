@@ -84,12 +84,13 @@ export class AdminAuth {
   }
   logout(req, ip) { const s = this.sessionFrom(req); if (s) this.sessions.delete(s.key); this.audit('logout', ip, true); }
   // A change (POST/PUT/DELETE) needs: a live session, the CSRF header, JSON content, and (when sent) an Origin equal to our own host.
-  authorize(req, { write }, ip) {
+  authorize(req, { write, upload }, ip) {
     const s = this.sessionFrom(req); if (!s) return { code: 401, error: 'Please sign in.' };
     if (write) {
       const o = req.headers.origin; if (o) { let h = ''; try { h = new URL(o).host; } catch { /* bad origin */ } if (h !== req.headers.host) { this.audit('csrf', ip, false, 'origin'); return { code: 403, error: 'Blocked: request came from another site.' }; } }
       if (!eq(String(req.headers['x-csrf-token'] || ''), s.csrf)) { this.audit('csrf', ip, false, 'token'); return { code: 403, error: 'Blocked: security token missing. Reload the page.' }; }
-      if (!/^application\/json/i.test(req.headers['content-type'] || '')) return { code: 415, error: 'JSON only.' };
+      const ct = req.headers['content-type'] || '';
+      if (!(/^application\/json/i.test(ct) || (upload && /^(video\/|application\/octet-stream)/i.test(ct)))) return { code: 415, error: 'JSON only.' };   // the video upload is the one raw-file route; it still needs the session, CSRF token and same-site origin above
     }
     return { code: 200, session: s };
   }

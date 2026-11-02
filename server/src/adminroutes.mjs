@@ -8,7 +8,7 @@ import path from 'node:path';
 import { publicView } from './shopdata.mjs';
 import { runAi, cleanPlan, localPlan, istIso } from './aihelper.mjs';
 
-export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, json, readBody, ROOT }) {
+export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, json, readBody, ROOT }) {
   const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY', 'Cross-Origin-Resource-Policy': 'same-origin', 'Cache-Control': 'no-store', ...(auth.secure ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' } : {}) };
   const CSP = "default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'";
   const ipOf = req => String(req.socket.remoteAddress || '').replace(/^::ffff:/, '');   // never trust X-Forwarded-For for security decisions
@@ -32,6 +32,13 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
     }
     let m = /^GET \/media\/([0-9a-f]{32})\.jpg$/.exec(route);
     if (m) { const b = media.read(m[1]); if (!b) return json(res, 404, { error: 'not found' }), true; res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Cache-Control': 'public, max-age=86400', 'X-Content-Type-Options': 'nosniff', 'Cross-Origin-Resource-Policy': 'cross-origin' }); res.end(b); return true; }
+    m = /^GET \/media\/([0-9a-f]{32})\.mp4$/.exec(route);
+    if (m) {
+      const f = media.path(m[1], 'mp4'); if (!f || !fs.existsSync(f)) return json(res, 404, { error: 'not found' }), true;
+      const size = fs.statSync(f).size, rg = /^bytes=(\d*)-(\d*)$/.exec(String(req.headers.range || '')), H = { 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=86400', 'X-Content-Type-Options': 'nosniff', 'Cross-Origin-Resource-Policy': 'cross-origin' };
+      if (rg && (rg[1] || rg[2])) { let a = rg[1] ? +rg[1] : size - +rg[2], z = rg[1] && rg[2] ? +rg[2] : size - 1; if (a > z || a >= size) { res.writeHead(416, { 'Content-Range': `bytes */${size}` }); res.end(); return true; } z = Math.min(z, size - 1); res.writeHead(206, { ...H, 'Content-Range': `bytes ${a}-${z}/${size}`, 'Content-Length': z - a + 1 }); fs.createReadStream(f, { start: a, end: z }).pipe(res); return true; }
+      res.writeHead(200, { ...H, 'Content-Length': size }); fs.createReadStream(f).pipe(res); return true;
+    }
     if (!url.pathname.startsWith('/admin/api/')) return false;
 
     // ---------- admin API ----------
@@ -44,7 +51,7 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
         const b = await body(req, 5_000); await new Promise(r => setTimeout(r, cfg.loginDelayMs ?? 350)); const r = auth.login(b, ip, req.headers['user-agent']);
         if (r.code !== 200) return send(res, r), true; send(res, { code: 200, ok: true, csrf: r.csrf }, { 'Set-Cookie': auth.cookie(r.sessionId) }); return true;
       }
-      const a = auth.authorize(req, { write: !read }, ip); if (a.code !== 200) return send(res, a), true;
+      const a = auth.authorize(req, { write: !read, upload: route === 'POST /admin/api/video/upload' }, ip); if (a.code !== 200) return send(res, a), true;
       const wrote = (ev, extra = '') => auth.audit(ev, ip, true, extra);
       if (route === 'POST /admin/api/logout') { auth.logout(req, ip); send(res, { code: 200, ok: true }, { 'Set-Cookie': auth.clearCookie() }); return true; }
 
@@ -61,6 +68,9 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       // ---------- Instagram ----------
       if (route === 'GET /admin/api/social/status') { send(res, { code: 200, connected: ig.configured, account: mask(cfg.ig.userId), httpsOk: /^https:\/\//.test(cfg.payments.publicUrl || ''), postedToday: social.postedToday(), dailyCap: cfg.ig.dailyCap, jobs: social.list() }); return true; }
       if (route === 'POST /admin/api/social/media') { const b = await body(req, 12_000_000); const r = media.save(b.dataUrl); send(res, { code: 200, id: r.id }); return true; }
+      if (route === 'POST /admin/api/video/upload') { const r = await videos.upload(req); wrote('video-upload', `${Math.round(r.bytes / 1e6)}MB ${Math.round(r.duration)}s`); send(res, { code: 200, ...r }); return true; }
+      if (route === 'POST /admin/api/video/render') { const b = await body(req, 6_500_000); const job = videos.start({ id: String(b.id || ''), edl: b.edl, hookPng: b.hookPng, logoPng: b.logoPng }); wrote('video-render', job.id); send(res, { code: 200, jobId: job.id }); return true; }
+      if (route === 'GET /admin/api/video/job') { const j = videos.job(url.searchParams.get('id')); if (!j) return send(res, { code: 404, error: 'Not found.' }), true; send(res, { code: 200, state: j.state, progress: j.progress, error: j.error, result: j.result }); return true; }
       if (route === 'POST /admin/api/social/plan') {
         const b = await body(req, 20_000), now = Date.now(), existing = social.s.jobs.filter(j => j.status === 'queued').map(j => j.when), input = { ...(b.product || {}), nowIso: istIso(now), existing };
         let plan, via = 'built-in';
@@ -69,7 +79,7 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       }
       if (route === 'POST /admin/api/social/post') {
         const b = await body(req, 20_000); if (!ig.configured) return send(res, { code: 503, error: 'Instagram is not connected on the server yet.' }), true;
-        const job = social.add({ mediaIds: b.mediaIds, caption: b.caption, when: b.when === 'now' ? 'now' : String(b.when || ''), productId: b.productId, productName: b.productName }); wrote('ig-queue', job.id);
+        const job = social.add({ kind: b.kind === 'reel' ? 'reel' : 'photo', videoId: b.videoId, coverId: b.coverId, mediaIds: b.mediaIds, caption: b.caption, when: b.when === 'now' ? 'now' : String(b.when || ''), productId: b.productId, productName: b.productName }); wrote('ig-queue', job.id);
         if (b.when === 'now') await social.postNow(job.id); send(res, { code: 200, job }); return true;
       }
       if (route === 'POST /admin/api/social/cancel') { const r = social.cancel(String((await body(req, 2_000)).id)); if (r.code === 200) wrote('ig-cancel', r.job.id); send(res, r); return true; }
@@ -88,6 +98,6 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
         if (r.sent) wrote('tracking-msg', id); send(res, { code: 200, ...r }); return true;
       }
       return send(res, { code: 404, error: 'not found' }), true;
-    } catch (e) { send(res, { code: [400, 413, 415, 422].includes(e.code) ? e.code : 500, error: e.code && e.code < 500 ? e.message : 'Something went wrong.' }); return true; }
+    } catch (e) { send(res, { code: [400, 404, 413, 415, 422, 429].includes(e.code) ? e.code : 500, error: e.code && e.code < 500 ? e.message : 'Something went wrong.' }); return true; }
   };
 }

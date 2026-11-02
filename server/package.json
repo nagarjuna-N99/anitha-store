@@ -8,6 +8,13 @@
     "start": "node server.mjs",
     "test": "node tests/run.mjs"
   },
-  "engines": { "node": ">=20" },
-  "dependencies": { "@anthropic-ai/sdk": "^0.135.0" }
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.135.0"
+  },
+  "optionalDependencies": {
+    "ffmpeg-static": "^5.2.0"
+  }
 }
