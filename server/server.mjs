@@ -97,7 +97,18 @@ export function createApp(overrides = {}, deps = {}) {
       policies: Object.fromEntries(['shipping', 'returns', 'payment', 'care', 'timings', 'custom'].map(k => [k, str(P[k], 1500)])), products };
   };
 
-  const admin = adminRoutes({ cfg, auth, shop, media, social, ig, client, json, readBody, ROOT });
+  // Tracking message for orders held in the owner app. Claimed before sending, so the same order + tracking number is never sent twice.
+  const notifyTracking = async ({ orderId, trackingNo, phone, customer, courier, trackingUrl, resend }) => {
+    const key = `${orderId}|${trackingNo}`, sent = (store.s.trackingSent = store.s.trackingSent || {});
+    if (sent[key] && !resend) return { sent: false, reason: 'already-sent' };
+    if (store.isOptedOut(phone)) return { sent: false, reason: 'opted-out' };
+    sent[key] = Date.now(); store.save();
+    const nm = (customer || '').split(/\s+/)[0] || 'there', text = `🚚 Hi ${nm}, your order *${orderId}* has been shipped${courier ? ' via ' + courier : ''}.${trackingNo ? '\nTracking number: ' + trackingNo : ''}${trackingUrl ? '\nTrack it here: ' + trackingUrl : ''}\nThank you for shopping with ${shop.get().db?.settings?.businessName || 'Anitha Pemmasani'}! 💛`;
+    try { await pipeline.sendSmart(phone, text, { template: cfg.payments.templates.shipped, params: [nm, orderId, trackingUrl || trackingNo || '-'] }); }
+    catch (e) { delete sent[key]; store.save(); return { sent: false, reason: 'failed' }; }
+    return { sent: true, mode: cfg.waLive ? 'live' : 'dry-run' };
+  };
+  const admin = adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, json, readBody, ROOT });
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, 'http://x'), route = `${req.method} ${url.pathname}`;
     try {

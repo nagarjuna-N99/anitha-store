@@ -8,7 +8,7 @@ import path from 'node:path';
 import { publicView } from './shopdata.mjs';
 import { runAi, cleanPlan, localPlan, istIso } from './aihelper.mjs';
 
-export function adminRoutes({ cfg, auth, shop, media, social, ig, client, json, readBody, ROOT }) {
+export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, json, readBody, ROOT }) {
   const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY', 'Cross-Origin-Resource-Policy': 'same-origin', 'Cache-Control': 'no-store', ...(auth.secure ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' } : {}) };
   const CSP = "default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'";
   const ipOf = req => String(req.socket.remoteAddress || '').replace(/^::ffff:/, '');   // never trust X-Forwarded-For for security decisions
@@ -74,6 +74,12 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, json, 
       if (route === 'POST /admin/api/social/cancel') { const r = social.cancel(String((await body(req, 2_000)).id)); if (r.code === 200) wrote('ig-cancel', r.job.id); send(res, r); return true; }
       if (route === 'POST /admin/api/social/now') { const b = await body(req, 2_000); const r = await social.postNow(String(b.id)); if (r.code === 200) wrote('ig-now', b.id); send(res, r); return true; }
       if (route === 'POST /admin/api/social/retry') { const b = await body(req, 2_000), r = social.retry(String(b.id), !!b.force); if (r.code === 200) { wrote('ig-retry', r.job.id); await social.postNow(r.job.id); } send(res, r); return true; }
+      if (route === 'POST /admin/api/notify-tracking') {
+        const b = await body(req, 4_000), id = String(b.orderId || '').slice(0, 60), trackingNo = String(b.trackingNo || '').slice(0, 60), phone = String(b.phone || '').replace(/\D/g, '');
+        if (!id || phone.length < 10 || phone.length > 15) return send(res, { code: 422, error: 'A valid order id and phone number are needed.' }), true;
+        const r = await notifyTracking({ orderId: id, trackingNo, phone, customer: String(b.customer || '').slice(0, 80), courier: String(b.courier || '').slice(0, 60), trackingUrl: /^https?:\/\//i.test(b.trackingUrl || '') ? String(b.trackingUrl).slice(0, 300) : '', resend: !!b.resend });
+        if (r.sent) wrote('tracking-msg', id); send(res, { code: 200, ...r }); return true;
+      }
       return send(res, { code: 404, error: 'not found' }), true;
     } catch (e) { send(res, { code: [400, 413, 415, 422].includes(e.code) ? e.code : 500, error: e.code && e.code < 500 ? e.message : 'Something went wrong.' }); return true; }
   };
