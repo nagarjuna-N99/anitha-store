@@ -19,6 +19,7 @@ import { ShopData } from './src/shopdata.mjs';
 import { MediaStore } from './src/media.mjs';
 import { IgClient, SocialQueue } from './src/instagram.mjs';
 import { adminRoutes } from './src/adminroutes.mjs';
+import { SecretStore } from './src/secrets.mjs';
 
 const sha = s => crypto.createHash('sha256').update(String(s)).digest();
 const safeEq = (a, b) => crypto.timingSafeEqual(sha(a), sha(b));
@@ -28,6 +29,19 @@ export function createApp(overrides = {}, deps = {}) {
   const store = deps.store || new Store(cfg.dataDir);
   const wa = deps.wa || new WhatsApp(cfg, deps.fetch);
   const client = deps.client || makeClient(cfg);
+  // The owner can paste the Anthropic key in the owner app (Security & backup). It is stored encrypted and wins over the environment value.
+  const secrets = deps.secrets || new SecretStore(cfg.dataDir, cfg.adminSetupToken || '');
+  const envKey = cfg.anthropicKey, applyKey = k => { cfg.anthropicKey = k; try { client.apiKey = k || 'missing'; } catch {} };
+  { const saved = secrets.get('anthropic'); if (saved) applyKey(saved); }
+  const defaultTestKey = async key => {
+    try { await makeClient({ ...cfg, anthropicKey: key }).messages.create({ model: cfg.model, max_tokens: 1, messages: [{ role: 'user', content: 'hi' }] }); }
+    catch (e) { if (e && [401, 403].includes(e.status)) throw Object.assign(new Error('Anthropic did not accept this key. Check that you copied all of it.'), { code: 422 }); if (e && [404, 429, 529].includes(e.status)) return; throw Object.assign(new Error('Could not check the key right now (' + (e && e.message || 'network') + '). Try again in a minute.'), { code: 422 }); }
+  };
+  const aiKey = {
+    meta: () => { const m = secrets.meta('anthropic'), have = !!cfg.anthropicKey && cfg.anthropicKey !== 'missing'; return { set: have, source: m.set && have ? 'owner' : have ? 'server' : 'none', last4: have ? (m.set ? m.last4 : String(envKey || '').slice(-4)) : '', updatedAt: m.updatedAt || null }; },
+    set: async key => { if (!/^sk-ant-[A-Za-z0-9_\-]{20,300}$/.test(key)) throw Object.assign(new Error('That does not look like an Anthropic key. It starts with sk-ant-'), { code: 422 }); await (deps.testKey || defaultTestKey)(key); secrets.set('anthropic', key); applyKey(key); },
+    remove: () => { secrets.remove('anthropic'); applyKey(envKey); },
+  };
   let aiHits = [];
   const auth = deps.auth || new AdminAuth({ dir: cfg.dataDir, setupToken: cfg.adminSetupToken, secureCookie: cfg.cookieSecure, ...(deps.authOpts || {}) });
   const shop = deps.shop || new ShopData(cfg.dataDir), media = deps.media || new MediaStore(cfg.dataDir), ig = deps.ig || new IgClient(cfg, deps.fetch);
@@ -108,7 +122,7 @@ export function createApp(overrides = {}, deps = {}) {
     catch (e) { delete sent[key]; store.save(); return { sent: false, reason: 'failed' }; }
     return { sent: true, mode: cfg.waLive ? 'live' : 'dry-run' };
   };
-  const admin = adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, json, readBody, ROOT });
+  const admin = adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, json, readBody, ROOT });
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, 'http://x'), route = `${req.method} ${url.pathname}`;
     try {

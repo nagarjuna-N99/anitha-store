@@ -8,12 +8,13 @@ import path from 'node:path';
 import { publicView } from './shopdata.mjs';
 import { runAi, cleanPlan, localPlan, istIso } from './aihelper.mjs';
 
-export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, json, readBody, ROOT }) {
+export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, json, readBody, ROOT }) {
   const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY', 'Cross-Origin-Resource-Policy': 'same-origin', 'Cache-Control': 'no-store', ...(auth.secure ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' } : {}) };
   const CSP = "default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'";
   const ipOf = req => String(req.socket.remoteAddress || '').replace(/^::ffff:/, '');   // never trust X-Forwarded-For for security decisions
   const send = (res, r, extra = {}) => json(res, r.code || 200, r.code && r.code >= 400 ? { error: r.error, retryAfter: r.retryAfter } : r, { ...SEC, ...extra });
   const body = async (req, limit = 200_000) => { try { return JSON.parse((await readBody(req, limit)).toString('utf8') || '{}'); } catch (e) { throw Object.assign(new Error(e.code === 413 ? 'Too large.' : 'Bad request.'), { code: e.code === 413 ? 413 : 400 }); } };
+  let keyTries = [];
   const mask = s => s ? s.slice(0, 3) + '…' + s.slice(-3) : '';
 
   return async function handle(req, res, url, route) {
@@ -74,6 +75,12 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       if (route === 'POST /admin/api/social/cancel') { const r = social.cancel(String((await body(req, 2_000)).id)); if (r.code === 200) wrote('ig-cancel', r.job.id); send(res, r); return true; }
       if (route === 'POST /admin/api/social/now') { const b = await body(req, 2_000); const r = await social.postNow(String(b.id)); if (r.code === 200) wrote('ig-now', b.id); send(res, r); return true; }
       if (route === 'POST /admin/api/social/retry') { const b = await body(req, 2_000), r = social.retry(String(b.id), !!b.force); if (r.code === 200) { wrote('ig-retry', r.job.id); await social.postNow(r.job.id); } send(res, r); return true; }
+      if (route === 'GET /admin/api/ai-key') { send(res, { code: 200, ...aiKey.meta() }); return true; }
+      if (route === 'POST /admin/api/ai-key') {
+        const now = Date.now(); keyTries = keyTries.filter(t => now - t < 60_000); if (keyTries.length >= 5) return send(res, { code: 429, error: 'Too many tries. Wait a minute.' }), true; keyTries.push(now);
+        const b = await body(req, 2_000); await aiKey.set(String(b.key || '').trim()); wrote('ai-key-set'); send(res, { code: 200, ...aiKey.meta() }); return true;
+      }
+      if (route === 'POST /admin/api/ai-key/remove') { aiKey.remove(); wrote('ai-key-removed'); send(res, { code: 200, ...aiKey.meta() }); return true; }
       if (route === 'POST /admin/api/notify-tracking') {
         const b = await body(req, 4_000), id = String(b.orderId || '').slice(0, 60), trackingNo = String(b.trackingNo || '').slice(0, 60), phone = String(b.phone || '').replace(/\D/g, '');
         if (!id || phone.length < 10 || phone.length > 15) return send(res, { code: 422, error: 'A valid order id and phone number are needed.' }), true;

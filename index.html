@@ -2217,7 +2217,7 @@ function renderAdminContent(tab) {
         ${admSecurityHTML()}
       </div>
     `;
-    if (BUILD === 'admin') admLoadAudit();
+    if (BUILD === 'admin') { admLoadAudit(); admLoadAiKey(); }
     return;
   }
 }
@@ -5497,7 +5497,7 @@ const AI_FEATURES = [['describe', 'Product descriptions, tags & SEO'], ['photo',
 const AI_LANGS = [['en', 'English'], ['te', 'తెలుగు Telugu'], ['hi', 'हिन्दी Hindi']];
 const aiCfg = () => { const c = { master: true, ...(db.settings.ai || {}) }; AI_FEATURES.forEach(([k]) => { if (c[k] === undefined) c[k] = true; }); return c; };
 const aiOn = k => { const c = aiCfg(); return !!c.master && !!c[k]; };
-const aiConnected = () => !!waServer() && !!waTok();
+const aiConnected = () => !!waServer() && !!waTok() && (BUILD !== 'admin' || ADM.claude !== false);
 const aiReady = k => aiOn(k) && aiConnected();
 function aiToggle(k, on) { db.settings.ai = { ...aiCfg(), [k]: !!on }; saveDB(); renderAiHelper(el_('adminContent')); }
 async function aiCall(task, input) {
@@ -5580,7 +5580,7 @@ function renderAiHelper(content) {
   const sec = (k, icon, title, sub, body) => `<details class="ai-sec" data-k="${k}" ${open[k] ? 'open' : ''} ontoggle="AIH.open=Object.assign(AIH.open||{},{${k}:this.open})"><summary><span class="ai-ic">${icon}</span><span><b>${title}</b><small>${sub}</small></span>${aiOn(k === 'writer' ? 'write' : k === 'clean' ? 'cleanup' : k) ? '' : '<em class="ai-off">off</em>'}</summary><div class="ai-body">${body}</div></details>`;
   const langSel = id => `<select id="${id}">${AI_LANGS.map(([v, l]) => `<option value="${v}">${l}</option>`).join('')}</select>`;
   content.innerHTML = `
-    <div class="admin-card ai-status ${conn ? 'on' : ''}"><div><h3 style="margin:0 0 4px;">✨ AI Helper</h3><p class="note" style="margin:0;">${conn ? '🟢 Claude is connected. Helpers write drafts for you to review. Nothing is sent to customers or saved by itself.' : '🟡 Claude is not connected. Tools that can work without it use built-in drafts. To connect: WhatsApp Assistant tab → assistant address + admin token.'}</p></div>
+    <div class="admin-card ai-status ${conn ? 'on' : ''}"><div><h3 style="margin:0 0 4px;">✨ AI Helper</h3><p class="note" style="margin:0;">${conn ? '🟢 Claude is connected. Helpers write drafts for you to review. Nothing is sent to customers or saved by itself.' : '🟡 Claude is not connected. Tools that can work without it use built-in drafts. ' + (BUILD === 'admin' ? 'To connect: Settings tab → Security &amp; backup → <b>Claude AI key</b>.' : 'To connect: WhatsApp Assistant tab → assistant address + admin token.')}</p></div>
       <details class="ai-switches"><summary>Switches &amp; privacy</summary>
         <label class="chk-line"><input type="checkbox" ${c.master ? 'checked' : ''} onchange="aiToggle('master',this.checked)"> <b>All AI helpers</b> (master switch)</label>
         ${AI_FEATURES.map(([k, l]) => `<label class="chk-line"><input type="checkbox" ${c[k] ? 'checked' : ''} ${c.master ? '' : 'disabled'} onchange="aiToggle('${k}',this.checked)"> ${l}</label>`).join('')}
@@ -5911,9 +5911,31 @@ function admSecurityHTML() {
     <p class="note">${tf ? 'A 6-digit code from your authenticator app is needed at every sign-in.' : 'Strongly recommended: sign-in also needs a 6-digit code from an authenticator app (Google Authenticator, Microsoft Authenticator…).'}</p>
     ${tf ? '<div class="ai-row"><label>Password to switch it off<input id="sec-2off" type="password" autocomplete="current-password"></label></div><button class="btn-sm btn-danger-sm" onclick="admTwoFactorOff()">Switch off 2-step sign-in</button>' : '<div class="ai-row"><label>Your password<input id="sec-2pw" type="password" autocomplete="current-password"></label></div><button class="btn-sm btn-primary-sm" onclick="admTwoFactorStart()">Set up 2-step sign-in</button>'}
     <div id="sec-2fa" class="note"></div>
+    <h4 class="dash-h4">Claude AI key <span id="sec-ai-pill"></span></h4>
+    <p class="note">Switches on the ✨ AI helpers. Get a key at console.anthropic.com → API keys. It is stored <b>encrypted on your server</b>, is never shown again (only the last 4 characters), and is only used to talk to Anthropic. Pasting a new key replaces the old one.</p>
+    <div class="ai-row"><label style="flex:1;">Anthropic API key<input id="sec-aikey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-…"></label></div>
+    <div class="pf-actions"><button class="btn-sm btn-primary-sm" id="sec-ai-save" onclick="admSaveAiKey()">Save &amp; check key</button><button class="btn-sm btn-danger-sm" id="sec-ai-rm" onclick="admRemoveAiKey()" style="display:none;">Remove key</button></div><div id="sec-ai-msg" class="note"></div>
     <h4 class="dash-h4">Backup</h4><div class="pf-actions"><button class="btn-sm btn-info-sm" onclick="admDownloadBackup()">⬇ Download a backup of the whole shop</button><label class="btn-sm btn-info-sm" style="cursor:pointer;">⬆ Import a data file<input type="file" accept="application/json,.json" hidden onchange="admImport(this)"></label></div><div id="sec-bk" class="note"></div>
     <h4 class="dash-h4">Recent sign-in activity</h4><div id="sec-audit" class="note">Loading…</div>
     <div class="pf-actions" style="margin-top:14px;"><button class="btn-sm btn-danger-sm" onclick="admSignOut()">Sign out</button></div></div>`;
+}
+function admAiKeyShow(r) {
+  ADM.claude = !!r.set; const pill = document.getElementById('sec-ai-pill'), rm = document.getElementById('sec-ai-rm'), m = document.getElementById('sec-ai-msg');
+  if (pill) pill.innerHTML = r.set ? '<span class="status-pill status-active">ON</span>' : '<span class="status-pill status-inactive">OFF</span>';
+  if (rm) rm.style.display = r.source === 'owner' ? '' : 'none';
+  if (m) m.textContent = r.set ? `Key ending …${r.last4} is active${r.source === 'server' ? ' (set in the server settings)' : r.updatedAt ? ' (saved ' + new Date(r.updatedAt).toLocaleDateString('en-IN') + ')' : ''}.` : 'No key yet: the AI helpers use built-in drafts where they exist.';
+}
+async function admLoadAiKey() { try { admAiKeyShow(await admApi('GET', '/admin/api/ai-key')); } catch (e) {} }
+async function admSaveAiKey() {
+  const inp = document.getElementById('sec-aikey'), m = document.getElementById('sec-ai-msg'), b = document.getElementById('sec-ai-save'); if (!inp) return;
+  const key = inp.value.trim(); if (!key) { m.textContent = 'Paste your key first.'; return; }
+  b.disabled = true; m.textContent = 'Checking the key with Anthropic…';
+  try { const r = await admApi('POST', '/admin/api/ai-key', { key }); inp.value = ''; admAiKeyShow(r); showToast('Claude is connected', 'success'); if (typeof renderAiHelper === 'function' && document.querySelector('.ai-status')) renderAiHelper(el_('adminContent')); }
+  catch (e) { m.textContent = aiMsg(e); } finally { b.disabled = false; }
+}
+async function admRemoveAiKey() {
+  if (!confirm('Remove the saved key? The AI helpers will stop working until you add one again.')) return;
+  try { admAiKeyShow(await admApi('POST', '/admin/api/ai-key/remove', {})); showToast('Key removed', 'success'); } catch (e) { showToast(aiMsg(e), 'error'); }
 }
 async function admLoadAudit() { const e = document.getElementById('sec-audit'); if (!e) return; try { const r = await admApi('GET', '/admin/api/audit'); e.innerHTML = r.events.slice(0, 12).map(x => `<div class="dd-row"><span>${x.ok ? '✅' : '⚠️'} ${esc(x.ev)}<small> · ${esc(new Date(x.t).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }))} IST · ${esc(x.ip)}${x.extra ? ' · ' + esc(x.extra) : ''}</small></span></div>`).join('') || 'Nothing yet.'; } catch (err) { e.textContent = err.message; } }
 async function admChangePw() { const m = document.getElementById('sec-pw-msg'); try { await admApi('POST', '/admin/api/password', { current: document.getElementById('sec-cur').value, next: document.getElementById('sec-new').value }); m.textContent = '✓ Password changed. Other devices were signed out.'; document.getElementById('sec-cur').value = document.getElementById('sec-new').value = ''; } catch (e) { m.textContent = e.message; } }
