@@ -135,37 +135,60 @@ export function createApp(overrides = {}, deps = {}) {
   const smtpMeta = () => { const c = smtpCfg(), m = secrets.meta('smtp'); return c ? { configured: true, host: c.host, port: c.port, secure: !!c.secure, user: c.user, from: c.from, to: c.to, hasPass: !!c.pass, updatedAt: m.updatedAt || null } : { configured: false }; };
   const reportFile = path.join(cfg.dataDir, 'reports.json'), reportState = () => { try { return JSON.parse(fs.readFileSync(reportFile, 'utf8')); } catch { return {}; } }, saveReportState = o => { const t = reportFile + '.tmp'; fs.writeFileSync(t, JSON.stringify(o), { mode: 0o600 }); fs.renameSync(t, reportFile); };
   const growthCache = new Map();
+  const addD = (ymd, n) => { const d = new Date(ymd + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+  const monthOf = ymd => ({ from: ymd.slice(0, 7) + '-01', to: addD(new Date(Date.UTC(+ymd.slice(0, 4), +ymd.slice(5, 7), 1)).toISOString().slice(0, 10), -1) });
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  // which days a report covers: weekly = the 7 complete days before today, monthly = the previous calendar month, daily = yesterday
+  const periodFor = (kind, t) => {
+    const today = istDay(t);
+    if (kind === 'daily') { const y = addD(today, -1); return { from: y, to: y, prevFrom: addD(y, -1), prevTo: addD(y, -1), label: 'yesterday' }; }
+    if (kind === 'monthly' || kind === 'lastmonth') { const first = today.slice(0, 7) + '-01', last = addD(first, -1), m = monthOf(last), pm = monthOf(addD(m.from, -1)); return { from: m.from, to: m.to, prevFrom: pm.from, prevTo: pm.to, label: `${MONTHS[+m.from.slice(5, 7) - 1]} ${m.from.slice(0, 4)}` }; }
+    if (kind === 'thismonth') { const from = today.slice(0, 7) + '-01', n = Math.round((Date.parse(today) - Date.parse(from)) / 86400000) + 1, pm = monthOf(addD(from, -1)); return { from, to: today, prevFrom: pm.from, prevTo: addD(pm.from, n - 1) > pm.to ? pm.to : addD(pm.from, n - 1), label: `${MONTHS[+today.slice(5, 7) - 1]} so far` }; }
+    const to = addD(today, -1); return { from: addD(to, -6), to, label: '' };
+  };
   const growth = {
-    async build(days, fresh) {
-      const k = String(days), hit = growthCache.get(k); if (!fresh && hit && clockNow() - hit.at < 5 * 60_000) return hit.r;
-      const r = await collect({ analytics, ig, db: shop.get().db || { settings: {} }, days, now: clockNow(), siteUrl: cfg.siteUrl }); analytics.save(); growthCache.set(k, { at: clockNow(), r }); return r;
+    // spec: 7 | 30 | 90 (the last N days up to now) or 'thismonth' | 'lastmonth' | a report kind
+    async build(spec, fresh, kind) {
+      const k = String(spec) + '|' + (kind || ''), hit = growthCache.get(k); if (!fresh && hit && clockNow() - hit.at < 5 * 60_000) return hit.r;
+      const db = shop.get().db || { settings: {} }, now = clockNow(), isDays = typeof spec === 'number', period = isDays ? null : periodFor(spec, now);
+      const r = await collect({ analytics, ig, db, days: isDays ? spec : 7, now, siteUrl: cfg.siteUrl, period, detail: spec === 'lastmonth' || spec === 'monthly' }); analytics.save(); growthCache.set(k, { at: now, r }); return r;
     },
-    async plan(r) {
-      const top = r.actions[0]; if (cfg.anthropicKey && cfg.anthropicKey !== 'missing') { try { const t = r.ig.totals || {}, x = (await runAi({ cfg, client, task: 'weeklyplan', input: { days: r.period.days, orders: r.sales.orders, ordersPrev: r.sales.prev.orders, revenue: r.sales.revenue, revenuePrev: r.sales.prev.revenue, visitors: r.web.visitors, visitorsPrev: r.web.prev.visitors, saree_views: r.web.productViews, whatsapp_taps: r.web.waClicks, instagramConnected: r.ig.connected, reach: t.reach, followers: r.ig.followers, followersChange: r.ig.followersChange, engagementRatePct: r.ig.engagementRate, topAction: top ? top.title : 'keep posting and reply quickly' } })).data; if (x && x.headline && x.summary) return { headline: String(x.headline).slice(0, 120), summary: String(x.summary).slice(0, 700), via: 'claude' }; } catch { /* fall back to plain facts */ } }
-      return localPlan(r);
+    async plan(r, kind = 'weekly') {
+      const top = r.actions[0]; if (cfg.anthropicKey && cfg.anthropicKey !== 'missing') { try { const t = r.ig.totals || {}, x = (await runAi({ cfg, client, task: 'weeklyplan', input: { kind, period: `${r.period.from} to ${r.period.to}`, days: r.period.days, orders: r.sales.orders, ordersPrev: r.sales.prev.orders, revenue: r.sales.revenue, revenuePrev: r.sales.prev.revenue, visitors: r.web.visitors, visitorsPrev: r.web.prev.visitors, saree_views: r.web.productViews, whatsapp_taps: r.web.waClicks, instagramConnected: r.ig.connected, reach: t.reach, followers: r.ig.followers, followersChange: r.ig.followersChange, engagementRatePct: r.ig.engagementRate, topAction: top ? top.title : 'keep posting and reply quickly' } })).data; if (x && x.headline && x.summary) return { headline: String(x.headline).slice(0, 120), summary: String(x.summary).slice(0, 700), via: 'claude' }; } catch { /* fall back to plain facts */ } }
+      return localPlan(r, kind);
     },
-    async preview() { const r = await growth.build(7, true), plan = await growth.plan(r), base = (cfg.payments.publicUrl || '').replace(/\/$/, ''), e = renderEmail(r, plan, base ? base + '/admin' : ''); return { subject: `${r.brand} weekly growth report · ${r.period.from} to ${r.period.to}`, html: e.html, text: e.text, via: plan.via }; },
-    async mail(manual) {
+    async compose(kind) {
+      const r = await growth.build(kind, true, kind), plan = await growth.plan(r, kind), base = (cfg.payments.publicUrl || '').replace(/\/$/, ''), e = renderEmail(r, plan, base ? base + '/admin' : '', kind), name = { weekly: 'weekly growth report', monthly: 'monthly business review', daily: 'daily brief' }[kind];
+      return { r, plan, subject: `${r.brand} ${name} · ${kind === 'monthly' ? r.period.label : kind === 'daily' ? r.period.from : r.period.from + ' to ' + r.period.to}`, html: e.html, text: e.text };
+    },
+    async preview(kind = 'weekly') { const c = await growth.compose(kind); return { subject: c.subject, html: c.html, text: c.text, via: c.plan.via }; },
+    async mail(kind = 'weekly', manual) {
       const c = smtpCfg(); if (!c) throw Object.assign(new Error('Add your email settings first (Growth tab → Weekly email).'), { code: 422 });
-      const r = await growth.build(7, true), plan = await growth.plan(r), base = (cfg.payments.publicUrl || '').replace(/\/$/, ''), e = renderEmail(r, plan, base ? base + '/admin' : '');
-      await smtpSend(c, { subject: `${r.brand} weekly growth report · ${r.period.from} to ${r.period.to}`, text: e.text, html: e.html }); return { subject: plan.headline, via: plan.via, manual: !!manual };
+      const m = await growth.compose(kind); await smtpSend(c, { subject: m.subject, text: m.text, html: m.html }); return { subject: m.plan.headline, via: m.plan.via, kind, manual: !!manual };
     },
   };
   const isoWeek = t => { const d = new Date(t + 330 * 60_000), x = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())), dn = x.getUTCDay() || 7; x.setUTCDate(x.getUTCDate() + 4 - dn); const y = new Date(Date.UTC(x.getUTCFullYear(), 0, 1)); return x.getUTCFullYear() + '-W' + String(Math.ceil(((x - y) / 86400000 + 1) / 7)).padStart(2, '0'); };
-  // Every Monday from 8:00 IST. The week is claimed BEFORE sending, so two overlapping ticks can never send twice; a failure releases the claim (3 tries a week).
+  const DEFAULT_PREFS = { weekly: true, monthly: true, daily: false };
+  const prefs = () => ({ ...DEFAULT_PREFS, ...(reportState().prefs || {}) });
+  const reportDue = (kind, t) => { const ist = new Date(t + 330 * 60_000), h = ist.getUTCHours() + ist.getUTCMinutes() / 60; return kind === 'weekly' ? (ist.getUTCDay() === 1 && h >= 8 ? isoWeek(t) : null) : kind === 'monthly' ? (ist.getUTCDate() === 1 && h >= 8.5 ? istDay(t).slice(0, 7) : null) : (h >= 21 ? istDay(t) : null); };
+  // Weekly: Mondays from 8:00 IST. Monthly: the 1st from 8:30 IST (covers the month that just ended). Daily (off unless switched on): every day from 21:00 IST.
+  // Each report is claimed BEFORE sending, so two overlapping ticks can never send twice; a failure releases the claim (3 tries a period, an hour apart).
   const reportTick = async () => {
     try {
-      const t = clockNow(), ist = new Date(t + 330 * 60_000); if (ist.getUTCDay() !== 1 || ist.getUTCHours() < 8 || !smtpCfg()) return;
-      const wk = isoWeek(t), st = reportState(); if (st.week === wk && st.state !== 'failed') return; if (st.week === wk && (st.tries || 0) >= 3) return; if (st.retryAt && t < st.retryAt) return;
-      saveReportState({ week: wk, state: 'sending', tries: (st.week === wk ? st.tries || 0 : 0) + 1, at: t });
-      try { await growth.mail(false); saveReportState({ week: wk, state: 'sent', tries: 0, at: t }); }
-      catch (e) { const cur = reportState(); saveReportState({ week: wk, state: 'failed', tries: cur.tries || 1, at: t, retryAt: t + 3600_000, error: String(e.message).slice(0, 200) }); }
+      const t = clockNow(); if (!smtpCfg()) return; const pf = prefs();
+      for (const kind of ['weekly', 'monthly', 'daily']) {
+        if (!pf[kind]) continue; const key = reportDue(kind, t); if (!key) continue; const all = reportState(), st = all[kind] || {};
+        if (st.key === key && st.state !== 'failed') continue; if (st.key === key && (st.tries || 0) >= 3) continue; if (st.key === key && st.retryAt && t < st.retryAt) continue;
+        const tries = (st.key === key ? st.tries || 0 : 0) + 1; saveReportState({ ...all, [kind]: { key, state: 'sending', tries, at: t } });
+        try { await growth.mail(kind, false); saveReportState({ ...reportState(), [kind]: { key, state: 'sent', tries: 0, at: t } }); }
+        catch (e) { saveReportState({ ...reportState(), [kind]: { key, state: 'failed', tries, at: t, retryAt: t + 3600_000, error: String(e.message).slice(0, 200) } }); }
+      }
     } catch { /* never crash the timer */ }
   };
   // once a day, remember the follower count so growth can be shown
   const snapshotTick = async () => { try { if (!ig.configured) return; const k = istDay(clockNow()); if (analytics.s.ig[k]) { analytics.save(); return; } const a = await ig.call('GET', cfg.ig.userId, { fields: 'followers_count,follows_count,media_count' }); analytics.snapshotIg({ followers: a.followers_count, follows: a.follows_count, media: a.media_count }); analytics.save(); } catch { analytics.save(); } };
 
-  const admin = adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, smtpMeta, smtpSave: async o => { const old = smtpCfg() || {}, c = { host: String(o.host || '').trim().slice(0, 200), port: +o.port || (o.secure ? 465 : 587), secure: !!o.secure, user: String(o.user || '').trim().slice(0, 200), pass: o.pass ? String(o.pass).slice(0, 300) : old.pass || '', from: String(o.from || '').trim().slice(0, 200), to: String(o.to || '').trim().slice(0, 200) }; if (!c.host || !/^[\w.-]+$/.test(c.host)) throw Object.assign(new Error('Enter the mail server address, for example smtp.gmail.com'), { code: 422 }); if (!emailOk(c.to)) throw Object.assign(new Error('Enter the email address that should receive the report.'), { code: 422 }); if (!c.from) c.from = c.user && emailOk(c.user) ? c.user : c.to; await (deps.verifySmtp || smtpVerify)(c); secrets.set('smtp', JSON.stringify(c), { last4: false }); }, smtpRemove: () => secrets.remove('smtp'), smtpSendTest: async () => { const c = smtpCfg(); if (!c) throw Object.assign(new Error('Add your email settings first.'), { code: 422 }); await smtpSend(c, { subject: 'Test email from your shop app', text: 'This is a test. If you can read it, the weekly growth report will reach you here every Monday morning.', html: '<p>This is a test. If you can read it, the weekly growth report will reach you here every Monday morning.</p>' }); }, reportState, json, readBody, ROOT });
+  const admin = adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, smtpMeta, smtpSave: async o => { const old = smtpCfg() || {}, c = { host: String(o.host || '').trim().slice(0, 200), port: +o.port || (o.secure ? 465 : 587), secure: !!o.secure, user: String(o.user || '').trim().slice(0, 200), pass: o.pass ? String(o.pass).slice(0, 300) : old.pass || '', from: String(o.from || '').trim().slice(0, 200), to: String(o.to || '').trim().slice(0, 200) }; if (!c.host || !/^[\w.-]+$/.test(c.host)) throw Object.assign(new Error('Enter the mail server address, for example smtp.gmail.com'), { code: 422 }); if (!emailOk(c.to)) throw Object.assign(new Error('Enter the email address that should receive the report.'), { code: 422 }); if (!c.from) c.from = c.user && emailOk(c.user) ? c.user : c.to; await (deps.verifySmtp || smtpVerify)(c); secrets.set('smtp', JSON.stringify(c), { last4: false }); }, smtpRemove: () => secrets.remove('smtp'), smtpSendTest: async () => { const c = smtpCfg(); if (!c) throw Object.assign(new Error('Add your email settings first.'), { code: 422 }); await smtpSend(c, { subject: 'Test email from your shop app', text: 'This is a test. If you can read it, the weekly growth report will reach you here every Monday morning.', html: '<p>This is a test. If you can read it, the weekly growth report will reach you here every Monday morning.</p>' }); }, reportState, prefs, savePrefs: o => { const all = reportState(); saveReportState({ ...all, prefs: { weekly: !!o.weekly, monthly: !!o.monthly, daily: !!o.daily } }); }, json, readBody, ROOT });
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, 'http://x'), route = `${req.method} ${url.pathname}`;
     try {

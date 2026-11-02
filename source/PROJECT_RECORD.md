@@ -3,7 +3,7 @@
 > **STANDING RULE (owner's instruction, 23 Oct 2026):** this record and the `HOW-IT-WORKS/` folder are updated **after every change or update**, in the same step as the change, never later. A change is not finished until (1) the code is tested, (2) a dated entry is added to the Change Log below, (3) any affected `HOW-IT-WORKS/` page is corrected, (4) `./check-record.sh` has been run (it fails if the record or how-it-works is behind the code).
 > Also standing: the owner wants chats remembered for later use; this record is that memory for the project.
 
-**Last updated:** 4 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 1.5 (24 Oct 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 432 automated checks) · **Browser test suites:** 24 (see §6)
+**Last updated:** 4 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 1.5 (24 Oct 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 444 automated checks) · **Browser test suites:** 24 (see §6)
 
 ---
 
@@ -130,6 +130,13 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+**10 Nov 2026 (monthly review, daily brief, switches, 30-day plan)**
+- **Three automatic email reports**, each with its own switch (Growth → Weekly report by email): **Weekly growth report** (Mondays from 8:00 IST, the 7 complete days before, on by default), **Monthly business review** (the 1st from 8:30 IST, the month that just ended compared with the month before, on by default), **Daily brief** (every evening from 9:00 IST, yesterday in numbers and what to do today, off by default). Each is claimed before sending (never twice), a failure is retried hourly up to 3 times; state is kept per report in `reports.json` (`weekly`, `monthly`, `daily`, `prefs`).
+- **Monthly review contents**: scorecard against the month before; sales in detail (categories with share, best sellers, week by week orders/revenue/website visitors, best day, sarees per order, coupon orders, dependence on one buyer); stock and customers (listed, sold out, almost sold out, never viewed, past buyers silent for 60+ days); Instagram and website sections as in the weekly; the steps that matter most; and a **30-day plan in four weeks** (week 1 fix the biggest leaks, week 2 build the weekly habit, week 3 turn interest into orders, week 4 measure and repeat) built from the live numbers plus a routine sized to how much you post now (target = current posts per week + 1, between 3 and 5).
+- **Growth tab** period list now has **This month so far** and **Last month (full review)** (with the sales detail and the 30-day plan on screen); every report has a **Preview** and **Send it now**; Instagram windows longer than 30 days use the last 30 days of the period (Instagram's limit). The AI opening line (`weeklyplan`) now covers daily, weekly and monthly.
+- Routes added: `POST /admin/api/report/prefs`; `report/send` and `report/preview` take `kind`; `GET /admin/api/growth?period=thismonth|lastmonth`. Server checks 444.
+- Weekly email now covers the 7 complete days before the Monday (it used to include the day it was sent). Not tested: a real mailbox or Instagram account; a flaky timeout seen once in 6 runs of `admin-app-test.cjs` (cause not found, passes on re-run).
+
 **9 Nov 2026 (handover documentation and full source in git)**
 - New guide **HOW-IT-WORKS/19-developer-handover.md** (layout, commands, how a change is made, how the pieces talk, settings names, routes, the shop data object, lessons learned, what is not built) and **AGENTS.md / CLAUDE.md** (the rules for any AI or person, read order). **CHANGELOG.md** is now generated from this section by `tools/make-changelog.py` (also run by `tools/refresh-exports.sh`).
 - **`tools/publish-repo.sh <git checkout>`** copies everything into git in one go: the public site, the deployable `server/`, and `source/` (the whole project with tests, docs, tools and `data-export/`, without node_modules, server data, `.env`, backups). So the repository alone is enough to rebuild, test and change the project. `server/` and `index.html` are generated: edit `source/`, then publish.

@@ -78,7 +78,7 @@ export const TASKS = {
   },
   weeklyplan: {
     json: true, max: 450,
-    build: i => ({ system: `${RULES}\nYou write the opening of the weekly growth email to the shop owner. Use ONLY the numbers in <data>; never invent a number, never promise views or sales. Answer with JSON only: {"headline": string (max 9 words, plain and true to the numbers, no hype), "summary": string (max 70 words: what happened in sales, website visits and Instagram compared with the previous period, then the one most important next step, which is named in topAction)}.`,
+    build: i => ({ system: `${RULES}\nYou write the opening of a growth email to the shop owner (the numbers say whether it is a daily brief, a weekly report or a monthly review, and for which period). Use ONLY the numbers in <data>; never invent a number, never promise views or sales. Answer with JSON only: {"headline": string (max 9 words, plain and true to the numbers, no hype), "summary": string (max 70 words: what happened in sales, website visits and Instagram in the period compared with the one before, then the one most important next step, which is named in topAction)}.`,
       user: `Numbers:\n${wrap(i)}` }),
   },
   translate: {

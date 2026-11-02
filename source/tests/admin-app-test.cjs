@@ -157,6 +157,11 @@ const ROOT = process.cwd(), SETUP = 'setup-token-0123456789', PW = 'Correct-Hors
     await ev(() => { ADM.ig = true; renderGrowth(document.getElementById('adminContent')); }); await p.waitForSelector('#em-host', { timeout: 8000 });
     await p.fill('#em-host', '127.0.0.1'); await p.fill('#em-port', '1'); await p.fill('#em-user', 'a@b.com'); await p.fill('#em-pass', 'x'); await p.fill('#em-to', 'a@b.com'); await p.click('#em-save'); await p.waitForFunction(() => /Could not connect/.test(document.getElementById('em-msg').textContent), null, { timeout: 15000 });
     ok('Weekly email form: a wrong mail server gives a plain message and nothing is saved', await ev(() => document.getElementById('grow-email').innerText.includes('OFF')));
+    // monthly review in the tab + report switches
+    await ev(() => { GROW.days = 'lastmonth'; renderGrowth(document.getElementById('adminContent')); }); await p.waitForFunction(() => /30-day plan/i.test(document.getElementById('adminContent').innerText), null, { timeout: 15000 });
+    ok('Growth tab: "Last month" shows sales in detail and a 30-day plan in four weeks', await ev(() => { const t = document.getElementById('adminContent').innerText; return /sales in detail/i.test(t) && ['Week 1', 'Week 2', 'Week 3', 'Week 4'].every(x => t.includes(x)) && /measure and repeat/i.test(t); }));
+    ok('Growth tab: switches for weekly, monthly and daily reports are shown (daily off)', await ev(() => { const l = [...document.querySelector('#grow-email .ai-row').querySelectorAll('.chk input')]; return l.length === 3 && l[0].checked && l[1].checked && !l[2].checked; }));
+    await ev(() => { GROW.days = 7; });
     await ev(() => closeModal('adminModal'));
     // phone-width
     await p.setViewportSize({ width: 390, height: 800 }); await ev(() => igOffer(db.products.find(x => x.id === 'p9'), { force: true })); await p.waitForSelector('#ig-cap'); await sleep(200);
