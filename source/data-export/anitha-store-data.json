@@ -1245,7 +1245,8 @@
             }
           ]
         }
-      ]
+      ],
+      "show": true
     },
     "journal": {
       "label": "Stories & Heritage",
@@ -1281,7 +1282,8 @@
           "alt": "Heirloom saree",
           "show": true
         }
-      ]
+      ],
+      "show": true
     },
     "atelier": {
       "heroTitle": "The Atelier",
@@ -1305,7 +1307,9 @@
           "value": "50+",
           "label": "Weaving Clusters"
         }
-      ]
-    }
+      ],
+      "show": true
+    },
+    "custom": []
   }
 }

@@ -40,10 +40,17 @@ export function merge3(base, mine, theirs) {
 }
 
 const PUBLIC_SETTINGS = ['businessName', 'gstNumber', 'address', 'phone', 'email', 'siteUrl', 'metaDescription', 'waNumber', 'waChatOn', 'waGreeting', 'giftWrapFee', 'delivery', 'dispatchTime', 'returnDays', 'grievanceOfficer', 'showRecentlySold', 'invoicePrefix', 'gstRate'];
+// Pages the owner has hidden (and hidden stories, tabs or whole new pages) never leave the server: the public website only gets what it may show.
+export function publicPages(pg) {
+  if (!pg || typeof pg !== 'object') return null; const vis = x => x && x.show !== false, out = {};
+  for (const k of ['care', 'journal', 'atelier']) { const p = pg[k]; if (!p || typeof p !== 'object') continue; out[k] = vis(p) ? { ...p } : { show: false }; if (!vis(p)) continue; if (Array.isArray(p.sections)) out[k].sections = p.sections.filter(vis); if (Array.isArray(p.posts)) out[k].posts = p.posts.filter(vis); }
+  out.custom = (Array.isArray(pg.custom) ? pg.custom : []).filter(vis).map(c => { const d = { ...(c.data || {}) }; if (Array.isArray(d.sections)) d.sections = d.sections.filter(vis); if (Array.isArray(d.posts)) d.posts = d.posts.filter(vis); return { ...c, data: d }; });
+  return out;
+}
 export function publicView(db) {
   const d = db || {}, pick = (o, ks) => Object.fromEntries(ks.filter(k => o && o[k] !== undefined).map(k => [k, o[k]]));
   return {
-    settings: pick(d.settings, PUBLIC_SETTINGS), categories: d.categories || [], accessoryCategories: d.accessoryCategories || [], products: d.products || [], home: d.home || null, pages: d.pages || null,
+    settings: pick(d.settings, PUBLIC_SETTINGS), categories: d.categories || [], accessoryCategories: d.accessoryCategories || [], products: d.products || [], home: d.home || null, pages: publicPages(d.pages),
     bundles: (d.bundles || []).filter(b => b.active), coupons: (d.coupons || []).filter(c => c.active && c.announce).map(c => pick(c, ['code', 'type', 'discount', 'active', 'description', 'minOrder', 'expiresAt', 'announce', 'firstOrderOnly', 'oncePerCustomer', 'channel'])),
     reviews: (d.reviews || []).filter(r => r.status === 'approved').map(r => ({ id: r.id, productId: r.productId, name: String(r.name || '').split(' ')[0], rating: r.rating, title: r.title, text: r.text, photos: r.photos || [], status: 'approved', createdAt: r.createdAt, reply: r.reply || '', replyAt: r.replyAt || null })),
   };
