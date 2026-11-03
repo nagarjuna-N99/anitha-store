@@ -14,6 +14,31 @@ export class Ops {
   note(level, msg) { this.errors.unshift({ at: new Date().toISOString(), level, msg: String(msg).slice(0, 300) }); this.errors.length = Math.min(this.errors.length, 50); }
 }
 
+export function previewsOf(x) {
+  const { cfg, ig, social, analytics, store, wa } = x;
+  const previews = { instagram: null, whatsapp: null }, notes = [], now = Date.now();
+  try {
+    const base = cfg.wa.publicUrl || '', thumb = j => { const id = j.kind === 'reel' ? j.coverId : (j.mediaIds || [])[0]; return id ? `/media/${id}.jpg` : ''; };
+    const jobs = social && social.list ? social.list() : [], by = k => jobs.filter(j => j.status === k).length;
+    const snap = Object.keys((analytics.s && analytics.s.ig) || {}).sort(), lastSnap = snap.length ? analytics.s.ig[snap[snap.length - 1]] : null;
+    previews.instagram = { connected: !!ig.configured, postedToday: social && social.postedToday ? social.postedToday() : 0, dailyCap: cfg.ig.dailyCap || 20, counts: { queued: by('queued'), posted: by('posted'), failed: by('failed'), publishing: by('publishing'), check: by('check') },
+      followers: lastSnap ? { count: lastSnap.followers, on: snap[snap.length - 1] } : null, publicUrlOk: /^https:\/\//.test(base),
+      posts: jobs.slice(0, 6).map(j => ({ id: j.id, kind: j.kind, status: j.status, when: j.postedAt || j.when, caption: String(j.caption || '').slice(0, 160), product: j.productName || '', permalink: j.permalink || '', error: j.error || '', attempts: j.attempts || 0, thumb: thumb(j) })) };
+    if (previews.instagram.counts.failed) notes.push(['Instagram', C('ig-failed', 'warn', 'Instagram posts that failed', String(previews.instagram.counts.failed), 'Open the Instagram tab and press Retry, or read the error under "Latest posts" below.')]);
+    if (!previews.instagram.publicUrlOk) notes.push(['Instagram', C('ig-url', 'warn', 'Instagram cannot fetch photos', 'PUBLIC_URL is not https', 'Instagram downloads each photo from this server\'s https address.')]);
+  } catch (e) { previews.instagram = { error: String(e.message).slice(0, 120) }; }
+  try {
+    const mask = p => { const d = String(p || '').replace(/\D/g, ''); return d.length > 4 ? '••••••' + d.slice(-4) : '••••'; }, convs = Object.values(store.s.conversations || {}), t = Date.now();
+    const li = convs.reduce((m, c) => Math.max(m, c.lastInboundAt || 0), 0), la = convs.reduce((m, c) => Math.max(m, c.lastActivityAt || 0), 0);
+    previews.whatsapp = { mode: cfg.waLive ? 'live' : 'dry-run', ownerAlerts: !!cfg.wa.ownerPhone, conversations: convs.length, active24h: convs.filter(c => t - (c.lastInboundAt || 0) < DAY).length, humanHandling: convs.filter(c => c.status && c.status !== 'bot').length, unread: convs.reduce((n, c) => n + (c.unread || 0), 0), lastInboundAt: li || null, lastActivityAt: la || null,
+      recent: convs.slice().sort((a, b) => (b.lastActivityAt || 0) - (a.lastActivityAt || 0)).slice(0, 6).map(c => ({ who: mask(c.phone), status: c.status || 'bot', lang: c.lang || '', unread: c.unread || 0, lastInboundAt: c.lastInboundAt || null, lastActivityAt: c.lastActivityAt || null, windowOpen: t - (c.lastInboundAt || 0) < DAY })),
+      wouldSend: wa && wa.dry && wa.sentLog ? wa.sentLog.slice(-5).reverse().map(m => ({ to: mask(m.to), type: m.type || '', template: m.template && m.template.name || '' })) : null,
+      optedOut: Object.keys(store.s.optOut || {}).length };
+    if (cfg.waLive && li && t - li > 7 * DAY) notes.push(['WhatsApp', C('wa-quiet', 'warn', 'No customer message for over 7 days', ago(li), 'If customers are writing, the webhook may be broken: check the Meta app webhook and WA_APP_SECRET.')]);
+  } catch (e) { previews.whatsapp = { error: String(e.message).slice(0, 120) }; }
+  return { previews, notes };
+}
+
 export async function opsReport(x) {
   const { cfg, auth, shop, privacy, weborders, store, smtpMeta, ig, analytics, ops, reportState, social, wa, fetchImpl = fetch } = x;
   const G = {}; const add = (g, c) => { (G[g] = G[g] || []).push(c); };
@@ -147,27 +172,7 @@ export async function opsReport(x) {
   add('Recent errors', C('err-count', ops.errors.length ? (ops.errors.some(e => now - Date.parse(e.at) < 3600_000) ? 'fail' : 'warn') : 'ok', 'Server errors since it started', ops.errors.length ? String(ops.errors.length) : 'none', 'Details below. Also see the Render logs for the full stack.'));
   for (const e of ops.errors.slice(0, 10)) add('Recent errors', C('err', 'info', e.level + ' · ' + e.at.slice(0, 19).replace('T', ' ') + ' UTC', e.msg));
 
-  // ---- previews: what Instagram and WhatsApp are doing right now (no customer message text, numbers masked) ----
-  const previews = { instagram: null, whatsapp: null };
-  try {
-    const base = cfg.wa.publicUrl || '', thumb = j => { const id = j.kind === 'reel' ? j.coverId : (j.mediaIds || [])[0]; return id ? `/media/${id}.jpg` : ''; };
-    const jobs = social && social.list ? social.list() : [], by = k => jobs.filter(j => j.status === k).length;
-    const snap = Object.keys((analytics.s && analytics.s.ig) || {}).sort(), lastSnap = snap.length ? analytics.s.ig[snap[snap.length - 1]] : null;
-    previews.instagram = { connected: !!ig.configured, postedToday: social && social.postedToday ? social.postedToday() : 0, dailyCap: cfg.ig.dailyCap || 20, counts: { queued: by('queued'), posted: by('posted'), failed: by('failed'), publishing: by('publishing'), check: by('check') },
-      followers: lastSnap ? { count: lastSnap.followers, on: snap[snap.length - 1] } : null, publicUrlOk: /^https:\/\//.test(base),
-      posts: jobs.slice(0, 6).map(j => ({ id: j.id, kind: j.kind, status: j.status, when: j.postedAt || j.when, caption: String(j.caption || '').slice(0, 160), product: j.productName || '', permalink: j.permalink || '', error: j.error || '', attempts: j.attempts || 0, thumb: thumb(j) })) };
-    if (previews.instagram.counts.failed) add('Instagram', C('ig-failed', 'warn', 'Instagram posts that failed', String(previews.instagram.counts.failed), 'Open the Instagram tab and press Retry, or read the error under "Latest posts" below.'));
-    if (!previews.instagram.publicUrlOk) add('Instagram', C('ig-url', 'warn', 'Instagram cannot fetch photos', 'PUBLIC_URL is not https', 'Instagram downloads each photo from this server\'s https address.'));
-  } catch (e) { previews.instagram = { error: String(e.message).slice(0, 120) }; }
-  try {
-    const mask = p => { const d = String(p || '').replace(/\D/g, ''); return d.length > 4 ? '••••••' + d.slice(-4) : '••••'; }, convs = Object.values(store.s.conversations || {}), t = Date.now();
-    const li = convs.reduce((m, c) => Math.max(m, c.lastInboundAt || 0), 0), la = convs.reduce((m, c) => Math.max(m, c.lastActivityAt || 0), 0);
-    previews.whatsapp = { mode: cfg.waLive ? 'live' : 'dry-run', ownerAlerts: !!cfg.wa.ownerPhone, conversations: convs.length, active24h: convs.filter(c => t - (c.lastInboundAt || 0) < DAY).length, humanHandling: convs.filter(c => c.status && c.status !== 'bot').length, unread: convs.reduce((n, c) => n + (c.unread || 0), 0), lastInboundAt: li || null, lastActivityAt: la || null,
-      recent: convs.slice().sort((a, b) => (b.lastActivityAt || 0) - (a.lastActivityAt || 0)).slice(0, 6).map(c => ({ who: mask(c.phone), status: c.status || 'bot', lang: c.lang || '', unread: c.unread || 0, lastInboundAt: c.lastInboundAt || null, lastActivityAt: c.lastActivityAt || null, windowOpen: t - (c.lastInboundAt || 0) < DAY })),
-      wouldSend: wa && wa.dry && wa.sentLog ? wa.sentLog.slice(-5).reverse().map(m => ({ to: mask(m.to), type: m.type || '', template: m.template && m.template.name || '' })) : null,
-      optedOut: Object.keys(store.s.optOut || {}).length };
-    if (cfg.waLive && li && t - li > 7 * DAY) add('WhatsApp', C('wa-quiet', 'warn', 'No customer message for over 7 days', ago(li), 'If customers are writing, the webhook may be broken: check the Meta app webhook and WA_APP_SECRET.'));
-  } catch (e) { previews.whatsapp = { error: String(e.message).slice(0, 120) }; }
+  const { previews, notes } = previewsOf({ cfg, ig, social, analytics, store, wa }); for (const [g, c] of notes) add(g, c);
 
   const groups = Object.entries(G).map(([name, checks]) => ({ name, checks }));
   const all = groups.flatMap(g => g.checks), count = s => all.filter(c => c.status === s).length;

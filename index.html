@@ -955,6 +955,163 @@ body.adm-app #storefrontView, body.adm-app #view-toggle, body.adm-app .owner-ent
 .sold-track{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px}.sold-card{flex:0 0 190px}.sold-img{position:relative}.sold-img img{width:190px;height:240px;object-fit:cover;border-radius:6px;filter:grayscale(.35)}
 .sold-tag{position:absolute;top:8px;left:8px;background:var(--charcoal);color:#fff;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:3px}.sold-actions{display:flex;flex-direction:column;gap:6px;margin-top:8px}.sold-actions .btn-sm{width:100%}
 </style>
+<style id="ui2css">
+.ov2 *{box-sizing:border-box}
+.ov2 button{font:inherit;color:inherit;cursor:pointer}
+.ov2 :focus-visible{outline:2px solid var(--o-accent);outline-offset:2px}
+.ov2 svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ov2 .sp{flex:1}
+.ov2 .pill{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:7px 12px;font-size:13px;background:var(--o-glass);border:1px solid var(--o-line)}
+.ov2 .odot{width:8px;height:8px;border-radius:50%;background:var(--o-sage)}
+.ov2 .odot.w{background:var(--o-accent)}
+.ov2 .avatar{width:42px;height:42px;border-radius:50%;background:var(--o-sage);color:#1b2a10;display:grid;place-items:center;font-weight:600}
+.ov2 .head{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin-bottom:18px}
+.ov2 h1{font-family:var(--o-display);font-weight:500;font-size:40px;line-height:.95;margin:0;max-width:7ch}
+.ov2 .okpi{display:flex;align-items:center;gap:12px;min-width:0}
+.ov2 .okpi .ic{width:46px;height:46px;border-radius:50%;background:var(--o-glass);border:1px solid var(--o-line);display:grid;place-items:center;color:var(--o-mute);flex:none}
+.ov2 .okpi b{font-size:22px;font-weight:500;font-variant-numeric:tabular-nums}
+.ov2 .okpi small{display:block;color:var(--o-mute);font-size:13px}
+.ov2 .okpi b{white-space:nowrap}
+.ov2 .ochip{display:inline-block;white-space:nowrap;font-weight:400;border-radius:999px;padding:3px 10px;font-size:12px;background:var(--o-rose);color:#2b1209;margin-left:6px;vertical-align:middle}
+.ov2 .ochip.ogood{background:var(--o-sage);color:#1b2a10}
+.ov2 .grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.ov2 .card{background:var(--o-glass);border:1px solid var(--o-line);border-radius:26px;padding:18px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);min-width:0}
+.ov2 .card h2{font-size:16px;font-weight:500;margin:0}
+.ov2 .ch{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ov2 .ch .sp{flex:1}
+.ov2 .ib{width:38px;height:38px;border-radius:50%;border:1px solid var(--o-line);background:transparent;display:grid;place-items:center;color:var(--o-ink)}
+.ov2 .ib:hover{background:var(--o-chip)}
+.ov2 .oseg{display:flex;padding:3px;border-radius:999px;background:var(--o-chip);border:1px solid var(--o-line)}
+.ov2 .oseg button{border:0;background:transparent;padding:6px 12px;border-radius:999px;font-size:13px;color:var(--o-mute)}
+.ov2 .oseg button[aria-pressed="true"]{background:var(--o-glass-2);color:var(--o-ink);box-shadow:inset 0 0 0 1px var(--o-line)}
+.ov2 .c12{grid-column:span 12}
+.ov2 .c8{grid-column:span 8}
+.ov2 .c7{grid-column:span 7}
+.ov2 .c6{grid-column:span 6}
+.ov2 .c5{grid-column:span 5}
+.ov2 .c4{grid-column:span 4}
+.ov2 .obig{font-size:34px;font-weight:500;font-variant-numeric:tabular-nums}
+.ov2 .mute{color:var(--o-mute)}
+.ov2 .sm{font-size:13px}
+.ov2 .olegend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--o-mute);margin:6px 0 4px}
+.ov2 .olegend i{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--o-accent);margin-right:6px}
+.ov2 .olegend i.t{width:16px;height:0;border-top:2px dashed var(--o-ink);border-radius:0;background:none;vertical-align:middle}
+.ov2 #chart{position:relative;height:250px}
+.ov2 #chart svg{width:100%;height:100%;display:block;overflow:visible}
+.ov2 #tip{position:absolute;pointer-events:none;padding:8px 12px;border-radius:12px;background:var(--o-glass-2);border:1px solid var(--o-line);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-size:13px;min-width:150px;opacity:0;transition:opacity .12s}
+.ov2 #tip b{display:block;margin-bottom:3px}
+.ov2 #tip span{display:flex;justify-content:space-between;gap:14px}
+.ov2 .orders{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.ov2 .oc{border:1px solid var(--o-line);background:var(--o-chip);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.ov2 .oc small{color:var(--o-mute);font-size:12.5px}
+.ov2 .oc h3{margin:6px 0 0;font-weight:400;font-size:18px;line-height:1.2}
+.ov2 .oc .amt{font-size:22px;margin-top:10px;font-variant-numeric:tabular-nums}
+.ov2 .oc .row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px}
+.ov2 .tag{font-size:12px;border-radius:999px;padding:3px 9px;background:var(--o-chip);border:1px solid var(--o-line)}
+.ov2 .tag.warn{background:var(--o-accent);color:var(--o-accent-ink);border-color:transparent}
+.ov2 .btn{border:0;border-radius:999px;padding:7px 14px;font-size:13px;font-weight:500;background:var(--o-accent);color:var(--o-accent-ink)}
+.ov2 .btn.g{background:transparent;border:1px solid var(--o-line);color:var(--o-ink)}
+.ov2 .ring{position:relative;width:170px;height:170px;margin:4px auto 10px}
+.ov2 .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ov2 .ring div{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.ov2 .ring b{font-size:34px;font-weight:500}
+.ov2 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.ov2 .stats b{display:block;font-size:17px;font-weight:500;font-variant-numeric:tabular-nums}
+.ov2 .stats small{color:var(--o-mute);font-size:12px}
+.ov2 .ostack{display:flex;gap:6px;margin:12px 0}
+.ov2 .ostack i{height:38px;border-radius:12px;display:block;min-width:8px}
+.ov2 table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.ov2 td{padding:9px 0;border-top:1px solid var(--o-line);font-size:14px}
+.ov2 td:nth-child(n+2){text-align:right}
+.ov2 td:first-child{display:flex;align-items:center;gap:9px}
+.ov2 .sw{width:10px;height:10px;border-radius:50%;display:inline-block}
+.ov2 .lb{display:flex;flex-direction:column;gap:8px}
+.ov2 .lr{display:grid;grid-template-columns:22px 40px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border-radius:16px}
+.ov2 .lr:first-child{background:var(--o-chip)}
+.ov2 .thumb{width:40px;height:40px;border-radius:12px}
+.ov2 .lr .n{color:var(--o-mute);text-align:center}
+.ov2 .obar{height:5px;border-radius:5px;background:var(--o-chip);margin:5px 0 2px;overflow:hidden}
+.ov2 .obar i{display:block;height:100%;background:var(--o-accent);border-radius:5px}
+.ov2 .lr b{font-weight:500;font-variant-numeric:tabular-nums}
+.ov2 .task{display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:12px;align-items:center;padding:11px 0;border-top:1px solid var(--o-line)}
+.ov2 .task input{width:20px;height:20px;accent-color:var(--o-accent)}
+.ov2 .task.done span.t{text-decoration:line-through;color:var(--o-mute)}
+.ov2 .prog{height:5px;border-radius:5px;background:var(--o-chip);overflow:hidden;flex:1}
+.ov2 .prog i{display:block;height:100%;width:0;background:var(--o-sage);transition:width .25s}
+.ov2 .onext{display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:center;padding:8px 10px;border-radius:14px;background:var(--o-chip);margin-top:8px}
+.ov2 .onext b{font-weight:500;display:block;font-size:14px}
+.ov2 .onext small{color:var(--o-mute)}
+.ov2 .day{text-align:center;font-size:12px;line-height:1.1;color:var(--o-mute)}
+.ov2 .day b{color:var(--o-ink);font-size:17px}
+.ov2 .posts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ov2 .post{border-radius:16px;overflow:hidden;border:1px solid var(--o-line);background:var(--o-chip)}
+.ov2 .post .ph{aspect-ratio:1/1}
+.ov2 .post div.m{padding:8px 10px;font-size:12.5px}
+.ov2 .post .m b{display:block;font-weight:500;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ov2 .st{display:inline-block;border-radius:999px;padding:1px 8px;font-size:11.5px;background:var(--o-sage);color:#1b2a10;margin-top:3px}
+.ov2 .st.q{background:var(--o-accent);color:var(--o-accent-ink)}
+.ov2 .owa{display:flex;flex-direction:column;gap:8px}
+.ov2 .wr{display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:center;padding:8px 10px;border-radius:14px;background:var(--o-chip)}
+.ov2 .wr .av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:600;color:#1b2a10}
+.ov2 .ofoot{grid-column:1/-1;margin-top:6px;color:var(--o-mute);font-size:12.5px;text-align:center}
+.ov2 #note{display:none;margin-bottom:12px}
+@media (max-width:1000px){.ov2 .c8,.ov2 .c7,.ov2 .c6,.ov2 .c5,.ov2 .c4{grid-column:span 12}.ov2 .orders{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){.ov2 h1{font-size:34px;max-width:none}.ov2 .orders{grid-template-columns:minmax(0,1fr)}.ov2 .posts{grid-template-columns:repeat(3,1fr)}.ov2 .obig{font-size:28px}}
+@media (prefers-reduced-motion:reduce){.ov2 *{transition:none!important}}
+.ov2 a{color:inherit;text-decoration:none}
+.ov2 .err{color:var(--o-rose);min-height:20px;margin-top:8px;font-size:13px}
+.ov2 .empty{color:var(--o-mute);font-size:14px;padding:10px 0}
+.ov2 .goal-edit{display:flex;gap:8px;align-items:center;margin-top:12px}
+.ov2 .goal-edit input{flex:1;min-width:0;padding:8px 10px;border-radius:12px;border:1px solid var(--o-line);background:var(--o-chip);color:var(--o-ink);font:inherit}
+.ov2 .olive{font-size:12px;color:var(--o-mute)}.ov2 [hidden]{display:none!important}
+
+/* ===== New owner look (/admin2). Inert unless <html class="ui2">. Same app, same code: only colours and shape change. ===== */
+html.ui2{--o-bg:#efe9dc;--o-bg-glow1:rgba(201,106,17,.20);--o-bg-glow2:rgba(120,150,100,.22);--o-glass:rgba(255,255,255,.86);--o-glass-2:rgba(255,255,255,.95);--o-line:rgba(46,45,41,.14);--o-ink:#2E2D29;--o-mute:#5f5b52;--o-accent:#B85F0E;--o-accent-ink:#fff;--o-sage:#6f9455;--o-rose:#c8664c;--o-sky:#4f84bb;--o-chip:rgba(46,45,41,.07);--o-display:'Cormorant Garamond',Georgia,serif;--o-body:'Outfit',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;--o-bad:#a8281c;--o-badbg:rgba(176,50,39,.12);--o-okbg:rgba(70,120,60,.14);--o-warnbg:rgba(201,106,17,.16);color-scheme:light}
+html.ui2.dk{--o-bg:#12110f;--o-bg-glow1:rgba(224,131,43,.22);--o-bg-glow2:rgba(110,150,90,.16);--o-glass:rgba(255,255,255,.07);--o-glass-2:rgba(255,255,255,.13);--o-line:rgba(255,255,255,.14);--o-ink:#F3EFE6;--o-mute:#b3aea2;--o-accent:#F0913A;--o-accent-ink:#1b1206;--o-sage:#B3D08F;--o-rose:#F2A58E;--o-sky:#8FB8E6;--o-chip:rgba(255,255,255,.09);--o-bad:#f5a095;--o-badbg:rgba(240,138,128,.16);--o-okbg:rgba(179,208,143,.16);--o-warnbg:rgba(240,145,58,.18);color-scheme:dark}
+/* the classic app's own colour names now follow the new tokens, so every screen picks them up */
+html.ui2{--ivory:var(--o-bg);--cream:var(--o-chip);--border:var(--o-line);--red:var(--o-bad)}
+html.ui2 body.adm-app{background-color:var(--o-bg);background-image:radial-gradient(900px 500px at 8% -5%,var(--o-bg-glow1),transparent 60%),radial-gradient(800px 600px at 100% 100%,var(--o-bg-glow2),transparent 60%);background-attachment:fixed;color:var(--o-ink);font-family:var(--o-body)}
+html.ui2 #adminView,html.ui2 .admin-main{color:var(--o-ink)}
+html.ui2 .admin-sidebar{background:var(--o-glass);border-right:1px solid var(--o-line);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+html.ui2 .admin-sidebar-header h1{font-family:var(--o-display);color:var(--o-ink)}html.ui2 .admin-sidebar-header p{color:var(--o-accent)}
+html.ui2 .admin-nav-item{color:var(--o-ink);border-radius:999px}html.ui2 .admin-nav-item:hover{background:var(--o-chip);color:var(--o-ink)}
+html.ui2 .admin-nav-item.active{background:var(--o-glass-2);color:var(--o-ink);box-shadow:inset 0 0 0 1px var(--o-line)}
+html.ui2 .admin-header h2,html.ui2 h1,html.ui2 h2,html.ui2 h3,html.ui2 h4{color:var(--o-ink)}
+html.ui2 .admin-card{background:var(--o-glass);border:1px solid var(--o-line);border-radius:22px;box-shadow:none;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:var(--o-ink)}
+html.ui2 .admin-table th{color:var(--o-mute);border-bottom:1px solid var(--o-line)}html.ui2 .admin-table td{border-bottom:1px solid var(--o-line);color:var(--o-ink)}
+html.ui2 .admin-table tr:hover td{background:var(--o-chip)}
+html.ui2 input,html.ui2 select,html.ui2 textarea{background:var(--o-chip);color:var(--o-ink);border-color:var(--o-line)}
+html.ui2 input::placeholder,html.ui2 textarea::placeholder{color:var(--o-mute)}
+html.ui2 select option{background:var(--o-bg);color:var(--o-ink)}
+html.ui2 .btn-sm{border-radius:999px}
+html.ui2 .btn-primary-sm,html.ui2 .btn-full{background:var(--o-accent);color:var(--o-accent-ink)}html.ui2 .btn-primary-sm:hover{filter:brightness(1.08);background:var(--o-accent)}
+html.ui2 .btn-info-sm{background:var(--o-chip);color:var(--o-ink);border:1px solid var(--o-line)}
+html.ui2 .btn-danger-sm{background:transparent;color:var(--o-bad);border:1px solid var(--o-bad)}
+html.ui2 .modal-content{background:var(--o-bg);color:var(--o-ink);border:1px solid var(--o-line)}
+html.ui2 .note,html.ui2 .pf-sub,html.ui2 small{color:var(--o-mute)}
+html.ui2 a{color:var(--o-accent)}
+html.ui2 .va-do,html.ui2 .soc-passed,html.ui2 .grow-remind,html.ui2 .g-act{background:var(--o-chip);border-color:var(--o-line);color:var(--o-ink)}
+html.ui2 .ai-err{background:var(--o-badbg);color:var(--o-bad)}html.ui2 .ai-busy{color:var(--o-mute)}
+html.ui2 #adm-security,html.ui2 .dash-detail{color:var(--o-ink)}
+html.ui2 .ui2-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:14px}
+html.ui2 .ui2-bar button,html.ui2 .ui2-bar a{border:1px solid var(--o-line);background:var(--o-chip);color:var(--o-ink);border-radius:999px;padding:8px 12px;font-size:12.5px;cursor:pointer;text-decoration:none;font-family:inherit}
+html.ui2 .ov2-sep{font-family:var(--o-display);font-weight:500;font-size:26px;margin:28px 0 12px}
+@media (prefers-reduced-motion:reduce){html.ui2 *{transition:none!important}}
+
+/* dark: the classic screens use fixed greys and whites inline; map them to the new tokens so nothing is unreadable */
+html.ui2.dk label,html.ui2.dk .form-group label,html.ui2.dk .note,html.ui2.dk small,html.ui2.dk .pf-sub,html.ui2.dk .hint{color:var(--o-mute)}
+html.ui2.dk [style*="color:#888"],html.ui2.dk [style*="color: #888"],html.ui2.dk [style*="color:#777"],html.ui2.dk [style*="color:#666"],html.ui2.dk [style*="color:#999"],html.ui2.dk [style*="color:#555"],html.ui2.dk [style*="color:#aaa"]{color:var(--o-mute)!important}
+html.ui2.dk [style*="color:#333"],html.ui2.dk [style*="color:#222"],html.ui2.dk [style*="color:#444"],html.ui2.dk [style*="color:var(--charcoal)"],html.ui2.dk [style*="color: var(--charcoal)"]{color:var(--o-ink)!important}
+html.ui2.dk [style*="background:white"],html.ui2.dk [style*="background: white"],html.ui2.dk [style*="background:#fff"],html.ui2.dk [style*="background: #fff"],html.ui2.dk [style*="background:#fafafa"],html.ui2.dk [style*="background:var(--cream)"]{background:var(--o-glass-2)!important;color:var(--o-ink)}
+html.ui2.dk .admin-table th{color:var(--o-mute)}
+html.ui2.dk .kpi-v,html.ui2.dk .kpi-l,html.ui2.dk .att,html.ui2.dk .rank,html.ui2.dk .dd-row,html.ui2.dk .snap,html.ui2.dk .cat-row,html.ui2.dk .g-goal,html.ui2.dk .ai-card,html.ui2.dk .sum-card,html.ui2.dk .stat-card{color:var(--o-ink)}
+
+html.ui2.dk .ai-sec,html.ui2.dk .stat-card,html.ui2.dk .kpi,html.ui2.dk .g-tile,html.ui2.dk .studio-side,html.ui2.dk .studio-bar,html.ui2.dk .size-btn,html.ui2.dk .seg-btn,html.ui2.dk .report-filters,html.ui2.dk .report-card,html.ui2.dk .att,html.ui2.dk .dash-detail{background:var(--o-glass);color:var(--o-ink);border-color:var(--o-line)}
+html.ui2.dk .grow-remind{background:var(--o-badbg)!important;border-color:var(--o-line)!important;color:var(--o-ink)}
+html.ui2 [style*="color:#888"],html.ui2 [style*="color: #888"],html.ui2 [style*="color:#999"],html.ui2 [style*="color:#aaa"]{color:var(--o-mute)!important}
+html.ui2 .hint,html.ui2 .att-go{color:var(--o-mute)}
+
+</style>
 </head>
 <body>
 <noscript><p style="padding:20px;">Anitha Pemmasani – pure handloom sarees from Hyderabad. Please enable JavaScript to browse and shop, or call +91 98496 46440.</p></noscript>
@@ -5461,6 +5618,10 @@ function dashPick(i) { DASH.sel = DASH.sel === i ? null : i; renderDashboardPro(
 function dashGo(tab) { switchAdminTab(tab); }
 const spark = (vals, color) => { const w = 90, h = 28, m = Math.max(...vals, 1), pts = vals.map((v, i) => `${vals.length > 1 ? (i / (vals.length - 1)) * w : w / 2},${h - 3 - (v / m) * (h - 6)}`).join(' '); return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><polyline fill="none" stroke="${color}" stroke-width="2" points="${pts}"/></svg>`; };
 function renderDashboardPro(content) {
+  if (typeof UI2 !== 'undefined' && UI2 && content === el_('adminContent')) { content.innerHTML = '<div id="ov2-top"></div><div id="dash-classic"></div>'; renderDashboardClassic(el_('dash-classic')); renderOverview2(el_('ov2-top')); return; }
+  return renderDashboardClassic(content);
+}
+function renderDashboardClassic(content) {
   if (!content) return;
   const P = dashPeriod(), cur = dashStats(P.from, P.to), prev = P.prevFrom ? dashStats(P.prevFrom, P.prevTo) : null;
   const metricName = { revenue: 'Revenue', orders: 'Orders', units: 'Pieces sold' }[DASH.metric];
@@ -6057,12 +6218,14 @@ async function admBoot() {
   try { ADM.state = await admApi('GET', '/admin/api/state'); ADM.ig = !!ADM.state.instagram; ADM.claude = !!ADM.state.claude; if (ADM.state.signedIn) { ADM.csrf = ADM.state.csrf; ADM.signedIn = true; ADM.role = ADM.state.role || 'owner'; ADM.user = ADM.state.user || 'owner'; await admEnter(); } else admGate(ADM.state.configured ? 'login' : 'setup'); }
   catch (e) { admGate('error', 'Cannot reach the server: ' + e.message); }
 }
+// a link from the new owner screen (/admin2) such as /admin#orders opens that tab
+function admHashTab() { const t = String(location.hash || '').slice(1); return t && document.querySelector('[data-tab="' + t.replace(/[^a-z-]/g, '') + '"]') && !(t === 'privacy' || t === 'ops') || (t && isOwnerRole() && /^(privacy|ops)$/.test(t)) ? t.replace(/[^a-z-]/g, '') : ''; }
 async function admEnter() {
   const g = await admApi('GET', '/admin/api/db'); ADM.version = g.version;
   const demo = !g.db; const fresh = normalizeDB(g.db || JSON.parse(JSON.stringify(defaultDB)));
   ['adminPin', 'otpEndpoint', 'aiEndpoint', 'assistantUrl'].forEach(k => { delete fresh.settings[k]; }); for (const k of Object.keys(db)) delete db[k]; Object.assign(db, fresh);
-  ADM.ready = true; document.getElementById('admGate').style.display = 'none'; init(); admApplyRole();
-  isAdminView = true; document.getElementById('storefrontView').classList.add('hidden'); document.getElementById('adminView').classList.add('active'); document.body.classList.add('admin-on', 'adm-app'); switchAdminTab(currentAdminTab || 'dashboard');
+  ADM.ready = true; document.getElementById('admGate').style.display = 'none'; init(); admApplyRole(); ov2Init();
+  isAdminView = true; document.getElementById('storefrontView').classList.add('hidden'); document.getElementById('adminView').classList.add('active'); document.body.classList.add('admin-on', 'adm-app'); switchAdminTab(admHashTab() || currentAdminTab || 'dashboard');
   if (demo) { ADM.dirty = true; admSetBadge('Starting with demo data. Import your own in Settings → Security & backup, or just edit this.'); admQueueSave(); }
   clearInterval(ADM.poll); ADM.poll = setInterval(admPoll, 20_000); admSetBadge();
 }
@@ -6369,6 +6532,121 @@ async function encJson(obj, pass) { const salt = crypto.getRandomValues(new Uint
 async function decJson(box, pass) { try { const key = await encKey(pass, unb64(box.salt), +box.iter || 250000, 'decrypt'); return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(box.iv) }, key, unb64(box.data)))); } catch (e) { throw new Error('That password does not open this backup.'); } }
 function twoFaBannerHTML() { return BUILD === 'admin' && ADM.state && !ADM.state.twoFactor ? '<div class="grow-remind" style="background:#fde8e6;border-color:#f3b8b0;"><div><b>🔐 Turn on 2-step sign-in</b><div class="note" style="margin:2px 0 0;">Your customers\' phone numbers and addresses are kept here. A password alone is not enough protection. It takes 2 minutes: Settings → Security &amp; backup.</div></div><div class="pf-actions"><button type="button" class="btn-sm btn-primary-sm" onclick="switchAdminTab(\'settings\')">Open Settings</button></div></div>' : ''; }
 function privNoticeBack() { return ''; }
+
+// ---- New owner look (/admin2): the same app with a new Overview on top of the full dashboard ----
+const UI2 = document.documentElement.classList.contains('ui2');
+const OV2 = { web: [], prev: null, priv: null, N: 12, timer: null, n: 0, C: null };
+function ov2Store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+function ov2Theme(dark) { document.documentElement.classList.toggle('dk', dark); ov2Store('ap_ui2_dark', dark ? '1' : '0'); if (OV2.C) ov2Chart(); setTimeout(() => ui2Guard(true), 30); }
+function ov2Init() {
+  if (!UI2) return; const s = ov2Store('ap_ui2_dark'); document.documentElement.classList.toggle('dk', s === null ? matchMedia('(prefers-color-scheme:dark)').matches : s === '1');
+  const sb = document.querySelector('.admin-sidebar'); if (sb && !sb.querySelector('.ui2-bar')) sb.insertAdjacentHTML('beforeend', '<div class="ui2-bar"><button type="button" id="ui2-theme" aria-label="Switch light or dark">◐ Light / dark</button><a href="/admin">Classic look</a></div>');
+  ui2Watch(); const b = el_('ui2-theme'); if (b) b.onclick = () => ov2Theme(!document.documentElement.classList.contains('dk'));
+}
+
+// A safety net for the whole app in the new look: any text that ends up hard to read on its background (a fixed grey from an old screen,
+// white on white in dark mode) is recoloured at once. It looks only at colours; it never changes text, layout or behaviour.
+const UI2G = { t: null, busy: false };
+function ui2Rgb(s) { const m = /rgba?\(([^)]+)\)/.exec(s || ''); if (!m) return null; const v = m[1].split(/[ ,\/]+/).filter(Boolean).map(Number); return { r: v[0], g: v[1], b: v[2], a: v[3] == null || isNaN(v[3]) ? 1 : v[3] }; }
+const ui2Lum = c => { const f = x => { x /= 255; return x <= .03928 ? x / 12.92 : Math.pow((x + .055) / 1.055, 2.4); }; return .2126 * f(c.r) + .7152 * f(c.g) + .0722 * f(c.b); };
+function ui2Base() { const h = getComputedStyle(document.documentElement).getPropertyValue('--o-bg').trim(), n = parseInt(h.slice(1), 16); return h[0] === '#' ? { r: n >> 16, g: (n >> 8) & 255, b: n & 255, a: 1 } : { r: 255, g: 255, b: 255, a: 1 }; }
+function ui2Bg(el, base) { const st = []; for (let e = el; e; e = e.parentElement) { const c = ui2Rgb(getComputedStyle(e).backgroundColor); if (c && c.a > 0) { st.push(c); if (c.a >= .99) break; } } let o = base; for (let i = st.length - 1; i >= 0; i--) { const c = st[i]; o = { r: c.r * c.a + o.r * (1 - c.a), g: c.g * c.a + o.g * (1 - c.a), b: c.b * c.a + o.b * (1 - c.a), a: 1 }; } return o; }
+function ui2Guard(reset) {
+  if (!UI2 || UI2G.busy) return; UI2G.busy = true;
+  try {
+    const roots = [...document.querySelectorAll('#adminContent, .modal.active, #adminView .admin-sidebar')]; if (reset) document.querySelectorAll('[data-ui2fix]').forEach(e => { e.style.removeProperty('color'); e.removeAttribute('data-ui2fix'); });
+    const base = ui2Base(); let n = 0;
+    for (const r of roots) for (const el of r.querySelectorAll('*')) {
+      if (++n > 6000) break; if (el.closest('svg,script,style') || el.disabled) continue; if (![...el.childNodes].some(x => x.nodeType === 3 && x.textContent.trim().length > 1)) continue;
+      const cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < .3) continue; const fg = ui2Rgb(cs.color); if (!fg) continue; const bg = ui2Bg(el, base), L2 = ui2Lum(bg);
+      const fc = { r: fg.r * fg.a + bg.r * (1 - fg.a), g: fg.g * fg.a + bg.g * (1 - fg.a), b: fg.b * fg.a + bg.b * (1 - fg.a) }, L1 = ui2Lum(fc), ratio = (Math.max(L1, L2) + .05) / (Math.min(L1, L2) + .05);
+      if (ratio < 4) { el.style.setProperty('color', L2 > .35 ? '#2a2925' : '#F3EFE6', 'important'); el.setAttribute('data-ui2fix', '1'); }
+    }
+  } finally { UI2G.busy = false; }
+}
+function ui2Watch() { if (!UI2 || UI2G.obs) return; UI2G.obs = new MutationObserver(() => { clearTimeout(UI2G.t); UI2G.t = setTimeout(() => ui2Guard(false), 220); }); UI2G.obs.observe(document.body, { childList: true, subtree: true, characterData: true }); ui2Guard(false); }
+const OV2_OPEN = ['placed', 'confirmed', 'packed', 'shipped', 'out_for_delivery'], OV2_STG = [['placed', 'Placed', 'var(--o-sky)'], ['confirmed', 'Confirmed', 'var(--o-chip)'], ['packed', 'Packed', 'var(--o-sage)'], ['shipped', 'Shipped', 'var(--o-rose)'], ['out_for_delivery', 'Out for delivery', 'var(--o-accent)']];
+const ov2Short = v => v >= 100000 ? '₹' + ((v / 1e5) % 1 ? (v / 1e5).toFixed(1) : v / 1e5) + ' lakh' : v >= 1000 ? '₹' + Math.round(v / 1000) + 'k' : '₹' + Math.round(v);
+const ov2Nice = v => { if (v <= 0) return 100000; const p = Math.pow(10, Math.floor(Math.log10(v))), f = v / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; };
+function ov2Calc() {
+  const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], now = new Date(Date.now() + 330 * 60000), key = d => d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0'), os = db.orders || [], months = [], idx = {};
+  for (let i = 11; i >= 0; i--) { const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1)); idx[key(d)] = months.length; months.push({ k: key(d), l: MON[d.getUTCMonth()], v: 0 }); }
+  os.forEach(o => { if (o.status === 'cancelled') return; const k = String(o.date || '').slice(0, 7); if (k in idx) months[idx[k]].v += +o.total || 0; });
+  const open = os.filter(o => OV2_OPEN.includes(o.status)), cut = new Date(Date.now() - 90 * 86400000).toISOString().slice(0, 10), fin = os.filter(o => o.date >= cut && (o.status === 'delivered' || o.status === 'cancelled')), dl = fin.filter(o => o.status === 'delivered').length, items = {}, cur = key(now);
+  os.forEach(o => { if (o.status === 'cancelled' || String(o.date || '').slice(0, 7) !== cur) return; (o.items || []).forEach(it => { const k = it.productId || it.name, r = items[k] || (items[k] = { name: it.name, qty: 0, rev: 0, pid: it.productId }); r.qty += +it.quantity || 0; r.rev += (+it.price || 0) * (+it.quantity || 0); }); });
+  const dim = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0)).getUTCDate();
+  return { months, thisM: months[11].v, lastM: months[10].v, open, fin: fin.length, dl, best: Object.values(items).sort((a, b) => b.rev - a.rev).slice(0, 5), low: (db.products || []).filter(p => p.stock >= 0 && p.stock <= (p.threshold || 0)).length, daysLeft: dim - now.getUTCDate(), placed: os.filter(o => o.status === 'placed').length, day: now.toISOString().slice(0, 10) };
+}
+function ov2Chart() {
+  const C = OV2.C, box = el_('ov-chart'); if (!box || !C) return; const W = box.clientWidth, H = box.clientHeight; if (!W) return;
+  const L = 60, R = 14, T = 10, B = 26, pw = W - L - R, ph = H - T - B, data = C.months.slice(12 - OV2.N), goal = +ov2Store('ap_goal_month') || 0, mx = ov2Nice(Math.max(...data.map(m => m.v), goal));
+  const x = i => L + pw * i / (data.length - 1), y = v => T + ph * (1 - v / mx), pts = data.map((m, i) => [x(i), y(m.v)]), cs = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim(), ink = cs('--o-ink'), mute = cs('--o-mute'), line = cs('--o-line'), acc = cs('--o-accent'); let s = '';
+  const smooth = p => { let d = 'M' + p[0][0] + ',' + p[0][1]; for (let i = 0; i < p.length - 1; i++) { const a = p[i - 1] || p[i], b = p[i], c = p[i + 1], e = p[i + 2] || c; d += ' C' + (b[0] + (c[0] - a[0]) / 6) + ',' + (b[1] + (c[1] - a[1]) / 6) + ' ' + (c[0] - (e[0] - b[0]) / 6) + ',' + (c[1] - (e[1] - b[1]) / 6) + ' ' + c[0] + ',' + c[1]; } return d; };
+  [0, mx / 2, mx].forEach(t => { s += `<line x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}" stroke="${line}" stroke-dasharray="2 5"/><text x="${L - 10}" y="${y(t) + 4}" text-anchor="end" font-size="12" fill="${mute}">${t ? ov2Short(t) : '₹0'}</text>`; });
+  const step = data.length > 8 ? 2 : 1; data.forEach((m, i) => { if (i % step === 0 || i === data.length - 1) s += `<text x="${x(i)}" y="${H - 6}" text-anchor="middle" font-size="12" fill="${mute}">${m.l}</text>`; });
+  if (goal) s += `<line x1="${L}" x2="${W - R}" y1="${y(goal)}" y2="${y(goal)}" stroke="${ink}" stroke-width="2" stroke-dasharray="7 6" opacity=".85"/>`;
+  s += `<defs><linearGradient id="ov-ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${acc}" stop-opacity=".38"/><stop offset="1" stop-color="${acc}" stop-opacity="0"/></linearGradient></defs><path d="${smooth(pts)} L${x(data.length - 1)},${y(0)} L${x(0)},${y(0)} Z" fill="url(#ov-ag)"/><path d="${smooth(pts)}" fill="none" stroke="${acc}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>`;
+  s += `<line id="ov-vl" y1="${T}" y2="${y(0)}" stroke="${ink}" opacity="0"/><circle id="ov-vd" r="5.5" fill="${acc}" stroke="${cs('--o-bg')}" stroke-width="2" opacity="0"/><circle cx="${pts[pts.length - 1][0]}" cy="${pts[pts.length - 1][1]}" r="5" fill="${acc}"/>`;
+  const old = box.querySelector('svg'); if (old) old.remove(); box.insertAdjacentHTML('afterbegin', `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Monthly sales">${s}</svg>`);
+  const svg = box.querySelector('svg'), tip = el_('ov-tip');
+  const at = ev => { const r = svg.getBoundingClientRect(), i = Math.max(0, Math.min(data.length - 1, Math.round((ev.clientX - r.left - L) / pw * (data.length - 1)))), vl = el_('ov-vl'), vd = el_('ov-vd'); vl.setAttribute('x1', pts[i][0]); vl.setAttribute('x2', pts[i][0]); vl.setAttribute('opacity', '.35'); vd.setAttribute('cx', pts[i][0]); vd.setAttribute('cy', pts[i][1]); vd.setAttribute('opacity', '1'); tip.innerHTML = `<b>${esc(data[i].l)}</b><span><span>Sales</span><b style="display:inline;margin:0">₹${gN(data[i].v)}</b></span>${goal ? `<span><span>Goal</span><b style="display:inline;margin:0">₹${gN(goal)}</b></span>` : ''}`; tip.style.opacity = 1; let tx = pts[i][0] + 14; if (tx > W - 170) tx = pts[i][0] - 168; tip.style.left = tx + 'px'; tip.style.top = Math.max(0, pts[i][1] - 60) + 'px'; };
+  svg.addEventListener('pointermove', at); svg.addEventListener('pointerdown', at); svg.addEventListener('pointerleave', () => { tip.style.opacity = 0; el_('ov-vl').setAttribute('opacity', 0); el_('ov-vd').setAttribute('opacity', 0); });
+  const tot = data.reduce((a, m) => a + m.v, 0); el_('ov-total').textContent = '₹' + gN(tot); el_('ov-sub').textContent = tot ? `sold in the last ${OV2.N} months${goal ? ` · ${data.filter(m => m.v >= goal).length} of ${OV2.N} months reached the goal` : ''}` : 'No orders in this period yet. They appear here as soon as you take one.'; el_('ov-lgoal').hidden = !goal;
+}
+function renderOverview2(box) {
+  if (!box) return;
+  box.innerHTML = `<div class="ov2"><section class="head" aria-label="Summary"><h1>Shop Overview</h1>
+    <div class="okpi"><div class="ic">₹</div><div><b id="ov-k1">–</b><small>Sales this month</small></div></div><div class="okpi"><div class="ic">▤</div><div><b id="ov-k2">–</b><small id="ov-k2s"></small></div></div><div class="okpi"><div class="ic">✓</div><div><b id="ov-k3">–</b><small id="ov-k3s"></small></div></div>
+    <span style="flex:1"></span><a class="pill" id="ov-pv" href="#" onclick="switchAdminTab('privacy');return false" hidden></a><span class="pill" id="ov-live"><span class="odot"></span><span id="ov-livet">live</span></span></section>
+  <div class="grid">
+    <section class="card c12" aria-label="Sales"><div class="ch"><h2>Sales</h2><span class="sp"></span><div class="oseg" id="ov-range"><button type="button" aria-pressed="${OV2.N === 6}" data-n="6">6M</button><button type="button" aria-pressed="${OV2.N === 12}" data-n="12">12M</button></div></div>
+      <div class="obig" id="ov-total">₹0</div><div class="mute sm" id="ov-sub"></div><div class="olegend"><span><i></i>Sales (all orders except cancelled)</span><span id="ov-lgoal" hidden><i class="t"></i>Monthly goal</span></div><div id="ov-chart"><div id="ov-tip" role="status"></div></div></section>
+    <section class="card c12" aria-label="New from the website"><div class="ch"><h2>New from the website</h2><span class="mute sm">nobody has been charged; confirm on WhatsApp</span></div><div class="orders" id="ov-orders"></div></section>
+    <section class="card c4" aria-label="Monthly goal"><div class="ch"><h2>Monthly goal</h2></div><div class="ring"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--o-chip)" stroke-width="9"/><circle id="ov-arc" cx="50" cy="50" r="42" fill="none" stroke="var(--o-sage)" stroke-width="9" stroke-linecap="round" stroke-dasharray="0 264"/></svg><div><b id="ov-rp">–</b><span class="mute sm" id="ov-rs"></span></div></div>
+      <div class="stats"><div><small>Sold</small><b id="ov-gs">–</b></div><div><small>Goal</small><b id="ov-gg">–</b></div><div><small>Days left</small><b id="ov-gd">–</b></div></div>
+      <form class="goal-edit" onsubmit="ov2Goal(event)"><label for="ov-gi" style="position:absolute;left:-9999px">Monthly goal in rupees</label><input id="ov-gi" inputmode="numeric" placeholder="Goal in ₹, e.g. 300000"><button class="btn" type="submit">Save</button></form><p class="mute sm" style="margin:8px 0 0">The goal is yours to set. It is kept in this browser only.</p></section>
+    <section class="card c8" aria-label="Orders by stage"><div class="ch"><h2>Orders by stage</h2></div><div class="obig" id="ov-stot">₹0 <span class="mute sm" style="font-weight:300" id="ov-scnt"></span></div><div class="ostack" id="ov-stack"></div><table id="ov-stages"></table></section>
+    <section class="card c6" aria-label="Best sellers"><div class="ch"><h2>Best sellers</h2><span class="mute sm">this month</span></div><div class="lb" id="ov-lb"></div></section>
+    <section class="card c6" aria-label="Today"><div class="ch"><h2>Today</h2></div><div style="display:flex;align-items:center;gap:12px;margin-bottom:6px"><span class="mute sm" id="ov-dn"></span><div class="prog"><i id="ov-prog"></i></div></div><div id="ov-tasks"></div><div class="ch" style="margin:14px 0 0"><span class="mute sm" style="letter-spacing:.08em;text-transform:uppercase">Coming up</span></div><div id="ov-coming"></div></section>
+    <section class="card c6" aria-label="Instagram" id="ov-ig" hidden></section><section class="card c6" aria-label="WhatsApp" id="ov-wa" hidden></section>
+  </div></div><h3 class="ov2-sep">The full dashboard</h3>`;
+  el_('ov-range').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; OV2.N = +b.dataset.n; [...el_('ov-range').children].forEach(c => c.setAttribute('aria-pressed', c === b)); ov2Chart(); });
+  el_('ov-orders').addEventListener('click', e => { const a = e.target.closest('[data-acc]'), d = e.target.closest('[data-dec]'); if (a) acceptWebOrder(a.dataset.acc); else if (d) declineWebOrder(d.dataset.dec); });
+  el_('ov-tasks').addEventListener('change', e => { const t = e.target.dataset.t; if (!t) return; ov2Store('ap_done_' + OV2.C.day + '_' + t, e.target.checked ? '1' : '0'); ov2Draw(); });
+  ov2Draw(); ov2Load(true); clearInterval(OV2.timer); OV2.timer = setInterval(() => { if (currentAdminTab !== 'dashboard' || !el_('ov-chart')) { clearInterval(OV2.timer); return; } if (!document.hidden) ov2Load(false); }, 15000);
+}
+async function ov2Load(first) {
+  try {
+    OV2.web = (await admApi('GET', '/admin/api/web-orders').catch(() => ({ orders: [] }))).orders; WEB.list = OV2.web;
+    if (isOwnerRole()) { OV2.priv = await admApi('GET', '/admin/api/privacy/summary').catch(() => null); if (first || OV2.n % 4 === 0) OV2.prev = (await admApi('GET', '/admin/api/previews').catch(() => ({}))).previews || null; }
+    OV2.n++; const t = el_('ov-livet'); if (t) { t.textContent = 'live · ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }); document.querySelector('#ov-live .odot').className = 'odot'; } ov2Draw();
+  } catch (e) { const t = el_('ov-livet'); if (t) { t.textContent = 'offline'; document.querySelector('#ov-live .odot').className = 'odot w'; } }
+}
+function ov2Goal(e) { e.preventDefault(); const v = parseInt(String(el_('ov-gi').value).replace(/[^\d]/g, ''), 10); ov2Store('ap_goal_month', v > 0 ? String(v) : '0'); el_('ov-gi').value = ''; ov2Draw(); }
+const ov2Tm = v => { if (!v) return 'never'; const t = typeof v === 'number' ? v : Date.parse(v), m = Math.round((Date.now() - t) / 60000), f = Math.abs(m), u = f < 90 ? f + ' min' : f < 2880 ? Math.round(f / 60) + ' h' : Math.round(f / 1440) + ' days'; return m >= 0 ? u + ' ago' : 'in ' + u; };
+function ov2Draw() {
+  if (!el_('ov-chart')) return; const C = OV2.C = ov2Calc(), wn = OV2.web.filter(w => w.status === 'new'), set = (id, v) => { el_(id).textContent = v; };
+  el_('ov-k1').innerHTML = '₹' + gN(C.thisM) + (C.lastM > 0 ? ` <span class="ochip ${C.thisM >= C.lastM ? 'ogood' : ''}">${C.thisM >= C.lastM ? '+' : ''}${Math.round((C.thisM - C.lastM) / C.lastM * 100)}% on last month</span>` : '');
+  set('ov-k2', C.open.length + (C.open.length === 1 ? ' open order' : ' open orders')); set('ov-k2s', wn.length ? `Waiting for you: ${wn.length} from the website` : 'Nothing waiting from the website');
+  set('ov-k3', C.fin ? Math.round(C.dl / C.fin * 100) + '%' : '–'); set('ov-k3s', C.fin ? `delivered, of ${C.fin} finished in 90 days` : 'No finished orders in 90 days yet'); ov2Chart();
+  el_('ov-orders').innerHTML = wn.length ? wn.slice(0, 6).map((w, i) => { const o = w.order || {}, c = w.customer || {}, ini = String(c.name || '?').split(/\s+/).map(x => x[0]).join('').slice(0, 2).toUpperCase(), bad = w.check && w.check.issues && w.check.issues.length; return `<div class="oc"><small>${esc(String(w.createdAt || '').slice(0, 10))} · ${esc(w.id)}</small><h3>${esc((o.items || []).map(x => x.name).join(', ') || 'Order')}</h3><div class="amt">₹${gN(o.total || 0)}</div><div class="row"><span class="tag ${bad ? 'warn' : ''}">${bad ? 'Check first' : 'Payment to agree'}</span><span class="avatar" style="width:32px;height:32px;font-size:12px;background:${['var(--o-sage)', 'var(--o-sky)', 'var(--o-rose)'][i % 3]}">${esc(ini)}</span></div><div class="row"><button type="button" class="btn" data-acc="${esc(w.id)}">Accept</button><button type="button" class="btn g" data-dec="${esc(w.id)}">Not possible</button></div></div>`; }).join('') + (wn.length > 6 ? `<div class="oc"><h3>+ ${wn.length - 6} more</h3><div class="row"><button type="button" class="btn g" onclick="switchAdminTab('orders')">Open Orders</button></div></div>` : '') : '<p class="empty">No new website orders. When a customer orders on the website it appears here within seconds.</p>';
+  const goal = +ov2Store('ap_goal_month') || 0, pc = goal ? Math.min(100, Math.round(C.thisM / goal * 100)) : 0; set('ov-gs', ov2Short(C.thisM)); set('ov-gg', goal ? ov2Short(goal) : 'not set'); set('ov-gd', C.daysLeft); set('ov-rp', goal ? pc + '%' : '–'); set('ov-rs', goal ? 'of ' + ov2Short(goal) : 'set a goal below'); el_('ov-arc').setAttribute('stroke-dasharray', (264 * pc / 100).toFixed(1) + ' 264');
+  let sv = 0, sc = 0, rows = '', st = ''; OV2_STG.forEach(g => { const l = C.open.filter(o => o.status === g[0]), v = l.reduce((a, o) => a + (+o.total || 0), 0); sv += v; sc += l.length; if (l.length) { st += `<i style="flex:${Math.max(v, 1)};background:${g[2]}"></i>`; rows += `<tr><td><span class="sw" style="background:${g[2]}"></span>${g[1]}</td><td>${l.length}</td><td>₹${gN(v)}</td></tr>`; } });
+  el_('ov-stot').firstChild.textContent = '₹' + gN(sv) + ' '; set('ov-scnt', sc ? `in ${sc} order${sc > 1 ? 's' : ''} not yet delivered` : ''); el_('ov-stack').innerHTML = st; el_('ov-stages').innerHTML = rows || '<tr><td class="mute">No open orders.</td></tr>';
+  const prod = {}; (db.products || []).forEach(p => { prod[p.id] = p; });
+  el_('ov-lb').innerHTML = C.best.length ? C.best.map((b, i) => { const p = prod[b.pid] || {}, img = p.image || (p.images && p.images[0]) || ''; return `<div class="lr"><span class="n">${i + 1}</span>${img ? `<img class="thumb" alt="" loading="lazy" style="object-fit:cover" src="${esc(img)}">` : '<span class="thumb" style="background:var(--o-chip)"></span>'}<div><div>${esc(b.name)}</div><div class="obar"><i style="width:${Math.round(b.rev / C.best[0].rev * 100)}%"></i></div><small class="mute">${b.qty} sold</small></div><b>₹${gN(b.rev)}</b></div>`; }).join('') : '<p class="empty">No sales this month yet.</p>';
+  const pv = OV2.priv, late = pv ? pv.late + pv.soon : 0, T = [], done = id => ov2Store('ap_done_' + C.day + '_' + id) === '1';
+  if (wn.length) T.push(['web', `Confirm ${wn.length} website order${wn.length > 1 ? 's' : ''} on WhatsApp`, 'customers are waiting', 'WhatsApp']); if (C.placed) T.push(['pack', `Pack ${C.placed} new order${C.placed > 1 ? 's' : ''}`, 'status is still "placed"', 'orders']);
+  if (late) T.push(['priv', `Answer ${late} privacy request${late > 1 ? 's' : ''}`, (pv.late ? pv.late + ' late · ' : '') + 'the law asks for a reply in 30 days', 'privacy']); if (C.low) T.push(['low', `${C.low} saree${C.low > 1 ? 's are' : ' is'} running low`, 'at or below the restock level', 'stock']);
+  el_('ov-tasks').innerHTML = T.length ? T.map(t => `<label class="task${done(t[0]) ? ' done' : ''}"><input type="checkbox" data-t="${t[0]}" ${done(t[0]) ? 'checked' : ''}><span><span class="t">${esc(t[1])}</span><br><small class="mute">${esc(t[2])}</small></span><span class="tag">${esc(t[3])}</span></label>`).join('') : '<p class="empty">Nothing waiting. Enjoy the quiet.</p>';
+  const dn = T.filter(t => done(t[0])).length; set('ov-dn', T.length ? `${dn} of ${T.length} done` : ''); el_('ov-prog').style.width = T.length ? (100 * dn / T.length) + '%' : '0%';
+  const q = ((OV2.prev && OV2.prev.instagram && OV2.prev.instagram.posts) || []).filter(p => p.status === 'queued').slice(0, 3);
+  el_('ov-coming').innerHTML = q.length ? q.map(p => { const d = new Date(p.when); return `<div class="onext"><div class="day">${d.toLocaleDateString('en-IN', { weekday: 'short' })}<br><b>${d.getDate()}</b></div><div><b>Instagram: ${esc(p.product || p.kind)}</b><small>${d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</small></div></div>`; }).join('') : '<p class="empty">Nothing scheduled.</p>';
+  const pp = el_('ov-pv'); if (pv && (pv.late || pv.soon || pv.open)) { pp.hidden = false; pp.innerHTML = '<span class="odot w"></span>' + (pv.late ? pv.late + ' privacy request late' : pv.soon ? pv.soon + ' privacy request due soon' : pv.open + ' privacy request open'); } else pp.hidden = true;
+  const P = OV2.prev; el_('ov-ig').hidden = el_('ov-wa').hidden = !P; if (!P) return; const I = P.instagram, W = P.whatsapp;
+  if (I && !I.error) el_('ov-ig').innerHTML = `<div class="ch"><h2>Instagram</h2><span class="tag" style="background:${I.connected ? 'var(--o-sage);color:#1b2a10' : 'var(--o-accent);color:var(--o-accent-ink)'};border:0">${I.connected ? 'connected' : 'not connected'}</span><span class="sp"></span><span class="mute sm">${I.postedToday} of ${I.dailyCap} posts today</span></div>${I.posts.length ? `<div class="posts">${I.posts.slice(0, 3).map(p => `<div class="post">${p.thumb ? `<img class="ph" style="width:100%;object-fit:cover" alt="" loading="lazy" src="${esc(p.thumb)}">` : '<div class="ph" style="background:var(--o-chip)"></div>'}<div class="m"><b>${esc(p.product || p.caption || p.kind)}</b><span class="st${p.status === 'posted' ? '' : ' q'}">${esc(p.status)}</span></div></div>`).join('')}</div>` : '<p class="empty">No posts yet.</p>'}`;
+  if (W && !W.error) el_('ov-wa').innerHTML = `<div class="ch"><h2>WhatsApp</h2><span class="tag" style="background:${W.mode === 'live' ? 'var(--o-sage);color:#1b2a10' : 'var(--o-accent);color:var(--o-accent-ink)'};border:0">${esc(W.mode)}</span><span class="sp"></span><span class="mute sm">${W.active24h} chat${W.active24h === 1 ? '' : 's'} wrote in 24 h</span></div><div class="owa">${W.recent.slice(0, 3).map((c, i) => `<div class="wr"><div class="av" style="background:${['var(--o-sage)', 'var(--o-sky)', 'var(--o-rose)'][i % 3]}">${esc(String(c.who).slice(-2))}</div><div><b style="font-weight:500">${esc(c.who)}</b><div class="mute sm">last message ${ov2Tm(c.lastInboundAt)} · ${c.windowOpen ? 'free replies open' : 'template needed'}</div></div>${c.unread ? `<span class="tag warn">${c.unread} unread</span>` : `<span class="tag">${esc(c.status)}</span>`}</div>`).join('') || '<p class="empty">No chats yet.</p>'}</div><p class="mute sm" style="margin:10px 0 0">Message text is never shown here and numbers are masked.</p>`;
+}
 // ---- Ops: one page for the developer to see whether anything is wrong, in every part of the shop ----
 const OPS = { r: null, open: {}, timer: null };
 const OPS_ICON = { ok: '✓', warn: '!', fail: '✕', info: 'i' };
@@ -6488,9 +6766,9 @@ async function acceptWebOrder(id) {
   for (const i of order.items) { const p = db.products.find(x => x.id === i.productId); if (!p) continue; if (p.stock >= i.quantity) { const prev = p.stock; p.stock -= i.quantity; addLog('stock_out', p.name, p.sku, -i.quantity, prev, p.stock, `Order ${oid}`); } else short.push(p.name); }
   saveDB();
   try { await admApi('POST', '/admin/api/web-orders/update', { id, status: 'accepted', orderId: oid }); } catch (e) { showToast('Saved here, but could not mark it on the server: ' + e.message, 'error'); }
-  showToast(short.length ? `Added as ${oid}. Not enough stock for ${short.join(', ')}: check it.` : `Added as ${oid}. Now message the customer on WhatsApp.`, short.length ? 'error' : 'success'); renderAdminContent('orders');
+  showToast(short.length ? `Added as ${oid}. Not enough stock for ${short.join(', ')}: check it.` : `Added as ${oid}. Now message the customer on WhatsApp.`, short.length ? 'error' : 'success'); renderAdminContent(currentAdminTab);
 }
-async function declineWebOrder(id) { const why = prompt('Why is it not possible? (kept on record). Then tell the customer on WhatsApp.'); if (why === null) return; if (!why.trim()) { showToast('Please say why', 'error'); return; } try { await admApi('POST', '/admin/api/web-orders/update', { id, status: 'declined', note: why }); loadWebOrders(); } catch (e) { showToast(e.message, 'error'); } }
+async function declineWebOrder(id) { const why = prompt('Why is it not possible? (kept on record). Then tell the customer on WhatsApp.'); if (why === null) return; if (!why.trim()) { showToast('Please say why', 'error'); return; } try { await admApi('POST', '/admin/api/web-orders/update', { id, status: 'declined', note: why }); loadWebOrders(); if (typeof ov2Load === 'function' && el_('ov-chart')) ov2Load(false); } catch (e) { showToast(e.message, 'error'); } }
 // ---- the public website sends each order to the shop (nothing is charged on the site) ----
 const WEB_PENDING = 'ap_pending_orders';
 function webPayload(order, u) { return { order: { id: order.id, date: order.date, total: order.total, items: order.items.map(i => ({ productId: i.productId, name: i.name, sku: i.sku, category: i.category, quantity: i.quantity, price: i.price })), shippingAddress: order.shippingAddress, billTo: order.billTo, pricing: order.pricing, instructions: order.instructions || '', gift: order.gift, coupon: (order.pricing && order.pricing.coupon) || '', delivery: order.delivery, addressCheck: order.addressCheck }, customer: { id: u.id, name: u.name, phone: u.phone, email: u.email, addr: u.addr, consents: u.consents, termsVersion: u.termsVersion, noticeVersion: u.noticeVersion, ageConfirmedAt: u.ageConfirmedAt, nominee: u.nominee || null }, consentLog: db.consentLog.filter(c => c.userId === u.id).slice(-30) }; }

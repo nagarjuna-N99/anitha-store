@@ -9,6 +9,7 @@ import path from 'node:path';
 import { publicView } from './shopdata.mjs';
 import { runAi, cleanPlan, localPlan, istIso } from './aihelper.mjs';
 import { OPS_HTML } from './opspage.mjs';
+import { previewsOf } from './ops.mjs';
 import crypto from 'node:crypto';
 
 export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, ops, opsReport, wa, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
@@ -22,7 +23,7 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
 
   return async function handle(req, res, url, route) {
     const ip = ipOf(req);
-    if (cfg.adminAllowedIps && cfg.adminAllowedIps.length && (route === 'GET /admin' || route === 'GET /admin/' || url.pathname.startsWith('/admin/api/')) && !cfg.adminAllowedIps.includes(ip)) { json(res, 404, { error: 'not found' }, SEC); return true; }   // optional: only these addresses can even see the owner app
+    if (cfg.adminAllowedIps && cfg.adminAllowedIps.length && (route === 'GET /admin' || route === 'GET /admin/' || route === 'GET /admin2' || url.pathname.startsWith('/admin/api/')) && !cfg.adminAllowedIps.includes(ip)) { json(res, 404, { error: 'not found' }, SEC); return true; }   // optional: only these addresses can even see the owner app
     // ---------- the stand-alone Ops page: its own key, no owner login, works even if the owner app is broken ----------
     if (route === 'GET /ops' || route === 'GET /ops/' || route === 'GET /ops/api/report') {
       const on = String(cfg.opsToken || '').length >= 24; if (!on) return json(res, 404, { error: 'not found' }, SEC), true;
@@ -33,6 +34,11 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       if (!given || !crypto.timingSafeEqual(h(given), h(cfg.opsToken))) { opsTries.push({ ip, t }); auth.audit('ops-login', ip, false); return json(res, 401, { error: 'Wrong key.' }, SEC), true; }
       auth.audit('ops-report', ip, true);
       json(res, 200, await opsReport({ cfg, auth, shop, privacy, weborders, store, smtpMeta, ig, analytics, ops, reportState, social, wa }), SEC); return true;
+    }
+    // ---------- the new owner look, next to the classic one: the very same app and the same sign-in, only the look differs (class "ui2") ----------
+    if (route === 'GET /admin2' || route === 'GET /admin2/') {
+      const f = path.join(ROOT, 'public', 'admin.html'); if (!fs.existsSync(f)) return json(res, 404, { error: 'admin.html is not built yet (run tools/build-split.py)' }, SEC), true;
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Content-Security-Policy': CSP, ...SEC }); res.end(fs.readFileSync(f, 'utf8').replace('<html lang="en">', '<html lang="en" class="ui2">')); return true;
     }
     // ---------- the admin page ----------
     if (route === 'GET /admin' || route === 'GET /admin/') {
@@ -101,7 +107,7 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       }
       const a = auth.authorize(req, { write: !read, upload: route === 'POST /admin/api/video/upload' }, ip); if (a.code !== 200) return send(res, a), true;
       const who = a.session.user || 'owner', role = a.session.role || 'owner', wrote = (ev, extra = '') => auth.audit(ev, ip, true, (who !== 'owner' ? `[${who}] ` : '') + extra);
-      if (role === 'staff' && /^\/admin\/api\/(privacy|email|report|ai-key|import|team|2fa|audit|ops|growth\/(done|plan))/.test(url.pathname)) return send(res, { code: 403, error: 'Only the owner can do this.' }), true;
+      if (role === 'staff' && /^\/admin\/api\/(privacy|email|report|ai-key|import|team|2fa|audit|ops|previews|growth\/(done|plan))/.test(url.pathname)) return send(res, { code: 403, error: 'Only the owner can do this.' }), true;
       if (route === 'POST /admin/api/logout') { auth.logout(req, ip); send(res, { code: 200, ok: true }, { 'Set-Cookie': auth.clearCookie() }); return true; }
 
       if (route === 'GET /admin/api/db') { const g = shop.get(); send(res, { code: 200, version: g.version, db: g.db }); return true; }
@@ -113,6 +119,7 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       if (route === 'POST /admin/api/2fa/confirm') { const r = auth.twoFactorConfirm(await body(req, 5_000), ip); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
       if (route === 'POST /admin/api/2fa/off') { const r = auth.twoFactorOff(await body(req, 5_000), ip); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
       if (route === 'GET /admin/api/ops') { send(res, { code: 200, ...(await opsReport({ cfg, auth, shop, privacy, weborders, store, smtpMeta, ig, analytics, ops, reportState, social, wa })) }); return true; }
+      if (route === 'GET /admin/api/previews') { send(res, { code: 200, previews: previewsOf({ cfg, ig, social, analytics, store, wa }).previews }); return true; }
       if (route === 'GET /admin/api/audit') { send(res, { code: 200, events: auth.auditTail(100) }); return true; }
 
       // ---------- Instagram ----------
