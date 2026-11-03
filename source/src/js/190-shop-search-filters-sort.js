@@ -64,12 +64,9 @@ const shopFilterCount = () => (SHOP.occasion ? 1 : 0) + SHOP.fabrics.length + SH
 function initShopToolbar() {
   const nsb = document.getElementById('navSearch'); if (nsb) nsb.innerHTML = `<div class="shop-search"><span aria-hidden="true">🔍</span><input id="shop-q" type="search" placeholder="Search sarees — try “kanchipuram”, “red silk”, “wedding”" oninput="shopSearch(this.value)" onkeydown="if(event.key==='Enter'){closeNavSearch();}" aria-label="Search sarees" autocomplete="off"><button type="button" class="shop-q-clear" id="shop-q-clear" aria-label="Clear search" onclick="shopSearch('',true)" style="display:none;">×</button></div><button type="button" class="nav-search-close" aria-label="Close search" onclick="closeNavSearch()">Close</button>`;
   const box = document.getElementById('shopToolbar'); if (!box) return;
-  box.innerHTML = `<div class="shop-bar">
-    <select id="shop-sort" onchange="shopSort(this.value)" aria-label="Sort sarees"><option value="featured">Featured</option><option value="new">Newest first</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="name">Name A–Z</option><option value="rating">Top rated</option></select>
-    <button type="button" class="btn-filters" id="shop-filter-btn" onclick="shopTogglePanel()" aria-expanded="false">⚙ Filters <span class="fcount" id="shop-fcount"></span></button></div>
-    <div class="shop-panel" id="shop-panel"><div id="shop-panel-body"></div></div>
-    <div class="shop-meta"><span id="shop-count" aria-live="polite"></span><div id="shop-active" class="chips"></div></div>`;
-}
+  box.innerHTML = `<div class="shop-bar"><button type="button" class="btn-filters" id="shop-filter-btn" onclick="shopTogglePanel()" aria-expanded="false">Filter &amp; sort <span class="fcount" id="shop-fcount"></span></button></div>
+    <div class="shop-panel" id="shop-panel"><div class="shop-sortrow"><label for="shop-sort">Sort by</label><select id="shop-sort" onchange="shopSort(this.value)" aria-label="Sort sarees"><option value="featured">Featured</option><option value="new">Newest first</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="name">Name A–Z</option><option value="rating">Top rated</option></select></div><div id="shop-panel-body"></div></div>
+    <div class="shop-meta"><div id="shop-active" class="chips"></div></div>`;}
 function renderShopPanel() {
   const body = document.getElementById('shop-panel-body'); if (!body) return;
   const prods = categoryProducts().length ? categoryProducts() : kindProducts(), count = (arr, key) => { const m = {}; arr.forEach(v => { m[v] = (m[v] || 0) + 1; }); return Object.entries(m).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])); };
@@ -95,7 +92,7 @@ function shopMeta(n, total) {
   SHOP.fabrics.forEach(v => chips.push(['fabrics', v, v])); SHOP.colours.forEach(v => chips.push(['colours', v, v]));
   if (SHOP.min !== '' || SHOP.max !== '') chips.push(['price', '', `₹${SHOP.min !== '' ? money(SHOP.min) : '0'} – ${SHOP.max !== '' ? '₹' + money(SHOP.max) : 'any'}`]);
   if (SHOP.inStock) chips.push(['stock', '', 'In stock']);
-  document.getElementById('shop-active').innerHTML = chips.map(([k, v, l]) => `<span class="chip">${esc(l)}<button type="button" data-k="${k}" data-v="${esc(v)}" onclick="shopRemove(this.dataset.k,this.dataset.v)" aria-label="Remove filter ${esc(l)}">×</button></span>`).join('') + (chips.length > 1 ? `<button type="button" class="linkbtn" onclick="shopClearAll()">Clear all</button>` : '');
+  document.getElementById('shop-active').innerHTML = (chips.length ? '<span class="flabel">Filtered</span>' : '') + chips.map(([k, v, l]) => `<span class="chip">${esc(l)}<button type="button" data-k="${k}" data-v="${esc(v)}" onclick="shopRemove(this.dataset.k,this.dataset.v)" aria-label="Remove filter ${esc(l)}">×</button></span>`).join('') + (chips.length > 1 ? `<button type="button" class="linkbtn" onclick="shopClearAll()">Clear all</button>` : '');
 }
 function shopEmptyHTML() {
   const filtered = shopFilterCount() || SHOP.q.trim();

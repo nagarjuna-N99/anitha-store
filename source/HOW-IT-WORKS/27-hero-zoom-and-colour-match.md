@@ -61,3 +61,6 @@ All slides now share one text look, so the banner reads as one design. Pick a lo
 ## Update 8 (5 Nov 2026): the Collection page banner, and one search
 - The Collection page opens with a banner photo and words. Edit it under Home Page → **Collection page banner**. It uses **exactly the same editor as a home slide**: photo (upload or link; until you pick one it uses the first home page photo), small heading, title, description, button text and link, ✨ Suggest the words, the row of looks (Auto, Elegant, Bold, Modern, Soft, Classic), and under **More options** the photo position, zoom, move, darkness, every text option, colours and colour matching. The look is shared with the home slides, so a look chosen on either one changes both. Switch it off with its Show switch.
 - The website now has one search, in the top bar on every page. Tap the 🔍: a search bar opens under the header. Typing from any page shows the results on the Collection page. The extra search box that sat in the middle of the Collection page is gone (Sort and Filters stay).
+
+## Update 9 (5 Nov 2026): the Collection page layout
+The Collection page now has a title block (Home / The Collection, the title and how many sarees), one **Filter & sort** button (sort and filters are in the panel it opens), a line saying prices include taxes, and calmer saree cards on phones.
