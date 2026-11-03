@@ -49,7 +49,7 @@ Required to start the owner app: `DATA_DIR`, `ADMIN_SETUP_TOKEN` (first sign-up 
 
 ## Server routes
 Public: `GET /health`, `GET /admin2` (the new look: the same owner page with class ui2), `GET /ops` + `GET /ops/api/report` (own key `OPS_TOKEN`; 404 when unset), `GET /public/shop`, `POST /public/hit`, `POST /public/rights` (privacy requests), `POST /public/order` (website orders; text/plain JSON, origin-checked, rate-limited), `GET /media/<id>.jpg|.mp4`, `GET /admin` (the owner app page), WhatsApp `GET|POST /webhook`, `POST /payments/webhook`, `POST /cart/sync`, `/inbox` and `/test` pages.
-Owner (session + CSRF): `/admin/api/` `ops, previews, web-orders (+/update), team (+/add, /remove, /password; owner only), privacy/{verify-start, verify, ticket-new, summary}, state, setup, login, logout, db (GET/PUT), version, import, password, 2fa/*, audit, ai-key (+/remove), email (+/remove, /test), growth (+/plan, /done), report/send (kind), report/preview (kind), report/prefs, privacy (+/ticket, /breach, /access, /erase, /sweep, /log), notify-tracking, social/(status, media, plan, post, cancel, now, retry), video/(upload, job, review)`.
+Owner (session + CSRF): `/admin/api/` `ops, previews, agents/ops-watch (+/run), web-orders (+/update), team (+/add, /remove, /password; owner only), privacy/{verify-start, verify, ticket-new, summary}, state, setup, login, logout, db (GET/PUT), version, import, password, 2fa/*, audit, ai-key (+/remove), email (+/remove, /test), growth (+/plan, /done), report/send (kind), report/preview (kind), report/prefs, privacy (+/ticket, /breach, /access, /erase, /sweep, /log), notify-tracking, social/(status, media, plan, post, cancel, now, retry), video/(upload, job, review)`.
 Assistant (bearer `ADMIN_TOKEN` or the owner session): `/api/ai`, `/api/ai/reply`, `/api/inbox*`, `/api/orders/*`, `/api/carts*`, `/api/catalogue`, `/api/status`, `/api/test-chat`.
 
 ## The shop data object (`db`)
@@ -81,3 +81,5 @@ Ops page: `wa-assistant/src/ops.mjs` and `opspage.mjs`, setting `OPS_TOKEN` (see
 New owner look: `/admin2`, `ui2css` block + `ov2*` + `ui2Guard` in `anitha-store.html` (see guide 23).
 
 Pages (Care/Journal/Atelier) are data in `db.pages`, drawn by `renderPublicPages`, edited in the Pages tab (see guide 24).
+
+AI helpers (agents): `src/agents.mjs`, tasks in `src/aihelper.mjs`, watcher timer in `server.mjs` (see guide 25).

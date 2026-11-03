@@ -12,13 +12,13 @@ import { OPS_HTML } from './opspage.mjs';
 import { previewsOf } from './ops.mjs';
 import crypto from 'node:crypto';
 
-export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, ops, opsReport, wa, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
+export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, ops, opsReport, wa, watchRun, watchRead, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
   const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY', 'Cross-Origin-Resource-Policy': 'same-origin', 'Cache-Control': 'no-store', ...(auth.secure ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' } : {}) };
   const CSP = "default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'";
   const ipOf = req => String(req.socket.remoteAddress || '').replace(/^::ffff:/, '');   // never trust X-Forwarded-For for security decisions
   const send = (res, r, extra = {}) => json(res, r.code || 200, r.code && r.code >= 400 ? { error: r.error, retryAfter: r.retryAfter } : r, { ...SEC, ...extra });
   const body = async (req, limit = 200_000) => { try { return JSON.parse((await readBody(req, limit)).toString('utf8') || '{}'); } catch (e) { throw Object.assign(new Error(e.code === 413 ? 'Too large.' : 'Bad request.'), { code: e.code === 413 ? 413 : 400 }); } };
-  let keyTries = [], reviewTries = [], emailTries = [], opsTries = [];
+  let keyTries = [], reviewTries = [], emailTries = [], opsTries = [], watchTries = [];
   const mask = s => s ? s.slice(0, 3) + '…' + s.slice(-3) : '';
 
   return async function handle(req, res, url, route) {
@@ -33,7 +33,7 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       const given = String(req.headers.authorization || '').replace(/^Bearer\s+/i, ''), h = s => crypto.createHash('sha256').update(String(s)).digest();
       if (!given || !crypto.timingSafeEqual(h(given), h(cfg.opsToken))) { opsTries.push({ ip, t }); auth.audit('ops-login', ip, false); return json(res, 401, { error: 'Wrong key.' }, SEC), true; }
       auth.audit('ops-report', ip, true);
-      json(res, 200, await opsReport({ cfg, auth, shop, privacy, weborders, store, smtpMeta, ig, analytics, ops, reportState, social, wa }), SEC); return true;
+      json(res, 200, { ...(await opsReport({ cfg, auth, shop, privacy, weborders, store, smtpMeta, ig, analytics, ops, reportState, social, wa })), watch: watchRead() }, SEC); return true;
     }
     // ---------- the new owner look, next to the classic one: the very same app and the same sign-in, only the look differs (class "ui2") ----------
     if (route === 'GET /admin2' || route === 'GET /admin2/') {
@@ -107,7 +107,7 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       }
       const a = auth.authorize(req, { write: !read, upload: route === 'POST /admin/api/video/upload' }, ip); if (a.code !== 200) return send(res, a), true;
       const who = a.session.user || 'owner', role = a.session.role || 'owner', wrote = (ev, extra = '') => auth.audit(ev, ip, true, (who !== 'owner' ? `[${who}] ` : '') + extra);
-      if (role === 'staff' && /^\/admin\/api\/(privacy|email|report|ai-key|import|team|2fa|audit|ops|previews|growth\/(done|plan))/.test(url.pathname)) return send(res, { code: 403, error: 'Only the owner can do this.' }), true;
+      if (role === 'staff' && /^\/admin\/api\/(privacy|email|report|ai-key|import|team|2fa|audit|ops|previews|agents|growth\/(done|plan))/.test(url.pathname)) return send(res, { code: 403, error: 'Only the owner can do this.' }), true;
       if (route === 'POST /admin/api/logout') { auth.logout(req, ip); send(res, { code: 200, ok: true }, { 'Set-Cookie': auth.clearCookie() }); return true; }
 
       if (route === 'GET /admin/api/db') { const g = shop.get(); send(res, { code: 200, version: g.version, db: g.db }); return true; }
@@ -118,7 +118,9 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       if (route === 'POST /admin/api/2fa/start') { send(res, auth.twoFactorStart(await body(req, 5_000), ip)); return true; }
       if (route === 'POST /admin/api/2fa/confirm') { const r = auth.twoFactorConfirm(await body(req, 5_000), ip); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
       if (route === 'POST /admin/api/2fa/off') { const r = auth.twoFactorOff(await body(req, 5_000), ip); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
-      if (route === 'GET /admin/api/ops') { send(res, { code: 200, ...(await opsReport({ cfg, auth, shop, privacy, weborders, store, smtpMeta, ig, analytics, ops, reportState, social, wa })) }); return true; }
+      if (route === 'GET /admin/api/ops') { send(res, { code: 200, ...(await opsReport({ cfg, auth, shop, privacy, weborders, store, smtpMeta, ig, analytics, ops, reportState, social, wa })), watch: watchRead() }); return true; }
+      if (route === 'GET /admin/api/agents/ops-watch') { send(res, { code: 200, last: watchRead() }); return true; }
+      if (route === 'POST /admin/api/agents/ops-watch/run') { const t = Date.now(); if (watchTries.length && t - watchTries[watchTries.length - 1] < 20_000) return send(res, { code: 429, error: 'Please wait a few seconds.' }), true; watchTries.push(t); watchTries = watchTries.slice(-5); wrote('ops-watch'); send(res, { code: 200, last: await watchRun(true) }); return true; }
       if (route === 'GET /admin/api/previews') { send(res, { code: 200, previews: previewsOf({ cfg, ig, social, analytics, store, wa }).previews }); return true; }
       if (route === 'GET /admin/api/audit') { send(res, { code: 200, events: auth.auditTail(100) }); return true; }
 

@@ -3,7 +3,7 @@
 > **STANDING RULE (owner's instruction, 23 Oct 2026):** this record and the `HOW-IT-WORKS/` folder are updated **after every change or update**, in the same step as the change, never later. A change is not finished until (1) the code is tested, (2) a dated entry is added to the Change Log below, (3) any affected `HOW-IT-WORKS/` page is corrected, (4) `./check-record.sh` has been run (it fails if the record or how-it-works is behind the code).
 > Also standing: the owner wants chats remembered for later use; this record is that memory for the project.
 
-**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 520 automated checks) · **Browser test suites:** 27 (see §6)
+**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 530 automated checks) · **Browser test suites:** 28 (see §6)
 
 ---
 
@@ -111,8 +111,9 @@ Owner's guidance: *"we will setup everything after we host it"* — real hosting
 | `order-test.cjs` | 11 | paid WhatsApp orders imported into the store |
 | `coupon-test.cjs` | 18 | coupon rules in store and assistant |
 | `accessories-test.cjs` | 22 | accessory tabs/categories, filters and search per kind, Complete-the-look rows, Category Manager, product form groups, assistant export type |
+| `agents-test.cjs` | 27 | the five AI helpers with and without Claude: order messages, privacy replies, weekly content, catalogue batch, Ops watcher note |
 | `pages-ai-invoices-test.cjs` | 38 | invoice search/sort/group, category auto-fill and one-click product AI, editable Care/Journal/Atelier pages |
-| `ui2-test.cjs` | 43 | the new owner look: same page as classic, all 23 screens identical, Overview numbers and website-order buttons, light/dark readable |
+| `ui2-test.cjs` | 48 | the new owner look: same page as classic, all 23 screens identical, Overview numbers and website-order buttons, light/dark readable |
 | `dpdp2-test.cjs` | 29 | website orders to the owner (accept, decline, retry queue), checking who is asking, logging a phone request, provider ticks, erased count, notice archive, Dashboard reminder, helper logins |
 | `admin-app-test.cjs` | 35 | the real owner app against the real server: account setup, sign-in, wrong-password and lockout screens, 2-step sign-in, saving and merging, the public website, session end, backup, Instagram dialog / schedule / post now |
 | `drafts-ready-test.cjs` | 22 | Ready-to-post drafts: details dialog, built-in and Claude AI fill, readiness, filters, Post now / Post all ready, SKU clash, Fill all |
@@ -133,6 +134,15 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**4 Nov 2026 (Five AI helpers: Ops watcher, catalogue batch, order messages, privacy replies, weekly content)**
+- **All draft-only**; each works without a Claude key (built-in writer, said plainly); no phone, email, street or full name goes to Claude. Guide: HOW-IT-WORKS/25-ai-agents.md.
+- **Ops watcher:** daily ~8:15 IST note from the Ops checks (Claude or built-in), shown on the Ops tab and `/ops`; emailed only when something needs fixing (or Mondays for warnings); "Write it now"; owner-only routes `GET/POST /admin/api/agents/ops-watch`; state in `ops-watch.json`.
+- **Catalogue batch:** Saved Drafts → many photos (max 40) → drafts with category, SKU, name, description, tags and SEO; price left for the owner; nothing published.
+- **Order desk:** ✉ Message on orders and website orders (Orders tab, Overview); stages received/confirmed/packed/shipped/delivered; Copy or Open in WhatsApp.
+- **Privacy helper:** ✨ Draft a reply on each request (type, 30-day promise, 6-year invoice rule, days left); counts and first name only; Save as a note.
+- **Weekly content:** captions + a hidden Journal story; "Draft replies for all waiting reviews"; weekly nudge on the Overview.
+- Tests: server 530 (+10); `tests/agents-test.cjs` 27 checks; +5 checks for `/admin2` in `ui2-test.cjs`. Not tested: real Claude output, the real 8:15 email, a 40-photo batch from a phone.
 
 **3 Nov 2026 (Invoice search and sort, one-click product AI, editable Care / Journal / Atelier pages)**
 - **Invoices:** search (name, phone, invoice/order number), customer, year, month, date range, sort (date, amount, customer, number) and group by customer/month/year with subtotals; count, total and average line.

@@ -13,7 +13,7 @@ const { chromium } = require(process.env.PW);
     { id: 'T2', userId: 'u1', customer: 'Priya Ramakrishnan', phone: '+919876543210', total: 18500, status: 'delivered', date: ymd(new Date()), source: 'website', items: [{ productId: 'p3', name: 'Pure Maheswari Silk', quantity: 1, price: 18500, category: 'Maheswari' }], pricing: {} }];
     db.users[0].addr = { street: '12 banjara hills', city: 'hyderabad ', state: 'karnataka', pincode: '500034' }; db.users[1].phone = db.users[0].phone; db.users[1].addr = { street: '5 Indiranagar', city: 'Bangalore', state: 'Karnataka', pincode: '560038' }; db.logs.unshift({ id: 99, type: 'product_created', product: 'Coral Ponduru Khadi', time: '2026-07-01 10:00', reason: 'x' }); });
   await tab('ai');
-  ok('AI Helper tab opens with 7 tool sections and the switches', await ev(() => document.querySelectorAll('.ai-sec').length === 7 && /AI Helper/.test(document.querySelector('.admin-header h2').textContent)));
+  ok('AI Helper tab opens with 8 tool sections and the switches', await ev(() => document.querySelectorAll('.ai-sec').length === 8 && /AI Helper/.test(document.querySelector('.admin-header h2').textContent)));
   ok('shown as not connected, with how to connect', /not connected/i.test(await txt('adminContent')));
   ok('AI Helper is in the desktop and phone menus', await ev(() => !!document.querySelector('.admin-nav-item[data-tab="ai"]') && !!document.querySelector('#adminMobileNavList li[data-tab="ai"]')));
   // ---- built-in (not connected) ----
