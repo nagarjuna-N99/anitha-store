@@ -62,6 +62,8 @@ export function loadConfig(overrides = {}) {
     // POST {phone, token} -> {ok:true}. Required in live mode.
     customerTokenCheckUrl: env('CUSTOMER_TOKEN_CHECK_URL'),
     adminToken: env('ADMIN_TOKEN'),
+    // The stand-alone developer page /ops has its own key. Empty or shorter than 24 characters = the page is switched off (404).
+    opsToken: env('OPS_TOKEN'),
     // Owner app (/admin): the first password is set once with this token. cookieSecure must stay on whenever the server is reached over https.
     adminSetupToken: env('ADMIN_SETUP_TOKEN'),
     adminAllowedIps: env('ADMIN_ALLOWED_IPS').split(',').map(x => x.trim().replace(/^::ffff:/, '')).filter(Boolean),

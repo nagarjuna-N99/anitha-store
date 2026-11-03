@@ -25,5 +25,7 @@ services:
         value: https://nagarjuna-n99.github.io
       - key: SITE_URL
         value: https://nagarjuna-n99.github.io/anitha-store
+      - key: OPS_TOKEN
+        sync: false
       - key: ANTHROPIC_API_KEY
         sync: false

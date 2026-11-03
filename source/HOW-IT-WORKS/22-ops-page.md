@@ -1,7 +1,15 @@
 # 22 · The Ops page (for the developer)
 
-**Where:** owner app → 🩺 **Ops** (owner only; helpers cannot see it, and the server refuses them: `GET /admin/api/ops` returns 403).
 **What it is:** one read-only health check of the whole shop. It changes nothing and never shows a secret (only "set" or "missing"). Press **Check again**, tick **Re-check every minute**, or **Copy report as text** to paste into a ticket.
+
+## Two ways to open it
+1. **Stand-alone (for the developer): `https://<your server>/ops`.** Its own key, `OPS_TOKEN`, no owner login: it works even if the owner app is broken or locked. Set `OPS_TOKEN` in the Render environment (24+ random characters); if empty or shorter the page does not exist (404). The key is typed on the page and kept only in that tab (no cookie). Eight wrong tries lock it for 15 minutes; wrong tries go in the activity log (`ops-login`). Give it to the developer only.
+2. **Inside the owner app: 🩺 Ops** (owner only; helpers get 403).
+
+## Previews: Instagram and WhatsApp
+- **📸 Instagram:** connected or not, posts today against the daily limit, queued / posted / failed counts, last follower count, and the **latest 6 posts** (photo, product, caption, time, status, error, link to the live post).
+- **💬 WhatsApp:** live or dry-run, chats, how many wrote in the last 24 h, how many are with a person, unread, STOP count, last customer message and activity, owner alerts on/off, the **6 most recent chats** with whether the free 24-hour reply window is open, and in dry-run what it *would have sent* (type and template only).
+- **Privacy:** customer message text is never shown and numbers are masked (last 4 digits). WhatsApp has no shop "status" (stories) feature, so "status" means the connection and activity above.
 
 Each line is ✓ ok, ! warn, ✕ fail or i info. Problems are open by default and show a "→ fix" hint.
 
@@ -22,4 +30,4 @@ Each line is ✓ ok, ! warn, ✕ fail or i info. Problems are open by default an
 **Not checked on purpose:** it does not call Meta, Instagram, Razorpay or the mail server (that would use quota or send mail). To test those, use Test email in Growth and look at the Render logs.
 
 **Adding a check:** edit `wa-assistant/src/ops.mjs` (`add('Group', C(id, status, title, detail, fix))`), add a line to `tests/run.mjs` if it needs one, and update this table.
-Code: `src/ops.mjs`, route in `adminroutes.mjs`, screen `renderOpsAdmin` in `anitha-store.html`, tests in `tests/run.mjs` (ops:) and `tests/dpdp2-test.cjs`.
+Code: `src/ops.mjs` (the checks and previews), `src/opspage.mjs` (the stand-alone page), routes in `adminroutes.mjs` (`GET /ops`, `GET /ops/api/report`, `GET /admin/api/ops`), screen `renderOpsAdmin` in `anitha-store.html`, tests in `tests/run.mjs` (ops:) and `tests/dpdp2-test.cjs`.

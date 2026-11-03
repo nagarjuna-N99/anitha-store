@@ -8,19 +8,32 @@ import { CHANNELS } from './privacy.mjs';
 import path from 'node:path';
 import { publicView } from './shopdata.mjs';
 import { runAi, cleanPlan, localPlan, istIso } from './aihelper.mjs';
+import { OPS_HTML } from './opspage.mjs';
+import crypto from 'node:crypto';
 
-export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, ops, opsReport, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
+export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, ops, opsReport, wa, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
   const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY', 'Cross-Origin-Resource-Policy': 'same-origin', 'Cache-Control': 'no-store', ...(auth.secure ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' } : {}) };
   const CSP = "default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'";
   const ipOf = req => String(req.socket.remoteAddress || '').replace(/^::ffff:/, '');   // never trust X-Forwarded-For for security decisions
   const send = (res, r, extra = {}) => json(res, r.code || 200, r.code && r.code >= 400 ? { error: r.error, retryAfter: r.retryAfter } : r, { ...SEC, ...extra });
   const body = async (req, limit = 200_000) => { try { return JSON.parse((await readBody(req, limit)).toString('utf8') || '{}'); } catch (e) { throw Object.assign(new Error(e.code === 413 ? 'Too large.' : 'Bad request.'), { code: e.code === 413 ? 413 : 400 }); } };
-  let keyTries = [], reviewTries = [], emailTries = [];
+  let keyTries = [], reviewTries = [], emailTries = [], opsTries = [];
   const mask = s => s ? s.slice(0, 3) + '…' + s.slice(-3) : '';
 
   return async function handle(req, res, url, route) {
     const ip = ipOf(req);
     if (cfg.adminAllowedIps && cfg.adminAllowedIps.length && (route === 'GET /admin' || route === 'GET /admin/' || url.pathname.startsWith('/admin/api/')) && !cfg.adminAllowedIps.includes(ip)) { json(res, 404, { error: 'not found' }, SEC); return true; }   // optional: only these addresses can even see the owner app
+    // ---------- the stand-alone Ops page: its own key, no owner login, works even if the owner app is broken ----------
+    if (route === 'GET /ops' || route === 'GET /ops/' || route === 'GET /ops/api/report') {
+      const on = String(cfg.opsToken || '').length >= 24; if (!on) return json(res, 404, { error: 'not found' }, SEC), true;
+      if (route !== 'GET /ops/api/report') { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Content-Security-Policy': "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'", 'X-Robots-Tag': 'noindex', ...SEC }); res.end(OPS_HTML); return true; }
+      const t = Date.now(); opsTries = opsTries.filter(x => t - x.t < 900_000);
+      if (opsTries.filter(x => x.ip === ip).length >= 8) return json(res, 429, { error: 'Too many wrong tries.' }, SEC), true;
+      const given = String(req.headers.authorization || '').replace(/^Bearer\s+/i, ''), h = s => crypto.createHash('sha256').update(String(s)).digest();
+      if (!given || !crypto.timingSafeEqual(h(given), h(cfg.opsToken))) { opsTries.push({ ip, t }); auth.audit('ops-login', ip, false); return json(res, 401, { error: 'Wrong key.' }, SEC), true; }
+      auth.audit('ops-report', ip, true);
+      json(res, 200, await opsReport({ cfg, auth, shop, privacy, weborders, store, smtpMeta, ig, analytics, ops, reportState, social, wa }), SEC); return true;
+    }
     // ---------- the admin page ----------
     if (route === 'GET /admin' || route === 'GET /admin/') {
       const f = path.join(ROOT, 'public', 'admin.html'); if (!fs.existsSync(f)) return json(res, 404, { error: 'admin.html is not built yet (run tools/build-split.py)' }, SEC), true;
@@ -99,7 +112,7 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       if (route === 'POST /admin/api/2fa/start') { send(res, auth.twoFactorStart(await body(req, 5_000), ip)); return true; }
       if (route === 'POST /admin/api/2fa/confirm') { const r = auth.twoFactorConfirm(await body(req, 5_000), ip); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
       if (route === 'POST /admin/api/2fa/off') { const r = auth.twoFactorOff(await body(req, 5_000), ip); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
-      if (route === 'GET /admin/api/ops') { send(res, { code: 200, ...(await opsReport({ cfg, auth, shop, privacy, weborders, store, smtpMeta, ig, analytics, ops, reportState })) }); return true; }
+      if (route === 'GET /admin/api/ops') { send(res, { code: 200, ...(await opsReport({ cfg, auth, shop, privacy, weborders, store, smtpMeta, ig, analytics, ops, reportState, social, wa })) }); return true; }
       if (route === 'GET /admin/api/audit') { send(res, { code: 200, events: auth.auditTail(100) }); return true; }
 
       // ---------- Instagram ----------

@@ -1,13 +1,13 @@
 // DPDP round 2 in a real browser against the real server: website orders reach the owner, checking who is asking before data is shown,
 // logging a request that came by phone, the do-not-bring-back list, and helper logins that cannot open Privacy.
 const { chromium } = require(process.env.PW); const { spawn } = require('child_process'); const http = require('http'); const fs = require('fs'); const os = require('os'); const path = require('path');
-const ROOT = process.cwd(), SETUP = 'setup-token-0123456789', PW = 'Correct-Horse-9!', HPW = 'Helper-Pass-Strong-7!';
+const ROOT = process.cwd(), SETUP = 'setup-token-0123456789', PW = 'Correct-Horse-9!', HPW = 'Helper-Pass-Strong-7!', OPSK = 'ops-key-for-browser-test-0123456789';
 (async () => {
   let fails = 0; const ok = (n, c) => { if (!c) fails++; console.log(c ? 'PASS' : 'FAIL', n); };
   const free = () => new Promise(r => { const s = http.createServer(); s.listen(0, '127.0.0.1', () => { const p = s.address().port; s.close(() => r(p)); }); });
   const port = await free(), sitePort = await free(), data = fs.mkdtempSync(path.join(os.tmpdir(), 'dpdp2-')); let BASE = '';
   const site = http.createServer((q, r) => { r.writeHead(200, { 'content-type': 'text/html' }); r.end(fs.readFileSync(ROOT + '/build/site/index.html', 'utf8').replace(/window.__SHOP_API="[^"]*"/, 'window.__SHOP_API="' + BASE + '"')); }); await new Promise(r => site.listen(sitePort, '127.0.0.1', r));
-  const srv = spawn('node', ['server.mjs'], { cwd: ROOT + '/wa-assistant', env: { ...process.env, PORT: String(port), DATA_DIR: data, ADMIN_SETUP_TOKEN: SETUP, COOKIE_SECURE: 'false', PUBLIC_URL: 'https://shop.test', ALLOWED_ORIGINS: `http://127.0.0.1:${sitePort}`, ANTHROPIC_API_KEY: '', ADMIN_TOKEN: '' }, stdio: 'ignore' });
+  const srv = spawn('node', ['server.mjs'], { cwd: ROOT + '/wa-assistant', env: { ...process.env, PORT: String(port), DATA_DIR: data, ADMIN_SETUP_TOKEN: SETUP, COOKIE_SECURE: 'false', PUBLIC_URL: 'https://shop.test', ALLOWED_ORIGINS: `http://127.0.0.1:${sitePort}`, ANTHROPIC_API_KEY: '', ADMIN_TOKEN: '', OPS_TOKEN: OPSK }, stdio: 'ignore' });
   const base = `http://127.0.0.1:${port}`; BASE = base; for (let i = 0; i < 60; i++) { try { if ((await fetch(base + '/health')).ok) break; } catch (e) { } await new Promise(r => setTimeout(r, 200)); }
   const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' }); const sleep = ms => new Promise(r => setTimeout(r, ms));
   const errs = []; const mk = async () => { const c = await b.newContext({ viewport: { width: 1280, height: 900 } }); await c.route(/^https?:\/\/(?!127\.0\.0\.1)/, r => r.abort()); const p = await c.newPage(); p.on('pageerror', e => errs.push(e.message)); p.on('dialog', d => d.accept('Out of stock this week')); return { c, p }; };
@@ -61,6 +61,14 @@ const ROOT = process.cwd(), SETUP = 'setup-token-0123456789', PW = 'Correct-Hors
     ok('ops: the page shows a verdict and every area (server, data, security, website, orders, WhatsApp, AI, Instagram, email, privacy, errors)', await ev(() => { const t = document.getElementById('adminContent').innerText; return /fail ·/i.test(t) && ['Server', 'Shop data', 'Security', 'Public website', 'Orders & payments', 'WhatsApp', 'AI helpers', 'Instagram', 'Email', 'Privacy', 'Recent errors'].every(n => t.toLowerCase().includes(n.toLowerCase())); }));
     ok('ops: problems are open with a "→ fix" hint, and the report can be copied as text', await ev(() => /→/.test(document.getElementById('adminContent').innerText) && !!document.querySelector('#adminContent button[onclick="opsCopy()"]')));
     ok('ops: it sees the unanswered state of this test server (no email, WhatsApp not live) as warnings, not as ok', await ev(() => OPS.r.groups.find(g => g.name === 'Email').checks.some(c => c.id === 'smtp' && c.status === 'warn') && OPS.r.groups.find(g => g.name === 'WhatsApp').checks.some(c => c.id === 'wa-live' && c.status === 'warn')));
+    ok('ops: the owner tab also previews Instagram (status, counts, posts) and WhatsApp (mode, chats, 24-hour window)', await ev(() => { const t = document.getElementById('adminContent').innerText; return /Instagram/i.test(t) && /not connected/i.test(t) && /WhatsApp/i.test(t) && /dry-run/i.test(t) && /Message text is never shown/i.test(t); }));
+    // ---- the stand-alone Ops page (own key, no owner login) ----
+    const O = await mk(), op = O.p; await op.goto(base + '/ops'); await op.waitForSelector('#k');
+    await op.fill('#k', 'the-wrong-key'); await op.click('button[type=submit]'); await op.waitForFunction(() => /not right/.test(document.getElementById('e').textContent));
+    ok('standalone ops: a wrong key is explained and nothing is shown', await op.evaluate(() => document.getElementById('out').hidden === true));
+    await op.fill('#k', OPSK); await op.click('button[type=submit]'); await op.waitForSelector('#out .row', { timeout: 20000 });
+    ok('standalone ops: with the key it shows the verdict, every area and both previews, with no owner sign-in', await op.evaluate(() => { const t = document.getElementById('out').innerText; return /fail ·/i.test(t) && ['Server', 'Shop data', 'Security', 'Public website', 'Orders & payments', 'WhatsApp', 'AI helpers', 'Instagram', 'Email', 'Privacy', 'Recent errors'].every(n => t.includes(n)) && /Instagram/.test(t) && /not connected/.test(t) && /dry-run/.test(t) && /Message text is never shown/.test(t); }));
+    ok('standalone ops: the key is not kept after the tab closes (session only) and no cookie is set', await op.evaluate(() => document.cookie === '' && !localStorage.getItem('opsk')));
     // ---- helper logins ----
     await ev(() => switchAdminTab('settings')); await p.waitForSelector('#tm-name'); await p.fill('#tm-name', 'meena'); await p.fill('#tm-pass', HPW); await p.click('button:has-text("Add a helper")'); await sleep(800);
     ok('team: the owner can add a helper', await ev(() => /meena/.test(document.getElementById('sec-team').innerText)));
