@@ -138,6 +138,9 @@ See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
 
+**4 Nov 2026 (Hero slide editor simplified)**
+- Owner said the slide editor had become too complicated. Each slide now shows only: photo, small heading, title, description, button text, "Suggest the words", and one row of looks (Auto, Elegant, Bold, Modern, Soft, Classic; one tap sets font, weight, size, case and spacing). Everything else (photo position, zoom, darkness, button link, every text option, colour pickers, colour matching) is inside one folded "More options"; its open state is kept while editing. Tests updated (+2 checks).
+
 **4 Nov 2026 (Preview now matches the live page 100%; text style options; AI text style and words)**
 - **Cause of the mismatch:** a leftover rule (`max-width:100%` on the hero text column) in the admin preview let the title run on one line, while the website keeps it in its 600px column and breaks it in two. Removed. A test now measures the title, small heading, description and button boxes in the preview and on the website (position and size, same line breaks) and they must agree.
 - **Text style panel on every slide** (Home Page → slide → "Text style"): big-heading font (11 choices, loaded on demand), weight, italic/upright, capitals, shadow, description font, big-heading size, letter spacing, line spacing, description size, button look (filled/outline), and colour pickers for big heading, description, small heading, button and button text. Stored in `slide.type`, drawn through CSS variables so the website and the preview use the same rules.

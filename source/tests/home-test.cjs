@@ -55,6 +55,7 @@ const { chromium } = require(process.env.PW);
   await p.evaluate(() => heroSetting('autoplay', true));
 
   // appearance + buttons
+  await p.evaluate(() => document.querySelectorAll('.hs-fold').forEach(d => { d.open = true; })); await p.waitForTimeout(150);
   const s1 = p.locator('.hs >> nth=0');
   await s1.locator('label:has-text("Text position") + select').selectOption('center');
   await s1.locator('label:has-text("Photo focus") + select').selectOption('top');
