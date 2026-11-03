@@ -34,3 +34,8 @@ Matching a photo no longer turns the top bar colour on by itself: switch **Top b
 
 ## Update (4 Nov 2026)
 Matching a photo no longer turns the top bar colour on by itself: switch **Top bar follows the hero photo's colours** on only if you want it. The top bar is slimmer and shows the full logo (on a dark bar it sits on a white tile). The shop name is set in Bodoni Moda Bold Italic.
+
+## Update 2 (4 Nov 2026): automatic colours
+- You no longer need the match button: when you add or change a hero photo, or move/zoom it, the text, button and top-bar colours are picked and saved by themselves. The button is still there to redo it.
+- The top bar is always light: a pale tint of the photo's main colour, with the shop name and menu in a deep shade of the same colour. It follows the photo by default; switch it off in Home Page → Hero slides.
+- The header shows the round A/P monogram. The "Complimentary shipping" line now sits just above the footer; edit it under Home Page → Announcements.

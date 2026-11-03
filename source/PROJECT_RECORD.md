@@ -138,6 +138,11 @@ See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
 
+**4 Nov 2026 (Shipping line moved to the bottom; A/P monogram back; automatic header and text colours from the hero photo)**
+- The "Complimentary shipping..." line no longer sits above the header. It now shows as a quiet strip just above the footer (same Announcements editor, schedule and rotation). Suggested other places: on the product page under Add to cart, in the cart/checkout.
+- The header shows the round A/P monogram again, next to the shop name in Bodoni Moda Bold Italic.
+- **Automatic colours:** adding or moving a hero photo (upload, link, zoom, focus, text side) picks and saves the colours by itself (`heroAuto`, theme `v:2`); opening Home Page does the same for slides without them. The top bar is always a pale tint of the photo's main colour with a deep shade of the same colour for the name and menu (never a heavy dark bar), and follows the hero unless switched off (`headerMatch` now defaults to on). Old saved dark themes are converted on the fly (`navFromTheme`). On the website a slide with no saved colours is read in the visitor's browser when the photo allows it. Tests: hero-theme-test updated/+1.
+
 **4 Nov 2026 (Slimmer top bar with the full logo; shop name in Bodoni Moda Bold Italic; Shop by occasion centred)**
 - Top bar is about half the height (65px, was about 126px) and shows the **full logo** uncropped; on a dark bar it sits on a white tile. Matching a hero photo no longer switches "Top bar follows the hero photo" on by itself. "Shop by occasion" tiles are centred. The "Anitha Pemmasani" name uses Bodoni Moda Bold Italic (owner picked D from a font comparison; added to the Google Fonts link, falls back to Playfair Display, then Georgia). Tests: hero-theme-test updated (+2).
 
