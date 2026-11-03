@@ -56,11 +56,16 @@ const ROOT = process.cwd(), SETUP = 'setup-token-0123456789', PW = 'Correct-Hors
     // ---- the dashboard reminder ----
     await ev(() => switchAdminTab('dashboard')); await sleep(1000);
     ok('dashboard: warns that email is not set up (so new requests would go unseen)', await ev(() => /Set up email/.test(document.getElementById('dash-priv').innerText)));
+    // ---- the developer's Ops page ----
+    await ev(() => switchAdminTab('ops')); await p.waitForSelector('#adminContent .va-row', { timeout: 20000 });
+    ok('ops: the page shows a verdict and every area (server, data, security, website, orders, WhatsApp, AI, Instagram, email, privacy, errors)', await ev(() => { const t = document.getElementById('adminContent').innerText; return /fail ·/i.test(t) && ['Server', 'Shop data', 'Security', 'Public website', 'Orders & payments', 'WhatsApp', 'AI helpers', 'Instagram', 'Email', 'Privacy', 'Recent errors'].every(n => t.toLowerCase().includes(n.toLowerCase())); }));
+    ok('ops: problems are open with a "→ fix" hint, and the report can be copied as text', await ev(() => /→/.test(document.getElementById('adminContent').innerText) && !!document.querySelector('#adminContent button[onclick="opsCopy()"]')));
+    ok('ops: it sees the unanswered state of this test server (no email, WhatsApp not live) as warnings, not as ok', await ev(() => OPS.r.groups.find(g => g.name === 'Email').checks.some(c => c.id === 'smtp' && c.status === 'warn') && OPS.r.groups.find(g => g.name === 'WhatsApp').checks.some(c => c.id === 'wa-live' && c.status === 'warn')));
     // ---- helper logins ----
     await ev(() => switchAdminTab('settings')); await p.waitForSelector('#tm-name'); await p.fill('#tm-name', 'meena'); await p.fill('#tm-pass', HPW); await p.click('button:has-text("Add a helper")'); await sleep(800);
     ok('team: the owner can add a helper', await ev(() => /meena/.test(document.getElementById('sec-team').innerText)));
     const H = await mk(), hp = H.p; await signIn(hp, 'meena', HPW); await sleep(800);
-    ok('helper: signs in as a helper and the Privacy tab is hidden', await hp.evaluate(() => ADM.role === 'staff' || ADM.role === 'helper' || ADM.role !== 'owner') && await hp.evaluate(() => [...document.querySelectorAll('[data-tab="privacy"]')].every(e => getComputedStyle(e).display === 'none')));
+    ok('helper: signs in as a helper and the Privacy and Ops tabs are hidden', await hp.evaluate(() => ADM.role === 'staff' || ADM.role === 'helper' || ADM.role !== 'owner') && await hp.evaluate(() => [...document.querySelectorAll('[data-tab="privacy"],[data-tab="ops"]')].every(e => getComputedStyle(e).display === 'none')));
     ok('helper: the server refuses Privacy, team and backup data to a helper', await hp.evaluate(async () => { const r = []; for (const u of ['/admin/api/privacy', '/admin/api/team', '/admin/api/email']) r.push(await admApi('GET', u).then(() => 200, e => e.status)); return r.every(x => x === 403); }));
     ok('helper: can still work on orders', await hp.evaluate(() => admApi('GET', '/admin/api/web-orders').then(() => true, () => false)));
     ok('no JavaScript errors anywhere', errs.length === 0 || (console.log(errs), false));

@@ -9,7 +9,7 @@ import path from 'node:path';
 import { publicView } from './shopdata.mjs';
 import { runAi, cleanPlan, localPlan, istIso } from './aihelper.mjs';
 
-export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
+export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, ops, opsReport, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
   const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY', 'Cross-Origin-Resource-Policy': 'same-origin', 'Cache-Control': 'no-store', ...(auth.secure ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' } : {}) };
   const CSP = "default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'";
   const ipOf = req => String(req.socket.remoteAddress || '').replace(/^::ffff:/, '');   // never trust X-Forwarded-For for security decisions
@@ -88,7 +88,7 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       }
       const a = auth.authorize(req, { write: !read, upload: route === 'POST /admin/api/video/upload' }, ip); if (a.code !== 200) return send(res, a), true;
       const who = a.session.user || 'owner', role = a.session.role || 'owner', wrote = (ev, extra = '') => auth.audit(ev, ip, true, (who !== 'owner' ? `[${who}] ` : '') + extra);
-      if (role === 'staff' && /^\/admin\/api\/(privacy|email|report|ai-key|import|team|2fa|audit|growth\/(done|plan))/.test(url.pathname)) return send(res, { code: 403, error: 'Only the owner can do this.' }), true;
+      if (role === 'staff' && /^\/admin\/api\/(privacy|email|report|ai-key|import|team|2fa|audit|ops|growth\/(done|plan))/.test(url.pathname)) return send(res, { code: 403, error: 'Only the owner can do this.' }), true;
       if (route === 'POST /admin/api/logout') { auth.logout(req, ip); send(res, { code: 200, ok: true }, { 'Set-Cookie': auth.clearCookie() }); return true; }
 
       if (route === 'GET /admin/api/db') { const g = shop.get(); send(res, { code: 200, version: g.version, db: g.db }); return true; }
@@ -99,6 +99,7 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       if (route === 'POST /admin/api/2fa/start') { send(res, auth.twoFactorStart(await body(req, 5_000), ip)); return true; }
       if (route === 'POST /admin/api/2fa/confirm') { const r = auth.twoFactorConfirm(await body(req, 5_000), ip); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
       if (route === 'POST /admin/api/2fa/off') { const r = auth.twoFactorOff(await body(req, 5_000), ip); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
+      if (route === 'GET /admin/api/ops') { send(res, { code: 200, ...(await opsReport({ cfg, auth, shop, privacy, weborders, store, smtpMeta, ig, analytics, ops, reportState })) }); return true; }
       if (route === 'GET /admin/api/audit') { send(res, { code: 200, events: auth.auditTail(100) }); return true; }
 
       // ---------- Instagram ----------

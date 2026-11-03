@@ -49,7 +49,7 @@ Required to start the owner app: `DATA_DIR`, `ADMIN_SETUP_TOKEN` (first sign-up 
 
 ## Server routes
 Public: `GET /health`, `GET /public/shop`, `POST /public/hit`, `POST /public/rights` (privacy requests), `POST /public/order` (website orders; text/plain JSON, origin-checked, rate-limited), `GET /media/<id>.jpg|.mp4`, `GET /admin` (the owner app page), WhatsApp `GET|POST /webhook`, `POST /payments/webhook`, `POST /cart/sync`, `/inbox` and `/test` pages.
-Owner (session + CSRF): `/admin/api/` `web-orders (+/update), team (+/add, /remove, /password; owner only), privacy/{verify-start, verify, ticket-new, summary}, state, setup, login, logout, db (GET/PUT), version, import, password, 2fa/*, audit, ai-key (+/remove), email (+/remove, /test), growth (+/plan, /done), report/send (kind), report/preview (kind), report/prefs, privacy (+/ticket, /breach, /access, /erase, /sweep, /log), notify-tracking, social/(status, media, plan, post, cancel, now, retry), video/(upload, job, review)`.
+Owner (session + CSRF): `/admin/api/` `ops, web-orders (+/update), team (+/add, /remove, /password; owner only), privacy/{verify-start, verify, ticket-new, summary}, state, setup, login, logout, db (GET/PUT), version, import, password, 2fa/*, audit, ai-key (+/remove), email (+/remove, /test), growth (+/plan, /done), report/send (kind), report/preview (kind), report/prefs, privacy (+/ticket, /breach, /access, /erase, /sweep, /log), notify-tracking, social/(status, media, plan, post, cancel, now, retry), video/(upload, job, review)`.
 Assistant (bearer `ADMIN_TOKEN` or the owner session): `/api/ai`, `/api/ai/reply`, `/api/inbox*`, `/api/orders/*`, `/api/carts*`, `/api/catalogue`, `/api/status`, `/api/test-chat`.
 
 ## The shop data object (`db`)
@@ -75,3 +75,5 @@ Website checkout that creates orders on the server with a real payment gateway; 
 
 ## Round 2 files (3 Nov 2026)
 `shared/erase-core.js` -> `wa-assistant/src/erase.mjs` (also pasted in `anitha-store.html`), `wa-assistant/src/weborders.mjs` (website order inbox), team logins in `adminauth.mjs`. Setting `PRIVACY_OTP_TEMPLATE` (name of the approved WhatsApp template used for the verification code; default `otp_code`). Plain-words notes: guide 21.
+
+Ops page: `wa-assistant/src/ops.mjs` (see guide 22).

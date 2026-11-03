@@ -3,7 +3,7 @@
 > **STANDING RULE (owner's instruction, 23 Oct 2026):** this record and the `HOW-IT-WORKS/` folder are updated **after every change or update**, in the same step as the change, never later. A change is not finished until (1) the code is tested, (2) a dated entry is added to the Change Log below, (3) any affected `HOW-IT-WORKS/` page is corrected, (4) `./check-record.sh` has been run (it fails if the record or how-it-works is behind the code).
 > Also standing: the owner wants chats remembered for later use; this record is that memory for the project.
 
-**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 499 automated checks) · **Browser test suites:** 25 (see §6)
+**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 505 automated checks) · **Browser test suites:** 25 (see §6)
 
 ---
 
@@ -111,7 +111,7 @@ Owner's guidance: *"we will setup everything after we host it"* — real hosting
 | `order-test.cjs` | 11 | paid WhatsApp orders imported into the store |
 | `coupon-test.cjs` | 18 | coupon rules in store and assistant |
 | `accessories-test.cjs` | 22 | accessory tabs/categories, filters and search per kind, Complete-the-look rows, Category Manager, product form groups, assistant export type |
-| `dpdp2-test.cjs` | 22 | website orders to the owner (accept, decline, retry queue), checking who is asking, logging a phone request, provider ticks, erased count, notice archive, Dashboard reminder, helper logins |
+| `dpdp2-test.cjs` | 25 | website orders to the owner (accept, decline, retry queue), checking who is asking, logging a phone request, provider ticks, erased count, notice archive, Dashboard reminder, helper logins |
 | `admin-app-test.cjs` | 35 | the real owner app against the real server: account setup, sign-in, wrong-password and lockout screens, 2-step sign-in, saving and merging, the public website, session end, backup, Instagram dialog / schedule / post now |
 | `drafts-ready-test.cjs` | 22 | Ready-to-post drafts: details dialog, built-in and Claude AI fill, readiness, filters, Post now / Post all ready, SKU clash, Fill all |
 | `ai-test.cjs` | 35 | the ten AI helpers: built-in and Claude modes, privacy of what is sent, validation of AI fixes, switches, product form, reviews |
@@ -131,6 +131,10 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**3 Nov 2026 (Ops page for the developer)**
+- New owner-only tab **🩺 Ops** (23rd tab): a read-only health report over server, shop data, security, public website, orders and payments, WhatsApp, AI, Instagram, email, privacy and recent server errors, each with a fix hint; copy-as-text and optional 1-minute re-check. Guide: HOW-IT-WORKS/22-ops-page.md. Code: `wa-assistant/src/ops.mjs`, `GET /admin/api/ops` (helpers get 403), `renderOpsAdmin`.
+- Tests: server 505 (+6 ops checks); `dpdp2-test.cjs` 25 (+3). Not tested: against the real Render server (disk, website probe and memory numbers are only seen there). It does not call Meta, Instagram, Razorpay or the mail server.
 
 **3 Nov 2026 (DPDP round 2: website orders, identity check, erased list, helpers)**
 - Plain-words notes: HOW-IT-WORKS/21-privacy-round-2-what-changed.md. Website orders now reach the server (`wa-assistant/src/weborders.mjs`, `POST /public/order`) and show in Orders → "New from the website" (accept / decline); payment stays manual and pending. Site keeps a retry queue (`ap_pending_orders`).

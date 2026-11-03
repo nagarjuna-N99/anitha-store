@@ -1008,6 +1008,7 @@ body.adm-app #storefrontView, body.adm-app #view-toggle, body.adm-app .owner-ent
     <li data-tab="social" onclick="switchAdminTab('social'); closeAdminNav();">📸 Instagram</li>
     <li data-tab="growth" onclick="switchAdminTab('growth'); closeAdminNav();">📈 Growth</li>
     <li data-tab="privacy" onclick="switchAdminTab('privacy'); closeAdminNav();">🛡️ Privacy</li>
+    <li data-tab="ops" onclick="switchAdminTab('ops'); closeAdminNav();">🩺 Ops</li>
     <li data-tab="logs" onclick="switchAdminTab('logs'); closeAdminNav();">📜 Audit Logs</li>
     <li data-tab="settings" onclick="switchAdminTab('settings'); closeAdminNav();">⚙️ Settings</li>
   </ul>
@@ -1215,6 +1216,7 @@ body.adm-app #storefrontView, body.adm-app #view-toggle, body.adm-app .owner-ent
       <li class="admin-nav-item" data-tab="social" onclick="switchAdminTab('social')">📸 Instagram</li>
       <li class="admin-nav-item" data-tab="growth" onclick="switchAdminTab('growth')">📈 Growth</li>
       <li class="admin-nav-item" data-tab="privacy" onclick="switchAdminTab('privacy')">🛡️ Privacy</li>
+      <li class="admin-nav-item" data-tab="ops" onclick="switchAdminTab('ops')">🩺 Ops</li>
       <li class="admin-nav-item" data-tab="logs" onclick="switchAdminTab('logs')">📜 Audit Logs</li>
       <li class="admin-nav-item" data-tab="settings" onclick="switchAdminTab('settings')">⚙️ Settings</li>
     </ul>
@@ -2330,6 +2332,7 @@ function renderAdminContent(tab) {
   if (tab === 'social') { if (BUILD === 'admin') renderSocialAdmin(content); else content.innerHTML = '<div class="admin-card"><h3>📸 Instagram</h3><p class="note">Instagram posting and scheduling work in the <b>owner app</b> (admin.html on your server), where the server can post for you. See HOW-IT-WORKS/17.</p></div>'; return; }
   if (tab === 'growth') { renderGrowth(content); return; }
   if (tab === 'privacy') { renderPrivacyAdmin(content); return; }
+  if (tab === 'ops') { renderOpsAdmin(content); return; }
 
   if (tab === 'coupons') {
     content.innerHTML = `
@@ -6442,6 +6445,23 @@ async function encJson(obj, pass) { const salt = crypto.getRandomValues(new Uint
 async function decJson(box, pass) { try { const key = await encKey(pass, unb64(box.salt), +box.iter || 250000, 'decrypt'); return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(box.iv) }, key, unb64(box.data)))); } catch (e) { throw new Error('That password does not open this backup.'); } }
 function twoFaBannerHTML() { return BUILD === 'admin' && ADM.state && !ADM.state.twoFactor ? '<div class="grow-remind" style="background:#fde8e6;border-color:#f3b8b0;"><div><b>🔐 Turn on 2-step sign-in</b><div class="note" style="margin:2px 0 0;">Your customers\' phone numbers and addresses are kept here. A password alone is not enough protection. It takes 2 minutes: Settings → Security &amp; backup.</div></div><div class="pf-actions"><button type="button" class="btn-sm btn-primary-sm" onclick="switchAdminTab(\'settings\')">Open Settings</button></div></div>' : ''; }
 function privNoticeBack() { return ''; }
+// ---- Ops: one page for the developer to see whether anything is wrong, in every part of the shop ----
+const OPS = { r: null, open: {}, timer: null };
+const OPS_ICON = { ok: '✓', warn: '!', fail: '✕', info: 'i' };
+async function renderOpsAdmin(c) {
+  if (!c) return; if (BUILD !== 'admin') { c.innerHTML = '<div class="admin-card"><h3>🩺 Ops</h3><p class="note">The Ops page works in the owner app on your server.</p></div>'; return; }
+  clearInterval(OPS.timer); c.innerHTML = '<div class="ai-busy">Checking everything… (up to 10 seconds)</div>';
+  try { OPS.r = await admApi('GET', '/admin/api/ops'); } catch (e) { c.innerHTML = `<div class="ai-err">${esc(e.message)}</div>`; return; }
+  opsDraw(c);
+  OPS.timer = setInterval(async () => { if (currentAdminTab !== 'ops') { clearInterval(OPS.timer); return; } if (!el_('ops-auto') || !el_('ops-auto').checked) return; try { OPS.r = await admApi('GET', '/admin/api/ops'); opsDraw(el_('adminContent')); } catch (e) { /* keep the last report */ } }, 60000);
+}
+function opsDraw(c) {
+  const r = OPS.r, s = r.summary, auto = el_('ops-auto') && el_('ops-auto').checked, verdict = s.fail ? ['bad', `${s.fail} thing(s) need fixing now`] : s.warn ? ['warn', `${s.warn} thing(s) to look at`] : ['ok', 'Everything looks healthy'];
+  c.innerHTML = `<div class="admin-card"><h3 style="margin:0 0 4px;">🩺 Ops <span class="pf-sub">checked ${esc(r.at.slice(0, 19).replace('T', ' '))} UTC</span></h3><div class="va-do ${verdict[0] === 'ok' ? 'ok' : ''}" style="margin:8px 0;"><h4 style="margin:0">${verdict[0] === 'ok' ? '✓' : verdict[0] === 'bad' ? '✕' : '!'} ${esc(verdict[1])}</h4><p class="note" style="margin:2px 0 0;">${s.fail} fail · ${s.warn} warn · ${s.ok} ok · ${s.info} info. Read-only: nothing here changes any data. No secret is ever shown (only "set" or "missing").</p></div>
+    <div class="pf-actions"><button type="button" class="btn-sm btn-primary-sm" onclick="renderOpsAdmin(el_('adminContent'))">↻ Check again</button><button type="button" class="btn-sm btn-info-sm" onclick="opsCopy()">Copy report as text</button><label class="chk" style="display:inline-flex;margin:0 8px;"><input type="checkbox" id="ops-auto" ${auto ? 'checked' : ''}><span>Re-check every minute</span></label></div></div>
+    ${r.groups.map(g => { const bad = g.checks.filter(x => x.status === 'fail').length, wr = g.checks.filter(x => x.status === 'warn').length, open = OPS.open[g.name] != null ? OPS.open[g.name] : (bad + wr) > 0; return `<div class="admin-card"><details ${open ? 'open' : ''} ontoggle="OPS.open['${esc(g.name)}']=this.open"><summary><b>${esc(g.name)}</b> ${bad ? `<span class="g-p g-p1">${bad} fail</span>` : ''} ${wr ? `<span class="g-p g-p2">${wr} warn</span>` : ''} ${!bad && !wr ? '<span class="g-p g-p3">ok</span>' : ''}</summary>${g.checks.map(x => `<div class="va-row"><span class="va-i ${x.status === 'ok' ? 'ok' : x.status === 'info' ? '' : x.status === 'warn' ? 'warn' : 'bad'}">${OPS_ICON[x.status]}</span><div style="flex:1"><b>${esc(x.title)}</b>${x.detail ? `<div class="note" style="margin:0;white-space:pre-wrap">${esc(x.detail)}</div>` : ''}${x.fix && (x.status === 'fail' || x.status === 'warn') ? `<div class="note" style="margin:0;color:#8a5a00">→ ${esc(x.fix)}</div>` : ''}</div></div>`).join('')}</details></div>`; }).join('')}`;
+}
+function opsCopy() { const r = OPS.r; if (!r) return; const t = `Ops report ${r.at}\n` + r.groups.map(g => `\n## ${g.name}\n` + g.checks.map(x => `[${x.status.toUpperCase()}] ${x.title}${x.detail ? ': ' + x.detail : ''}${x.fix && (x.status === 'fail' || x.status === 'warn') ? '\n    fix: ' + x.fix : ''}`).join('\n')).join('\n'); copyText(t, 'Report copied'); }
 async function renderPrivacyAdmin(c) {
   if (!c) return; if (BUILD !== 'admin') { c.innerHTML = '<div class="admin-card"><h3>🛡️ Privacy &amp; DPDP</h3><p class="note">Privacy requests, erasing customers, the breach register and the checklist work in the owner app on your server.</p></div>'; return; }
   c.innerHTML = `${twoFaBannerHTML()}<div class="ai-busy">Loading…</div>`;
@@ -6477,7 +6497,7 @@ async function privChatOnly(d) { try { const r = await admApi('POST', '/admin/ap
 // ---- team logins, role handling (owner or helper) ----
 async function admRole() { try { const st = await admApi('GET', '/admin/api/state'); ADM.state = Object.assign(ADM.state || {}, st); ADM.role = st.role || 'owner'; ADM.user = st.user || 'owner'; } catch (e) { ADM.role = ADM.role || 'owner'; } }
 const isOwnerRole = () => (ADM.role || 'owner') === 'owner';
-function admApplyRole() { if (BUILD !== 'admin' || isOwnerRole()) return; document.querySelectorAll('[data-tab="privacy"]').forEach(el => { el.style.display = 'none'; }); }
+function admApplyRole() { if (BUILD !== 'admin' || isOwnerRole()) return; document.querySelectorAll('[data-tab="privacy"],[data-tab="ops"]').forEach(el => { el.style.display = 'none'; }); }
 function admStaffSecurityHTML() { return `<div class="admin-card" id="adm-security"><h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:12px;">My sign-in</h4><p class="note">You are signed in as <b>${esc(ADM.user || '')}</b> (helper). You can work on products and orders. Privacy requests, backups, email, keys and the team list are only for the owner.</p>
     <div class="ai-row"><label>Current password<input id="sec-cur" type="password" autocomplete="current-password"></label><label>New password (12+ characters)<input id="sec-new" type="password" autocomplete="new-password"></label></div><button class="btn-sm btn-primary-sm" onclick="admChangePw()">Change my password</button><div id="sec-pw-msg" class="note"></div><div class="pf-actions" style="margin-top:14px;"><button class="btn-sm btn-danger-sm" onclick="admSignOut()">Sign out</button></div></div>`; }
 async function admLoadTeam() { const e = document.getElementById('sec-team'); if (!e || !isOwnerRole()) return; try { const r = await admApi('GET', '/admin/api/team'); e.innerHTML = (r.team.length ? r.team.map(x => `<div class="va-row"><div style="flex:1"><b>${esc(x.name)}</b> <span class="note">helper · added ${esc(String(x.createdAt || '').slice(0, 10))}</span></div><button type="button" class="btn-sm btn-info-sm" onclick="admTeamPw('${esc(x.name)}')">New password</button><button type="button" class="btn-sm btn-danger-sm" onclick="admTeamRemove('${esc(x.name)}')">Remove</button></div>`).join('') : '<p class="note">No helpers yet.</p>') + `<div class="ai-row"><label>Name<input id="tm-name" maxlength="30" placeholder="e.g. meena" autocomplete="off"></label><label>Password (12+ characters)<input id="tm-pass" type="password" autocomplete="new-password"></label></div><button type="button" class="btn-sm btn-primary-sm" onclick="admTeamAdd()">Add a helper</button><div id="tm-msg" class="note"></div>`; } catch (err) { e.textContent = err.message; } }
