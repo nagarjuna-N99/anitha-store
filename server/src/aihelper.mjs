@@ -21,6 +21,11 @@ export const TASKS = {
     build: i => ({ system: `${RULES}\nLook at the product photo and describe ONLY what is visible. Answer with JSON only: {"category": one of the allowed categories or "", "fabric": one of the allowed fabrics or "", "colours": string[] (max 4 main colours, plain English names), "border": string (e.g. "wide zari border", or ""), "pattern": string, "occasions": string[] (max 3 of: Wedding, Festive, Office, Party, Casual), "notes": string (one short sentence)}. If unsure about a field use "" or []. Never guess the fabric from the price.`,
       user: `Allowed categories: ${J(arr(i.categories, 40, 40))}\nAllowed fabrics: ${J(arr(i.fabrics, 40, 40))}\nDescribe the saree in the photo.` }),
   },
+  hero: {
+    json: true, max: 700,
+    build: i => ({ system: `${RULES}\nYou suggest words for the big banner on the home page of a handloom saree shop. Answer with JSON only: {"variants": [{"eyebrow": string (max 4 words, small heading above the title), "title": string (max 7 words, elegant, no exclamation marks), "subtitle": string (max 22 words, one sentence), "button": string (max 3 words)}]} with exactly 3 different variants. Use only the facts given (the main colour of the photo, light or dark, the category names). Do not mention prices, discounts, offers, delivery or certificates. Do not promise views or sales.`,
+      user: `Banner photo facts:\n${wrap({ colour: str(i.colour, 30), tone: str(i.tone, 10), categories: arr(i.categories, 8, 40), current: { title: str(i.current && i.current.title, 80), subtitle: str(i.current && i.current.subtitle, 200) } })}` }),
+  },
   reply: {
     json: false, max: 500,
     build: i => ({ system: `${RULES}\nYou draft a WhatsApp reply for the owner to edit and send. Plain text, max 90 words, at most one emoji, no markdown. Answer the customer's last message using only the shop policies given. If the answer is not in the policies or product facts, say you will check and come back. ${LANG[i.lang] ? 'Reply in ' + LANG[i.lang] + '.' : 'Reply in the language the customer used.'}`,

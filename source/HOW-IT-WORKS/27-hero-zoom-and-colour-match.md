@@ -45,3 +45,9 @@ The picture under each slide is now the website itself (header with the shop nam
 
 ## Update 4 (4 Nov 2026): header on the photo
 On the home page the header has no bar: the name, menu and icons sit on the hero photo. Scroll down and it turns into the light bar (tint of the photo). Other pages keep the normal bar. On a phone the bottom bar is unchanged. The shipping line now also shows on every product page, and the footer no longer says payment is agreed on WhatsApp.
+
+## Update 5 (4 Nov 2026): text style, and the preview matches 100%
+- **Preview fixed.** The small picture under each slide now breaks the lines exactly like the website (a leftover rule had kept the title on one line). The title, small heading, description and button have the same size and place as on the live page.
+- **Text style** (under each slide): big-heading font (11 choices), weight, italic or upright, CAPITALS, shadow, description font, big-heading size, space between letters, space between lines, description size, button filled or outline, and colour pickers for the big heading, description, small heading, button and button text. "Auto" next to a colour goes back to the automatic colour. "Reset text style" puts everything back.
+- **✨ Auto-style the text for this photo:** picks the font, weight, size and shadow from the photo (dark or light, colourful or calm, plain or detailed) and tells you why. It also runs when you add a photo, unless you untick "Style it automatically…" or change a style yourself.
+- **✨ Suggest the words:** three drafts for the small heading, title, description and button. With Claude connected they are written by Claude (about the photo's colour and your categories); otherwise built-in drafts appear. Nothing is saved until you press "Use these words". It never mentions prices, offers or promises.

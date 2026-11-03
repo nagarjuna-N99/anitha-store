@@ -113,9 +113,9 @@
 
   .hero { height: 85vh; height: 85svh; background: linear-gradient(90deg, rgba(30,25,20,0.85) 0%, rgba(30,25,20,0.4) 50%, rgba(30,25,20,0.1) 100%), url('https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=2574') center/cover; display: flex; align-items: center; color: var(--ivory); }
   .hero-content { max-width: 600px; padding-left: 60px; }
-  .hero-est { font-size: 12px; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 20px; color: var(--gold-light); }
-  .hero-title { font-family: 'Cormorant Garamond', serif; font-size: 64px; font-weight: 400; line-height: 1.1; margin-bottom: 24px; font-style: italic; }
-  .hero-subtitle { font-size: 16px; line-height: 1.8; margin-bottom: 40px; font-weight: 300; }
+  .hero-est { font-size: calc(12px * var(--e-scale, 1)); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 20px; color: var(--gold-light); }
+  .hero-title { font-family: var(--t-font, 'Cormorant Garamond', serif); font-size: calc(64px * var(--t-scale, 1)); font-weight: var(--t-weight, 400); line-height: var(--t-lh, 1.1); margin-bottom: 24px; font-style: var(--t-style, italic); text-transform: var(--t-case, none); letter-spacing: var(--t-ls, normal); text-shadow: var(--t-shadow, none); }
+  .hero-subtitle { font-size: calc(16px * var(--st-scale, 1)); font-family: var(--st-font, inherit); line-height: 1.8; margin-bottom: 40px; font-weight: 300; text-shadow: var(--t-shadow, none); }
   .btn-primary { display: inline-block; padding: 16px 40px; background: var(--ivory); color: var(--charcoal); text-decoration: none; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; transition: 0.3s; border: 1px solid var(--ivory); cursor: pointer; }
   .btn-primary:hover { background: transparent; color: var(--ivory); }
 
@@ -675,7 +675,7 @@
     .hamburger-btn { display: block; }
     .nav-links { display: none; }
     nav { padding: 15px 20px; }
-    .hero-title { font-size: 42px; }
+    .hero-title { font-size: calc(42px * var(--t-scale, 1)); }
     .hero-content { padding-left: 20px; }
     .category-strip { grid-template-columns: 1fr 1fr; }
     .product-grid { padding: 20px; grid-template-columns: 1fr 1fr; }
@@ -704,7 +704,7 @@
     .top-banner { padding: 8px 12px; font-size: 11px; letter-spacing: 1px; line-height: 1.5; }
     nav { padding: 4px 8px 4px 4px; gap: 4px; } .brand-mark { height: 36px; width: 36px; margin-right: 6px; } .nav-brand { font-size: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; text-align: left; margin-left: 4px; }
     .nav-icons { flex-shrink: 0; }
-    .hero-slider { height: 64vh; min-height: 420px; } .hero-title { font-size: 34px; margin-bottom: 14px; } .hero-subtitle { font-size: 14px; margin-bottom: 26px; line-height: 1.7; } .hero-est { font-size: 11px; letter-spacing: 3px; margin-bottom: 12px; }
+    .hero-slider { height: 64vh; min-height: 420px; } .hero-title { font-size: calc(34px * var(--t-scale, 1)); margin-bottom: 14px; } .hero-subtitle { font-size: calc(14px * var(--st-scale, 1)); margin-bottom: 26px; line-height: 1.7; } .hero-est { font-size: calc(11px * var(--e-scale, 1)); letter-spacing: 3px; margin-bottom: 12px; }
     .hero-content { padding-left: 20px; padding-right: 20px; }
     .section-header { padding: 34px 16px 14px; } .section-title { font-size: 30px; } .section-label { font-size: 11px; letter-spacing: 3px; }
     .category-strip { grid-template-columns: 1fr 1fr; } .category-item { height: 220px; } .category-overlay { padding: 16px; } .category-name { font-size: 20px; }
@@ -756,7 +756,7 @@
     .coupon-input-group { display: flex; gap: 8px; } .coupon-input-group input { min-width: 0; flex: 1; font-size: 16px; min-height: 46px; } .btn-apply { min-height: 46px; flex-shrink: 0; }
     .presets button { min-height: 40px; } .nav-brand, .product-name { display: block; padding: 4px 0; }
   }
-  @media (max-width: 360px) { .product-grid { gap: 8px; padding: 8px; } .product-name { font-size: 15px; } .hero-title { font-size: 30px; } }
+  @media (max-width: 360px) { .product-grid { gap: 8px; padding: 8px; } .product-name { font-size: 15px; } .hero-title { font-size: calc(30px * var(--t-scale, 1)); } }
 
   /* ===== bottom tab bar (phones) ===== */
   .tabbar { display: none; }
@@ -1181,11 +1181,13 @@ h1, h2, h3, h4, h5, h6 { font-weight: 600; }
 #resumeBar { border-top: 0; }
 /* hero: the photo is its own (zoomable) layer; matched colours reach the words, the button and the top bar */
 .hero-slide { overflow: hidden; } .hero-img, .hero-shade { position: absolute; inset: 0; } .hero-img { background-size: cover; background-repeat: no-repeat; transition: transform 0.4s ease; } .hero-content { position: relative; z-index: 2; }
-.hero-title, .hero-subtitle { color: var(--hero-ink, inherit); } .hero-est { color: var(--hero-accent, var(--gold-light)); }
-.hero-slide.themed .btn-primary { background: var(--hero-btn-bg); color: var(--hero-btn-ink); border-color: var(--hero-btn-bg); }
+.hero-title { color: var(--hero-title, var(--hero-ink, inherit)); } .hero-subtitle { color: var(--hero-sub, var(--hero-ink, inherit)); } .hero-est { color: var(--hero-accent, var(--gold-light)); }
+.hero-slide.btn-outline .btn-primary { background: transparent !important; color: var(--hero-btn-bg, #fff) !important; border: 1px solid var(--hero-btn-bg, #fff) !important; }
+.hero-slide.themed .btn-primary, .hero-slide.btn-custom .btn-primary { background: var(--hero-btn-bg); color: var(--hero-btn-ink); border-color: var(--hero-btn-bg); }
 body.nav-over nav { position: fixed; left: 0; right: 0; top: 0; box-sizing: border-box; } body.nav-over.nav-top nav { background: linear-gradient(180deg, rgba(20,12,8,.6), rgba(20,12,8,0)); border-bottom: 0; --nav-bg: transparent; --nav-ink: #fff; }
 @media (max-width: 640px) { #storefrontView nav .nav-left, .hs-fnav .nav-left { display: contents !important; } #storefrontView nav .nav-brand, .hs-fnav .nav-brand { order: 1; } #storefrontView nav .nav-icons, .hs-fnav .nav-icons { order: 2; } #storefrontView nav .hamburger-btn, .hs-fnav .hamburger-btn { order: 3; } }
-nav.dark .brand-mark { background: #fff; padding: 3px; box-sizing: border-box; } nav { background: var(--nav-bg, var(--ivory)); transition: background-color 0.6s ease, color 0.6s ease; } nav .nav-brand, nav .nav-links a, nav .nav-icon { color: var(--nav-ink, var(--charcoal)); } .hamburger-btn span { background: var(--nav-ink, var(--charcoal)); } .img-broken{background:var(--cream);color:transparent;font-size:0}.arr-cat{border:1px solid rgba(128,128,128,.25);border-radius:8px;margin:0 0 6px;padding:6px 10px}.arr-cat summary{cursor:pointer;font-weight:600}.arr-list{display:grid;gap:4px;padding:6px 0}.arr-item{margin:0}
+nav.dark .brand-mark { background: #fff; padding: 3px; box-sizing: border-box; } nav { background: var(--nav-bg, var(--ivory)); transition: background-color 0.6s ease, color 0.6s ease; } nav .nav-brand, nav .nav-links a, nav .nav-icon { color: var(--nav-ink, var(--charcoal)); } .hamburger-btn span { background: var(--nav-ink, var(--charcoal)); } .img-broken{background:var(--cream);color:transparent;font-size:0}.hs-type{border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin:8px 0}.hs-type summary{cursor:pointer;font-weight:600;padding:4px 0}.hw-opt{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px dashed var(--border);flex-wrap:wrap}.hw-list{margin-top:6px}
+.arr-cat{border:1px solid rgba(128,128,128,.25);border-radius:8px;margin:0 0 6px;padding:6px 10px}.arr-cat summary{cursor:pointer;font-weight:600}.arr-list{display:grid;gap:4px;padding:6px 0}.arr-item{margin:0}
 .hs-theme { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 4px 0 12px; } .hm-sw { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border); display: inline-block; } .hs-gap { flex: 1; }
 .journal-grid { grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); }
 .cart-item button, .btn-sm-card { min-width: 44px; min-height: 44px; } .modal-close { width: 44px; height: 44px; } #storefrontView .btn-sm { min-height: 44px; }
@@ -1195,7 +1197,7 @@ nav.dark .brand-mark { background: #fff; padding: 3px; box-sizing: border-box; }
 .hs { grid-template-columns: minmax(min(260px, 100%), 340px) minmax(0, 1fr); } @media (max-width: 900px) { .hs { grid-template-columns: minmax(0, 1fr); } }
 .pg-wrap { max-width: 1000px; margin: 0 auto; padding: 80px 60px; } .pg-wrap > div:first-child { grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)) !important; }
 @media (max-width: 700px) { .pg-wrap { padding: 48px 20px; } }
-.hs-prev, .hs-prev .hero-slider.mini, .hs-prev .hero-slide, .hs-prev .hero-content { min-width: 0; max-width: 100%; }
+.hs-prev { min-width: 0; max-width: 100%; }
 .footer-desc, .footer-links a, .footer-bottom, .fl { color: #b9b4aa; } .fl:hover, .footer-links a:hover { color: var(--ivory); }
 .footer-legal { display: flex; gap: 8px 18px; flex-wrap: wrap; justify-content: flex-end; }
 .coupon-section h3 { font-size: 14px; margin-bottom: 10px; font-weight: 600; }
@@ -4285,12 +4287,33 @@ function syncHomeCats() {
 // ---- storefront rendering ----
 const HERO = { i: 0, timer: null, paused: false };
 const reducedMotion = () => !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+// ---- text style for each hero slide (font, size, weight, case, spacing, colours...) ----
+const HERO_FONTS = [['', 'Website default (Cormorant)', "'Cormorant Garamond', serif", ''], ['Cormorant Garamond', 'Cormorant Garamond', "'Cormorant Garamond', serif", ''], ['Bodoni Moda', 'Bodoni Moda (fashion)', "'Bodoni Moda', Georgia, serif", 'Bodoni+Moda:ital,wght@0,400;0,700;1,400;1,700'], ['Playfair Display', 'Playfair Display (classic)', "'Playfair Display', Georgia, serif", 'Playfair+Display:ital,wght@0,400;0,700;1,400;1,700'], ['DM Serif Display', 'DM Serif Display (soft)', "'DM Serif Display', Georgia, serif", 'DM+Serif+Display:ital@0;1'], ['Abril Fatface', 'Abril Fatface (very bold)', "'Abril Fatface', Georgia, serif", 'Abril+Fatface'], ['Gloock', 'Gloock (sturdy)', "'Gloock', Georgia, serif", 'Gloock'], ['Instrument Serif', 'Instrument Serif (slim)', "'Instrument Serif', Georgia, serif", 'Instrument+Serif:ital@0;1'], ['Fraunces', 'Fraunces (warm)', "'Fraunces', Georgia, serif", 'Fraunces:ital,wght@0,400;0,700;1,400;1,700'], ['Syne', 'Syne (modern)', "'Syne', system-ui, sans-serif", 'Syne:wght@400;700'], ['Inter', 'Inter (plain)', "'Inter', system-ui, sans-serif", '']];
+const FONT_LOADED = new Set();
+function ensureFont(name) { const f = HERO_FONTS.find(x => x[0] === name); if (!f || !f[3] || FONT_LOADED.has(name)) return; FONT_LOADED.add(name); try { const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=' + f[3] + '&display=swap'; document.head.appendChild(l); } catch (e) { } }
+const fontCss = name => { const f = HERO_FONTS.find(x => x[0] === name); return f ? f[2] : ''; };
+const TYPE_SHADOW = { none: 'none', soft: '0 2px 14px rgba(0,0,0,.45)', strong: '0 2px 4px rgba(0,0,0,.7), 0 4px 24px rgba(0,0,0,.6)' };
+const okHex = v => /^#[0-9a-f]{6}$/i.test(String(v || ''));
+function heroTypeVars(t) {
+  if (!t) return [];
+  const v = []; if (t.font) { ensureFont(t.font); v.push(`--t-font:${fontCss(t.font)}`); }
+  if (t.weight) v.push(`--t-weight:${+t.weight || 400}`); if (t.style === 'normal' || t.style === 'italic') v.push(`--t-style:${t.style}`);
+  if (t.size && +t.size !== 100) v.push(`--t-scale:${(Math.max(50, Math.min(180, +t.size)) / 100).toFixed(2)}`);
+  if (['uppercase', 'capitalize', 'lowercase'].includes(t.case)) v.push(`--t-case:${t.case}`);
+  if (t.spacing) v.push(`--t-ls:${Math.max(-2, Math.min(12, +t.spacing))}px`); if (t.lh) v.push(`--t-lh:${Math.max(0.8, Math.min(1.8, +t.lh))}`);
+  if (t.subSize && +t.subSize !== 100) v.push(`--st-scale:${(Math.max(70, Math.min(160, +t.subSize)) / 100).toFixed(2)}`);
+  if (t.subFont === 'title' && t.font) v.push(`--st-font:${fontCss(t.font)}`);
+  if (TYPE_SHADOW[t.shadow] && t.shadow !== 'none') v.push(`--t-shadow:${TYPE_SHADOW[t.shadow]}`);
+  if (okHex(t.ink)) v.push(`--hero-title:${t.ink}`); if (okHex(t.subInk)) v.push(`--hero-sub:${t.subInk}`); if (okHex(t.accentInk)) v.push(`--hero-accent:${t.accentInk}`);
+  if (okHex(t.btnBg)) v.push(`--hero-btn-bg:${t.btnBg}`); if (okHex(t.btnInk)) v.push(`--hero-btn-ink:${t.btnInk}`);
+  return v;
+}
 function heroSlideHTML(s, i, active, tag) {
   const A = Math.max(0, Math.min(90, +s.overlay || 0)) / 100, pos = ['left', 'center', 'right'].includes(s.pos) ? s.pos : 'left', focus = ['top', 'center', 'bottom'].includes(s.focus) ? s.focus : 'center';
   const grad = pos === 'center' ? `linear-gradient(rgba(30,25,20,${(A * 0.7).toFixed(2)}),rgba(30,25,20,${(A * 0.7).toFixed(2)}))` : `linear-gradient(${pos === 'right' ? 270 : 90}deg,rgba(30,25,20,${A.toFixed(2)}) 0%,rgba(30,25,20,${(A * 0.47).toFixed(2)}) 50%,rgba(30,25,20,${(A * 0.12).toFixed(2)}) 100%)`;
   const img = safeImg(s.image).replace(/["\\\n\r]/g, ''), z = Math.max(100, Math.min(250, +s.zoom || 100)), fx = Math.max(0, Math.min(100, s.focusX == null ? 50 : +s.focusX)), fy = { top: 0, center: 50, bottom: 100 }[focus], th = s.theme || {};
-  const vars = [th.ink && `--hero-ink:${th.ink}`, th.accent && `--hero-accent:${th.accent}`, th.btnBg && `--hero-btn-bg:${th.btnBg}`, th.btnInk && `--hero-btn-ink:${th.btnInk}`].filter(Boolean).join(';');
-  return `<div class="hero-slide pos-${pos} ${active ? 'active' : ''} ${th.btnBg ? 'themed' : ''}" ${vars ? `style="${esc(vars)}"` : ''} role="group" aria-roledescription="slide" aria-label="Slide ${i + 1}" ${active ? '' : 'aria-hidden="true"'}>
+  const ty = s.type || {}, vars = [th.ink && `--hero-ink:${th.ink}`, th.accent && `--hero-accent:${th.accent}`, th.btnBg && `--hero-btn-bg:${th.btnBg}`, th.btnInk && `--hero-btn-ink:${th.btnInk}`].filter(Boolean).concat(heroTypeVars(ty)).join(';');
+  return `<div class="hero-slide pos-${pos} ${active ? 'active' : ''} ${th.btnBg ? 'themed' : ''} ${okHex(ty.btnBg) ? 'btn-custom' : ''} ${ty.btnStyle === 'outline' ? 'btn-outline' : ''}" ${vars ? `style="${esc(vars)}"` : ''} role="group" aria-roledescription="slide" aria-label="Slide ${i + 1}" ${active ? '' : 'aria-hidden="true"'}>
     <div class="hero-img" style="${esc(`background-image:url("${img}");background-position:${fx}% ${fy}%;transform:scale(${(z / 100).toFixed(2)});transform-origin:${fx}% ${fy}%`)}"></div><div class="hero-shade" style="${esc(`background:${grad}`)}"></div>
     <div class="hero-content">${s.eyebrow ? `<div class="hero-est">${esc(s.eyebrow)}</div>` : ''}<${tag} class="hero-title">${esc(s.title)}</${tag}>${s.subtitle ? `<p class="hero-subtitle">${esc(s.subtitle)}</p>` : ''}${s.btnText && s.link && s.link.type !== 'none' ? `<a class="btn-primary" role="button" tabindex="${active ? 0 : -1}" onclick="heroGo('${esc(s.id)}')" onkeydown="if(event.key==='Enter')heroGo('${esc(s.id)}')">${esc(s.btnText)}</a>` : ''}</div></div>`;
 }
@@ -4310,8 +4333,8 @@ async function heroAnalyze(s) {
   const pos = ['left', 'center', 'right'].includes(s.pos) ? s.pos : 'left', A = Math.max(0, Math.min(90, +s.overlay || 0)) / 100;
   const alphaAt = u => pos === 'center' ? A * 0.7 : (() => { const t = pos === 'right' ? 1 - u : u; return t <= 0.5 ? A * (1 - 0.53 * t / 0.5) : A * (0.47 - 0.35 * (t - 0.5) / 0.5); })();
   const zone = u => pos === 'left' ? u < 0.6 : pos === 'right' ? u > 0.4 : u > 0.2 && u < 0.8;
-  let sumL = 0, n = 0, hw = 0, hx = 0, hy = 0, satBest = []; const area = [];
-  for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) { const k = (j * W + i) * 4, r = d[k], g = d[k + 1], b = d[k + 2], [h, sa, l] = rgbHsl(r, g, b); sumL += hxLum(rgbHexOf(r, g, b)); n++; const w = sa * (1 - Math.abs(2 * l - 1)); hw += w; hx += Math.cos(h * Math.PI / 180) * w; hy += Math.sin(h * Math.PI / 180) * w; if (sa > 0.3 && l > 0.2 && l < 0.8) satBest.push([r, g, b, sa]);
+  let sumL = 0, sumL2 = 0, sumS = 0, n = 0, hw = 0, hx = 0, hy = 0, satBest = []; const area = [];
+  for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) { const k = (j * W + i) * 4, r = d[k], g = d[k + 1], b = d[k + 2], [h, sa, l] = rgbHsl(r, g, b); const lm = hxLum(rgbHexOf(r, g, b)); sumL += lm; sumL2 += lm * lm; sumS += sa; n++; const w = sa * (1 - Math.abs(2 * l - 1)); hw += w; hx += Math.cos(h * Math.PI / 180) * w; hy += Math.sin(h * Math.PI / 180) * w; if (sa > 0.3 && l > 0.2 && l < 0.8) satBest.push([r, g, b, sa]);
     const u = i / W, v = j / H; if (zone(u) && v > 0.15 && v < 0.9) area.push([r, g, b, alphaAt(u)]); }
   const hue = hw > 0.5 ? (Math.atan2(hy, hx) * 180 / Math.PI + 360) % 360 : 30, avgL = sumL / n;
   const behind = (extra = 0) => area.map(([r, g, b, a]) => { const aa = Math.min(0.92, a + extra); return rgbHexOf(r * (1 - aa) + 30 * aa, g * (1 - aa) + 25 * aa, b * (1 - aa) + 20 * aa); });
@@ -4324,7 +4347,63 @@ async function heroAnalyze(s) {
   const bgNow = behind(extra), lightBg = ink === dark; let accent = null; for (let l = lightBg ? 28 : 72; lightBg ? l >= 10 : l <= 92; l += lightBg ? -3 : 3) { const cand = hslHex(ah, as, l); if (p10(cand, bgNow) >= 3) { accent = cand; break; } } if (!accent) accent = ink;
   const btnBg = accent, btnInk = hxRatio('#ffffff', btnBg) >= hxRatio('#1a1511', btnBg) ? '#ffffff' : '#1a1511';
   const tone = avgL < 0.28 ? 'dark' : 'light', headerBg = hslHex(hue, 34, 95), headerInk = hslHex(hue, 32, 14);
-  return { ink, accent, btnBg, btnInk, headerBg, headerInk, tone, overlay: newOverlay, raised: newOverlay > Math.round(A * 100), contrast: Math.round(best * 10) / 10, hue: Math.round(hue) };
+  return { busy: Math.sqrt(Math.max(0, sumL2 / n - (sumL / n) ** 2)), sat: sumS / n, ink, accent, btnBg, btnInk, headerBg, headerInk, tone, overlay: newOverlay, raised: newOverlay > Math.round(A * 100), contrast: Math.round(best * 10) / 10, hue: Math.round(hue) };
+}
+// "AI" text style: reads how dark, colourful and busy the photo is and picks a matching type style (no key needed).
+function heroAutoType(r) {
+  const dark = r.tone === 'dark', busy = r.busy > 0.16, vivid = r.sat > 0.45, t = { auto: true, size: 100, weight: 400, style: 'italic', case: 'none', spacing: 0, lh: 1.1, subSize: 100, shadow: busy ? 'soft' : 'none' };
+  let why;
+  if (dark && !vivid) { t.font = 'Bodoni Moda'; t.weight = 700; why = 'a dark, calm photo suits sharp, elegant letters'; }
+  else if (dark) { t.font = 'Playfair Display'; t.weight = 700; why = 'a dark, colourful photo suits a strong classic serif'; }
+  else if (vivid) { t.font = 'DM Serif Display'; t.weight = 400; why = 'a bright, colourful photo suits soft, rounded letters'; }
+  else { t.font = 'Cormorant Garamond'; t.weight = 600; why = 'a light, quiet photo suits fine, airy letters'; }
+  if (busy) { if (t.font === 'Cormorant Garamond') t.font = 'Playfair Display'; t.weight = 700; t.size = 105; why += '; the photo is detailed, so the letters are bolder with a soft shadow'; }
+  t.why = why; return t;
+}
+function heroTypeSet(i, k, v) {
+  const s = db.home.hero.slides[i]; if (!s) return; s.type = s.type || {};
+  if (['size', 'spacing', 'lh', 'subSize', 'weight'].includes(k) && v !== '') v = +v;
+  if (v === '' || v === null) delete s.type[k]; else s.type[k] = v;
+  s.type.auto = false; if (k === 'font') ensureFont(v);
+  homeLive(true); heroPreview(i);
+}
+function heroTypeReset(i) { const s = db.home.hero.slides[i]; if (!s) return; delete s.type; homeLive(true); renderHomeAdmin(document.getElementById('adminContent')); }
+function heroTypeAutoToggle(i, on) { const s = db.home.hero.slides[i]; if (!s) return; if (on) { heroStyleAuto(i, true); } else { s.type = s.type || {}; s.type.auto = false; homeLive(true); renderHomeAdmin(document.getElementById('adminContent')); } }
+async function heroStyleAuto(i, quiet) {
+  const s = db.home.hero.slides[i], b = document.getElementById('hty-auto-' + i); if (!s) return; if (b) { b.disabled = true; b.textContent = 'Reading the photo…'; }
+  try { const r = await heroAnalyze(s); s.type = heroAutoType(r); s.theme = { ink: r.ink, accent: r.accent, btnBg: r.btnBg, btnInk: r.btnInk, headerBg: r.headerBg, headerInk: r.headerInk, tone: r.tone, v: 2 }; if (r.raised) s.overlay = r.overlay; homeLive(true); applyHeaderTheme(); renderHomeAdmin(document.getElementById('adminContent')); if (!quiet) showToast('Text style set: ' + s.type.why + '. Change anything below.', 'success'); }
+  catch (e) { if (b) { b.disabled = false; b.textContent = '✨ Auto-style the text for this photo'; } showToast(e.message || 'Could not read this photo', 'error'); }
+}
+const hueName = h => h < 15 || h >= 345 ? 'red' : h < 45 ? 'orange or brown' : h < 70 ? 'golden yellow' : h < 160 ? 'green' : h < 200 ? 'teal' : h < 255 ? 'blue' : h < 290 ? 'purple' : 'pink or magenta';
+function heroLocalWords(r) {
+  const col = hueName(r.hue), cats = db.categories.slice(0, 3).join(', ') || 'handloom sarees';
+  return [{ eyebrow: 'Est. Hyderabad', title: 'Woven slowly, worn for years', subtitle: `Pure handloom sarees in ${col} and more, chosen one by one.`, button: 'Shop the collection' }, { eyebrow: 'New arrivals', title: 'Handloom, the way it should be', subtitle: `Fresh from the loom: ${cats}.`, button: 'See what is new' }, { eyebrow: 'Handpicked', title: 'A saree with a story', subtitle: 'Each piece is selected for its weave, its colour and its maker.', button: 'Explore sarees' }];
+}
+async function heroWriteWords(i) {
+  const s = db.home.hero.slides[i], box = document.getElementById('hwd-' + i); if (!s || !box) return; box.innerHTML = '<span class="note">Thinking…</span>';
+  let r = { hue: 30, tone: 'light' }; try { r = await heroAnalyze(s); } catch (e) { }
+  let v, ai = aiReady('hero');
+  try { v = ai ? (await aiCall('hero', { colour: hueName(r.hue), tone: r.tone, categories: db.categories.slice(0, 8), current: { title: s.title, subtitle: s.subtitle } })).data.variants : heroLocalWords(r); } catch (e) { v = heroLocalWords(r); ai = false; }
+  window.HERO_WORDS = v || [];
+  box.innerHTML = `${ai ? '' : '<p class="note" style="margin:0 0 6px">Built-in drafts (connect Claude for richer ones).</p>'}${(v || []).map((x, n) => `<div class="hw-opt"><div><b>${esc(x.title)}</b><br><span class="note" style="margin:0">${esc(x.eyebrow || '')} · ${esc(x.subtitle || '')} · button: ${esc(x.button || '')}</span></div><button type="button" class="btn-sm btn-primary-sm" onclick="heroUseWords(${i},${n})">Use these words</button></div>`).join('')}`;
+}
+function heroUseWords(i, n) { const s = db.home.hero.slides[i], w = (window.HERO_WORDS || [])[n]; if (!s || !w) return; s.eyebrow = String(w.eyebrow || '').slice(0, 40); s.title = String(w.title || '').slice(0, 80); s.subtitle = String(w.subtitle || '').slice(0, 200); if (w.button) s.btnText = String(w.button).slice(0, 30); homeLive(true); renderHomeAdmin(document.getElementById('adminContent')); showToast('Words added. They are a draft: change anything you like.', 'success'); }
+// the text style panel inside each slide
+function heroTypeUI(s, i) {
+  const t = s.type || {}, auto = t.auto !== false, sel = (k, opts, cur) => `<select onchange="heroTypeSet(${i},'${k}',this.value)">${opts.map(([v, l]) => `<option value="${v}" ${String(cur ?? '') === String(v) ? 'selected' : ''}>${l}</option>`).join('')}</select>`;
+  const rng = (k, label, min, max, step, val, unit) => `<div class="form-group"><label>${label} <span class="mono" style="color:var(--gold);">${val}${unit}</span></label><input type="range" min="${min}" max="${max}" step="${step}" value="${val}" aria-label="${label}" oninput="this.previousElementSibling.lastElementChild.textContent=this.value+'${unit}';heroTypeSet(${i},'${k}',this.value)"></div>`;
+  const col = (k, label, fallback) => `<div class="form-group"><label>${label}</label><div class="hs-img-row"><input type="color" value="${okHex(t[k]) ? t[k] : fallback}" aria-label="${label}" oninput="heroTypeSet(${i},'${k}',this.value)" style="width:48px;padding:2px;flex:none"><button type="button" class="btn-sm btn-info-sm" onclick="heroTypeSet(${i},'${k}','');renderHomeAdmin(document.getElementById('adminContent'))">Auto</button></div></div>`;
+  const th = s.theme || {};
+  return `<details class="hs-type" ${t.font || t.size || !auto ? 'open' : ''}><summary>🅰 Text style (font, size, colours…)</summary>
+    <div class="hs-theme"><button type="button" class="btn-sm btn-primary-sm" id="hty-auto-${i}" onclick="heroStyleAuto(${i})">✨ Auto-style the text for this photo</button><label class="chk" style="margin:0"><input type="checkbox" ${auto ? 'checked' : ''} onchange="heroTypeAutoToggle(${i},this.checked)"><span>Style it automatically whenever I change the photo</span></label>${t.why ? `<span class="note" style="margin:0">Chosen because ${esc(t.why)}.</span>` : ''}</div>
+    <div class="hs-grid3"><div class="form-group"><label>Big heading font</label>${sel('font', HERO_FONTS.map(f => [f[0], f[1]]), t.font)}</div><div class="form-group"><label>Weight</label>${sel('weight', [['', 'Default'], [400, 'Regular'], [600, 'Semi-bold'], [700, 'Bold'], [800, 'Extra bold']], t.weight)}</div><div class="form-group"><label>Style</label>${sel('style', [['', 'Default (italic)'], ['italic', 'Italic'], ['normal', 'Upright']], t.style)}</div></div>
+    <div class="hs-grid3"><div class="form-group"><label>Letters</label>${sel('case', [['', 'As typed'], ['uppercase', 'CAPITALS'], ['capitalize', 'Each Word Capital'], ['lowercase', 'all small']], t.case)}</div><div class="form-group"><label>Shadow behind text</label>${sel('shadow', [['', 'None'], ['soft', 'Soft'], ['strong', 'Strong']], t.shadow)}</div><div class="form-group"><label>Description font</label>${sel('subFont', [['', 'Plain (website text)'], ['title', 'Same as the title']], t.subFont)}</div></div>
+    <div class="hs-grid3">${rng('size', 'Big heading size', 50, 180, 5, t.size || 100, '%')}${rng('spacing', 'Space between letters', -2, 12, 0.5, t.spacing || 0, 'px')}${rng('lh', 'Space between lines', 0.8, 1.8, 0.05, t.lh || 1.1, '')}</div>
+    <div class="hs-grid3">${rng('subSize', 'Description size', 70, 160, 5, t.subSize || 100, '%')}<div class="form-group"><label>Button look</label>${sel('btnStyle', [['', 'Filled'], ['outline', 'Outline only']], t.btnStyle)}</div><div class="form-group"><label>&nbsp;</label><button type="button" class="btn-sm btn-info-sm" onclick="heroTypeReset(${i})">Reset text style</button></div></div>
+    <div class="hs-grid3">${col('ink', 'Big heading colour', th.ink || '#ffffff')}${col('subInk', 'Description colour', th.ink || '#ffffff')}${col('accentInk', 'Small heading colour', th.accent || '#d4c4a8')}</div>
+    <div class="hs-grid3">${col('btnBg', 'Button colour', th.btnBg || '#faf9f6')}${col('btnInk', 'Button text colour', th.btnInk || '#2c2c2c')}<div class="form-group"><label>&nbsp;</label></div></div>
+    <div class="hs-theme"><button type="button" class="btn-sm btn-primary-sm" onclick="heroWriteWords(${i})">✨ Suggest the words (small heading, title, description, button)</button><span class="note" style="margin:0">Drafts only. You choose and can edit them.</span></div><div id="hwd-${i}" class="hw-list"></div>
+  </details>`;
 }
 async function heroMatch(i) {
   const s = db.home.hero.slides[i], b = document.getElementById('hm-' + i); if (!s) return; if (b) { b.disabled = true; b.textContent = 'Reading the photo…'; }
@@ -4350,10 +4429,10 @@ function navOverSync() {
 }
 window.addEventListener('scroll', () => { if (typeof navOverSync === 'function') navOverSync(); }, { passive: true });
 // Automatic colours: when a hero photo is added or moved, the colours are picked again and saved with the slide.
-function heroAuto(i, raise) {
+function heroAuto(i, raise, styleText) {
   clearTimeout(AUTO_T[i]); AUTO_T[i] = setTimeout(async () => {
     const s = db.home && db.home.hero.slides[i]; if (!s || db.home.autoColours === false || !safeImg(s.image)) return;
-    try { const r = await heroAnalyze(s); s.theme = { ink: r.ink, accent: r.accent, btnBg: r.btnBg, btnInk: r.btnInk, headerBg: r.headerBg, headerInk: r.headerInk, tone: r.tone, v: 2 }; if (raise && r.raised) s.overlay = r.overlay; homeLive(true); applyHeaderTheme(); if (isAdminView && currentAdminTab === 'home' && !/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName || '')) renderHomeAdmin(document.getElementById('adminContent')); } catch (e) { }
+    try { const r = await heroAnalyze(s); s.theme = { ink: r.ink, accent: r.accent, btnBg: r.btnBg, btnInk: r.btnInk, headerBg: r.headerBg, headerInk: r.headerInk, tone: r.tone, v: 2 }; if (styleText && (!s.type || s.type.auto !== false)) s.type = heroAutoType(r); if (raise && r.raised) s.overlay = r.overlay; homeLive(true); applyHeaderTheme(); if (isAdminView && currentAdminTab === 'home' && !/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName || '')) renderHomeAdmin(document.getElementById('adminContent')); } catch (e) { }
   }, 500);
 }
 function heroAutoAll() { (db.home.hero.slides || []).forEach((s, i) => { const key = s.id + '|' + String(s.image).slice(-40) + '|' + (s.zoom || 100); if ((!s.theme || s.theme.v !== 2) && safeImg(s.image) && !AUTO_SEEN.has(key)) { AUTO_SEEN.add(key); heroAuto(i, true); } }); }
@@ -4426,7 +4505,7 @@ async function homeFileChosen(files) {
   if (!target) return;
   const prev = target.image; target.image = url;
   if (!saveDB()) { target.image = prev; return; }
-  HOME_TIMER = null; renderHomeAdmin(document.getElementById('adminContent')); homeLive(true); homeFlush(); showToast('✓ Image updated', 'success'); if (pick.kind === 'hero') heroAuto(pick.idx, true);
+  HOME_TIMER = null; renderHomeAdmin(document.getElementById('adminContent')); homeLive(true); homeFlush(); showToast('✓ Image updated', 'success'); if (pick.kind === 'hero') heroAuto(pick.idx, true, true);
 }
 
 // ---- admin: hero slides ----
@@ -4434,7 +4513,7 @@ function heroSet(i, k, v) {
   const s = db.home.hero.slides[i]; if (!s) return;
   if (k === 'image') { v = String(v).trim(); if (v && !safeImg(v)) { showToast('Image link must start with https://', 'error'); return renderHomeAdmin(document.getElementById('adminContent')); } }
   if (k === 'overlay' || k === 'zoom' || k === 'focusX') v = +v;
-  s[k] = v; homeLive(true); heroPreview(i); if (['image', 'zoom', 'focusX', 'focus', 'pos'].includes(k)) heroAuto(i, k === 'image');
+  s[k] = v; homeLive(true); heroPreview(i); if (['image', 'zoom', 'focusX', 'focus', 'pos'].includes(k)) heroAuto(i, k === 'image', k === 'image');
 }
 function heroLinkType(i, t) { const s = db.home.hero.slides[i]; s.link = { type: t, value: t === 'category' ? db.categories[0] || '' : t === 'product' ? (db.products[0] || {}).id || '' : t === 'page' ? homePages()[0][0] : '' }; renderHomeAdmin(document.getElementById('adminContent')); homeLive(true); }
 function heroLinkValue(i, v) { const s = db.home.hero.slides[i]; if (s.link.type === 'url' && v.trim() && !/^https?:\/\//i.test(v.trim())) { showToast('Link must start with https://', 'error'); return; } s.link.value = v.trim(); homeLive(true); }
@@ -4505,6 +4584,7 @@ function renderHomeAdmin(container) {
           <div class="form-group"><label>Move photo left / right <span class="mono" style="color:var(--gold);">${s.focusX == null ? 50 : +s.focusX}%</span></label><input type="range" min="0" max="100" value="${s.focusX == null ? 50 : +s.focusX}" aria-label="Move the hero photo sideways" oninput="this.previousElementSibling.lastElementChild.textContent=this.value+'%';heroSet(${i},'focusX',this.value)"></div>
           <div class="form-group"><label>&nbsp;</label><button type="button" class="btn-sm btn-info-sm" onclick="heroZoomReset(${i})">Reset zoom</button></div></div>
         <div class="hs-theme"><button type="button" class="btn-sm btn-primary-sm" id="hm-${i}" onclick="heroMatch(${i})">🎨 Match text and top-bar colours to this photo</button>${heroSwatches(s.theme)}${s.theme ? `<button type="button" class="btn-sm btn-info-sm" onclick="heroThemeClear(${i})">Clear matched colours</button>` : ''}<span class="note" style="margin:0">Reads the photo itself (no Claude needed), sets the title, button and top-bar colours, and darkens the photo only if the words would be hard to read.</span></div>
+        ${heroTypeUI(s, i)}
         <div class="hs-grid2"><div class="form-group"><label>Small heading</label><input type="text" value="${esc(s.eyebrow)}" onchange="heroSet(${i},'eyebrow',this.value)" oninput="heroSet(${i},'eyebrow',this.value)"></div><div class="form-group"><label>Title</label><input type="text" value="${esc(s.title)}" oninput="heroSet(${i},'title',this.value)"></div></div>
         <div class="form-group"><label>Description</label><textarea rows="2" oninput="heroSet(${i},'subtitle',this.value)">${esc(s.subtitle)}</textarea></div>
         <div class="hs-grid2"><div class="form-group"><label>Button text</label><input type="text" value="${esc(s.btnText)}" oninput="heroSet(${i},'btnText',this.value)"></div>
@@ -6355,7 +6435,7 @@ function cartAnim(btn) {
 // ================= AI HELPERS for the owner (30 Oct 2026) =================
 // Every helper only DRAFTS: nothing is sent to customers or saved without the owner pressing the button.
 // Connected = the assistant server address + admin token are set (WhatsApp Assistant tab); otherwise built-in drafts are used where they exist.
-const AI_FEATURES = [['describe', 'Product descriptions, tags & SEO'], ['photo', 'Read colours & fabric from a photo'], ['reply', 'WhatsApp reply suggestions (Inbox)'], ['write', 'Festival, offer & caption writer'], ['review', 'Review replies'], ['ask', 'Ask your shop'], ['summary', 'Weekly summary'], ['pricing', 'Pricing & stock ideas'], ['cleanup', 'Data clean-up'], ['translate', 'Translation (Telugu / Hindi / English)'], ['captionpack', 'Caption & hashtag pack (English + Telugu)'], ['followup', 'Follow-up message drafts'], ['orderdraft', 'Order message drafts'], ['privacydraft', 'Privacy request reply drafts'], ['contentweek', 'Weekly content writer']];
+const AI_FEATURES = [['describe', 'Product descriptions, tags & SEO'], ['photo', 'Read colours & fabric from a photo'], ['reply', 'WhatsApp reply suggestions (Inbox)'], ['write', 'Festival, offer & caption writer'], ['hero', 'Home page words (small heading, title, button)'], ['review', 'Review replies'], ['ask', 'Ask your shop'], ['summary', 'Weekly summary'], ['pricing', 'Pricing & stock ideas'], ['cleanup', 'Data clean-up'], ['translate', 'Translation (Telugu / Hindi / English)'], ['captionpack', 'Caption & hashtag pack (English + Telugu)'], ['followup', 'Follow-up message drafts'], ['orderdraft', 'Order message drafts'], ['privacydraft', 'Privacy request reply drafts'], ['contentweek', 'Weekly content writer']];
 const AI_LANGS = [['en', 'English'], ['te', 'తెలుగు Telugu'], ['hi', 'हिन्दी Hindi']];
 const aiCfg = () => { const c = { master: true, ...(db.settings.ai || {}) }; AI_FEATURES.forEach(([k]) => { if (c[k] === undefined) c[k] = true; }); return c; };
 const aiOn = k => { const c = aiCfg(); return !!c.master && !!c[k]; };
