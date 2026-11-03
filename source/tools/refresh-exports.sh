@@ -13,6 +13,7 @@ mkdir -p data-export backups
 [ -f .last-published.html ] && cp .last-published.html backups/anitha-store.prev.html
 node tools/export-data.cjs
 python3 tools/make-changelog.py
+python3 tools/join-parts.py >/dev/null   # anitha-store.html is the joined src/ parts
 cp anitha-store.html .last-published.html
 NAME="$(basename "$PWD")"
 rm -f ../APSilks.zip

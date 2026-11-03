@@ -1,0 +1,59 @@
+<body>
+<noscript><p style="padding:20px;">Anitha Pemmasani – pure handloom sarees from Hyderabad. Please enable JavaScript to browse and shop, or call +91 98496 46440.</p></noscript>
+
+<button id="view-toggle" onclick="toggleView()">Switch to Admin</button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- HAMBURGER MENUS -->
+<div class="mobile-nav-overlay" id="storeNavOverlay" onclick="closeStoreNav()"></div>
+<div class="store-mobile-nav" id="storeMobileNav">
+  <div class="mobile-nav-header">
+    <h3>Anitha Pemmasani</h3>
+    <button class="mobile-nav-close" onclick="closeStoreNav()">×</button>
+  </div>
+  <ul class="mobile-nav-list">
+    <li onclick="navigateTo('home'); closeStoreNav();">🏠 Home</li>
+    <li onclick="navigateTo('shop'); closeStoreNav();">🛍️ Collection</li>
+    <li id="pgnav-m" hidden></li>
+    <li onclick="openAccount(); closeStoreNav();">👤 My account</li>
+    <li onclick="openCart(); closeStoreNav();">🛒 Cart (<span id="mobileCartCount">0</span>)</li>
+    <li onclick="navigateTo('faq'); closeStoreNav();">❓ FAQ</li>
+    <li class="owner-entry" onclick="closeStoreNav(); toggleView();">🔐 Owner login</li>
+  </ul>
+</div>
+
+<div class="mobile-nav-overlay" id="adminNavOverlay" onclick="closeAdminNav()"></div>
+<div class="admin-mobile-nav" id="adminMobileNav">
+  <div class="mobile-nav-header">
+    <div><h3>Anitha Pemmasani</h3><p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);">Admin Portal V7.1</p></div>
+    <button class="mobile-nav-close" onclick="closeAdminNav()">×</button>
+  </div>
+  <ul class="mobile-nav-list" id="adminMobileNavList">
+    <li class="owner-entry" onclick="closeAdminNav(); toggleView();">🏬 View store</li>
+    <li data-tab="dashboard" class="active" onclick="switchAdminTab('dashboard'); closeAdminNav();">📊 Dashboard</li>
+    <li data-tab="home" onclick="switchAdminTab('home'); closeAdminNav();">🏠 Home Page</li>
+    <li data-tab="products" onclick="switchAdminTab('products'); closeAdminNav();">📦 Products</li>
+    <li data-tab="categories" onclick="switchAdminTab('categories'); closeAdminNav();">🏷️ Categories</li>
+    <li data-tab="studio" onclick="switchAdminTab('studio'); closeAdminNav();">🎨 Image Studio</li>
+    <li data-tab="drafts" onclick="switchAdminTab('drafts'); closeAdminNav();">📝 Saved Drafts</li>
+    <li data-tab="orders" onclick="switchAdminTab('orders'); closeAdminNav();">📋 Orders</li>
+    <li data-tab="reviews" onclick="switchAdminTab('reviews'); closeAdminNav();">⭐ Reviews<span class="nav-count" data-nc="reviews"></span></li>
+    <li data-tab="delivery" onclick="switchAdminTab('delivery'); closeAdminNav();">🚚 Delivery &amp; Gifting</li>
+    <li data-tab="whatsapp" onclick="switchAdminTab('whatsapp'); closeAdminNav();">💬 WhatsApp Assistant</li>
+    <li data-tab="alerts" onclick="switchAdminTab('alerts'); closeAdminNav();">🔔 Stock Alerts<span class="nav-count" data-nc="alerts"></span></li>
+    <li data-tab="invoices" onclick="switchAdminTab('invoices'); closeAdminNav();">🧾 Invoices</li>
+    <li data-tab="customers" onclick="switchAdminTab('customers'); closeAdminNav();">👥 Customers</li>
+    <li data-tab="statements" onclick="switchAdminTab('statements'); closeAdminNav();">📈 Statements</li>
+    <li data-tab="coupons" onclick="switchAdminTab('coupons'); closeAdminNav();">🎟️ Coupons</li>
+    <li data-tab="bundles" onclick="switchAdminTab('bundles'); closeAdminNav();">🎁 Bundles</li>
+    <li data-tab="ai" onclick="switchAdminTab('ai'); closeAdminNav();">✨ AI Helper</li>
+    <li data-tab="social" onclick="switchAdminTab('social'); closeAdminNav();">📸 Instagram</li>
+    <li data-tab="growth" onclick="switchAdminTab('growth'); closeAdminNav();">📈 Growth</li>
+    <li data-tab="privacy" onclick="switchAdminTab('privacy'); closeAdminNav();">🛡️ Privacy</li>
+    <li data-tab="pages" onclick="switchAdminTab('pages'); closeAdminNav();">📰 Pages</li>
+    <li data-tab="ops" onclick="switchAdminTab('ops'); closeAdminNav();">🩺 Ops</li>
+    <li data-tab="logs" onclick="switchAdminTab('logs'); closeAdminNav();">📜 Audit Logs</li>
+    <li data-tab="settings" onclick="switchAdminTab('settings'); closeAdminNav();">⚙️ Settings</li>
+  </ul>
+</div>
+

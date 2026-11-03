@@ -28,6 +28,7 @@ Plain-language pages for the owner and for anyone who takes over the project. Ke
 | `28-new-arrivals-pick.md` | choosing which sarees show in New Arrivals |
 | `29-saree-care-guide.md` | the Saree Care page, the full wash-care guide, photo links |
 | `30-my-account-window.md` | the customer My Account window |
+| `31-modular-source-parts.md` | the website source is split into parts in src/ and joined |
 | `19-developer-handover.md` | **start here if you are a developer or an AI**: layout, commands, rules, routes, settings, lessons |
 | `18-growth-and-weekly-email.md` | Growth tab, visit counting, live suggestions, weekly email, Instagram reminder |
 | `16-data-reference.md` | **every piece of data stored**: where it lives, each collection and its fields, the assistant server's data, what is sent to AI, privacy |

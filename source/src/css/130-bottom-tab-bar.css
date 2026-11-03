@@ -1,0 +1,36 @@
+  /* ===== bottom tab bar (phones) ===== */
+  .tabbar { display: none; }
+  @media (max-width: 640px) {
+    .tabbar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 998; background: rgba(250,248,244,0.97); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--border); padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -4px 18px rgba(0,0,0,0.06); }
+    .tabbar button { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 58px; background: none; border: none; color: #8a8580; font-size: 11px; letter-spacing: 0.4px; font-weight: 500; font-family: inherit; }
+    .tabbar svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .tabbar button.on { color: var(--charcoal); font-weight: 600; } .tabbar button.on svg { stroke: var(--gold); stroke-width: 2; } .tabbar button.on::before { content: ''; position: absolute; top: 0; width: 28px; height: 3px; border-radius: 0 0 3px 3px; background: var(--gold); }
+    .tabbar button.on[data-tab="favourites"] svg { fill: rgba(166,124,82,0.18); }
+    .tab-badge { display: none; position: absolute; top: 6px; left: calc(50% + 6px); min-width: 17px; height: 17px; padding: 0 4px; border-radius: 9px; background: var(--heart); color: white; font-style: normal; font-size: 11px; font-weight: 600; line-height: 17px; text-align: center; }
+    body.has-tabbar { padding-bottom: calc(60px + env(safe-area-inset-bottom)); }
+    /* header slims down: the tab bar now carries wishlist / cart / account */
+    nav .nav-icon[aria-label="Favourites"], nav .nav-icon[aria-label="My account"], nav .nav-icon[title="Cart"] { display: none; }
+    #view-toggle { bottom: calc(68px + env(safe-area-inset-bottom)); }
+    .toast { bottom: calc(76px + env(safe-area-inset-bottom)); }
+    .drawer { height: calc(100dvh - 58px - env(safe-area-inset-bottom)); } .overlay, #overlay { bottom: calc(58px + env(safe-area-inset-bottom)); }
+    body.studio-focus .tabbar, body.admin-on .tabbar { display: none; }
+  }
+
+
+
+/* admin tables become cards on phones (no sideways swiping to find Status / Actions) */
+@media (max-width: 640px) {
+  .admin-card { overflow-x: visible !important; }
+  table.admin-table.stack { min-width: 0 !important; width: 100% !important; display: block; }
+  table.admin-table.stack thead { display: none; }
+  table.admin-table.stack tbody { display: block; }
+  table.admin-table.stack tr { display: block; border: 1px solid #ece6da; border-radius: 10px; padding: 8px 12px; margin-bottom: 10px; background: #fff; }
+  table.admin-table.stack td { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 7px 0; border: none; border-bottom: 1px dashed #f0ebe0; text-align: right; min-width: 0 !important; word-break: break-word; }
+  table.admin-table.stack td:last-child { border-bottom: none; }
+  table.admin-table.stack td::before { content: attr(data-label); flex: 0 0 34%; text-align: left; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #6b6862; font-weight: 600; }
+  table.admin-table.stack td[data-label=""]::before, table.admin-table.stack td[colspan]::before { display: none; }
+  table.admin-table.stack td:first-child { display: block; text-align: left; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 2px; }
+  table.admin-table.stack td:first-child::before { display: none; }
+  table.admin-table.stack td .action-buttons, table.admin-table.stack td[data-label=""] { justify-content: flex-start; flex-wrap: wrap; text-align: left; }
+  .stat-card { padding: 16px; } .stat-card .value { font-size: 26px; white-space: nowrap; }
+}

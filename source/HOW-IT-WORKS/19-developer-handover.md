@@ -8,10 +8,10 @@ A saree shop for Anitha Pemmasani (Hyderabad): a public website, a password-prot
 ## Layout (the folder `source/` in git; the same layout on the owner's computer)
 | Path | What it is |
 |---|---|
-| `anitha-store.html` | **The single source** of the whole front end (store, owner app, demo). About 900 KB, one file, no framework. A runtime flag decides what it is: `const BUILD = window.__BUILD || 'dev'` → `dev` all-in-one demo (admin PIN in the demo), `site` public website, `admin` owner app. |
+| `src/` + `anitha-store.html` | **The source of the whole front end is now in parts in `src/`** (css, html, js; see guide 31). `anitha-store.html` is the file they are joined into (the build and the tests read it): never edit it by hand. It is the whole front end (store, owner app, demo). About 900 KB, one file, no framework. A runtime flag decides what it is: `const BUILD = window.__BUILD || 'dev'` → `dev` all-in-one demo (admin PIN in the demo), `site` public website, `admin` owner app. |
 | `tools/build-split.py` | Builds `build/site/index.html` (public site: admin screens, demo PIN and bank details removed, `window.__SHOP_API`) and `wa-assistant/public/admin.html` (owner app). Flags `--shop-api <https url>`, `--index` (copy to `deploy/`/root index). |
 | `tools/refresh-exports.sh` | After tests pass: refreshes `data-export/*.json`, the zip, the site build, `CHANGELOG.md`. Same file names every time (never create new copies). |
-| `tools/sync-shared.py` | Copies `shared/*.js` (PIN-code and packing-slip logic used by both browser and server) into `anitha-store.html` and `wa-assistant/src`. Run after editing `shared/`. |
+| `tools/sync-shared.py` | Copies `shared/*.js` (PIN-code and packing-slip logic used by both browser and server) into `src/js/*-shared-*.js` (then joined) and `wa-assistant/src`. Run after editing `shared/`. |
 | `tools/make-changelog.py` | Writes `CHANGELOG.md` from section 8 of `PROJECT_RECORD.md` (that section is the one place history is written). |
 | `tools/publish-repo.sh <repo>` | Copies everything needed into the git repository (see "Publishing"). |
 | `wa-assistant/` | The Node 20 server (`server.mjs`, `src/*.mjs`, `public/*.html`, `tests/run.mjs`). Deployed as `server/` in git. `public/admin.html` is **generated**: never edit it by hand. |
@@ -32,7 +32,7 @@ tools/publish-repo.sh /path/to/git/checkout   # copy to git, then commit and pus
 Browser tests need Playwright (`PW=$(npm root -g)/playwright`) and a Chromium. The server tests and the video analyzer need `ffmpeg` on the machine (the server itself uses the `ffmpeg-static` package on a host).
 
 ## How a change is made (the owner's standing rules)
-1. Change the code. Edit `anitha-store.html` (not the generated `admin.html` or `build/`), `wa-assistant/src/*.mjs`, or `shared/`.
+1. Change the code. Edit the parts in `src/` (then `python3 tools/join-parts.py`; `run-tests.sh`, `build-split.py` and `publish-repo.sh` do it for you) (not the generated `anitha-store.html`, `admin.html` or `build/`), `wa-assistant/src/*.mjs`, or `shared/`.
 2. Add or update a test; run `./run-tests.sh` until it is all green. Anything visible must also be looked at in a real browser.
 3. In the **same step** update `PROJECT_RECORD.md` (status + newest change-log entry at the top of section 8) and the matching `HOW-IT-WORKS` guide, then run `./check-record.sh`.
 4. Run `./tools/refresh-exports.sh`, then publish to git. Update files in place; never create `v2` copies.

@@ -1,0 +1,56 @@
+/* ===== New owner look (/admin2). Inert unless <html class="ui2">. Same app, same code: only colours and shape change. ===== */
+html.ui2{--o-bg:#efe9dc;--o-bg-glow1:rgba(201,106,17,.20);--o-bg-glow2:rgba(120,150,100,.22);--o-glass:rgba(255,255,255,.86);--o-glass-2:rgba(255,255,255,.95);--o-line:rgba(46,45,41,.14);--o-ink:#2E2D29;--o-mute:#5f5b52;--o-accent:#B85F0E;--o-accent-ink:#fff;--o-sage:#6f9455;--o-rose:#c8664c;--o-sky:#4f84bb;--o-chip:rgba(46,45,41,.07);--o-display:'Cormorant Garamond',Georgia,serif;--o-body:'Outfit',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;--o-bad:#a8281c;--o-badbg:rgba(176,50,39,.12);--o-field:#7c786f;--o-accent-text:#7D4207;--ring:#2C2C2C;--ring-halo:#fff;--o-okbg:rgba(70,120,60,.14);--o-warnbg:rgba(201,106,17,.16);color-scheme:light}
+html.ui2.dk{--o-bg:#12110f;--o-bg-glow1:rgba(224,131,43,.22);--o-bg-glow2:rgba(110,150,90,.16);--o-glass:rgba(255,255,255,.07);--o-glass-2:rgba(255,255,255,.13);--o-line:rgba(255,255,255,.14);--o-ink:#F3EFE6;--o-mute:#b3aea2;--o-accent:#F0913A;--o-accent-ink:#1b1206;--o-sage:#B3D08F;--o-rose:#F2A58E;--o-sky:#8FB8E6;--o-chip:rgba(255,255,255,.09);--o-bad:#f5a095;--o-badbg:rgba(240,138,128,.16);--o-field:#9a958a;--o-accent-text:#F0913A;--ring:#fff;--ring-halo:#12110f;--o-okbg:rgba(179,208,143,.16);--o-warnbg:rgba(240,145,58,.18);color-scheme:dark}
+/* the classic app's own colour names now follow the new tokens, so every screen picks them up */
+html.ui2{--ivory:var(--o-bg);--cream:var(--o-chip);--border:var(--o-line);--red:var(--o-bad)}
+html.ui2 body.adm-app{background-color:var(--o-bg);background-image:radial-gradient(900px 500px at 8% -5%,var(--o-bg-glow1),transparent 60%),radial-gradient(800px 600px at 100% 100%,var(--o-bg-glow2),transparent 60%);background-attachment:fixed;color:var(--o-ink);font-family:var(--o-body)}
+html.ui2 #adminView,html.ui2 .admin-main{color:var(--o-ink)}
+html.ui2 .admin-sidebar{background:var(--o-glass);border-right:1px solid var(--o-line);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+html.ui2 .admin-sidebar-header h1{font-family:var(--o-display);color:var(--o-ink)}html.ui2 .admin-sidebar-header p{color:var(--o-accent)}
+html.ui2 .admin-nav-item{color:var(--o-ink);border-radius:999px}html.ui2 .admin-nav-item:hover{background:var(--o-chip);color:var(--o-ink)}
+html.ui2 .admin-nav-item.active{background:var(--o-glass-2);color:var(--o-ink);box-shadow:inset 0 0 0 1px var(--o-line)}
+html.ui2 .admin-header h2,html.ui2 h1,html.ui2 h2,html.ui2 h3,html.ui2 h4{color:var(--o-ink)}
+html.ui2 .admin-card{background:var(--o-glass);border:1px solid var(--o-line);border-radius:22px;box-shadow:none;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:var(--o-ink)}
+html.ui2 .admin-table th{color:var(--o-mute);border-bottom:1px solid var(--o-line)}html.ui2 .admin-table td{border-bottom:1px solid var(--o-line);color:var(--o-ink)}
+html.ui2 .admin-table tr:hover td{background:var(--o-chip)}
+html.ui2 input,html.ui2 select,html.ui2 textarea{background:var(--o-chip);color:var(--o-ink);border-color:var(--o-field)}
+html.ui2 input::placeholder,html.ui2 textarea::placeholder{color:var(--o-mute)}
+html.ui2 select option{background:var(--o-bg);color:var(--o-ink)}
+html.ui2 .btn-sm{border-radius:999px}
+html.ui2 .btn-primary-sm,html.ui2 .btn-full{background:var(--o-accent);color:var(--o-accent-ink)}html.ui2 .btn-primary-sm:hover{filter:brightness(1.08);background:var(--o-accent)}
+html.ui2 .btn-info-sm{background:var(--o-chip);color:var(--o-ink);border:1px solid var(--o-line)}
+html.ui2 .btn-danger-sm{background:transparent;color:var(--o-bad);border:1px solid var(--o-bad)}
+html.ui2 .modal-content{background:var(--o-bg);color:var(--o-ink);border:1px solid var(--o-line)}
+html.ui2 .note,html.ui2 .pf-sub,html.ui2 small{color:var(--o-mute)}
+html.ui2 a{color:var(--o-accent-text)}
+html.ui2 .admin-sidebar-header p{color:var(--o-accent-text)}
+html.ui2 .api-status{color:var(--o-ink)}
+html.ui2 .va-do,html.ui2 .soc-passed,html.ui2 .grow-remind,html.ui2 .g-act{background:var(--o-chip);border-color:var(--o-line);color:var(--o-ink)}
+html.ui2 .ai-err{background:var(--o-badbg);color:var(--o-bad)}html.ui2 .ai-busy{color:var(--o-mute)}
+html.ui2 #adm-security,html.ui2 .dash-detail{color:var(--o-ink)}
+html.ui2 .ui2-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:14px}
+html.ui2 .ui2-bar button,html.ui2 .ui2-bar a{border:1px solid var(--o-line);background:var(--o-chip);color:var(--o-ink);border-radius:999px;padding:8px 12px;font-size:12.5px;cursor:pointer;text-decoration:none;font-family:inherit}
+html.ui2 .ov2-sep{font-family:var(--o-display);font-weight:500;font-size:26px;margin:28px 0 12px}
+@media (prefers-reduced-motion:reduce){html.ui2 *{transition:none!important}}
+
+/* dark: the classic screens use fixed greys and whites inline; map them to the new tokens so nothing is unreadable */
+html.ui2.dk label,html.ui2.dk .form-group label,html.ui2.dk .note,html.ui2.dk small,html.ui2.dk .pf-sub,html.ui2.dk .hint{color:var(--o-mute)}
+html.ui2.dk [style*="color:#6b6862"],html.ui2.dk [style*="color: #6b6862"],html.ui2.dk [style*="color:#666"],html.ui2.dk [style*="color:#555"]{color:var(--o-mute)!important}
+html.ui2.dk [style*="color:#333"],html.ui2.dk [style*="color:#222"],html.ui2.dk [style*="color:#444"],html.ui2.dk [style*="color:var(--charcoal)"],html.ui2.dk [style*="color: var(--charcoal)"]{color:var(--o-ink)!important}
+html.ui2.dk [style*="background:white"],html.ui2.dk [style*="background: white"],html.ui2.dk [style*="background:#fff"],html.ui2.dk [style*="background: #fff"],html.ui2.dk [style*="background:#fafafa"],html.ui2.dk [style*="background:var(--cream)"]{background:var(--o-glass-2)!important;color:var(--o-ink)}
+html.ui2.dk .admin-table th{color:var(--o-mute)}
+html.ui2.dk .kpi-v,html.ui2.dk .kpi-l,html.ui2.dk .att,html.ui2.dk .rank,html.ui2.dk .dd-row,html.ui2.dk .snap,html.ui2.dk .cat-row,html.ui2.dk .g-goal,html.ui2.dk .ai-card,html.ui2.dk .sum-card,html.ui2.dk .stat-card{color:var(--o-ink)}
+
+html.ui2.dk .ai-sec,html.ui2.dk .stat-card,html.ui2.dk .kpi,html.ui2.dk .g-tile,html.ui2.dk .studio-side,html.ui2.dk .studio-bar,html.ui2.dk .size-btn,html.ui2.dk .seg-btn,html.ui2.dk .report-filters,html.ui2.dk .report-card,html.ui2.dk .att,html.ui2.dk .dash-detail{background:var(--o-glass);color:var(--o-ink);border-color:var(--o-line)}
+html.ui2.dk .grow-remind{background:var(--o-badbg)!important;border-color:var(--o-line)!important;color:var(--o-ink)}
+html.ui2 [style*="color:#6b6862"],html.ui2 [style*="color: #6b6862"]{color:var(--o-mute)!important}
+html.ui2 .hint,html.ui2 .att-go{color:var(--o-mute)}
+
+/* menus that slide in (phones) follow the new look in both themes */
+html.ui2 .admin-mobile-nav, html.ui2 .store-mobile-nav { background: var(--o-bg); color: var(--o-ink); }
+html.ui2 .admin-mobile-nav li, html.ui2 .admin-mobile-nav h3, html.ui2 .admin-mobile-nav .mobile-nav-close { color: var(--o-ink); }
+html.ui2 .admin-mobile-nav li:hover, html.ui2 .admin-mobile-nav li.active { background: var(--o-chip); color: var(--o-ink); }
+html.ui2.dk .dash-ranges button, html.ui2.dk .seg button { background: var(--o-chip); color: var(--o-ink); }
+html.ui2.dk .dash-ranges button.on, html.ui2.dk .seg button.on, html.ui2.dk .seg button[aria-pressed="true"] { background: var(--o-glass-2); color: var(--o-ink); }
+html.ui2 .drawer { background: var(--o-bg); color: var(--o-ink); }
+

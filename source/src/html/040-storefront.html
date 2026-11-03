@@ -1,0 +1,82 @@
+<!-- ================= STOREFRONT ================= -->
+<div id="storefrontView" class="store-view">
+  <nav>
+    <div class="nav-left" style="display:flex;align-items:center;gap:15px;">
+      <button class="hamburger-btn" id="storeHamburger" onclick="toggleStoreNav()" aria-label="Menu"><span></span><span></span><span></span></button>
+      <a class="nav-brand" onclick="navigateTo('home')" aria-label="Anitha Pemmasani"><img class="brand-mark" id="navLogo" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" width="40" height="40"><span>Anitha Pemmasani</span></a>
+    </div>
+    <ul class="nav-links">
+      <li><a onclick="navigateTo('home')">Home</a></li>
+      <li><a onclick="navigateTo('shop')">Collection</a></li>
+      <li id="pgnav-h" hidden></li>
+    </ul>
+    <div class="nav-icons">
+      <div class="nav-icon" onclick="shopFocusSearch()" title="Search sarees" role="button" aria-label="Search" tabindex="0">🔍</div>
+      <div class="nav-icon" onclick="navigateTo('favourites')" title="Favourites" role="button" aria-label="Favourites" tabindex="0">♡ <span class="badge" id="favCount">0</span></div>
+      <div class="nav-icon" onclick="openAccount()" title="My account" role="button" aria-label="My account" tabindex="0">👤<span class="acct-dot" id="acctDot" style="display:none;"></span></div>
+      <div class="nav-icon" onclick="openCart()" title="Cart">🛒 <span class="badge" id="cartCount">0</span></div>
+    </div>
+  </nav>
+
+  <div id="page-home" class="page active">
+    <div id="homeHero"></div>
+    <section class="category-strip" id="collection" aria-label="Shop by category"></section>
+    <section class="scrolling-section" id="new-arrivals">
+      <div class="section-header"><div class="section-label" id="arrLabel">Handpicked</div><h2 class="section-title" id="arrTitle">New Arrivals</h2></div>
+      <div class="scroll-track" id="scrollTrack"></div>
+    </section>
+    <section id="signatureSection"></section>
+    <section id="soldSection" class="sold-section" aria-label="Recently sold"></section>
+    <section id="occasionSection" class="occ-section" aria-label="Shop by occasion"></section>
+    <section id="recentSection" class="recent-section" aria-label="Recently viewed"></section>
+  </div>
+
+  <div id="page-shop" class="page">
+    <section>
+      <div class="section-header"><div class="section-label">Shop by Category</div><h2 class="section-title" id="shop-title">All Products</h2></div>
+      <div class="kind-tabs" id="kindTabs" role="tablist" aria-label="Shop sarees or accessories"></div>
+      <div class="filter-container" id="filterContainer"></div>
+      <div id="shopToolbar"></div>
+      <div class="product-grid" id="productGrid"></div>
+    </section>
+  </div>
+
+  <div id="page-favourites" class="page">
+    <section>
+      <div class="section-header"><div class="section-label">Your Collection</div><h2 class="section-title">My Favourites</h2></div>
+      <div class="product-grid" id="favouritesGrid"></div>
+    </section>
+  </div>
+
+  <div id="page-wishlist" class="page"><section id="wishlistShared"></section></div>
+  <div id="page-faq" class="page"><section id="faqBody"></section></div>
+
+  <div id="page-terms" class="page"><div id="legal-terms"></div></div>
+  <div id="page-privacy" class="page"><div id="legal-privacy"></div></div>
+
+  <div id="page-care" class="page"></div>
+
+  <div id="page-journal" class="page"></div>
+
+  <div id="page-atelier" class="page"></div>
+
+  <div class="top-banner" id="announceBar" role="status"></div>
+
+  <footer>
+    <div class="footer-grid">
+      <div><div class="footer-brand"><img class="brand-logo foot" id="footLogo" alt="Anitha Pemmasani Clothing Studio" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" width="160" height="48"></div><p class="footer-desc">Curating legacy-worthy pure handloom sarees for the modern woman. Based in Hyderabad, shipping worldwide.</p></div>
+      <div><div class="footer-title">Shop</div><ul class="footer-links"><li><a onclick="navigateTo('shop')">New Arrivals</a></li><li><a onclick="filterAndShowShop('Tussar')">Tussar Silk</a></li><li><a onclick="filterAndShowShop('Banarasi')">Banarasi</a></li></ul></div>
+      <div><div class="footer-title">Support</div><ul class="footer-links"><li><a onclick="openAccount()">My Account &amp; Orders</a></li><li><a onclick="navigateTo('faq')">FAQ</a></li><li><a onclick="openNotice()">Privacy notice</a></li><li><a onclick="openRights()">Your privacy rights</a></li><li class="owner-foot"><a onclick="toggleView()">Owner login</a></li><li><a onclick="openLegal('terms','shipping')">Shipping Policy</a></li><li><a onclick="openLegal('terms','returns')">Returns &amp; Exchanges</a></li><li><a onclick="openLegal('terms')">Terms &amp; Conditions</a></li><li><a onclick="openLegal('privacy')">Privacy Policy</a></li><li><a onclick="navigateTo('care')">Saree Care Guide</a></li></ul></div>
+      <div><div class="footer-title">Contact</div><ul class="footer-links"><li><a>Hyderabad, Telangana, India</a></li><li><a href="tel:+919849646440">+91 98496 46440</a></li><li><a id="footWa" href="https://wa.me/919849646440">WhatsApp Support</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><div>© 2026 Anitha Pemmasani. All rights reserved.</div><div class="footer-legal"><a class="fl" onclick="openLegal('terms')">Terms</a><a class="fl" onclick="openLegal('privacy')">Privacy</a></div></div>
+  </footer>
+<div class="tabbar" id="tabBar" role="navigation" aria-label="Main">
+    <button type="button" data-tab="home" onclick="tabGo('home')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10"/></svg><span>Home</span></button>
+    <button type="button" data-tab="shop" onclick="tabGo('shop')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2"/></svg><span>Shop</span></button>
+    <button type="button" data-tab="favourites" onclick="tabGo('favourites')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.600-7 10-7 10Z"/></svg><span>Wishlist</span><i class="tab-badge" id="tabFav"></i></button>
+    <button type="button" data-tab="cart" onclick="tabGo('cart')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2.500l2 11h10.500l2-8H7M9 20h.01M17 20h.01"/></svg><span>Cart</span><i class="tab-badge" id="tabCart"></i></button>
+    <button type="button" data-tab="account" onclick="tabGo('account')"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.500 20a7.500 7.500 0 0 1 15 0"/></svg><span>Account</span></button>
+  </div>
+</div>
+

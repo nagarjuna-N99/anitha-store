@@ -1,0 +1,109 @@
+{
+ "comment": "Order in which tools/join-parts.py joins these parts into anitha-store.html. Edit the parts, never anitha-store.html.",
+ "parts": [
+  {
+   "file": "html/010-head.html"
+  },
+  {
+   "open": "<style>\n",
+   "files": [
+    "css/010-base-nav-toggle-hamburger.css",
+    "css/020-storefront-and-social-studio.css",
+    "css/030-drawers-and-modals.css",
+    "css/040-admin.css",
+    "css/050-image-studio.css",
+    "css/060-cart-delivery-search-schedule.css",
+    "css/070-home-hero-and-editor.css",
+    "css/080-login-consent-legal-account.css",
+    "css/090-product-page-and-forms.css",
+    "css/100-drafts-and-statements.css",
+    "css/110-toast.css",
+    "css/120-mobile.css",
+    "css/130-bottom-tab-bar.css",
+    "css/140-phone-polish.css",
+    "css/150-owner-dashboard-ai-drafts.css",
+    "css/160-storefront-extras.css"
+   ],
+   "close": "</style>\n"
+  },
+  {
+   "open": "<style id=\"ui2css\">\n",
+   "files": [
+    "css/170-owner-app-new-look-base.css",
+    "css/180-owner-app-new-look-theme.css"
+   ],
+   "close": "</style>\n"
+  },
+  {
+   "open": "<style id=\"dsfix\">\n",
+   "files": [
+    "css/190-design-fixes.css"
+   ],
+   "close": "</style>\n"
+  },
+  {
+   "file": "html/020-head-end.html"
+  },
+  {
+   "file": "html/030-body-open.html"
+  },
+  {
+   "file": "html/040-storefront.html"
+  },
+  {
+   "file": "html/050-admin-view.html"
+  },
+  {
+   "open": "<script>\n",
+   "files": [
+    "js/010-helpers.js",
+    "js/020-build.js",
+    "js/030-database.js",
+    "js/040-hamburger-menus.js",
+    "js/050-view-toggle.js",
+    "js/060-storefront-navigation.js",
+    "js/070-storefront-logic.js",
+    "js/080-share-whatsapp-otp-login-profile-consent.js",
+    "js/090-privacy-notice-and-rights.js",
+    "js/100-admin-logic.js",
+    "js/110-image-studio.js",
+    "js/120-admin-forms-actions.js",
+    "js/130-product-media-preview-ai-copy-seo.js",
+    "js/140-publish-edit-product-form.js",
+    "js/150-pages-care-journal-atelier.js",
+    "js/160-ai-agents.js",
+    "js/170-statements.js",
+    "js/180-home-page-hero-slides-category-strip.js",
+    "js/190-shop-search-filters-sort.js",
+    "js/200-scheduled-banners.js",
+    "js/210-back-in-stock-alerts.js",
+    "js/220-reviews-with-photos.js",
+    "js/230-bottom-tab-bar.js",
+    "js/240-whatsapp-chat-button-ai-assistant.js",
+    "js/250-cart-follow-up.js",
+    "js/260-shared-pincode-core.js",
+    "js/270-cart-follow-up-continued.js",
+    "js/280-shared-slip-core.js",
+    "js/290-cart-follow-up-continued-2.js",
+    "js/300-delivery-gifts-address-book-tracking.js",
+    "js/310-shared-erase-core.js",
+    "js/320-delivery-gifts-address-book-tracking-continued.js",
+    "js/330-init.js",
+    "js/340-storefront-extras.js",
+    "js/350-owner-dashboard-drafts-add-to-cart-animation.js",
+    "js/360-ai-photo-tools-4-nov-2026.js",
+    "js/370-ai-helpers-for-the-owner.js",
+    "js/380-ready-to-post-drafts.js",
+    "js/390-hosted-builds.js",
+    "js/400-instagram.js",
+    "js/410-social-studio-posting-rules-previews-video.js",
+    "js/420-growth-insights.js",
+    "js/430-privacy-dpdp.js"
+   ],
+   "close": "</script>\n"
+  },
+  {
+   "file": "html/060-tail.html"
+  }
+ ]
+}

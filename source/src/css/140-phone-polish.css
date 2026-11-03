@@ -1,0 +1,77 @@
+/* ===== phone polish (28 Oct 2026) ===== */
+@media (max-width: 900px) { .pf-grid { grid-template-columns: minmax(0, 1fr) !important; } .pf-grid > *, .pf-sec, #adminModalBody .form-group { min-width: 0; } #adminModalBody input, #adminModalBody select, #adminModalBody textarea { max-width: 100%; box-sizing: border-box; } }
+@media (max-width: 900px) { .filter-container { padding-left: 16px; padding-right: 16px; scroll-padding: 0 16px; } }
+.owner-foot { display: none; } @media (max-width: 900px) { .owner-foot { display: list-item; } }
+.store-mobile-nav, .admin-mobile-nav { height: 100vh; height: 100dvh; } .drawer { height: 100vh; height: 100dvh; }
+@media (max-width: 900px) {
+  #view-toggle { display: none; }
+  .owner-entry { opacity: .75; border-top: 1px solid #eee; margin-top: 6px; }
+  .mobile-nav-close { min-width: 44px; min-height: 44px; font-size: 28px; display: inline-flex; align-items: center; justify-content: center; }
+  input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]), select, textarea { font-size: 16px !important; }
+  .shop-q-clear { min-width: 40px; min-height: 40px; }
+  .nav-brand { display: inline-flex; align-items: center; min-height: 44px; }
+  .footer-links a, .footer-bottom .fl { display: inline-block; padding: 10px 6px; min-height: 40px; min-width: 44px; box-sizing: border-box; }
+  .footer-bottom .fl { padding: 12px 8px; }
+  .faq-item summary { padding: 6px 0; min-height: 44px; display: flex; align-items: center; } .faq-item p a { display: inline-block; padding: 8px 0; }
+  .legal-toc a { display: inline-block; padding: 8px 0; min-height: 36px; box-sizing: border-box; }
+  .jump-btn { min-height: 40px; padding: 8px 16px; }
+  .chip-input { min-height: 40px; }
+  .pf-actions .btn-sm, .btn-sm { min-height: 38px; }
+  .pv-bar button, .pv-tabs button { min-height: 40px; min-width: 40px; } .pv-tabs { flex-wrap: wrap; } details > summary { padding: 8px 0; min-height: 40px; box-sizing: border-box; }
+  .pf-thumb { width: calc(50% - 4px); height: auto; aspect-ratio: 4 / 5; } .pf-tools button { min-height: 44px; font-size: 20px; }
+}
+@media (max-width: 640px) {
+  .drawer { height: calc(100vh - 58px - env(safe-area-inset-bottom)); height: calc(100dvh - 58px - env(safe-area-inset-bottom)); }   /* the tab bar stays tappable under the cart */
+  /* keep the close button on screen while a long sheet scrolls */
+  .modal-close { position: sticky; top: 10px; right: auto; display: block; margin: 10px 10px -54px auto; float: none; }
+  /* cart: items first, a compact total + checkout stay in view */
+  #cartDrawer .drawer-footer { padding-top: 10px; }
+  #cartDrawer .summary-row { padding: 5px 0; font-size: 13px; }
+  #cartDrawer .summary-row.total { font-size: 16px; }
+  #cartDrawer .drawer-footer .btn-full { margin-top: 8px; min-height: 48px; }
+  #cartDrawer .drawer-footer .btn-outline { margin-top: 6px; min-height: 40px; padding: 8px; }
+  #cartDelivM, #cartRemRowM { margin-top: 14px; }
+  /* sheets use the full phone width: the desktop side padding wasted 25% of a 360px screen */
+  #checkoutModal .modal-content > div[style*="padding"], #shareBody, #authBody, #accountBody, #trackBody, #alertBody, #adminModalBody, #previewBody { padding: 56px 16px 24px !important; }
+  #legalModalBody { padding: 56px 16px 24px !important; }
+}
+
+.kind-tabs { display: flex; gap: 10px; justify-content: center; margin: 0 auto 14px; padding: 0 16px; max-width: 420px; }
+.kind-tab { flex: 1 1 0; min-height: 46px; border: 1.5px solid var(--charcoal); background: transparent; color: var(--charcoal); border-radius: 30px; font-family: inherit; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; cursor: pointer; }
+.kind-tab.active { background: var(--charcoal); color: #fff; }
+.summary-row > span:last-child { white-space: nowrap; margin-left: 12px; }
+
+.product-card { content-visibility: auto; contain-intrinsic-size: auto 430px; }
+body:not(.ready) footer { visibility: hidden; }
+#homeHero:empty { min-height: 70vh; min-height: 70svh; }
+
+/* touch screens wider than a portrait phone (landscape phones, tablets) get the same finger-sized controls */
+@media (pointer: coarse) {
+  .btn-sm-card { min-height: 44px; font-size: 11px; padding: 10px; }
+  .swatch { width: 40px; height: 40px; } .swatches { gap: 12px; }
+  .presets button, .linkbtn { min-height: 40px; padding: 8px 14px; }
+  .item-remove, .drawer-close, .mobile-nav-close { min-width: 44px; min-height: 44px; }
+  .cart-item button { min-width: 36px; min-height: 36px; }
+  .shop-q-clear { min-width: 40px; min-height: 40px; }
+  .modal-close { position: sticky; top: 10px; right: auto; display: block; margin: 10px 10px -46px auto; width: 44px; height: 44px; }
+  .filter-btn, .btn-card { min-height: 40px; }
+  .chip button { min-width: 32px; min-height: 32px; }
+}
+/* short screens (phone on its side): the cart scrolls as one piece so Checkout is always reachable */
+@media (max-height: 560px) {
+  .drawer { overflow-y: auto; }
+  .drawer-body { flex: none; overflow: visible; }
+  .drawer-footer { position: static; }
+  .modal-content { max-height: 100dvh; }
+}
+
+/* readable small print on phones (was 9-10px) + no 300 ms tap delay */
+button, a, [onclick], input, select, summary, label { touch-action: manipulation; }
+@media (max-width: 900px) {
+  .top-banner { font-size: 11.5px; line-height: 1.5; }
+  .hero-est, .section-label, .scroll-card-tag, .product-tag, .sold-tag, .stock-badge, .tabbar button span, .vid-badge, .card-rating small { font-size: 11px !important; }
+  .stock-badge { padding: 5px 10px !important; }
+}
+
+.primary-tag { background: var(--gold); color: #fff; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; padding: 2px 6px; border-radius: 8px; vertical-align: middle; }
+

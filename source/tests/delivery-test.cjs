@@ -82,7 +82,7 @@ const { chromium } = require(process.env.PW);
 
   // ===== customer tracking + address change, no cancel =====
   await ev(() => { storeOn(); openAccount(); });
-  ok('My Account order list has Track buttons and NO cancel option', await ev(() => { const t = document.getElementById('accountBody').innerText.toLowerCase(); const orders = [...document.querySelectorAll('#accountBody .acct-order')].filter(x => /AP-/.test(x.innerText)); return orders.length >= 2 && orders.every(x => /track/i.test(x.innerText) && !/cancel/i.test(x.innerText)); }));
+  ok('My Account order list has Track buttons and NO cancel option', await ev(() => { const t = document.getElementById('accountBody').textContent.toLowerCase(); const orders = [...document.querySelectorAll('#accountBody .acct-order')].filter(x => /AP-/.test(x.textContent)); return orders.length >= 2 && orders.every(x => /track/i.test(x.textContent) && !/cancel/i.test(x.textContent)); }));
   await ev(id => { closeModal('accountModal'); openTrackOrder(id); }, o1.id);
   ok('tracking modal: steps, expected date, change-address button, no cancel', await ev(() => { const t = document.getElementById('trackBody').innerText; return /Order placed/i.test(t) && /Delivered/i.test(t) && /Delivery by/i.test(t) && /Change delivery address/i.test(t) && !/cancel/i.test(t); }));
   await p.click('#trackBody button:has-text("Change delivery address")');

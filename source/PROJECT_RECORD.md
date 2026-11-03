@@ -3,7 +3,7 @@
 > **STANDING RULE (owner's instruction, 23 Oct 2026):** this record and the `HOW-IT-WORKS/` folder are updated **after every change or update**, in the same step as the change, never later. A change is not finished until (1) the code is tested, (2) a dated entry is added to the Change Log below, (3) any affected `HOW-IT-WORKS/` page is corrected, (4) `./check-record.sh` has been run (it fails if the record or how-it-works is behind the code).
 > Also standing: the owner wants chats remembered for later use; this record is that memory for the project.
 
-**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 531 automated checks) · **Browser test suites:** 31 (see §6)
+**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 531 automated checks) · **Browser test suites:** 32 (see §6)
 
 ---
 
@@ -114,6 +114,7 @@ Owner's guidance: *"we will setup everything after we host it"* — real hosting
 | `hero-theme-test.cjs` | 16 | hero zoom, colour matching of text, button and top bar, top bar following the hero, View home page |
 | `arrivals-pick-test.cjs` | 9 | choosing New Arrivals sarees |
 | `care-test.cjs` | 9 | Saree Care tabs, wash-care guide, photo link repair |
+| `parts-test.cjs` | 8 | the website source parts and the joined file |
 | `agents-test.cjs` | 27 | the five AI helpers with and without Claude: order messages, privacy replies, weekly content, catalogue batch, Ops watcher note |
 | `pages-ai-invoices-test.cjs` | 55 | invoice search/sort/group, category auto-fill and one-click product AI, editable Care/Journal/Atelier pages |
 | `ui2-test.cjs` | 53 | the new owner look: same page as classic, all 23 screens identical, Overview numbers and website-order buttons, light/dark readable |
@@ -137,6 +138,9 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**4 Nov 2026 (Source split into modular parts; no visible change)**
+- Owner asked for a modular architecture. After choosing "split the code, same single page", the 7,500-line `anitha-store.html` was cut into 68 parts under `src/` (19 css, 6 html, 43 js, one per feature), joined in the order of `src/manifest.json` by `tools/join-parts.py`. The joined file is **byte-identical** to the one before the split (sha256 checked) and the built website is identical. `anitha-store.html` is now generated: the build, `run-tests.sh`, `refresh-exports.sh` and `publish-repo.sh` join first; `sync-shared.py` writes the three shared blocks into their own parts; `record-check.cjs` and `tests/parts-test.cjs` fail if the file is edited by hand. AGENTS.md / CLAUDE.md rules updated. Not done: separate web addresses per page. Guide: HOW-IT-WORKS/31-modular-source-parts.md.
 
 **4 Nov 2026 (My Account window: folding list, draft 4)**
 - Owner asked for a more professional look after sign-in and chose draft 4. The logged-in My Account window is now a header (initials circle, name, "Signed in with WhatsApp", masked number) and a list of folding sections: Personal details and WhatsApp messages (tick boxes) open by default, then My orders (with count and last order date), Saved addresses, Alerts and reviews (only when there are any), Privacy and data. Open sections stay open after saving (`ACCT_OPEN`). The legal links, Erase my account and Sign out stay in the footer. Classes are `ac4-*`: a first attempt reused `acc-*`, which collided with the admin accordion (`.acc-body{display:none}`), so the names were changed and the old admin classes verified unchanged. Tests: shop-test +2.

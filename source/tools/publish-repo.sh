@@ -7,6 +7,7 @@ set -e
 cd "$(dirname "$0")/.."
 REPO="${1:?usage: tools/publish-repo.sh /path/to/git/checkout [https://server-address]}"; API="${2:-}"
 [ -d "$REPO/.git" ] || { echo "$REPO is not a git checkout"; exit 1; }
+python3 tools/join-parts.py >/dev/null   # anitha-store.html is the joined src/ parts
 python3 tools/make-changelog.py >/dev/null
 [ -n "$API" ] && python3 tools/build-split.py --shop-api "$API" --index >/dev/null
 # 1. public site (generated)

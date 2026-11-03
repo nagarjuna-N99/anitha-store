@@ -10,6 +10,7 @@ const problems = [];
 const need = (cond, msg) => { if (!cond) problems.push(msg); };
 
 const html = read(path.join(SRC, 'anitha-store.html'));
+try { require('child_process').execFileSync('python3', [path.join(SRC, 'tools', 'join-parts.py'), '--check'], { stdio: 'pipe' }); } catch (e) { console.error('anitha-store.html is not exactly the joined src/ parts. Edit the parts in src/, then run: python3 tools/join-parts.py'); process.exit(1); }
 const ver = (html.match(/LEGAL_VERSION = '(\d+\.\d+) \(([^)]*)\)'/) || [])[1];
 need(ver && record.includes(`version in the shop:** ${ver}`), `Record does not state the current Terms/Privacy version ${ver}`);
 

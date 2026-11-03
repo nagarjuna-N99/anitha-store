@@ -9,6 +9,7 @@ Usage: python3 tools/build-split.py [--shop-api https://shop.example.com] [--ind
 import re, sys, os, argparse
 ap = argparse.ArgumentParser(); ap.add_argument('--shop-api', default=''); ap.add_argument('--index', action='store_true'); a = ap.parse_args()
 root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+import subprocess, sys; subprocess.check_call([sys.executable, os.path.join(root, 'tools', 'join-parts.py')], stdout=subprocess.DEVNULL)   # anitha-store.html is the joined src/ parts
 src = open(os.path.join(root, 'anitha-store.html'), encoding='utf-8').read()
 
 def strip_div(html, open_pat):

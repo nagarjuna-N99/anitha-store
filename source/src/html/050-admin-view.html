@@ -1,0 +1,113 @@
+<!-- ================= ADMIN VIEW ================= -->
+<div id="adminView" class="admin-view">
+  <button type="button" class="nav-toggle" id="navToggle" onclick="toggleNav()" aria-label="Hide the menu" aria-expanded="true" title="Hide the menu">‹</button>
+  <aside class="admin-sidebar" id="adminSidebarDesktop">
+    <div class="admin-sidebar-header"><h1>Anitha Pemmasani</h1><p>Admin Portal V7.1</p></div>
+    <ul class="admin-nav">
+      <li class="admin-nav-item active" data-tab="dashboard" onclick="switchAdminTab('dashboard')">📊 Dashboard</li>
+      <li class="admin-nav-item" data-tab="home" onclick="switchAdminTab('home')">🏠 Home Page</li>
+      <li class="admin-nav-item" data-tab="products" onclick="switchAdminTab('products')">📦 Products</li>
+      <li class="admin-nav-item" data-tab="categories" onclick="switchAdminTab('categories')">🏷️ Categories</li>
+      <li class="admin-nav-item" data-tab="studio" onclick="switchAdminTab('studio')">🎨 Image Studio</li>
+      <li class="admin-nav-item" data-tab="drafts" onclick="switchAdminTab('drafts')">📝 Saved Drafts</li>
+      <li class="admin-nav-item" data-tab="orders" onclick="switchAdminTab('orders')">📋 Orders</li>
+      <li class="admin-nav-item" data-tab="reviews" onclick="switchAdminTab('reviews')">⭐ Reviews<span class="nav-count" data-nc="reviews"></span></li>
+      <li class="admin-nav-item" data-tab="delivery" onclick="switchAdminTab('delivery')">🚚 Delivery &amp; Gifting</li>
+      <li class="admin-nav-item" data-tab="whatsapp" onclick="switchAdminTab('whatsapp')">💬 WhatsApp Assistant</li>
+      <li class="admin-nav-item" data-tab="alerts" onclick="switchAdminTab('alerts')">🔔 Stock Alerts<span class="nav-count" data-nc="alerts"></span></li>
+      <li class="admin-nav-item" data-tab="invoices" onclick="switchAdminTab('invoices')">🧾 Invoices</li>
+      <li class="admin-nav-item" data-tab="customers" onclick="switchAdminTab('customers')">👥 Customers</li>
+      <li class="admin-nav-item" data-tab="statements" onclick="switchAdminTab('statements')">📈 Statements</li>
+      <li class="admin-nav-item" data-tab="coupons" onclick="switchAdminTab('coupons')">🎟️ Coupons</li>
+      <li class="admin-nav-item" data-tab="bundles" onclick="switchAdminTab('bundles')">🎁 Bundles</li>
+      <li class="admin-nav-item" data-tab="ai" onclick="switchAdminTab('ai')">✨ AI Helper</li>
+      <li class="admin-nav-item" data-tab="social" onclick="switchAdminTab('social')">📸 Instagram</li>
+      <li class="admin-nav-item" data-tab="growth" onclick="switchAdminTab('growth')">📈 Growth</li>
+      <li class="admin-nav-item" data-tab="privacy" onclick="switchAdminTab('privacy')">🛡️ Privacy</li>
+      <li class="admin-nav-item" data-tab="pages" onclick="switchAdminTab('pages')">📰 Pages</li>
+      <li class="admin-nav-item" data-tab="ops" onclick="switchAdminTab('ops')">🩺 Ops</li>
+      <li class="admin-nav-item" data-tab="logs" onclick="switchAdminTab('logs')">📜 Audit Logs</li>
+      <li class="admin-nav-item" data-tab="settings" onclick="switchAdminTab('settings')">⚙️ Settings</li>
+    </ul>
+    <div style="margin-top:auto;padding-top:20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:12px;">
+      <div style="width:32px;height:32px;border-radius:50%;background:var(--charcoal);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;">AP</div>
+      <div><div style="font-size:13px;font-weight:500;">Admin User</div><div style="font-size:11px;color:#6b6862;">admin@anitapemmasani.com</div></div>
+    </div>
+  </aside>
+  <main class="admin-main">
+    <div class="admin-header">
+      <div style="display:flex;align-items:center;gap:15px;">
+        <button class="hamburger-btn" id="adminHamburger" onclick="toggleAdminNav()" aria-label="Admin menu"><span></span><span></span><span></span></button>
+        <h2 id="adminPageTitle">Dashboard</h2>
+      </div>
+      <div class="admin-header-actions">
+        <div class="api-status">Local demo data</div>
+        <button class="btn-sm btn-danger-sm" onclick="resetData()">Reset Data</button>
+      </div>
+    </div>
+    <div id="adminContent"></div>
+  </main>
+</div>
+
+<!-- Drawers & Modals -->
+<div class="overlay" id="overlay" onclick="closeAllDrawers()"></div>
+<div class="drawer" id="cartDrawer"><div class="drawer-header"><h3>Your Selection</h3><button class="drawer-close" onclick="closeAllDrawers()">×</button></div><div class="drawer-body" id="cartBody"></div><div class="drawer-footer"><div class="checkout-summary" id="cartSummary"></div><div id="cartDeliv"></div><div id="cartRemRow"></div><button class="btn-full" onclick="openCheckout()">Proceed to Checkout</button><button class="btn-outline" onclick="closeAllDrawers()">Continue Shopping</button></div></div>
+
+<div class="modal" id="productModal"><div class="modal-content"><button class="modal-close" onclick="closeModal('productModal')" aria-label="Close">×</button><div id="productModalBody"></div></div></div>
+
+<div class="modal" id="checkoutModal"><div class="modal-content" style="max-width:540px;"><button class="modal-close" onclick="closeModal('checkoutModal')" aria-label="Close">×</button><div style="padding:34px 38px;">
+  <h2 style="font-family:'Cormorant Garamond',serif;font-size:28px;margin-bottom:8px;">Secure Checkout</h2>
+  <div class="verified-bar">✓ WhatsApp verified · <strong id="chk-verified-phone"></strong><button type="button" class="linkbtn" onclick="checkoutSwitchNumber()">Change</button></div>
+  <input type="hidden" id="chk-phone">
+  <div class="form-group"><label>Full Name *</label><input type="text" id="chk-name" autocomplete="name"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"><div class="form-group"><label>Email (optional)</label><input type="email" id="chk-email" autocomplete="email"></div><div class="form-group"><label>Pincode *</label><input type="text" id="chk-pin" autocomplete="postal-code" inputmode="numeric" maxlength="6" oninput="chkPinCheck()"></div></div>
+  <div class="form-group"><label>Address Line *</label><input type="text" id="chk-address" autocomplete="street-address"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"><div class="form-group"><label>City *</label><input type="text" id="chk-city" oninput="chkPinCheck()"></div><div class="form-group"><label>State</label><input type="text" id="chk-state" oninput="chkPinCheck()"></div></div>
+  <div id="chk-book"></div><div id="chk-pinmsg" class="pin-msg" aria-live="polite"></div>
+  <label class="chk" style="margin:6px 0 14px;"><input type="checkbox" id="chk-save-addr" checked><span>Save this address for next time</span></label>
+  <div class="gift-box"><label class="chk"><input type="checkbox" id="chk-gift" onchange="giftSync()"><span><strong>🎁 This is a gift</strong></span></label>
+    <div id="gift-fields" style="display:none;">
+      <label class="chk"><input type="checkbox" id="chk-gift-wrap" onchange="giftSync()"><span>Gift wrapping <em id="gift-wrap-fee"></em></span></label>
+      <div class="form-group"><label>Note card message (free, optional)</label><textarea id="chk-gift-note" rows="3" maxlength="250" oninput="giftSync()" placeholder="e.g. Happy Diwali, Amma! With love, Priya"></textarea><div class="note" id="gift-note-count"></div></div>
+      <label class="chk"><input type="checkbox" id="chk-gift-other" onchange="giftSync()"><span>Ship to a <strong>different address</strong></span></label>
+      <div id="gift-recipient" style="display:none;margin:8px 0;">
+        <div class="form-group"><label>Recipient name *</label><input id="gift-name" oninput="giftSync()"></div><div class="form-group"><label>Recipient phone (for the courier)</label><input id="gift-phone" inputmode="tel" oninput="giftSync()"></div>
+        <div class="form-group"><label>Address *</label><input id="gift-street" oninput="giftSync()"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"><div class="form-group"><label>City *</label><input id="gift-city" oninput="giftSync()"></div><div class="form-group"><label>State</label><input id="gift-state" oninput="giftSync()"></div></div>
+        <div class="form-group"><label>PIN code *</label><input id="gift-pin" inputmode="numeric" maxlength="6" oninput="giftSync()"></div>
+        <div id="gift-pinmsg" class="pin-msg" aria-live="polite"></div></div>
+      <label class="chk" id="gift-hide-row"><input type="checkbox" id="chk-gift-hide" checked onchange="giftSync()"><span>Hide my name, the prices and the invoice from the parcel</span></label></div></div>
+  <div class="form-group" style="margin-top:14px;"><label for="chk-instr">Special instructions or requests <span style="color:#6b6862;font-weight:normal">(optional)</span></label><textarea id="chk-instr" rows="3" maxlength="300" placeholder="e.g. blouse stitching, fall &amp; pico, deliver after 6 pm, call before delivery"></textarea><div class="note" style="margin:2px 0 0;">We read this before packing. If a request needs a change in price or time, we will message you first.</div></div>
+  <div class="coupon-section"><h3>Have a Coupon Code?</h3><div class="coupon-input-group"><input type="text" id="couponInput" placeholder="Try: WELCOME10"><button type="button" class="btn-apply" onclick="applyCoupon()">Apply</button></div><div id="couponMsg" class="coupon-msg"></div></div>
+  <div class="checkout-summary" id="checkoutSummary"></div>
+  <div class="loyalty-msg" id="loyaltyMsg">You will earn 0 Loyalty Points!</div>
+  <div class="consent-box" id="chk-terms-row">
+    <label class="chk" id="chk-age-row"><input type="checkbox" id="chk-age"><span>I am <strong>18 years or older</strong>. <em>(required)</em></span></label>
+    <label class="chk"><input type="checkbox" id="chk-terms"><span>I have read and agree to the <a onclick="event.preventDefault();event.stopPropagation();openLegalModal('terms')">Terms &amp; Conditions</a> and <a onclick="event.preventDefault();event.stopPropagation();openLegalModal('privacy')">Privacy Policy</a>, and I have seen the <a onclick="event.preventDefault();event.stopPropagation();openNotice()">privacy notice</a>. <em>(required)</em></span></label>
+    <div class="consent-sub">WhatsApp messages — optional, not pre-selected, change any time</div>
+    <label class="chk"><input type="checkbox" id="chk-wa-orders"><span>Send me <strong>order updates</strong> (confirmation, shipping, delivery) on WhatsApp.</span></label>
+    <label class="chk" id="chk-wa-cart-row"><input type="checkbox" id="chk-wa-cart"><span>Remind me on WhatsApp <strong>if I leave sarees in my cart</strong> (at most 2 messages). Reply STOP any time.</span></label>
+    <label class="chk"><input type="checkbox" id="chk-wa-promos"><span>Send me <strong>offers &amp; new arrivals</strong> on WhatsApp. I can opt out any time in My Account or by replying STOP.</span></label>
+  </div>
+  <div style="font-size:11px;color:#6b6862;text-align:center;margin:14px 0;padding:10px;background:#f9f9f9;border-radius:4px;">🔒 Payment is simulated in this demo. No card or UPI details are collected.</div>
+  <button class="btn-full" onclick="processPayment()">Place Order</button><button class="btn-outline" onclick="closeModal('checkoutModal')">Back to Cart</button>
+</div></div></div>
+
+<div class="modal" id="successModal"><div class="modal-content" style="max-width:400px;text-align:center;padding:50px 30px;"><div style="width:60px;height:60px;background:var(--sage);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 20px;">✓</div><h2 style="font-family:'Cormorant Garamond',serif;font-size:28px;margin-bottom:10px;">Order Confirmed!</h2><p style="font-size:14px;color:#666;margin-bottom:20px;">Thank you for shopping with Anitha Pemmasani. Your handloom saree is being prepared with care.</p><p id="successMsg" style="font-size:12px;color:#6b6862;margin:-8px 0 18px;"></p><p id="successSent" style="font-size:12px;color:#5a6b4f;margin:-8px 0 18px;"></p><div style="background:var(--cream);padding:20px;border-radius:4px;text-align:left;margin-bottom:20px;"><div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid #eee;"><span style="color:#6b6862;">Order ID</span><span style="font-weight:600;font-family:monospace;" id="successOrderId">—</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid #eee;"><span style="color:#6b6862;">Amount</span><span style="font-weight:600;" id="successAmount">—</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;"><span style="color:#6b6862;">Payment Ref</span><span style="font-weight:600;font-family:monospace;" id="successPayment">—</span></div></div><button class="btn-full" onclick="closeModal('successModal')">Continue Shopping</button></div></div>
+
+<div class="modal" id="previewModal" style="z-index:1100;"><div class="modal-content" style="max-width:1100px;"><button class="modal-close" onclick="closePreviewModal()" aria-label="Close preview">×</button><div id="previewBody" style="padding:24px 28px 28px;"></div></div></div>
+
+<div class="modal" id="shareModal" style="z-index:1100;"><div class="modal-content" style="max-width:500px;"><button class="modal-close" onclick="closeModal('shareModal')" aria-label="Close">×</button><div id="shareBody" style="padding:32px;"></div></div></div>
+<div class="modal" id="authModal" style="z-index:1150;"><div class="modal-content" style="max-width:440px;"><button class="modal-close" onclick="closeAuth()" aria-label="Close">×</button><div id="authBody" style="padding:38px 36px 30px;"></div></div></div>
+<div class="modal" id="accountModal" style="z-index:1050;"><div class="modal-content" style="max-width:940px;"><button class="modal-close" onclick="closeModal('accountModal')" aria-label="Close">×</button><div id="accountBody" style="padding:36px 40px;"></div></div></div>
+<div class="modal" id="legalModal" style="z-index:1200;"><div class="modal-content" style="max-width:820px;"><button class="modal-close" onclick="closeModal('legalModal')" aria-label="Close">×</button><div id="legalModalBody" style="padding:10px 20px 24px;"></div></div></div>
+
+<div class="modal" id="journalModal" style="z-index:1150;"><div class="modal-content" style="max-width:720px;"><button class="modal-close" onclick="closeModal('journalModal')" aria-label="Close">×</button><div style="padding:30px 34px;" id="journalBody"></div></div></div>
+<div class="modal" id="noticeModal" style="z-index:1200;"><div class="modal-content" style="max-width:620px;"><button class="modal-close" onclick="closeModal('noticeModal')" aria-label="Close">×</button><div style="padding:30px 34px;" id="noticeBody"></div></div></div>
+<div class="modal" id="rightsModal" style="z-index:1200;"><div class="modal-content" style="max-width:540px;"><button class="modal-close" onclick="closeModal('rightsModal')" aria-label="Close">×</button><div style="padding:30px 34px;" id="rightsBody"></div></div></div>
+<div class="modal" id="trackModal" style="z-index:1100;"><div class="modal-content" style="max-width:480px;"><button class="modal-close" onclick="closeModal('trackModal')" aria-label="Close">×</button><div id="trackBody" style="padding:30px 26px;"></div></div></div>
+<div class="modal" id="alertModal" style="z-index:1100;"><div class="modal-content" style="max-width:440px;"><button class="modal-close" onclick="closeModal('alertModal')" aria-label="Close">×</button><div id="alertBody" style="padding:32px;"></div></div></div>
+<div class="modal" id="lightboxModal" style="z-index:1300;background:rgba(0,0,0,0.92);"><button class="modal-close" onclick="closeModal('lightboxModal')" style="position:fixed;top:18px;right:18px;" aria-label="Close photo">×</button><div id="lightboxBody" class="lb-body"></div></div>
+
+<div class="modal" id="adminModal"><div class="modal-content" style="max-width:600px;"><button class="modal-close" onclick="closeModal('adminModal')">×</button><div id="adminModalBody" style="padding:40px;"></div></div></div>
+
