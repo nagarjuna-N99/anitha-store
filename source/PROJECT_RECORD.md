@@ -137,6 +137,9 @@ See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
 
+**4 Nov 2026 (Fix: logo turned into a white disc on a dark top bar)**
+- Seen on the live site: my rule that turned the logo mark white flattened the round logo photo. Removed it; the logo keeps its own colours, and on a dark top bar it sits on a light disc with a ring so it is always clear.
+
 **4 Nov 2026 (New Arrivals: choose sarees from the website)**
 - Home Page → New Arrivals now has a tick-list of all published sarees by category (`db.home.arrivals.ids`; empty = all marked new). `arrPick/arrClear/arrPickerHTML`; `buildScrollTrack` honours it. Guide: HOW-IT-WORKS/28-new-arrivals-pick.md. Test: `arrivals-pick-test.cjs` 9 checks.
 

@@ -18,7 +18,7 @@ Press **🎨 Match text and top-bar colours to this photo** on a slide. It reads
 The slide shows three small swatches (text, accent, top bar). **Clear matched colours** removes them.
 
 ## Top bar follows the hero
-**Top bar follows the hero photo's colours** (switch at the top of the slides). When on, the white strip with "Anitha Pemmasani" changes to the colours of the slide being shown, smoothly as slides change. On every other page it stays the normal ivory. In a dark bar the small logo mark turns white. Slides you have not matched keep the normal bar.
+**Top bar follows the hero photo's colours** (switch at the top of the slides). When on, the white strip with "Anitha Pemmasani" changes to the colours of the slide being shown, smoothly as slides change. On every other page it stays the normal ivory. Slides you have not matched keep the normal bar.
 
 ## Limits
 - It needs to read the photo. A photo from another website that does not allow it will say so: use **⬆ Upload photo** instead.
