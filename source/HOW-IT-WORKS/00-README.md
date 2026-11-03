@@ -23,6 +23,7 @@ Plain-language pages for the owner and for anyone who takes over the project. Ke
 | `23-new-owner-look.md` | the new owner look at /admin2: what it is, the new Overview, how it is kept identical to the classic app |
 | `24-invoices-product-ai-pages.md` | invoice search and sort, one-click product writing, and editing the Care guide, Journal and Atelier |
 | `25-ai-agents.md` | the five AI helpers: Ops watcher, catalogue batch, order messages, privacy replies, weekly content |
+| `26-design-check-fixes.md` | the Hallmark design check: what was found, what was fixed, what was left |
 | `19-developer-handover.md` | **start here if you are a developer or an AI**: layout, commands, rules, routes, settings, lessons |
 | `18-growth-and-weekly-email.md` | Growth tab, visit counting, live suggestions, weekly email, Instagram reminder |
 | `16-data-reference.md` | **every piece of data stored**: where it lives, each collection and its fields, the assistant server's data, what is sent to AI, privacy |
