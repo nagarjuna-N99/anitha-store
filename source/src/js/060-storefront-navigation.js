@@ -20,7 +20,8 @@ function navigateTo(pageName) {
   if (pageName === 'faq') renderFaq();
   if (LEGAL_PAGES[pageName]) renderLegal(pageName);
   if (typeof applyHeaderTheme === 'function') applyHeaderTheme();
-  setPageSeo(pageName); trackHit('view', { p: ['home', 'shop', 'journal', 'care', 'faq', 'favourites'].includes(pageName) ? pageName : 'other' });
+  setPageSeo(pageName); if (typeof routePush === 'function') { routePush(pageName); pageSeo(pageName); }
+  trackHit('view', { p: ['home', 'shop', 'journal', 'care', 'faq', 'favourites'].includes(pageName) ? pageName : 'other' });
 }
 function filterAndShowShop(category) { navigateTo('shop'); shopResetFilters(); filterProducts(category); }
 

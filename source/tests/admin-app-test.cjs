@@ -38,6 +38,11 @@ const ROOT = process.cwd(), SETUP = 'setup-token-0123456789', PW = 'Correct-Hors
     await fill('#adm-pw', 'not-the-password'); await p.click('#adm-go'); await p.waitForFunction(() => /Wrong password/.test((document.getElementById('adm-msg') || {}).textContent || ''));
     ok('a wrong password shows one generic message', true);
     await fill('#adm-pw', PW); await p.click('#adm-go'); await p.waitForFunction(() => document.body.classList.contains('adm-app'));
+    ok('the owner app address follows the screen: /admin/dashboard/ once signed in', await ev(() => location.pathname === '/admin/dashboard/'));
+    await ev(() => switchAdminTab('orders')); ok('opening Orders gives its own address /admin/orders/', await ev(() => location.pathname === '/admin/orders/' && currentAdminTab === 'orders'));
+    await p.goBack(); await p.waitForTimeout(300); ok('the Back button returns to the previous screen', await ev(() => location.pathname === '/admin/dashboard/' && currentAdminTab === 'dashboard'));
+    await p.goto(base + '/admin/orders/'); await p.waitForFunction(() => document.body.classList.contains('adm-app'));
+    ok('opening /admin/orders/ directly (still signed in) shows Orders', await ev(() => currentAdminTab === 'orders' && location.pathname === '/admin/orders/'));
     ok('after signing in the owner app opens, with no customer shop and no PIN anywhere', await ev(() => document.getElementById('adminView').classList.contains('active') && getComputedStyle(document.getElementById('storefrontView')).display === 'none' && getComputedStyle(document.getElementById('admGate')).display === 'none' && ADM.signedIn));
     ok('the browser keeps no copy of the shop (nothing in localStorage)', await ev(() => !localStorage.getItem('ap_db_v70') && !sessionStorage.getItem('ap_admin')));
     ok('the session cookie cannot be read by page scripts', await ev(() => !document.cookie.includes('adm')));

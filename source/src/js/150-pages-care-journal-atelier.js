@@ -55,6 +55,7 @@ function renderPageLinks() {
   document.querySelectorAll('.pgnav').forEach(e => e.remove()); const items = pgList().filter(p => p.menu), m = el_('pgnav-m'), h = el_('pgnav-h'); if (!m || !h) return;
   m.insertAdjacentHTML('beforebegin', items.map(p => `<li class="pgnav" onclick="navigateTo('${p.key}'); closeStoreNav();">${p.icon} ${esc(p.label)}</li>`).join(''));
   h.insertAdjacentHTML('beforebegin', items.map(p => `<li class="pgnav"><a onclick="navigateTo('${p.key}')">${esc(p.label)}</a></li>`).join(''));
+  if (typeof enhanceLinks === 'function') enhanceLinks();
 }
 function openJournal(id) {
   let p = null; for (const x of pgList()) if (x.kind === 'stories' && !p) p = (x.data.posts || []).find(y => y.id === id) || null; if (!p) return;

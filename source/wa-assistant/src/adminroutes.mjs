@@ -23,7 +23,8 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
 
   return async function handle(req, res, url, route) {
     const ip = ipOf(req);
-    if (cfg.adminAllowedIps && cfg.adminAllowedIps.length && (route === 'GET /admin' || route === 'GET /admin/' || route === 'GET /admin2' || url.pathname.startsWith('/admin/api/')) && !cfg.adminAllowedIps.includes(ip)) { json(res, 404, { error: 'not found' }, SEC); return true; }   // optional: only these addresses can even see the owner app
+    const tabM = req.method === 'GET' ? /^\/(admin2?)\/([a-z0-9-]{1,32})\/?$/.exec(url.pathname) : null, tabRoute = !!tabM && tabM[2] !== 'api';   // /admin/orders, /admin2/orders: each owner-app screen has its own address (same page, same login)
+    if (cfg.adminAllowedIps && cfg.adminAllowedIps.length && (route === 'GET /admin' || route === 'GET /admin/' || route === 'GET /admin2' || tabRoute || url.pathname.startsWith('/admin/api/')) && !cfg.adminAllowedIps.includes(ip)) { json(res, 404, { error: 'not found' }, SEC); return true; }   // optional: only these addresses can even see the owner app
     // ---------- the stand-alone Ops page: its own key, no owner login, works even if the owner app is broken ----------
     if (route === 'GET /ops' || route === 'GET /ops/' || route === 'GET /ops/api/report') {
       const on = String(cfg.opsToken || '').length >= 24; if (!on) return json(res, 404, { error: 'not found' }, SEC), true;
@@ -36,12 +37,12 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       json(res, 200, { ...(await opsReport({ cfg, auth, shop, privacy, weborders, store, smtpMeta, ig, analytics, ops, reportState, social, wa })), watch: watchRead() }, SEC); return true;
     }
     // ---------- the new owner look, next to the classic one: the very same app and the same sign-in, only the look differs (class "ui2") ----------
-    if (route === 'GET /admin2' || route === 'GET /admin2/') {
+    if (route === 'GET /admin2' || route === 'GET /admin2/' || (tabRoute && tabM[1] === 'admin2')) {
       const f = path.join(ROOT, 'public', 'admin.html'); if (!fs.existsSync(f)) return json(res, 404, { error: 'admin.html is not built yet (run tools/build-split.py)' }, SEC), true;
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Content-Security-Policy': CSP, ...SEC }); res.end(fs.readFileSync(f, 'utf8').replace('<html lang="en">', '<html lang="en" class="ui2">')); return true;
     }
     // ---------- the admin page ----------
-    if (route === 'GET /admin' || route === 'GET /admin/') {
+    if (route === 'GET /admin' || route === 'GET /admin/' || (tabRoute && tabM[1] === 'admin')) {
       const f = path.join(ROOT, 'public', 'admin.html'); if (!fs.existsSync(f)) return json(res, 404, { error: 'admin.html is not built yet (run tools/build-split.py)' }, SEC), true;
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Content-Security-Policy': CSP, ...SEC }); res.end(fs.readFileSync(f)); return true;
     }

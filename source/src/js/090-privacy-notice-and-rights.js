@@ -158,8 +158,8 @@ function legalStaticPage(kind, base) {
 }
 function setPageSeo(page) {
   const L = LEGAL_PAGES[page];
-  if (L) { document.title = `${L.title} | ${BRAND()}`; try { history.replaceState(null, '', '#/' + page); } catch (e) {} }
-  else if (/^#\/(terms|privacy)$/.test(location.hash)) { document.title = SEO_DEFAULT.title; try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
+  if (L) { document.title = `${L.title} | ${BRAND()}`; if (!PATH_MODE) { try { history.replaceState(null, '', '#/' + page); } catch (e) {} } }
+  else if (!PATH_MODE && /^#\/(terms|privacy)$/.test(location.hash)) { document.title = SEO_DEFAULT.title; try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
 }
 
 

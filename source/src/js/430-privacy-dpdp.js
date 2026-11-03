@@ -397,6 +397,7 @@ function init() {
   updateFavBadge();
   seoRefreshHome();
   updateAcctIcon();
+  enhanceLinks();
   routeFromHash();
   document.body.classList.add('ready');
   if (BUILD === 'site') { shopSync(); if (!TRK.last) trackHit('view', { p: 'home' }); }

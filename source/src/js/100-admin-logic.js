@@ -8,6 +8,7 @@ function switchAdminTab(tab) {
   document.getElementById('adminPageTitle').textContent = ADMIN_TITLES[tab] || tab;
   renderAdminContent(tab);
   updateNavCounts();
+  if (typeof admRoutePush === 'function') admRoutePush(tab);
 }
 function refreshAdmin() { if (isAdminView) renderAdminContent(currentAdminTab); }
 

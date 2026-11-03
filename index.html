@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><script>window.__BUILD='site';window.__SHOP_API="https://anitha-store-server.onrender.com";</script>
+<head><script>window.__BUILD='site';window.__SHOP_API="https://anitha-store-server.onrender.com";window.__BASE='/anitha-store/';</script>
 <script>document.documentElement.classList.add('js')</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -1577,10 +1577,77 @@ function navigateTo(pageName) {
   if (pageName === 'faq') renderFaq();
   if (LEGAL_PAGES[pageName]) renderLegal(pageName);
   if (typeof applyHeaderTheme === 'function') applyHeaderTheme();
-  setPageSeo(pageName); trackHit('view', { p: ['home', 'shop', 'journal', 'care', 'faq', 'favourites'].includes(pageName) ? pageName : 'other' });
+  setPageSeo(pageName); if (typeof routePush === 'function') { routePush(pageName); pageSeo(pageName); }
+  trackHit('view', { p: ['home', 'shop', 'journal', 'care', 'faq', 'favourites'].includes(pageName) ? pageName : 'other' });
 }
 function filterAndShowShop(category) { navigateTo('shop'); shopResetFilters(); filterProducts(category); }
 
+// ================= PAGE ADDRESSES (each page has its own web address, 5 Nov 2026) =================
+// On the public website every page has a real address: /collection/, /saree-care/, /journal/, /the-atelier/, /faq/, /terms/,
+// /privacy/, /my-wishlist/, /page/<name>/ for pages the owner adds, and /product/<name>/ for each saree.
+// The build writes a real page file for every fixed address and a 404.html that opens the right page for the rest.
+// Old links such as #/product/<name>, #/faq, #/terms, #/cart and #/wishlist/... still work. Everything here is off in the owner
+// app and when the page is opened from a file, so those behave exactly as before.
+const ROUTE_PAGES = { shop: 'collection', care: 'saree-care', journal: 'journal', atelier: 'the-atelier', faq: 'faq', terms: 'terms', privacy: 'privacy', favourites: 'my-wishlist' };
+const ROUTE_RE = /\/(collection|saree-care|journal|the-atelier|faq|terms|privacy|my-wishlist|(?:page|product)\/[^/]+)\/?$/;
+const PATH_MODE = BUILD === 'site' && /^https?:$/.test(location.protocol);
+const ROUTE_BASE = PATH_MODE ? (window.__BASE || location.pathname.replace(ROUTE_RE, '').replace(/\/(index|404)\.html$/, '').replace(/\/?$/, '/')) : '/';
+let ROUTE_SKIP = false;                                          // true while the browser Back/Forward buttons drive the page
+const routeSlug = t => String(t || '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'page';
+function routePath(page) {
+  if (page === 'home') return '';
+  if (ROUTE_PAGES[page]) return ROUTE_PAGES[page] + '/';
+  const c = typeof pgList === 'function' ? pgList().find(p => p.custom && p.key === page) : null;
+  return c ? 'page/' + routeSlug(c.label) + '/' : '';
+}
+const routeUrl = page => ROUTE_BASE + routePath(page);
+function routePush(page) {
+  if (!PATH_MODE || ROUTE_SKIP) return; const u = routeUrl(page);
+  try { if (location.pathname !== u || location.hash) history.pushState({ page }, '', u + location.search); } catch (e) { }
+}
+function routeReplaceProduct(slug) { if (!PATH_MODE) return false; try { history.replaceState({ product: slug }, '', ROUTE_BASE + 'product/' + encodeURIComponent(slug) + '/' + location.search); } catch (e) { } return true; }
+function routeCurrentPage() { const a = document.querySelector('.page.active'); return a ? a.id.replace(/^page-/, '') : 'home'; }
+function routeReplaceCurrent() { if (!PATH_MODE) return false; try { history.replaceState({ page: routeCurrentPage() }, '', routeUrl(routeCurrentPage()) + location.search); } catch (e) { } return true; }
+// which page does the address in the browser bar mean? Returns true when it was handled.
+function routeFromLocation() {
+  if (!PATH_MODE) return false;
+  let rel = location.pathname.startsWith(ROUTE_BASE) ? location.pathname.slice(ROUTE_BASE.length) : location.pathname.replace(/^\//, '');
+  rel = rel.replace(/(^|\/)(index|404)\.html$/, '').replace(/\/+$/, '');
+  const modal = document.getElementById('productModal'), show = fn => { ROUTE_SKIP = true; try { fn(); } finally { ROUTE_SKIP = false; } };
+  const closeP = () => { if (modal && modal.classList.contains('active')) { closeModal('productModal'); } };
+  if (rel === '') { closeP(); show(() => navigateTo('home')); return true; }
+  const fixed = Object.keys(ROUTE_PAGES).find(k => ROUTE_PAGES[k] === rel);
+  if (fixed) { closeP(); show(() => navigateTo(fixed)); return true; }
+  let m = /^product\/(.+)$/.exec(rel);
+  if (m) { const slug = safeDecode(m[1]), p = db.products.find(x => x.slug === slug); if (p) { show(() => navigateTo('shop')); openProductDetail(p.id); return true; } if (SHOP_SYNCED) { try { history.replaceState(null, '', ROUTE_BASE); } catch (e) { } show(() => navigateTo('home')); } return false; }
+  m = /^page\/(.+)$/.exec(rel);
+  if (m) { const slug = safeDecode(m[1]), c = typeof pgList === 'function' ? pgList().find(p => p.custom && p.show && routeSlug(p.label) === slug) : null; if (c) { closeP(); show(() => navigateTo(c.key)); return true; } if (SHOP_SYNCED) { try { history.replaceState(null, '', ROUTE_BASE); } catch (e) { } show(() => navigateTo('home')); } return false; }
+  try { history.replaceState(null, '', ROUTE_BASE + location.search); } catch (e) { } show(() => navigateTo('home')); return true;   // an unknown address opens the home page
+}
+let SHOP_SYNCED = false;
+window.addEventListener('popstate', () => { if (PATH_MODE) routeFromLocation(); });
+// real links (so "open in a new tab", copy link and search engines work); a normal click still moves inside the page
+function enhanceLinks() {
+  if (!PATH_MODE) return;
+  document.querySelectorAll('a[onclick*="navigateTo("]').forEach(a => { const m = /navigateTo\('([^']+)'\)/.exec(a.getAttribute('onclick') || ''); if (m && (m[1] === 'home' || ROUTE_PAGES[m[1]] || /^c-/.test(m[1]))) a.setAttribute('href', routeUrl(m[1])); });
+}
+if (PATH_MODE) document.addEventListener('click', e => {
+  const a = e.target && e.target.closest && e.target.closest('a[href][onclick*="navigateTo("]');
+  if (a && !e.defaultPrevented && e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) e.preventDefault();
+}, false);
+// a title, description and address for each page (search results and shared links)
+const PAGE_SEO = { shop: ['Handloom Sarees Collection', 'Browse pure handloom sarees from Hyderabad: Tussar, Maheshwari, Banarasi, Kanjeevaram, Paithani, Mysore silk and Ponduru Khadi.'], care: ['Saree Care Guide', 'How to wash, dry, iron and store handloom silk, tussar and cotton sarees so they last for years.'], journal: ['Journal', 'Stories from the loom: weaves, weavers and the care behind each handloom saree.'], atelier: ['The Atelier', 'The story of the shop, the weavers we work with and how every saree is chosen.'], faq: ['Questions and Answers', 'Delivery, payment, care and returns: answers to common questions.'], favourites: ['My Wishlist', 'The sarees you saved.'] };
+function pageSeo(page) {
+  if (!PATH_MODE || page === 'home' || LEGAL_PAGES[page]) { if (PATH_MODE) setCanonical(routeUrl(page === 'home' ? 'home' : page)); return; }
+  const c = typeof pgList === 'function' ? pgList().find(p => p.key === page) : null, base = PAGE_SEO[page] || [c ? (c.data && c.data.title) || c.label : '', ''];
+  const t = (c && c.data && c.data.title) || base[0]; if (!t) return;
+  document.title = `${t} | ${BRAND()}`; const d = base[1] || (c && c.data && (c.data.subtitle || c.data.label)) || SEO_DEFAULT.desc;
+  setMeta('name', 'description', d); setMeta('property', 'og:title', document.title); setMeta('property', 'og:description', d); setCanonical(routeUrl(page));
+}
+function setCanonical(path) {
+  const u = location.origin + path; let canon = document.querySelector('link[rel="canonical"]'); if (!canon) { canon = document.createElement('link'); canon.rel = 'canonical'; document.head.appendChild(canon); }
+  canon.href = u; setMeta('property', 'og:url', u);
+}
 // ================= STOREFRONT LOGIC =================
 function stockBadge(p) {
   const s = p.stock === 0 ? 'Sold Out' : oneOfAKind(p) ? 'One of a kind' : p.stock <= 2 ? `Only ${p.stock} Left` : '';
@@ -2239,8 +2306,8 @@ function legalStaticPage(kind, base) {
 }
 function setPageSeo(page) {
   const L = LEGAL_PAGES[page];
-  if (L) { document.title = `${L.title} | ${BRAND()}`; try { history.replaceState(null, '', '#/' + page); } catch (e) {} }
-  else if (/^#\/(terms|privacy)$/.test(location.hash)) { document.title = SEO_DEFAULT.title; try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
+  if (L) { document.title = `${L.title} | ${BRAND()}`; if (!PATH_MODE) { try { history.replaceState(null, '', '#/' + page); } catch (e) {} } }
+  else if (!PATH_MODE && /^#\/(terms|privacy)$/.test(location.hash)) { document.title = SEO_DEFAULT.title; try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
 }
 
 
@@ -2260,6 +2327,7 @@ function switchAdminTab(tab) {
   document.getElementById('adminPageTitle').textContent = ADMIN_TITLES[tab] || tab;
   renderAdminContent(tab);
   updateNavCounts();
+  if (typeof admRoutePush === 'function') admRoutePush(tab);
 }
 function refreshAdmin() { if (isAdminView) renderAdminContent(currentAdminTab); }
 
@@ -3227,7 +3295,7 @@ function setLd(id, obj) {
   el.textContent = JSON.stringify(obj).replace(/</g, '\\u003c');
 }
 const siteBase = () => (db.settings.siteUrl || '').trim().replace(/\/$/, '');
-function liveUrl(p) { const b = siteBase() || (/^https?:/.test(location.protocol) ? location.origin + location.pathname : ''); return `${b}#/product/${p.slug}`; }
+function liveUrl(p) { if (PATH_MODE) return location.origin + ROUTE_BASE + 'product/' + encodeURIComponent(p.slug) + '/'; const b = siteBase() || (/^https?:/.test(location.protocol) ? location.origin + location.pathname : ''); return `${b}#/product/${p.slug}`; }
 function httpImages(p) { return (p.images || []).filter(s => /^https?:/i.test(s)); }
 function productLd(p, base, images) {
   const ld = { '@context': 'https://schema.org/', '@type': 'Product', name: p.name, description: (p.description || p.metaDescription || '').replace(/\s*\n\s*/g, ' ').trim(), sku: p.sku, category: p.category, brand: { '@type': 'Brand', name: BRAND() }, keywords: (p.tags || []).join(', '), offers: { '@type': 'Offer', priceCurrency: 'INR', price: String(p.price || 0), availability: p.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock', url: base ? `${base}/product/${p.slug}.html` : liveUrl(p) } };
@@ -3247,14 +3315,14 @@ function updateSeo(p) {
   setMeta('name', 'keywords', (p.tags || []).join(', '));
   let canon = document.querySelector('link[rel="canonical"]'); if (/^https?:/.test(liveUrl(p))) { if (!canon) { canon = document.createElement('link'); canon.rel = 'canonical'; document.head.appendChild(canon); } canon.href = liveUrl(p); }
   setLd('ld-product', productLd(p, '', imgs));
-  try { history.replaceState(null, '', '#/product/' + p.slug); } catch (e) {}
+  if (!routeReplaceProduct(p.slug)) { try { history.replaceState(null, '', '#/product/' + p.slug); } catch (e) {} }
 }
 function seoReset() {
   document.title = SEO_DEFAULT.title; setMeta('name', 'description', SEO_DEFAULT.desc);
   setMeta('property', 'og:title', SEO_DEFAULT.title); setMeta('property', 'og:description', SEO_DEFAULT.desc); setMeta('property', 'og:type', 'website'); setMeta('property', 'og:url', siteBase());
   setMeta('name', 'twitter:title', SEO_DEFAULT.title); setMeta('name', 'twitter:description', SEO_DEFAULT.desc); setMeta('name', 'keywords', 'handloom sarees, silk sarees, tussar, kanjeevaram, banarasi, hyderabad');
   setLd('ld-product', null);
-  if (location.hash.startsWith('#/product/')) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
+  if (PATH_MODE) { routeReplaceCurrent(); } else if (location.hash.startsWith('#/product/')) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
 }
 function afterModalClose() { const m = document.getElementById('productModal'); if (m && !m.classList.contains('active')) { seoReset(); CUR_PID = null; } }
 function seoRefreshHome() {
@@ -3263,6 +3331,7 @@ function seoRefreshHome() {
 const discountNote = o => { const bits = [o && o.coupon, o && o.pricing && o.pricing.bundle ? 'bundle: ' + o.pricing.bundle : ''].filter(Boolean); return bits.length ? ' (' + esc(bits.join(', ')) + ')' : ''; };
 const safeDecode = v => { try { return decodeURIComponent(v); } catch (e) { return String(v); } };
 function routeFromHash() {
+  if (PATH_MODE && !location.hash) { routeFromLocation(); return; }
   if (location.hash === '#/cart') { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} navigateTo('home'); openCart(); return; }
   const lg = /^#\/(terms|privacy)$/.exec(location.hash); if (lg) { navigateTo(lg[1]); return; }
   if (location.hash === '#/faq') { navigateTo('faq'); return; }
@@ -3658,6 +3727,7 @@ function renderPageLinks() {
   document.querySelectorAll('.pgnav').forEach(e => e.remove()); const items = pgList().filter(p => p.menu), m = el_('pgnav-m'), h = el_('pgnav-h'); if (!m || !h) return;
   m.insertAdjacentHTML('beforebegin', items.map(p => `<li class="pgnav" onclick="navigateTo('${p.key}'); closeStoreNav();">${p.icon} ${esc(p.label)}</li>`).join(''));
   h.insertAdjacentHTML('beforebegin', items.map(p => `<li class="pgnav"><a onclick="navigateTo('${p.key}')">${esc(p.label)}</a></li>`).join(''));
+  if (typeof enhanceLinks === 'function') enhanceLinks();
 }
 function openJournal(id) {
   let p = null; for (const x of pgList()) if (x.kind === 'stories' && !p) p = (x.data.posts || []).find(y => y.id === id) || null; if (!p) return;
@@ -6719,7 +6789,7 @@ async function shopSync() {
     db.settings = Object.assign({}, db.settings, p.settings); db.categories = p.categories; db.accessoryCategories = p.accessoryCategories; db.products = p.products; if (p.home) db.home = p.home; if (p.pages) db.pages = p.pages; db.bundles = p.bundles; db.coupons = p.coupons; db.accessorySeeded = true;
     const u = currentUser(), mine = u ? (db.reviews || []).filter(x => x.userId === u.id && x.status !== 'approved') : []; db.reviews = [...p.reviews, ...mine];
     try { localStorage.setItem('ap_db_v70', JSON.stringify(db)); } catch (e) { /* storage full: the page still works from memory */ }
-    ensureProductFields(); syncHomeCats(); pruneCart(); renderProducts(); buildScrollTrack(); renderHome(); renderPublicPages(); updateBadges(); updateFavBadge(); seoRefreshHome();
+    ensureProductFields(); syncHomeCats(); pruneCart(); renderProducts(); buildScrollTrack(); renderHome(); renderPublicPages(); updateBadges(); updateFavBadge(); seoRefreshHome(); enhanceLinks(); SHOP_SYNCED = true; routeFromLocation();
   } catch (e) { /* offline or server down: keep showing the last copy */ }
 }
 
@@ -6762,7 +6832,19 @@ async function admBoot() {
   catch (e) { admGate('error', 'Cannot reach the server: ' + e.message); }
 }
 // a link from the new owner screen (/admin2) such as /admin#orders opens that tab
-function admHashTab() { const t = String(location.hash || '').slice(1); return t && document.querySelector('[data-tab="' + t.replace(/[^a-z-]/g, '') + '"]') && !(t === 'privacy' || t === 'ops') || (t && isOwnerRole() && /^(privacy|ops)$/.test(t)) ? t.replace(/[^a-z-]/g, '') : ''; }
+// each owner-app screen has its own address: /admin/orders/ (new look: /admin2/orders/). The server sends the same page for all of them.
+const ADM_BASE = BUILD === 'admin' && location.pathname.startsWith('/admin2') ? '/admin2/' : '/admin/';
+let ADM_ROUTE_SKIP = false, ADM_ROUTED = false;
+function admPathTab() { const m = /^\/admin2?\/([a-z0-9-]+)\/?$/.exec(location.pathname); return m && m[1] !== 'api' ? m[1] : ''; }
+function admRoutePush(tab) {
+  if (BUILD !== 'admin' || !ADM.ready || ADM_ROUTE_SKIP || !/^[a-z0-9-]+$/.test(String(tab))) return; const u = ADM_BASE + tab + '/';
+  try { if (!ADM_ROUTED) { history.replaceState({ tab }, '', u + location.hash); ADM_ROUTED = true; } else if (location.pathname !== u) history.pushState({ tab }, '', u); } catch (e) { }
+}
+window.addEventListener('popstate', () => {
+  if (BUILD !== 'admin' || !ADM.ready) return; const t = admPathTab() || 'dashboard';
+  if (document.querySelector('[data-tab="' + t + '"]')) { ADM_ROUTE_SKIP = true; try { switchAdminTab(t); } finally { ADM_ROUTE_SKIP = false; } }
+});
+function admHashTab() { const t = String(location.hash || '').slice(1) || admPathTab(); return t && document.querySelector('[data-tab="' + t.replace(/[^a-z-]/g, '') + '"]') && !(t === 'privacy' || t === 'ops') || (t && isOwnerRole() && /^(privacy|ops)$/.test(t)) ? t.replace(/[^a-z-]/g, '') : ''; }
 async function admEnter() {
   const g = await admApi('GET', '/admin/api/db'); ADM.version = g.version;
   const demo = !g.db; const fresh = normalizeDB(g.db || JSON.parse(JSON.stringify(defaultDB)));
@@ -7459,6 +7541,7 @@ function init() {
   updateFavBadge();
   seoRefreshHome();
   updateAcctIcon();
+  enhanceLinks();
   routeFromHash();
   document.body.classList.add('ready');
   if (BUILD === 'site') { shopSync(); if (!TRK.last) trackHit('view', { p: 'home' }); }

@@ -202,7 +202,7 @@ function setLd(id, obj) {
   el.textContent = JSON.stringify(obj).replace(/</g, '\\u003c');
 }
 const siteBase = () => (db.settings.siteUrl || '').trim().replace(/\/$/, '');
-function liveUrl(p) { const b = siteBase() || (/^https?:/.test(location.protocol) ? location.origin + location.pathname : ''); return `${b}#/product/${p.slug}`; }
+function liveUrl(p) { if (PATH_MODE) return location.origin + ROUTE_BASE + 'product/' + encodeURIComponent(p.slug) + '/'; const b = siteBase() || (/^https?:/.test(location.protocol) ? location.origin + location.pathname : ''); return `${b}#/product/${p.slug}`; }
 function httpImages(p) { return (p.images || []).filter(s => /^https?:/i.test(s)); }
 function productLd(p, base, images) {
   const ld = { '@context': 'https://schema.org/', '@type': 'Product', name: p.name, description: (p.description || p.metaDescription || '').replace(/\s*\n\s*/g, ' ').trim(), sku: p.sku, category: p.category, brand: { '@type': 'Brand', name: BRAND() }, keywords: (p.tags || []).join(', '), offers: { '@type': 'Offer', priceCurrency: 'INR', price: String(p.price || 0), availability: p.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock', url: base ? `${base}/product/${p.slug}.html` : liveUrl(p) } };
@@ -222,14 +222,14 @@ function updateSeo(p) {
   setMeta('name', 'keywords', (p.tags || []).join(', '));
   let canon = document.querySelector('link[rel="canonical"]'); if (/^https?:/.test(liveUrl(p))) { if (!canon) { canon = document.createElement('link'); canon.rel = 'canonical'; document.head.appendChild(canon); } canon.href = liveUrl(p); }
   setLd('ld-product', productLd(p, '', imgs));
-  try { history.replaceState(null, '', '#/product/' + p.slug); } catch (e) {}
+  if (!routeReplaceProduct(p.slug)) { try { history.replaceState(null, '', '#/product/' + p.slug); } catch (e) {} }
 }
 function seoReset() {
   document.title = SEO_DEFAULT.title; setMeta('name', 'description', SEO_DEFAULT.desc);
   setMeta('property', 'og:title', SEO_DEFAULT.title); setMeta('property', 'og:description', SEO_DEFAULT.desc); setMeta('property', 'og:type', 'website'); setMeta('property', 'og:url', siteBase());
   setMeta('name', 'twitter:title', SEO_DEFAULT.title); setMeta('name', 'twitter:description', SEO_DEFAULT.desc); setMeta('name', 'keywords', 'handloom sarees, silk sarees, tussar, kanjeevaram, banarasi, hyderabad');
   setLd('ld-product', null);
-  if (location.hash.startsWith('#/product/')) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
+  if (PATH_MODE) { routeReplaceCurrent(); } else if (location.hash.startsWith('#/product/')) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
 }
 function afterModalClose() { const m = document.getElementById('productModal'); if (m && !m.classList.contains('active')) { seoReset(); CUR_PID = null; } }
 function seoRefreshHome() {
@@ -238,6 +238,7 @@ function seoRefreshHome() {
 const discountNote = o => { const bits = [o && o.coupon, o && o.pricing && o.pricing.bundle ? 'bundle: ' + o.pricing.bundle : ''].filter(Boolean); return bits.length ? ' (' + esc(bits.join(', ')) + ')' : ''; };
 const safeDecode = v => { try { return decodeURIComponent(v); } catch (e) { return String(v); } };
 function routeFromHash() {
+  if (PATH_MODE && !location.hash) { routeFromLocation(); return; }
   if (location.hash === '#/cart') { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} navigateTo('home'); openCart(); return; }
   const lg = /^#\/(terms|privacy)$/.exec(location.hash); if (lg) { navigateTo(lg[1]); return; }
   if (location.hash === '#/faq') { navigateTo('faq'); return; }

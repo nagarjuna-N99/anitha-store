@@ -16,7 +16,7 @@ The whole shop front end was one file of 7,500 lines. It is now split into small
 `python3 tools/join-parts.py --check` fails if `anitha-store.html` differs from the parts. `./check-record.sh` and `tests/parts-test.cjs` run that check, so a hand edit of `anitha-store.html` is caught.
 
 ## What did not change
-The build (`tools/build-split.py`), the website, the owner app, /admin2, the server, the tests and the deploy all work as before. The pages are still one single-page site (Home, Collection, Saree Care, Journal, Atelier and the product pages open inside it, no separate web addresses). Giving each page its own address is a separate, larger step that has not been done.
+The build (`tools/build-split.py`), the website, the owner app, /admin2, the server, the tests and the deploy all work as before. The pages are one app; giving each page its own web address is a separate step, done on 5 Nov 2026 (see guide 32).
 
 ## Tests
 `tests/parts-test.cjs` (8 checks): every part is in the manifest and listed once, the joined file equals the parts, the page keeps its four style blocks and single script, the three shared blocks have their own parts, syncing shared code changes nothing. Plus the whole existing suite on the joined file.

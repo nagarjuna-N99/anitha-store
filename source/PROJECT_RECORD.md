@@ -3,7 +3,7 @@
 > **STANDING RULE (owner's instruction, 23 Oct 2026):** this record and the `HOW-IT-WORKS/` folder are updated **after every change or update**, in the same step as the change, never later. A change is not finished until (1) the code is tested, (2) a dated entry is added to the Change Log below, (3) any affected `HOW-IT-WORKS/` page is corrected, (4) `./check-record.sh` has been run (it fails if the record or how-it-works is behind the code).
 > Also standing: the owner wants chats remembered for later use; this record is that memory for the project.
 
-**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 531 automated checks) · **Browser test suites:** 32 (see §6)
+**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 531 automated checks) · **Browser test suites:** 33 (see §6)
 
 ---
 
@@ -115,6 +115,7 @@ Owner's guidance: *"we will setup everything after we host it"* — real hosting
 | `arrivals-pick-test.cjs` | 9 | choosing New Arrivals sarees |
 | `care-test.cjs` | 9 | Saree Care tabs, wash-care guide, photo link repair |
 | `parts-test.cjs` | 8 | the website source parts and the joined file |
+| `addresses-test.cjs` | 25 | each page and saree has its own address, Back/Forward, old links |
 | `agents-test.cjs` | 27 | the five AI helpers with and without Claude: order messages, privacy replies, weekly content, catalogue batch, Ops watcher note |
 | `pages-ai-invoices-test.cjs` | 55 | invoice search/sort/group, category auto-fill and one-click product AI, editable Care/Journal/Atelier pages |
 | `ui2-test.cjs` | 53 | the new owner look: same page as classic, all 23 screens identical, Overview numbers and website-order buttons, light/dark readable |
@@ -138,6 +139,9 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**5 Nov 2026 (Every page and saree has its own web address)**
+- Owner: make each page its own address. Public website only (`PATH_MODE`): `/collection/`, `/saree-care/`, `/journal/`, `/the-atelier/`, `/faq/`, `/terms/`, `/privacy/`, `/my-wishlist/`, `/page/<name>/` (owner-added pages), `/product/<name>/` (each saree). The address changes as visitors move (pushState), Back/Forward work, menu links are real links, each page has its own title, description and canonical. Old `#/product/..`, `#/terms`, `#/faq`, `#/cart`, `#/wishlist/..` links (also the ones the server sends) still work and are tidied. Unknown addresses open Home. Code: `src/js/065-page-addresses.js` + small hooks. Build: `tools/build-split.py --site-url` writes a real page file per fixed address, `404.html` (the app, for sarees and owner pages) and `sitemap.xml`; `publish-repo.sh` copies them to the repo root (the old redirecting 404.html is replaced). The owner app also has an address per screen (`/admin/<screen>/`, `/admin2/<screen>/`; server serves the same shell, `admPathTab`/`admRoutePush`, old `#screen` links kept; tests +4 browser, +2 server). file:// behaves as before. `robots.txt` unchanged (still not crawlable). Guide: HOW-IT-WORKS/32-page-addresses.md. Test: `addresses-test.cjs` 25 checks. Not tested: live GitHub Pages, owner-added pages, custom domain.
 
 **4 Nov 2026 (Source split into modular parts; no visible change)**
 - Owner asked for a modular architecture. After choosing "split the code, same single page", the 7,500-line `anitha-store.html` was cut into 68 parts under `src/` (19 css, 6 html, 43 js, one per feature), joined in the order of `src/manifest.json` by `tools/join-parts.py`. The joined file is **byte-identical** to the one before the split (sha256 checked) and the built website is identical. `anitha-store.html` is now generated: the build, `run-tests.sh`, `refresh-exports.sh` and `publish-repo.sh` join first; `sync-shared.py` writes the three shared blocks into their own parts; `record-check.cjs` and `tests/parts-test.cjs` fail if the file is edited by hand. AGENTS.md / CLAUDE.md rules updated. Not done: separate web addresses per page. Guide: HOW-IT-WORKS/31-modular-source-parts.md.

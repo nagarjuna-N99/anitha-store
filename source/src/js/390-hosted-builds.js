@@ -9,7 +9,7 @@ async function shopSync() {
     db.settings = Object.assign({}, db.settings, p.settings); db.categories = p.categories; db.accessoryCategories = p.accessoryCategories; db.products = p.products; if (p.home) db.home = p.home; if (p.pages) db.pages = p.pages; db.bundles = p.bundles; db.coupons = p.coupons; db.accessorySeeded = true;
     const u = currentUser(), mine = u ? (db.reviews || []).filter(x => x.userId === u.id && x.status !== 'approved') : []; db.reviews = [...p.reviews, ...mine];
     try { localStorage.setItem('ap_db_v70', JSON.stringify(db)); } catch (e) { /* storage full: the page still works from memory */ }
-    ensureProductFields(); syncHomeCats(); pruneCart(); renderProducts(); buildScrollTrack(); renderHome(); renderPublicPages(); updateBadges(); updateFavBadge(); seoRefreshHome();
+    ensureProductFields(); syncHomeCats(); pruneCart(); renderProducts(); buildScrollTrack(); renderHome(); renderPublicPages(); updateBadges(); updateFavBadge(); seoRefreshHome(); enhanceLinks(); SHOP_SYNCED = true; routeFromLocation();
   } catch (e) { /* offline or server down: keep showing the last copy */ }
 }
 
@@ -52,7 +52,19 @@ async function admBoot() {
   catch (e) { admGate('error', 'Cannot reach the server: ' + e.message); }
 }
 // a link from the new owner screen (/admin2) such as /admin#orders opens that tab
-function admHashTab() { const t = String(location.hash || '').slice(1); return t && document.querySelector('[data-tab="' + t.replace(/[^a-z-]/g, '') + '"]') && !(t === 'privacy' || t === 'ops') || (t && isOwnerRole() && /^(privacy|ops)$/.test(t)) ? t.replace(/[^a-z-]/g, '') : ''; }
+// each owner-app screen has its own address: /admin/orders/ (new look: /admin2/orders/). The server sends the same page for all of them.
+const ADM_BASE = BUILD === 'admin' && location.pathname.startsWith('/admin2') ? '/admin2/' : '/admin/';
+let ADM_ROUTE_SKIP = false, ADM_ROUTED = false;
+function admPathTab() { const m = /^\/admin2?\/([a-z0-9-]+)\/?$/.exec(location.pathname); return m && m[1] !== 'api' ? m[1] : ''; }
+function admRoutePush(tab) {
+  if (BUILD !== 'admin' || !ADM.ready || ADM_ROUTE_SKIP || !/^[a-z0-9-]+$/.test(String(tab))) return; const u = ADM_BASE + tab + '/';
+  try { if (!ADM_ROUTED) { history.replaceState({ tab }, '', u + location.hash); ADM_ROUTED = true; } else if (location.pathname !== u) history.pushState({ tab }, '', u); } catch (e) { }
+}
+window.addEventListener('popstate', () => {
+  if (BUILD !== 'admin' || !ADM.ready) return; const t = admPathTab() || 'dashboard';
+  if (document.querySelector('[data-tab="' + t + '"]')) { ADM_ROUTE_SKIP = true; try { switchAdminTab(t); } finally { ADM_ROUTE_SKIP = false; } }
+});
+function admHashTab() { const t = String(location.hash || '').slice(1) || admPathTab(); return t && document.querySelector('[data-tab="' + t.replace(/[^a-z-]/g, '') + '"]') && !(t === 'privacy' || t === 'ops') || (t && isOwnerRole() && /^(privacy|ops)$/.test(t)) ? t.replace(/[^a-z-]/g, '') : ''; }
 async function admEnter() {
   const g = await admApi('GET', '/admin/api/db'); ADM.version = g.version;
   const demo = !g.db; const fresh = normalizeDB(g.db || JSON.parse(JSON.stringify(defaultDB)));

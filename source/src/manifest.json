@@ -62,6 +62,7 @@
     "js/040-hamburger-menus.js",
     "js/050-view-toggle.js",
     "js/060-storefront-navigation.js",
+    "js/065-page-addresses.js",
     "js/070-storefront-logic.js",
     "js/080-share-whatsapp-otp-login-profile-consent.js",
     "js/090-privacy-notice-and-rights.js",

@@ -4,10 +4,13 @@
   build/site/index.html          the PUBLIC website  (no admin screens, no PIN, no demo customers). Put it on any static host.
   wa-assistant/public/admin.html the OWNER app       (served only by the server at /admin, behind a real login)
 
-Usage: python3 tools/build-split.py [--shop-api https://shop.example.com] [--index]   (--index lets Google list the website)
+Usage: python3 tools/build-split.py [--shop-api https://shop.example.com] [--site-url https://www.example.com/shop] [--index]
+   (--index lets Google list the website; --site-url is the public address, used for each page's canonical link and sitemap.xml)
+Also writes one real page file per address (build/site/collection/index.html, saree-care/, journal/, the-atelier/, faq/, terms/, privacy/, my-wishlist/),
+404.html (opens the right page for product and owner-made pages) and sitemap.xml.
 """
 import re, sys, os, argparse
-ap = argparse.ArgumentParser(); ap.add_argument('--shop-api', default=''); ap.add_argument('--index', action='store_true'); a = ap.parse_args()
+ap = argparse.ArgumentParser(); ap.add_argument('--shop-api', default=''); ap.add_argument('--index', action='store_true'); ap.add_argument('--site-url', default=''); a = ap.parse_args()
 root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 import subprocess, sys; subprocess.check_call([sys.executable, os.path.join(root, 'tools', 'join-parts.py')], stdout=subprocess.DEVNULL)   # anitha-store.html is the joined src/ parts
 src = open(os.path.join(root, 'anitha-store.html'), encoding='utf-8').read()
@@ -42,11 +45,51 @@ site = common(src)
 site = strip_div(site, r'<div id="adminView"[^>]*>')
 site = strip_div(site, r'<div class="admin-mobile-nav" id="adminMobileNav">')
 site = site.replace('<!-- ================= ADMIN', '<!-- ================= ADMIN')            # comments are harmless
-site = inject(site, "window.__BUILD='site';window.__SHOP_API=%s;" % repr(a.shop_api.rstrip('/')).replace("'", '"'), robots=None if a.index else 'noindex, nofollow')
+from urllib.parse import urlparse
+base_path = (urlparse(a.site_url).path.rstrip('/') + '/') if a.site_url else ''
+site = inject(site, "window.__BUILD='site';window.__SHOP_API=%s;%s" % (repr(a.shop_api.rstrip('/')).replace("'", '"'), ("window.__BASE='%s';" % base_path) if base_path else ''), robots=None if a.index else 'noindex, nofollow')
 assert "adminPin: '1234'" not in site and 'HDFC0001234' not in site and '50100123456789' not in site, 'a secret is still in the public site'
 assert 'id="adminView"' not in site and 'id="adminMobileNav"' not in site and 'id="view-toggle"' not in site
 os.makedirs(os.path.join(root, 'build', 'site'), exist_ok=True)
 open(os.path.join(root, 'build', 'site', 'index.html'), 'w', encoding='utf-8').write(site)
+
+# ---- one real page file for every fixed address (same app; the head says what the page is) ----
+import shutil
+BRAND = 'Anitha Pemmasani'
+PAGES = {
+  'collection': ('Handloom Sarees Collection', 'Browse pure handloom sarees from Hyderabad: Tussar, Maheshwari, Banarasi, Kanjeevaram, Paithani, Mysore silk and Ponduru Khadi.'),
+  'saree-care': ('Saree Care Guide', 'How to wash, dry, iron and store handloom silk, tussar and cotton sarees so they last for years.'),
+  'journal': ('Journal', 'Stories from the loom: weaves, weavers and the care behind each handloom saree.'),
+  'the-atelier': ('The Atelier', 'The story of the shop, the weavers we work with and how every saree is chosen.'),
+  'faq': ('Questions and Answers', 'Delivery, payment, care and returns: answers to common questions.'),
+  'terms': ('Terms & Conditions', 'The terms for buying from ' + BRAND + '.'),
+  'privacy': ('Privacy Policy', 'How ' + BRAND + ' looks after your personal data.'),
+  'my-wishlist': ('My Wishlist', 'The sarees you saved.'),
+}
+site_url = a.site_url.rstrip('/')
+def esc_attr(t): return t.replace('&', '&amp;').replace('"', '&quot;').replace('<', '&lt;')
+def page_head(h, path, title, desc):
+    full = '%s | %s' % (title, BRAND)
+    h = re.sub(r'<title>.*?</title>', lambda m: '<title>%s</title>' % esc_attr(full).replace('&amp;', '&amp;'), h, count=1, flags=re.S)
+    h = re.sub(r'(<meta name="description" content=")[^"]*(")', lambda m: m.group(1) + esc_attr(desc) + m.group(2), h, count=1)
+    h = re.sub(r'(<meta property="og:title" content=")[^"]*(")', lambda m: m.group(1) + esc_attr(full) + m.group(2), h, count=1)
+    h = re.sub(r'(<meta property="og:description" content=")[^"]*(")', lambda m: m.group(1) + esc_attr(desc) + m.group(2), h, count=1)
+    extra = ''
+    if site_url: extra += '<link rel="canonical" href="%s/%s/"><meta property="og:url" content="%s/%s/">' % (site_url, path, site_url, path)
+    if path == 'my-wishlist': extra += '<meta name="robots" content="noindex, nofollow">'
+    return h.replace('</title>', '</title>' + extra, 1)
+outdir = os.path.join(root, 'build', 'site')
+for d in list(PAGES) + ['product', 'page']:
+    shutil.rmtree(os.path.join(outdir, d), ignore_errors=True)
+for path, (title, desc) in PAGES.items():
+    os.makedirs(os.path.join(outdir, path), exist_ok=True)
+    open(os.path.join(outdir, path, 'index.html'), 'w', encoding='utf-8').write(page_head(site, path, title, desc))
+# 404.html: for addresses without a file (a saree, a page the owner added) it is the same app, which opens the right page
+open(os.path.join(outdir, '404.html'), 'w', encoding='utf-8').write(site)
+if site_url:
+    urls = [''] + [p + '/' for p in PAGES if p != 'my-wishlist']
+    open(os.path.join(outdir, 'sitemap.xml'), 'w', encoding='utf-8').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join('  <url><loc>%s/%s</loc></url>\n' % (site_url, u) for u in urls) + '</urlset>\n')
+
 
 # ---- the owner app ----
 adm = common(src)
