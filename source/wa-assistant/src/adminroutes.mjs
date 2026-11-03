@@ -98,7 +98,7 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
     // ---------- admin API ----------
     const p = url.pathname.slice('/admin/api'.length), read = req.method === 'GET';
     try {
-      if (route === 'GET /admin/api/state') { const s = auth.sessionFrom(req); send(res, { code: 200, configured: auth.configured, twoFactor: auth.twoFactorOn, signedIn: !!s, role: s ? s.role || 'owner' : null, user: s ? s.user || 'owner' : null, csrf: s ? s.csrf : null, instagram: !!ig.configured, claude: !!(cfg.anthropicKey && cfg.anthropicKey !== 'missing') }); return true; }
+      if (route === 'GET /admin/api/state') { const s = auth.sessionFrom(req); send(res, { code: 200, configured: auth.configured, twoFactor: auth.twoFactorOn, siteUrl: cfg.siteUrl || '', signedIn: !!s, role: s ? s.role || 'owner' : null, user: s ? s.user || 'owner' : null, csrf: s ? s.csrf : null, instagram: !!ig.configured, claude: !!(cfg.anthropicKey && cfg.anthropicKey !== 'missing') }); return true; }
       if (route === 'POST /admin/api/setup') { const b = await body(req, 5_000); const r = auth.setup(b, ip); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
       if (route === 'POST /admin/api/login') {
         if (!/^application\/json/i.test(req.headers['content-type'] || '')) return send(res, { code: 415, error: 'JSON only.' }), true;

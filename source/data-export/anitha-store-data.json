@@ -1078,7 +1078,8 @@
     "arrivals": {
       "show": true,
       "label": "Handpicked",
-      "title": "New Arrivals"
+      "title": "New Arrivals",
+      "ids": []
     },
     "signature": {
       "show": true,

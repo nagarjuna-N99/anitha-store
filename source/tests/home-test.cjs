@@ -30,7 +30,7 @@ const { chromium } = require(process.env.PW);
   ok('add slide → editor has 2; new slide hidden on store until it has an image + warning free', await p.evaluate(() => document.querySelectorAll('.hs').length === 2 && document.querySelectorAll('#homeHero .hero-slide').length === 1));
   const img2 = p.locator('.hs >> nth=1').locator('input[placeholder^="https"]').first();
   await img2.fill('https://img.test/two.jpg'); await img2.press('Tab');
-  ok('image link added → store shows 2 slides with arrows + dots (instantly)', await p.evaluate(() => document.querySelectorAll('#homeHero .hero-slide').length === 2 && document.querySelectorAll('#homeHero .hero-dots button').length === 2 && document.querySelectorAll('.hero-arrow').length === 2 && /two\.jpg/.test(document.querySelectorAll('#homeHero .hero-slide')[1].getAttribute('style'))));
+  ok('image link added → store shows 2 slides with arrows + dots (instantly)', await p.evaluate(() => document.querySelectorAll('#homeHero .hero-slide').length === 2 && document.querySelectorAll('#homeHero .hero-dots button').length === 2 && document.querySelectorAll('.hero-arrow').length === 2 && /two\.jpg/.test(document.querySelectorAll('#homeHero .hero-slide')[1].querySelector('.hero-img').getAttribute('style'))));
   const t2 = p.locator('.hs >> nth=1').locator('input[type=text]').nth(3); // title
   await p.evaluate(() => { document.querySelectorAll('.hs')[1].querySelectorAll('input[type=text]').forEach((e, i) => e.dataset.i = i); });
   const titleBox = p.locator('.hs >> nth=1').locator('label:has-text("Title") + input');
@@ -38,7 +38,7 @@ const { chromium } = require(process.env.PW);
   ok('typing a title updates the store AND the preview live', await p.evaluate(() => document.querySelectorAll('#homeHero .hero-slide')[1].querySelector('.hero-title').textContent === 'Wedding Season' && /Wedding Season/.test(document.getElementById('hsprev-1').innerText) && document.querySelectorAll('#homeHero .hero-slide')[1].querySelector('.hero-title').tagName === 'H2'));
   await upload('.hs >> nth=1 >> button:has-text("Upload photo")');
   await p.waitForFunction(() => db.home.hero.slides[1].image.startsWith('data:image/jpeg'));
-  ok('photo upload stored (resized JPEG) and shown', await p.evaluate(() => /data:image\/jpeg/.test(document.querySelectorAll('#homeHero .hero-slide')[1].getAttribute('style')) && !!document.querySelector('#hsprev-1 .hero-slide')));
+  ok('photo upload stored (resized JPEG) and shown', await p.evaluate(() => /data:image\/jpeg/.test(document.querySelectorAll('#homeHero .hero-slide')[1].querySelector('.hero-img').getAttribute('style')) && !!document.querySelector('#hsprev-1 .hero-slide')));
 
   // slideshow behaviour
   await p.evaluate(() => heroStep(1));
@@ -59,7 +59,7 @@ const { chromium } = require(process.env.PW);
   await s1.locator('label:has-text("Text position") + select').selectOption('center');
   await s1.locator('label:has-text("Photo focus") + select').selectOption('top');
   await p.evaluate(() => { const r = document.querySelector('.hs input[type=range]'); r.value = 0; r.dispatchEvent(new Event('input')); });
-  ok('text position, photo focus and overlay apply', await p.evaluate(() => { const el = document.querySelector('#homeHero .hero-slide'); return el.classList.contains('pos-center') && /center top/.test(el.getAttribute('style')) && /rgba\(30,25,20,0\.00\)/.test(el.getAttribute('style')); }));
+  ok('text position, photo focus and overlay apply', await p.evaluate(() => { const el = document.querySelector('#homeHero .hero-slide'); return el.classList.contains('pos-center') && /50% 0%/.test(el.querySelector('.hero-img').getAttribute('style')) && /rgba\(30,25,20,0\.00\)/.test(el.querySelector('.hero-shade').getAttribute('style')); }));
   await s1.locator('label:has-text("Button opens") + div select').first().selectOption('category');
   await s1.locator('label:has-text("Button opens") + div select').nth(1).selectOption('Paithani');
   await p.evaluate(() => navigateTo('home')); await p.evaluate(() => document.querySelector('#homeHero .btn-primary').click());

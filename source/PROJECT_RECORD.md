@@ -3,7 +3,7 @@
 > **STANDING RULE (owner's instruction, 23 Oct 2026):** this record and the `HOW-IT-WORKS/` folder are updated **after every change or update**, in the same step as the change, never later. A change is not finished until (1) the code is tested, (2) a dated entry is added to the Change Log below, (3) any affected `HOW-IT-WORKS/` page is corrected, (4) `./check-record.sh` has been run (it fails if the record or how-it-works is behind the code).
 > Also standing: the owner wants chats remembered for later use; this record is that memory for the project.
 
-**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 531 automated checks) · **Browser test suites:** 28 (see §6)
+**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 531 automated checks) · **Browser test suites:** 30 (see §6)
 
 ---
 
@@ -111,9 +111,11 @@ Owner's guidance: *"we will setup everything after we host it"* — real hosting
 | `order-test.cjs` | 11 | paid WhatsApp orders imported into the store |
 | `coupon-test.cjs` | 18 | coupon rules in store and assistant |
 | `accessories-test.cjs` | 22 | accessory tabs/categories, filters and search per kind, Complete-the-look rows, Category Manager, product form groups, assistant export type |
+| `hero-theme-test.cjs` | 16 | hero zoom, colour matching of text, button and top bar, top bar following the hero, View home page |
+| `arrivals-pick-test.cjs` | 9 | choosing New Arrivals sarees |
 | `agents-test.cjs` | 27 | the five AI helpers with and without Claude: order messages, privacy replies, weekly content, catalogue batch, Ops watcher note |
 | `pages-ai-invoices-test.cjs` | 55 | invoice search/sort/group, category auto-fill and one-click product AI, editable Care/Journal/Atelier pages |
-| `ui2-test.cjs` | 51 | the new owner look: same page as classic, all 23 screens identical, Overview numbers and website-order buttons, light/dark readable |
+| `ui2-test.cjs` | 53 | the new owner look: same page as classic, all 23 screens identical, Overview numbers and website-order buttons, light/dark readable |
 | `dpdp2-test.cjs` | 29 | website orders to the owner (accept, decline, retry queue), checking who is asking, logging a phone request, provider ticks, erased count, notice archive, Dashboard reminder, helper logins |
 | `admin-app-test.cjs` | 35 | the real owner app against the real server: account setup, sign-in, wrong-password and lockout screens, 2-step sign-in, saving and merging, the public website, session end, backup, Instagram dialog / schedule / post now |
 | `drafts-ready-test.cjs` | 22 | Ready-to-post drafts: details dialog, built-in and Claude AI fill, readiness, filters, Post now / Post all ready, SKU clash, Fill all |
@@ -134,6 +136,15 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**4 Nov 2026 (New Arrivals: choose sarees from the website)**
+- Home Page → New Arrivals now has a tick-list of all published sarees by category (`db.home.arrivals.ids`; empty = all marked new). `arrPick/arrClear/arrPickerHTML`; `buildScrollTrack` honours it. Guide: HOW-IT-WORKS/28-new-arrivals-pick.md. Test: `arrivals-pick-test.cjs` 9 checks.
+
+**4 Nov 2026 (Hero zoom, colour match to the photo, top bar follows the hero; "View home page" fixed)**
+- **Bug:** in the owner app "View home page" switched to the hidden shop screen (blank). It now opens the public website in a new tab (`/admin/api/state` carries `siteUrl`). Guide: HOW-IT-WORKS/27-hero-zoom-and-colour-match.md.
+- **Zoom:** each hero slide has Zoom (100-250%) and Move left/right; the photo is now its own layer (`.hero-img`) under a shade layer (`.hero-shade`).
+- **Colour match:** `heroAnalyze` / `heroMatch` read the photo pixels (no Claude needed), pick title, accent, button and top-bar colours as tints of the photo with contrast checks (text 4.5:1, bar 7:1), and darken the overlay only if needed. **Top bar follows the hero** switch (`db.home.headerMatch`); `applyHeaderTheme` sets `--nav-bg` / `--nav-ink` only on the home page.
+- Tests: `tests/hero-theme-test.cjs` 16 checks; home-test updated; ui2-test +2. Not tested: real saree photos, other browsers.
 
 **4 Nov 2026 (Design check with Hallmark, and fixes)**
 - Hallmark (open-source design checker) installed in the build machine's `~/.claude/skills`; code scan plus a 43-screen browser check at 7 widths. Guide: HOW-IT-WORKS/26-design-check-fixes.md.
