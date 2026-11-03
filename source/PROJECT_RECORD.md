@@ -3,7 +3,7 @@
 > **STANDING RULE (owner's instruction, 23 Oct 2026):** this record and the `HOW-IT-WORKS/` folder are updated **after every change or update**, in the same step as the change, never later. A change is not finished until (1) the code is tested, (2) a dated entry is added to the Change Log below, (3) any affected `HOW-IT-WORKS/` page is corrected, (4) `./check-record.sh` has been run (it fails if the record or how-it-works is behind the code).
 > Also standing: the owner wants chats remembered for later use; this record is that memory for the project.
 
-**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 519 automated checks) · **Browser test suites:** 26 (see §6)
+**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 520 automated checks) · **Browser test suites:** 27 (see §6)
 
 ---
 
@@ -111,7 +111,8 @@ Owner's guidance: *"we will setup everything after we host it"* — real hosting
 | `order-test.cjs` | 11 | paid WhatsApp orders imported into the store |
 | `coupon-test.cjs` | 18 | coupon rules in store and assistant |
 | `accessories-test.cjs` | 22 | accessory tabs/categories, filters and search per kind, Complete-the-look rows, Category Manager, product form groups, assistant export type |
-| `ui2-test.cjs` | 24 | the new owner look: same page as classic, all 23 screens identical, Overview numbers and website-order buttons, light/dark readable |
+| `pages-ai-invoices-test.cjs` | 38 | invoice search/sort/group, category auto-fill and one-click product AI, editable Care/Journal/Atelier pages |
+| `ui2-test.cjs` | 43 | the new owner look: same page as classic, all 23 screens identical, Overview numbers and website-order buttons, light/dark readable |
 | `dpdp2-test.cjs` | 29 | website orders to the owner (accept, decline, retry queue), checking who is asking, logging a phone request, provider ticks, erased count, notice archive, Dashboard reminder, helper logins |
 | `admin-app-test.cjs` | 35 | the real owner app against the real server: account setup, sign-in, wrong-password and lockout screens, 2-step sign-in, saving and merging, the public website, session end, backup, Instagram dialog / schedule / post now |
 | `drafts-ready-test.cjs` | 22 | Ready-to-post drafts: details dialog, built-in and Claude AI fill, readiness, filters, Post now / Post all ready, SKU clash, Fill all |
@@ -132,6 +133,13 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**3 Nov 2026 (Invoice search and sort, one-click product AI, editable Care / Journal / Atelier pages)**
+- **Invoices:** search (name, phone, invoice/order number), customer, year, month, date range, sort (date, amount, customer, number) and group by customer/month/year with subtotals; count, total and average line.
+- **Product form:** one **✨ Auto-fill everything** button (photo, colours, fabric, SKU, name, description, tags, SEO, language) that falls back to the built-in writer when Claude is not connected; choosing a category now sets the SKU (e.g. AP-PHT-001), description, tags, SEO and fabric by itself and never overwrites what the owner typed; the owner-app error for a missing Claude key now points to Settings → Claude AI key (it used to point to the WhatsApp tab). Single-part buttons folded under "Fine-tune one part only".
+- **Pages (24th owner tab, 📰):** Care guide, Journal and Atelier moved from fixed HTML to data (`db.pages`, sent to the website by `publicView`), with an editor to add / edit / reorder / hide / remove, photo upload or link, working Read Story, and "put the original back". Starting photos are stock samples; the Atelier numbers are sample text for the owner to correct. Guide: HOW-IT-WORKS/24-invoices-product-ai-pages.md.
+- **Left menu can be closed** (‹ / ☰ button, remembered in the browser; classic and new look). Journal's "Read Story" link made a proper 44 px tap target (the mobile audit caught it).
+- Tests: server 520 (+1); `tests/pages-ai-invoices-test.cjs` 38 checks; `tests/ui2-test.cjs` now 43 checks, repeating the invoice, product-form, Pages and menu-button checks in `/admin2` against the real server. Not tested: real Claude output, a phone photo upload, the live site.
 
 **3 Nov 2026 (New owner look at /admin2, built parallel to the classic app)**
 - `/admin2` serves the very same owner app (same page, sign-in, session, data, code) with `<html class="ui2">`: a glass look in light and dark, and a new **Shop Overview** above the full classic dashboard (sales this month vs last, open orders, delivered share, 6M/12M sales chart, website orders with working Accept / Not possible, monthly goal kept in the browser, orders by stage, best sellers, Today list from real work, Instagram and WhatsApp previews). `/admin` is unchanged. Guide: HOW-IT-WORKS/23-new-owner-look.md.

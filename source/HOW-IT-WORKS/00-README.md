@@ -21,6 +21,7 @@ Plain-language pages for the owner and for anyone who takes over the project. Ke
 | `21-privacy-round-2-what-changed.md` | plain-words notes on privacy round 2: website orders, identity check, erased list, helper logins |
 | `22-ops-page.md` | the Ops page: what the developer's health check covers and how to add a check |
 | `23-new-owner-look.md` | the new owner look at /admin2: what it is, the new Overview, how it is kept identical to the classic app |
+| `24-invoices-product-ai-pages.md` | invoice search and sort, one-click product writing, and editing the Care guide, Journal and Atelier |
 | `19-developer-handover.md` | **start here if you are a developer or an AI**: layout, commands, rules, routes, settings, lessons |
 | `18-growth-and-weekly-email.md` | Growth tab, visit counting, live suggestions, weekly email, Instagram reminder |
 | `16-data-reference.md` | **every piece of data stored**: where it lives, each collection and its fields, the assistant server's data, what is sent to AI, privacy |

@@ -214,7 +214,7 @@
   .journal-date { font-size: 11px; color: #888; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
   .journal-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; margin-bottom: 12px; line-height: 1.3; }
   .journal-excerpt { font-size: 14px; line-height: 1.7; color: #666; margin-bottom: 16px; }
-  .journal-link { font-size: 12px; color: var(--gold); text-decoration: none; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; }
+  .journal-link { font-size: 12px; color: var(--gold); text-decoration: none; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; display: inline-block; padding: 14px 0; min-height: 44px; line-height: 16px; box-sizing: border-box; }
 
   footer { background: var(--charcoal); color: var(--ivory); padding: 60px; }
   .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
@@ -1112,6 +1112,7 @@ html.ui2 [style*="color:#888"],html.ui2 [style*="color: #888"],html.ui2 [style*=
 html.ui2 .hint,html.ui2 .att-go{color:var(--o-mute)}
 
 </style>
+<style>.nav-toggle{position:fixed;top:14px;left:268px;z-index:60;width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--ivory);color:var(--charcoal);cursor:pointer;display:none;align-items:center;justify-content:center;font-size:18px;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.08)}body.admin-on .nav-toggle{display:flex}body.nav-closed .nav-toggle{left:14px}body.nav-closed .admin-sidebar{display:none}body.nav-closed .admin-main{margin-left:0;padding-left:64px}body.studio-focus .nav-toggle{display:none!important}@media (max-width:900px){body.admin-on .nav-toggle{display:none}}html.ui2 .nav-toggle{background:var(--o-glass-2);color:var(--o-ink);border-color:var(--o-line)}.pg-item{border:1px solid var(--border);border-radius:14px;padding:14px;margin:12px 0}.pg-item.pg-off{opacity:.7}.pg-head{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.pg-head b{flex:1;min-width:140px}.pg-tools{display:inline-flex;gap:6px}.pg-tip{border-top:1px dashed var(--border);padding:10px 0}.pg-sec>summary{cursor:pointer;min-height:40px;display:flex;align-items:center}.pg-item textarea,.pg-tip textarea{width:100%}</style>
 </head>
 <body>
 <noscript><p style="padding:20px;">Anitha Pemmasani – pure handloom sarees from Hyderabad. Please enable JavaScript to browse and shop, or call +91 98496 46440.</p></noscript>
@@ -1165,6 +1166,7 @@ html.ui2 .hint,html.ui2 .att-go{color:var(--o-mute)}
     <li data-tab="social" onclick="switchAdminTab('social'); closeAdminNav();">📸 Instagram</li>
     <li data-tab="growth" onclick="switchAdminTab('growth'); closeAdminNav();">📈 Growth</li>
     <li data-tab="privacy" onclick="switchAdminTab('privacy'); closeAdminNav();">🛡️ Privacy</li>
+    <li data-tab="pages" onclick="switchAdminTab('pages'); closeAdminNav();">📰 Pages</li>
     <li data-tab="ops" onclick="switchAdminTab('ops'); closeAdminNav();">🩺 Ops</li>
     <li data-tab="logs" onclick="switchAdminTab('logs'); closeAdminNav();">📜 Audit Logs</li>
     <li data-tab="settings" onclick="switchAdminTab('settings'); closeAdminNav();">⚙️ Settings</li>
@@ -1230,105 +1232,11 @@ html.ui2 .hint,html.ui2 .att-go{color:var(--o-mute)}
   <div id="page-terms" class="page"><div id="legal-terms"></div></div>
   <div id="page-privacy" class="page"><div id="legal-privacy"></div></div>
 
-  <div id="page-care" class="page">
-    <section class="care-hero"><div><h1>Saree Care Guide</h1><p>Preserve the beauty and longevity of your handloom treasures</p></div></section>
-    <div class="care-content">
-      <div class="care-tabs">
-        <button class="care-tab active" onclick="switchCareTab('silk', this)">Pure Silk</button>
-        <button class="care-tab" onclick="switchCareTab('tussar', this)">Tussar &amp; Raw Silk</button>
-        <button class="care-tab" onclick="switchCareTab('cotton', this)">Cotton &amp; Khadi</button>
-        <button class="care-tab" onclick="switchCareTab('storage', this)">Storage Tips</button>
-      </div>
-      <div id="care-silk" class="care-section active">
-        <div class="care-grid">
-          <img src="https://images.unsplash.com/photo-1606293459339-aa5d34a7b0e1?q=80&w=800" class="care-image" alt="Silk care">
-          <div class="care-details">
-            <h3>Pure Silk Care (Kanjeevaram &amp; Banarasi)</h3>
-            <ul class="care-list">
-              <li><span class="care-icon">🫧</span><div class="care-text"><h4>Washing</h4><p>Dry clean only for heavily zari-worked sarees. For plain silks, use mild shampoo in cold water. Do not soak for more than 5 minutes.</p></div></li>
-              <li><span class="care-icon">💧</span><div class="care-text"><h4>Drying</h4><p>Never wring or twist. Dry in shade, away from direct sunlight to prevent color fading.</p></div></li>
-              <li><span class="care-icon">🔥</span><div class="care-text"><h4>Ironing</h4><p>Iron on the reverse side using low to medium heat. Place a cotton cloth between the iron and saree.</p></div></li>
-              <li><span class="care-icon">✨</span><div class="care-text"><h4>Special Note</h4><p>Silk naturally develops a soft sheen over time. Avoid contact with perfumes directly on the fabric.</p></div></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div id="care-tussar" class="care-section">
-        <div class="care-grid">
-          <img src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=800" class="care-image" alt="Tussar care">
-          <div class="care-details">
-            <h3>Tussar &amp; Raw Silk Care</h3>
-            <ul class="care-list">
-              <li><span class="care-icon">🫧</span><div class="care-text"><h4>Washing</h4><p>Hand wash gently with mild detergent in cold water. Tussar is delicate; avoid vigorous rubbing.</p></div></li>
-              <li><span class="care-icon">💧</span><div class="care-text"><h4>Drying</h4><p>Roll in a clean towel to absorb excess water. Dry flat in shade. Never hang wet Tussar.</p></div></li>
-              <li><span class="care-icon">🌡️</span><div class="care-text"><h4>Ironing</h4><p>Use low heat. Iron while slightly damp for best results. Always iron on the reverse side.</p></div></li>
-              <li><span class="care-icon">🌿</span><div class="care-text"><h4>Natural Texture</h4><p>Tussar has a natural coarse texture and slubs. This is not a defect but a mark of authentic handloom.</p></div></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div id="care-cotton" class="care-section">
-        <div class="care-grid">
-          <img src="https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?q=80&w=800" class="care-image" alt="Cotton care">
-          <div class="care-details">
-            <h3>Cotton &amp; Khadi Care</h3>
-            <ul class="care-list">
-              <li><span class="care-icon">🧺</span><div class="care-text"><h4>Washing</h4><p>Machine wash on gentle cycle or hand wash. Khadi may shrink slightly on first wash.</p></div></li>
-              <li><span class="care-icon">☀️</span><div class="care-text"><h4>Drying</h4><p>Sun drying is acceptable for white cottons. For colored cottons, dry in shade.</p></div></li>
-              <li><span class="care-icon">🔥</span><div class="care-text"><h4>Ironing</h4><p>Cotton can withstand high heat. Iron while damp for crisp finish.</p></div></li>
-              <li><span class="care-icon">🌀</span><div class="care-text"><h4>Wrinkles</h4><p>Khadi and handloom cottons wrinkle easily. This is a sign of pure natural fiber.</p></div></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div id="care-storage" class="care-section">
-        <div class="care-grid">
-          <img src="https://images.unsplash.com/photo-1583391733958-e04f9715d184?q=80&w=800" class="care-image" alt="Storage tips">
-          <div class="care-details">
-            <h3>Long-term Storage</h3>
-            <ul class="care-list">
-              <li><span class="care-icon">📦</span><div class="care-text"><h4>Folding</h4><p>Fold sarees along original lines. Refold every 3-4 months to prevent permanent crease damage.</p></div></li>
-              <li><span class="care-icon">🌿</span><div class="care-text"><h4>Natural Repellents</h4><p>Use dried neem leaves, lavender sachets, or cedar blocks. Avoid naphthalene balls.</p></div></li>
-              <li><span class="care-icon">🌬️</span><div class="care-text"><h4>Breathing</h4><p>Store in muslin cloth bags, never plastic. Plastic traps moisture and causes yellowing.</p></div></li>
-              <li><span class="care-icon">☀️</span><div class="care-text"><h4>Airing</h4><p>Take sarees out once a season. Air them in shade for a few hours to keep fibers fresh.</p></div></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div id="page-care" class="page"></div>
 
-  <div id="page-journal" class="page">
-    <section>
-      <div class="section-header"><div class="section-label">Stories &amp; Heritage</div><h2 class="section-title">The Journal</h2></div>
-      <div class="journal-grid">
-        <div class="journal-card"><img src="https://images.unsplash.com/photo-1602161490280-093915e84362?q=80&w=600" alt="Kalamkari"><div class="journal-body"><div class="journal-date">October 12, 2026</div><h3 class="journal-title">The Ancient Art of Kalamkari</h3><p class="journal-excerpt">Discover the centuries-old tradition of hand-painting myths and motifs on fabric using natural dyes.</p><a class="journal-link">Read Story →</a></div></div>
-        <div class="journal-card"><img src="https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?q=80&w=600" alt="Handloom silk"><div class="journal-body"><div class="journal-date">October 05, 2026</div><h3 class="journal-title">How to Identify Pure Handloom Silk</h3><p class="journal-excerpt">Learn the simple burn test and texture checks to distinguish authentic handloom silk.</p><a class="journal-link">Read Story →</a></div></div>
-        <div class="journal-card"><img src="https://images.unsplash.com/photo-1610189012906-4b2a8f8e0c9b?q=80&w=600" alt="Heirloom saree"><div class="journal-body"><div class="journal-date">September 28, 2026</div><h3 class="journal-title">Preserving Your Heirloom Saree</h3><p class="journal-excerpt">Essential tips on storage, cleaning, and maintenance to ensure your sarees last for generations.</p><a class="journal-link">Read Story →</a></div></div>
-      </div>
-    </section>
-  </div>
+  <div id="page-journal" class="page"></div>
 
-  <div id="page-atelier" class="page">
-    <section class="hero" style="height:50vh;background-image:linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),url('https://images.unsplash.com/photo-1596205849889-98e400c784c1?q=80&w=2000');justify-content:center;text-align:center;">
-      <div><h1 class="hero-title" style="font-size:56px;">The Atelier</h1></div>
-    </section>
-    <div style="max-width:1000px;margin:0 auto;padding:80px 60px;">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:60px;align-items:center;margin-bottom:60px;">
-        <img src="https://images.unsplash.com/photo-1602161490280-093915e84362?q=80&w=1000" alt="The atelier" style="width:100%;height:500px;object-fit:cover;border-radius:4px;">
-        <div>
-          <h2 style="font-family:'Cormorant Garamond',serif;font-size:40px;margin-bottom:24px;line-height:1.2;">Preserving the Art of Handloom</h2>
-          <p style="font-size:15px;line-height:1.9;color:#555;margin-bottom:20px;">Every saree at Anitha Pemmasani is a testament to the weaver's art. We work directly with artisan clusters across India, ensuring fair wages and preserving ancient weaving techniques.</p>
-          <p style="font-size:15px;line-height:1.9;color:#555;">Our promise: every piece is rigorously quality-checked before dispatch. We celebrate the natural, beautiful variations that make each handloom saree truly one-of-a-kind.</p>
-        </div>
-      </div>
-      <div style="display:flex;gap:50px;margin:40px 0;padding:30px 0;border-top:1px solid var(--gold-light);border-bottom:1px solid var(--gold-light);flex-wrap:wrap;">
-        <div style="text-align:center;flex:1;"><div style="font-family:'Cormorant Garamond',serif;font-size:44px;color:var(--gold);font-weight:600;">10+</div><div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#666;margin-top:10px;">Years of Craft</div></div>
-        <div style="text-align:center;flex:1;"><div style="font-family:'Cormorant Garamond',serif;font-size:44px;color:var(--gold);font-weight:600;">500+</div><div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#666;margin-top:10px;">Artisan Partners</div></div>
-        <div style="text-align:center;flex:1;"><div style="font-family:'Cormorant Garamond',serif;font-size:44px;color:var(--gold);font-weight:600;">50+</div><div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#666;margin-top:10px;">Weaving Clusters</div></div>
-      </div>
-    </div>
-  </div>
+  <div id="page-atelier" class="page"></div>
 
   <footer>
     <div class="footer-grid">
@@ -1350,6 +1258,7 @@ html.ui2 .hint,html.ui2 .att-go{color:var(--o-mute)}
 
 <!-- ================= ADMIN VIEW ================= -->
 <div id="adminView" class="admin-view">
+  <button type="button" class="nav-toggle" id="navToggle" onclick="toggleNav()" aria-label="Hide the menu" aria-expanded="true" title="Hide the menu">‹</button>
   <aside class="admin-sidebar" id="adminSidebarDesktop">
     <div class="admin-sidebar-header"><h1>Anitha Pemmasani</h1><p>Admin Portal V7.1</p></div>
     <ul class="admin-nav">
@@ -1373,6 +1282,7 @@ html.ui2 .hint,html.ui2 .att-go{color:var(--o-mute)}
       <li class="admin-nav-item" data-tab="social" onclick="switchAdminTab('social')">📸 Instagram</li>
       <li class="admin-nav-item" data-tab="growth" onclick="switchAdminTab('growth')">📈 Growth</li>
       <li class="admin-nav-item" data-tab="privacy" onclick="switchAdminTab('privacy')">🛡️ Privacy</li>
+      <li class="admin-nav-item" data-tab="pages" onclick="switchAdminTab('pages')">📰 Pages</li>
       <li class="admin-nav-item" data-tab="ops" onclick="switchAdminTab('ops')">🩺 Ops</li>
       <li class="admin-nav-item" data-tab="logs" onclick="switchAdminTab('logs')">📜 Audit Logs</li>
       <li class="admin-nav-item" data-tab="settings" onclick="switchAdminTab('settings')">⚙️ Settings</li>
@@ -1450,6 +1360,7 @@ html.ui2 .hint,html.ui2 .att-go{color:var(--o-mute)}
 <div class="modal" id="accountModal" style="z-index:1050;"><div class="modal-content" style="max-width:940px;"><button class="modal-close" onclick="closeModal('accountModal')" aria-label="Close">×</button><div id="accountBody" style="padding:36px 40px;"></div></div></div>
 <div class="modal" id="legalModal" style="z-index:1200;"><div class="modal-content" style="max-width:820px;"><button class="modal-close" onclick="closeModal('legalModal')" aria-label="Close">×</button><div id="legalModalBody" style="padding:10px 20px 24px;"></div></div></div>
 
+<div class="modal" id="journalModal" style="z-index:1150;"><div class="modal-content" style="max-width:720px;"><button class="modal-close" onclick="closeModal('journalModal')" aria-label="Close">×</button><div style="padding:30px 34px;" id="journalBody"></div></div></div>
 <div class="modal" id="noticeModal" style="z-index:1200;"><div class="modal-content" style="max-width:620px;"><button class="modal-close" onclick="closeModal('noticeModal')" aria-label="Close">×</button><div style="padding:30px 34px;" id="noticeBody"></div></div></div>
 <div class="modal" id="rightsModal" style="z-index:1200;"><div class="modal-content" style="max-width:540px;"><button class="modal-close" onclick="closeModal('rightsModal')" aria-label="Close">×</button><div style="padding:30px 34px;" id="rightsBody"></div></div></div>
 <div class="modal" id="trackModal" style="z-index:1100;"><div class="modal-content" style="max-width:480px;"><button class="modal-close" onclick="closeModal('trackModal')" aria-label="Close">×</button><div id="trackBody" style="padding:30px 26px;"></div></div></div>
@@ -1533,7 +1444,7 @@ const defaultDB = {
 
 // Make sure every order that claims an invoice actually has one, and that all collections exist.
 function normalizeDB(d) {
-  const base = JSON.parse(JSON.stringify(defaultDB));
+  const base = JSON.parse(JSON.stringify(defaultDB)); if (!d.pages) d.pages = defaultPages();
   ['settings', 'categories', 'accessoryCategories', 'products', 'users', 'orders', 'invoices', 'logs', 'coupons', 'drafts', 'consentLog', 'home', 'reviews', 'stockAlerts', 'outbox', 'similarAlerts', 'bundles'].forEach(k => { if (d[k] === undefined || d[k] === null) d[k] = base[k]; });
   // one-time: add the demo accessories to a store saved before accessories existed
   if (!d.accessorySeeded) { d.accessorySeeded = true; if (!d.products.some(p => d.accessoryCategories.includes(p.category))) base.products.filter(p => d.accessoryCategories.includes(p.category) && !d.products.some(x => x.id === p.id || x.sku === p.sku)).forEach(p => d.products.push(p)); }
@@ -1597,6 +1508,10 @@ function toggleAdminNav() {
   document.getElementById('adminNavOverlay').classList.toggle('active');
   document.getElementById('adminHamburger').classList.toggle('active');
 }
+// ---- hide or show the left menu (remembered in this browser) ----
+function navApply(closed) { document.body.classList.toggle('nav-closed', closed); const b = document.getElementById('navToggle'); if (b) { b.textContent = closed ? '☰' : '‹'; b.setAttribute('aria-expanded', String(!closed)); b.setAttribute('aria-label', closed ? 'Show the menu' : 'Hide the menu'); b.title = closed ? 'Show the menu' : 'Hide the menu'; } setTimeout(() => window.dispatchEvent(new Event('resize')), 60); }
+function toggleNav() { const closed = !document.body.classList.contains('nav-closed'); try { localStorage.setItem('ap_nav_closed', closed ? '1' : '0'); } catch (e) { /* not remembered */ } navApply(closed); }
+function navRestore() { let c = false; try { c = localStorage.getItem('ap_nav_closed') === '1'; } catch (e) { /* default open */ } navApply(c); }
 function closeAdminNav() {
   document.getElementById('adminMobileNav').classList.remove('active');
   document.getElementById('adminNavOverlay').classList.remove('active');
@@ -2417,21 +2332,7 @@ function renderAdminContent(tab) {
     return;
   }
 
-  if (tab === 'invoices') {
-    content.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
-        <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;margin:0;">Invoice Management</h3>
-        <button class="btn-sm btn-primary-sm" onclick="openTemplateEditor()">Edit Invoice Template</button>
-      </div>
-      <div class="admin-card" style="overflow-x:auto;">
-        <table class="admin-table" style="min-width:1000px;">
-          <thead><tr><th>Invoice ID</th><th>Order ID</th><th>Customer</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody>${db.invoices.length ? db.invoices.map(inv => `<tr><td style="font-family:monospace;font-weight:600;">${esc(inv.id)}</td><td style="font-family:monospace;font-size:12px;">${esc(inv.orderId)}</td><td><div style="font-weight:500;">${esc(inv.customer)}</div><div style="font-size:11px;color:#888;">${esc(inv.email) || '—'}</div></td><td style="font-size:12px;color:#888;">${esc(inv.date)}</td><td style="font-weight:600;">${formatCurrency(inv.amount)}</td><td><span class="status-pill status-paid">${esc(inv.status)}</span></td><td><div class="action-buttons"><button class="btn-sm btn-info-sm" onclick="viewInvoice('${esc(inv.id)}')">View</button><button class="btn-sm" style="background:white;color:var(--gold);border:1px solid var(--gold);" onclick="resendInvoice('${esc(inv.id)}')">Resend</button></div></td></tr>`).join('') : '<tr><td colspan="7" style="text-align:center;padding:40px;color:#888;">No invoices generated yet.</td></tr>'}</tbody>
-        </table>
-      </div>
-    `;
-    return;
-  }
+  if (tab === 'invoices') { renderInvoices(content); return; }
 
   if (tab === 'customers') { if (BUILD === 'admin') admApi('POST', '/admin/api/privacy/log', { event: 'customers-viewed' }).catch(() => {});
     content.innerHTML = `
@@ -2490,6 +2391,7 @@ function renderAdminContent(tab) {
   if (tab === 'growth') { renderGrowth(content); return; }
   if (tab === 'privacy') { renderPrivacyAdmin(content); return; }
   if (tab === 'ops') { renderOpsAdmin(content); return; }
+  if (tab === 'pages') { renderPagesAdmin(content); return; }
 
   if (tab === 'coupons') {
     content.innerHTML = `
@@ -3438,7 +3340,8 @@ async function fileToDataUrl(file, max = 1600, q = 0.85) {
 function openProductForm(id = null, prefill = null) {
   const p = id ? db.products.find(x => x.id === id) : null, src = p || prefill || {};
   const images = src.images && src.images.length ? src.images.slice() : (src.image ? [src.image] : []);
-  PF = { id: p ? p.id : null, name: src.name || '', sku: src.sku || '', category: src.category || db.categories[0] || '', price: p ? p.price : (src.price || ''), stock: p ? p.stock : 1, images, video: src.video || '', description: src.description || '', tags: (src.tags || []).slice(), seoTitle: src.seoTitle || '', metaDescription: src.metaDescription || '', slug: src.slug || '', altText: src.altText || '', slugTouched: !!src.slug, variant: 0, source: '', fabric: src.fabric || FABRIC_BY_CAT[src.category || db.categories[0]] || '', fabricTouched: !!src.fabric, colours: (src.colours || []).slice(), daylight: !!src.daylight };
+  PF = { id: p ? p.id : null, name: src.name || '', sku: src.sku || '', category: src.category || db.categories[0] || '', price: p ? p.price : (src.price || ''), stock: p ? p.stock : 1, images, video: src.video || '', description: src.description || '', tags: (src.tags || []).slice(), seoTitle: src.seoTitle || '', metaDescription: src.metaDescription || '', slug: src.slug || '', altText: src.altText || '', slugTouched: !!src.slug, variant: 0, source: '', fabric: src.fabric || FABRIC_BY_CAT[src.category || db.categories[0]] || '', fabricTouched: !!src.fabric, colours: (src.colours || []).slice(), daylight: !!src.daylight, skuTouched: !!(src.sku && (p || prefill)), descTouched: !!src.description, tagsTouched: !!(src.tags && src.tags.length), seoTouched: !!(src.seoTitle || src.metaDescription) };
+  if (!PF.id && !PF.sku) PF.sku = pfSkuFor(PF.category);
   renderProductForm();
   if (!PF.description.trim() && PF.name.trim()) pfGenerate('all', true);
 }
@@ -3470,8 +3373,9 @@ function renderProductForm() {
         <div>
           <div class="pf-sec"><h4>Description <span class="pf-sub" id="pf-ai-status"></span></h4>
             <textarea id="p-desc" class="input-field" rows="11" oninput="pfSet('description',this.value)" style="font-size:13px;line-height:1.6;padding:12px;">${esc(q.description)}</textarea>
-            <div class="pf-actions"><button type="button" class="btn-sm btn-info-sm" id="pf-gen" onclick="pfGenerate('description')">✨ ${q.description ? 'Regenerate' : 'Generate'} description</button><button type="button" class="btn-sm btn-info-sm" onclick="pfGenerate('all')">✨ Regenerate everything</button></div>
-            <div class="pf-actions pf-claude"><button type="button" class="btn-sm btn-primary-sm" onclick="pfAiAll()" title="Reads the photo, fills colours, fabric and category, then writes the description, tags and SEO">✨ Fill everything from the photos</button><select id="pf-lang" aria-label="Language" onchange="PF.lang=this.value">${AI_LANGS.map(([v, l]) => `<option value="${v}" ${(PF.lang || 'en') === v ? 'selected' : ''}>${l}</option>`).join('')}</select><button type="button" class="btn-sm btn-primary-sm" id="pf-ai-write" onclick="pfAiDescribe()" ${aiOn('describe') ? '' : 'disabled'}>✨ Write with Claude</button><button type="button" class="btn-sm btn-info-sm" onclick="pfAiPhoto()" ${aiOn('photo') ? '' : 'disabled'}>📷 Read photo</button><button type="button" class="btn-sm btn-info-sm" onclick="pfAiTranslate()" ${aiOn('translate') ? '' : 'disabled'}>🌐 Translate</button></div></div>
+            <div class="pf-actions pf-claude"><button type="button" class="btn-sm btn-primary-sm" id="pf-auto" onclick="pfAutoAll()" title="One click: reads the photo, sets the category details, SKU, description, tags and SEO">✨ Auto-fill everything</button><select id="pf-lang" aria-label="Language" onchange="PF.lang=this.value">${AI_LANGS.map(([v, l]) => `<option value="${v}" ${(PF.lang || 'en') === v ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+            <p id="pf-ai-note" class="note" style="margin:6px 0 0;">${aiReady('describe') ? '🟢 Claude is connected: one click reads the photo and writes everything.' : '🟡 Claude is not connected, so one click uses the built-in writer. ' + (BUILD === 'admin' ? 'For personal writing add your Claude key: <a onclick="closeModal();switchAdminTab(\'settings\')" style="cursor:pointer;text-decoration:underline">Settings → Claude AI key</a>.' : '')}</p>
+            <details id="pf-more" class="pf-more"><summary class="note" style="cursor:pointer;">Fine-tune one part only</summary><div class="pf-actions"><button type="button" class="btn-sm btn-info-sm" id="pf-gen" onclick="pfGenerate('description')">✨ ${q.description ? 'Regenerate' : 'Generate'} description</button><button type="button" class="btn-sm btn-info-sm" onclick="pfGenerate('all')">✨ Regenerate everything</button><button type="button" class="btn-sm btn-info-sm" id="pf-ai-write" onclick="pfAiDescribe()" ${aiOn('describe') ? '' : 'disabled'}>✨ Write with Claude</button><button type="button" class="btn-sm btn-info-sm" onclick="pfAiPhoto()" ${aiOn('photo') ? '' : 'disabled'}>📷 Read photo</button><button type="button" class="btn-sm btn-info-sm" onclick="pfAiTranslate()" ${aiOn('translate') ? '' : 'disabled'}>🌐 Translate</button></div></details></div>
           <div class="pf-sec"><h4>Tags <span class="pf-sub">(used for search &amp; SEO keywords)</span></h4><div id="pf-tags" class="chips"></div>
             <div class="pf-actions"><button type="button" class="btn-sm btn-info-sm" onclick="pfGenerate('tags')">✨ Suggest tags</button></div></div>
           <div class="pf-sec"><h4>SEO</h4>
@@ -3491,10 +3395,12 @@ function pfProduct() {
 }
 function pfSet(k, v) {
   PF[k] = v;
+  if (k === 'sku') PF.skuTouched = true; if (k === 'description') PF.descTouched = true; if (['seoTitle', 'metaDescription', 'altText'].includes(k)) PF.seoTouched = true;
   if (k === 'fabric') PF.fabricTouched = true;
   if (k === 'category' && !PF.fabricTouched && FABRIC_BY_CAT[v]) { PF.fabric = FABRIC_BY_CAT[v]; const f = gid_('pf-fabric'); if (f) f.value = PF.fabric; }
   if (k === 'name' && !PF.slugTouched) { PF.slug = slugify(v); const s = gid_('pf-slug'); if (s) s.value = PF.slug; }
   if (k === 'slug') { PF.slugTouched = true; PF.slug = slugify(v); }
+  if (k === 'category') pfCategoryChanged();
   if (k === 'video') pfRenderMeta(); else if (['seoTitle', 'metaDescription', 'slug', 'name'].includes(k)) pfRenderMeta();
 }
 function pfRenderMeta() {
@@ -3523,9 +3429,9 @@ function pfRenderTags() {
   const t = gid_('pf-tags'); if (!t) return;
   t.innerHTML = PF.tags.map((x, i) => `<span class="chip">${esc(x)}<button type="button" onclick="pfDelTag(${i})" aria-label="Remove tag ${esc(x)}">×</button></span>`).join('') + `<input type="text" id="pf-tag-in" class="chip-input" placeholder="Add tag + Enter" onkeydown="pfTagKey(event)" onblur="pfAddTag(this.value);this.value=''">`;
 }
-function pfAddTag(v) { v = String(v || '').replace(/,/g, ' ').trim(); if (!v) return; if (!PF.tags.some(t => t.toLowerCase() === v.toLowerCase())) { PF.tags.push(v); pfRenderTags(); const i = gid_('pf-tag-in'); if (i) i.focus(); } }
+function pfAddTag(v) { v = String(v || '').replace(/,/g, ' ').trim(); if (!v) return; if (!PF.tags.some(t => t.toLowerCase() === v.toLowerCase())) { PF.tags.push(v); PF.tagsTouched = true; pfRenderTags(); const i = gid_('pf-tag-in'); if (i) i.focus(); } }
 function pfTagKey(e) { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); pfAddTag(e.target.value); e.target.value = ''; } else if (e.key === 'Backspace' && !e.target.value && PF.tags.length) { PF.tags.pop(); pfRenderTags(); const i = gid_('pf-tag-in'); if (i) i.focus(); } }
-function pfDelTag(i) { PF.tags.splice(i, 1); pfRenderTags(); }
+function pfDelTag(i) { PF.tags.splice(i, 1); PF.tagsTouched = true; pfRenderTags(); }
 async function pfGenerate(which, silent) {
   if (!PF.name.trim()) { showToast('Enter the product name first', 'error'); const n = gid_('p-name'); if (n) n.focus(); return; }
   const st = gid_('pf-ai-status'); if (st) st.textContent = '✨ writing…';
@@ -3679,6 +3585,113 @@ function updateOrderStatus(orderId, newStatus) {
   if (askShip) openShipDialog(orderId);
 }
 
+// ================= Care guide, Journal and Atelier: written and edited by the owner (Admin → Pages) =================
+function pagesSeed() { return {"care": {"title": "Saree Care Guide", "subtitle": "Preserve the beauty and longevity of your handloom treasures", "sections": [{"id": "silk", "tab": "Pure Silk", "title": "Pure Silk Care (Kanjeevaram & Banarasi)", "image": "https://images.unsplash.com/photo-1606293459339-aa5d34a7b0e1?q=80&w=800?q=80&w=800", "alt": "Silk care", "show": true, "items": [{"icon": "🫧", "title": "Washing", "text": "Dry clean only for heavily zari-worked sarees. For plain silks, use mild shampoo in cold water. Do not soak for more than 5 minutes."}, {"icon": "💧", "title": "Drying", "text": "Never wring or twist. Dry in shade, away from direct sunlight to prevent color fading."}, {"icon": "🔥", "title": "Ironing", "text": "Iron on the reverse side using low to medium heat. Place a cotton cloth between the iron and saree."}, {"icon": "✨", "title": "Special Note", "text": "Silk naturally develops a soft sheen over time. Avoid contact with perfumes directly on the fabric."}]}, {"id": "tussar", "tab": "Tussar & Raw Silk", "title": "Tussar & Raw Silk Care", "image": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=800?q=80&w=800", "alt": "Tussar care", "show": true, "items": [{"icon": "🫧", "title": "Washing", "text": "Hand wash gently with mild detergent in cold water. Tussar is delicate; avoid vigorous rubbing."}, {"icon": "💧", "title": "Drying", "text": "Roll in a clean towel to absorb excess water. Dry flat in shade. Never hang wet Tussar."}, {"icon": "🌡️", "title": "Ironing", "text": "Use low heat. Iron while slightly damp for best results. Always iron on the reverse side."}, {"icon": "🌿", "title": "Natural Texture", "text": "Tussar has a natural coarse texture and slubs. This is not a defect but a mark of authentic handloom."}]}, {"id": "cotton", "tab": "Cotton & Khadi", "title": "Cotton & Khadi Care", "image": "https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?q=80&w=800?q=80&w=800", "alt": "Cotton care", "show": true, "items": [{"icon": "🧺", "title": "Washing", "text": "Machine wash on gentle cycle or hand wash. Khadi may shrink slightly on first wash."}, {"icon": "☀️", "title": "Drying", "text": "Sun drying is acceptable for white cottons. For colored cottons, dry in shade."}, {"icon": "🔥", "title": "Ironing", "text": "Cotton can withstand high heat. Iron while damp for crisp finish."}, {"icon": "🌀", "title": "Wrinkles", "text": "Khadi and handloom cottons wrinkle easily. This is a sign of pure natural fiber."}]}, {"id": "storage", "tab": "Storage Tips", "title": "Long-term Storage", "image": "https://images.unsplash.com/photo-1583391733958-e04f9715d184?q=80&w=800?q=80&w=800", "alt": "Storage tips", "show": true, "items": [{"icon": "📦", "title": "Folding", "text": "Fold sarees along original lines. Refold every 3-4 months to prevent permanent crease damage."}, {"icon": "🌿", "title": "Natural Repellents", "text": "Use dried neem leaves, lavender sachets, or cedar blocks. Avoid naphthalene balls."}, {"icon": "🌬️", "title": "Breathing", "text": "Store in muslin cloth bags, never plastic. Plastic traps moisture and causes yellowing."}, {"icon": "☀️", "title": "Airing", "text": "Take sarees out once a season. Air them in shade for a few hours to keep fibers fresh."}]}]}, "journal": {"label": "Stories & Heritage", "title": "The Journal", "posts": [{"id": "j1", "date": "2026-10-12", "title": "The Ancient Art of Kalamkari", "excerpt": "Discover the centuries-old tradition of hand-painting myths and motifs on fabric using natural dyes.", "body": "Kalamkari means “pen work”. Two living traditions exist in Andhra Pradesh and Telangana. At Srikalahasti the artist draws freehand with a bamboo pen (kalam) and fills the colour in by hand. At Machilipatnam carved wooden blocks print the pattern.\n\nThe cloth is first soaked in a mix of buffalo milk and myrobalan (harada) so that it holds the dye. The colours come from plants and minerals: indigo for blue, madder for red, myrobalan and pomegranate rind for yellow and green, and iron acetate for black. Each colour needs its own wash and drying, so one piece can take weeks.\n\nCare: wash gently in cold water, dry in shade, and expect the natural dyes to soften a little with time. That is part of its character.", "image": "https://images.unsplash.com/photo-1602161490280-093915e84362?q=80&w=600", "alt": "Kalamkari", "show": true}, {"id": "j2", "date": "2026-10-05", "title": "How to Identify Pure Handloom Silk", "excerpt": "Learn the simple burn test and texture checks to distinguish authentic handloom silk.", "body": "A pure handloom silk saree is not always perfectly even. Small variations in the weave are normal and are what make each piece one of a kind. A few simple checks can help you, none of them is proof on its own.\n\nTouch: real silk feels smooth but warm, and does not feel slippery like polyester.\nThe burn test: with the seller's permission, burn a loose thread only (never the saree). Real silk burns slowly, smells like burnt hair and leaves a soft ash you can crush. Synthetic thread melts, smells like plastic and leaves a hard bead.\nThe weaver: ask which cluster the saree comes from and look for the Silk Mark or the weaver's tag.\n\nIf a price looks too low for the work involved, be careful.", "image": "https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?q=80&w=600", "alt": "Handloom silk", "show": true}, {"id": "j3", "date": "2026-09-28", "title": "Preserving Your Heirloom Saree", "excerpt": "Essential tips on storage, cleaning, and maintenance to ensure your sarees last for generations.", "body": "A good saree can last for generations if it is stored well.\n\n• Keep it in a soft cotton or muslin cloth. Plastic traps moisture.\n• Refold along different lines every few months so the creases do not cut the zari.\n• Keep it away from direct sunlight and from perfume or hairspray.\n• Air it in the shade once a season.\n• Use naphthalene-free repellents, away from the cloth.\n• Send zari silks to a dry cleaner who knows handlooms; do not machine wash.\n\nIf a stain happens, blot (do not rub) and take it to a professional soon.", "image": "https://images.unsplash.com/photo-1610189012906-4b2a8f8e0c9b?q=80&w=600", "alt": "Heirloom saree", "show": true}]}, "atelier": {"heroTitle": "The Atelier", "heroImage": "https://images.unsplash.com/photo-1596205849889-98e400c784c1?q=80&w=2000", "image": "https://images.unsplash.com/photo-1602161490280-093915e84362?q=80&w=1000", "heading": "Preserving the Art of Handloom", "paragraphs": ["Every saree at Anitha Pemmasani is a testament to the weaver's art. We work directly with artisan clusters across India, ensuring fair wages and preserving ancient weaving techniques.", "Our promise: every piece is rigorously quality-checked before dispatch. We celebrate the natural, beautiful variations that make each handloom saree truly one-of-a-kind."], "stats": [{"value": "10+", "label": "Years of Craft"}, {"value": "500+", "label": "Artisan Partners"}, {"value": "50+", "label": "Weaving Clusters"}]}}; }
+function defaultPages() { return JSON.parse(JSON.stringify(pagesSeed())); }
+function ensurePages() {
+  const d = defaultPages(); if (!db.pages || typeof db.pages !== 'object' || Array.isArray(db.pages)) db.pages = d;
+  for (const k of ['care', 'journal', 'atelier']) if (!db.pages[k] || typeof db.pages[k] !== 'object') db.pages[k] = d[k];
+  const P = db.pages; P.care.sections = Array.isArray(P.care.sections) ? P.care.sections : []; P.journal.posts = Array.isArray(P.journal.posts) ? P.journal.posts : []; P.atelier.paragraphs = Array.isArray(P.atelier.paragraphs) ? P.atelier.paragraphs : []; P.atelier.stats = Array.isArray(P.atelier.stats) ? P.atelier.stats : [];
+}
+const pgDay = iso => { const d = new Date(String(iso || '') + 'T12:00:00'); return isNaN(d) ? String(iso || '') : d.toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }); };
+let CARE_ACTIVE = '';
+function renderPublicPages() {
+  ensurePages(); const P = db.pages, imgTag = (src, alt, cls, st) => safeImg(src) ? `<img src="${esc(safeImg(src))}" ${cls ? `class="${cls}"` : ''} alt="${esc(alt || '')}" ${st ? `style="${st}"` : ''} loading="lazy">` : '';
+  // ---- care ----
+  const secs = P.care.sections.filter(s => s.show !== false); if (!secs.some(s => s.id === CARE_ACTIVE)) CARE_ACTIVE = secs[0] ? secs[0].id : '';
+  const care = el_('page-care'); if (care) care.innerHTML = `<section class="care-hero"><div><h1>${esc(P.care.title)}</h1><p>${esc(P.care.subtitle)}</p></div></section><div class="care-content">${secs.length ? `<div class="care-tabs">${secs.map(s => `<button class="care-tab ${s.id === CARE_ACTIVE ? 'active' : ''}" onclick="switchCareTab('${esc(s.id)}', this)">${esc(s.tab || s.title)}</button>`).join('')}</div>${secs.map(s => `<div id="care-${esc(s.id)}" class="care-section ${s.id === CARE_ACTIVE ? 'active' : ''}"><div class="care-grid">${imgTag(s.image, s.alt || s.title, 'care-image') || '<div class="care-image" style="background:var(--cream)"></div>'}<div class="care-details"><h3>${esc(s.title)}</h3><ul class="care-list">${(s.items || []).map(i => `<li><span class="care-icon">${esc(i.icon)}</span><div class="care-text"><h4>${esc(i.title)}</h4><p>${esc(i.text)}</p></div></li>`).join('')}</ul></div></div></div>`).join('')}` : '<p style="text-align:center;padding:60px 0;color:#888;">The care guide is being written. Please check back soon.</p>'}</div>`;
+  // ---- journal ----
+  const posts = P.journal.posts.filter(p => p.show !== false).sort((a, b) => String(b.date).localeCompare(String(a.date))), jr = el_('page-journal');
+  if (jr) jr.innerHTML = `<section><div class="section-header"><div class="section-label">${esc(P.journal.label)}</div><h2 class="section-title">${esc(P.journal.title)}</h2></div><div class="journal-grid">${posts.map(p => `<div class="journal-card">${imgTag(p.image, p.alt || p.title)}<div class="journal-body"><div class="journal-date">${esc(pgDay(p.date))}</div><h3 class="journal-title">${esc(p.title)}</h3><p class="journal-excerpt">${esc(p.excerpt)}</p>${p.body ? `<a class="journal-link" role="button" tabindex="0" style="cursor:pointer" onclick="openJournal('${esc(p.id)}')" onkeydown="if(event.key==='Enter')openJournal('${esc(p.id)}')">Read Story →</a>` : ''}</div></div>`).join('') || '<p style="grid-column:1/-1;text-align:center;color:#888;padding:40px 0;">New stories are coming soon.</p>'}</div></section>`;
+  // ---- atelier ----
+  const A = P.atelier, at = el_('page-atelier');
+  if (at) at.innerHTML = `<section class="hero" style="height:50vh;${safeImg(A.heroImage) ? `background-image:linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),url('${esc(safeImg(A.heroImage)).replace(/'/g, '%27')}');` : 'background:#2C2C2C;'}justify-content:center;text-align:center;"><div><h1 class="hero-title" style="font-size:56px;">${esc(A.heroTitle)}</h1></div></section><div style="max-width:1000px;margin:0 auto;padding:80px 60px;"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:60px;align-items:center;margin-bottom:60px;">${imgTag(A.image, A.heading, '', 'width:100%;height:500px;object-fit:cover;border-radius:4px;')}<div><h2 style="font-family:'Cormorant Garamond',serif;font-size:40px;margin-bottom:24px;line-height:1.2;">${esc(A.heading)}</h2>${A.paragraphs.map(t => `<p style="font-size:15px;line-height:1.9;color:#555;margin-bottom:20px;">${esc(t)}</p>`).join('')}</div></div>${A.stats.length ? `<div style="display:flex;gap:50px;margin:40px 0;padding:30px 0;border-top:1px solid var(--gold-light);border-bottom:1px solid var(--gold-light);flex-wrap:wrap;">${A.stats.map(x => `<div style="text-align:center;flex:1;"><div style="font-family:'Cormorant Garamond',serif;font-size:44px;color:var(--gold);font-weight:600;">${esc(x.value)}</div><div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#666;margin-top:10px;">${esc(x.label)}</div></div>`).join('')}</div>` : ''}</div>`;
+}
+function openJournal(id) {
+  const p = (db.pages && db.pages.journal.posts || []).find(x => x.id === id); if (!p) return;
+  el_('journalBody').innerHTML = `${safeImg(p.image) ? `<img src="${esc(safeImg(p.image))}" alt="${esc(p.alt || p.title)}" style="width:100%;max-height:320px;object-fit:cover;border-radius:4px;margin-bottom:18px;">` : ''}<div class="journal-date">${esc(pgDay(p.date))}</div><h2 style="font-family:'Cormorant Garamond',serif;font-size:34px;line-height:1.2;margin:6px 0 16px;">${esc(p.title)}</h2>${String(p.body || p.excerpt).split(/\n{2,}/).map(t => `<p style="font-size:15px;line-height:1.85;color:#444;margin-bottom:14px;white-space:pre-line;">${esc(t)}</p>`).join('')}`;
+  el_('journalModal').classList.add('active');
+}
+// ---- the owner's editor ----
+const PG = { open: { care: true } };
+function pgWalk(path) { const k = path.split('.'); let o = db.pages; for (let i = 0; i < k.length - 1; i++) o = o[k[i]]; return [o, k[k.length - 1]]; }
+function pgSet(path, v) { ensurePages(); const [o, k] = pgWalk(path); o[k] = v; saveDB(); renderPublicPages(); }
+function pgRedo() { const y = window.scrollY; renderPagesAdmin(el_('adminContent')); window.scrollTo(0, y); }
+function pgAdd(path, item) { ensurePages(); const [o, k] = pgWalk(path); o[k].push(item); saveDB(); renderPublicPages(); pgRedo(); }
+function pgDel(path, i, what) { if (!confirm(`Remove this ${what || 'item'}? It disappears from the website.`)) return; const [o, k] = pgWalk(path); o[k].splice(i, 1); saveDB(); renderPublicPages(); pgRedo(); }
+function pgMove(path, i, d) { const [o, k] = pgWalk(path), a = o[k], j = i + d; if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; saveDB(); renderPublicPages(); pgRedo(); }
+function pgPick(path) { const f = document.createElement('input'); f.type = 'file'; f.accept = 'image/*'; f.onchange = async () => { if (!f.files[0]) return; try { pgSet(path, await fileToDataUrl(f.files[0], 1200, 0.8)); pgRedo(); showToast('Photo added', 'success'); } catch (e) { showToast('Could not read that photo', 'error'); } }; f.click(); }
+function pgReset(k) { if (!confirm('Put the original text and photos back for this page? Your changes to it are lost.')) return; ensurePages(); db.pages[k] = defaultPages()[k]; saveDB(); renderPublicPages(); pgRedo(); }
+function pgImg(path, label, val) { return `<div class="form-group"><label>${label}</label><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">${safeImg(val) ? `<img src="${esc(safeImg(val))}" alt="" style="width:90px;height:64px;object-fit:cover;border-radius:6px;border:1px solid var(--border);">` : '<span class="note" style="margin:0">No photo yet</span>'}<input type="text" style="flex:1;min-width:200px;" placeholder="${/^data:/.test(val || '') ? 'Your uploaded photo is in use. Paste a web link to replace it.' : 'Paste a photo link, or upload one'}" value="${/^data:/.test(val || '') ? '' : esc(val || '')}" onchange="pgSet('${path}',this.value.trim());pgRedo()"><button type="button" class="btn-sm btn-info-sm" onclick="pgPick('${path}')">⬆ Upload photo</button>${val ? `<button type="button" class="btn-sm btn-danger-sm" onclick="pgSet('${path}','');pgRedo()">Remove photo</button>` : ''}</div></div>`; }
+const pgIn = (path, label, val, o = {}) => `<div class="form-group"><label>${label}</label>${o.area ? `<textarea rows="${o.area}" oninput="pgSet('${path}',this.value)">${esc(val)}</textarea>` : `<input type="${o.type || 'text'}" value="${esc(val)}" ${o.ph ? `placeholder="${esc(o.ph)}"` : ''} oninput="pgSet('${path}',this.value)">`}</div>`;
+const pgTools = (path, i, n, what) => `<span class="pg-tools"><button type="button" class="btn-sm btn-info-sm" onclick="pgMove('${path}',${i},-1)" ${i === 0 ? 'disabled' : ''} aria-label="Move up">↑</button><button type="button" class="btn-sm btn-info-sm" onclick="pgMove('${path}',${i},1)" ${i === n - 1 ? 'disabled' : ''} aria-label="Move down">↓</button><button type="button" class="btn-sm btn-danger-sm" onclick="pgDel('${path}',${i},'${what}')">Remove</button></span>`;
+const pgShow = (path, on) => `<label class="chk" style="margin:0"><input type="checkbox" ${on !== false ? 'checked' : ''} onchange="pgSet('${path}',this.checked);pgRedo()"><span>Show on the website</span></label>`;
+function renderPagesAdmin(c) {
+  if (!c) return; ensurePages(); const P = db.pages, sec = (k, icon, title, sub, body) => `<details class="admin-card pg-sec" ${PG.open[k] ? 'open' : ''} ontoggle="PG.open.${k}=this.open"><summary><b>${icon} ${title}</b> <span class="note" style="margin:0 0 0 8px">${sub}</span></summary><div style="margin-top:14px">${body}</div></details>`;
+  const care = P.care.sections.map((s, i) => `<div class="pg-item ${s.show === false ? 'pg-off' : ''}"><div class="pg-head"><b>Section ${i + 1}: ${esc(s.tab || s.title || '')}</b>${pgShow(`care.sections.${i}.show`, s.show)}${pgTools('care.sections', i, P.care.sections.length, 'care section')}</div>
+      <div class="ai-row" style="flex-wrap:wrap;gap:12px">${pgIn(`care.sections.${i}.tab`, 'Tab name', s.tab)}${pgIn(`care.sections.${i}.title`, 'Heading', s.title)}</div>${pgImg(`care.sections.${i}.image`, 'Photo', s.image)}
+      <div class="note" style="margin:6px 0"><b>Tips in this section</b></div>${(s.items || []).map((it, j) => `<div class="pg-tip"><div class="ai-row" style="flex-wrap:wrap;gap:10px;align-items:flex-end"><label style="width:70px">Icon<input type="text" maxlength="4" value="${esc(it.icon)}" oninput="pgSet('care.sections.${i}.items.${j}.icon',this.value)"></label><label style="flex:1;min-width:160px">Title<input type="text" value="${esc(it.title)}" oninput="pgSet('care.sections.${i}.items.${j}.title',this.value)"></label>${pgTools(`care.sections.${i}.items`, j, s.items.length, 'tip')}</div><label style="display:block">Advice<textarea rows="2" oninput="pgSet('care.sections.${i}.items.${j}.text',this.value)">${esc(it.text)}</textarea></label></div>`).join('')}
+      <button type="button" class="btn-sm btn-info-sm" onclick="pgAdd('care.sections.${i}.items',{icon:'✨',title:'New tip',text:''})">+ Add a tip</button></div>`).join('');
+  const posts = P.journal.posts.map((p, i) => `<div class="pg-item ${p.show === false ? 'pg-off' : ''}"><div class="pg-head"><b>${esc(p.title || 'Untitled story')}</b>${pgShow(`journal.posts.${i}.show`, p.show)}${pgTools('journal.posts', i, P.journal.posts.length, 'story')}</div>
+      <div class="ai-row" style="flex-wrap:wrap;gap:12px">${pgIn(`journal.posts.${i}.title`, 'Title', p.title)}${pgIn(`journal.posts.${i}.date`, 'Date', p.date, { type: 'date' })}</div>${pgIn(`journal.posts.${i}.excerpt`, 'Short summary (shown on the card)', p.excerpt, { area: 2 })}${pgIn(`journal.posts.${i}.body`, 'Full story (opens when a customer taps Read Story; leave empty for no Read Story link)', p.body || '', { area: 8 })}${pgImg(`journal.posts.${i}.image`, 'Photo', p.image)}</div>`).join('');
+  const A = P.atelier, stats = A.stats.map((x, i) => `<div class="ai-row" style="flex-wrap:wrap;gap:10px;align-items:flex-end"><label style="width:120px">Number<input type="text" value="${esc(x.value)}" oninput="pgSet('atelier.stats.${i}.value',this.value)"></label><label style="flex:1;min-width:160px">What it counts<input type="text" value="${esc(x.label)}" oninput="pgSet('atelier.stats.${i}.label',this.value)"></label>${pgTools('atelier.stats', i, A.stats.length, 'number')}</div>`).join(''), paras = A.paragraphs.map((t, i) => `<div class="pg-tip"><div class="ai-row" style="gap:10px;align-items:flex-start"><label style="flex:1">Paragraph ${i + 1}<textarea rows="3" oninput="pgSet('atelier.paragraphs.${i}',this.value)">${esc(t)}</textarea></label>${pgTools('atelier.paragraphs', i, A.paragraphs.length, 'paragraph')}</div></div>`).join('');
+  c.innerHTML = `<div style="margin-bottom:14px"><h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;margin:0 0 4px;">Pages: Care guide, Journal, The Atelier</h3><p class="note" style="margin:0">Write or change anything here and it appears on your website within a few seconds. Add your own photos with <b>⬆ Upload photo</b>. Use only facts that are true: customers rely on what you write.</p></div>
+  ${sec('care', '🧵', 'Saree care guide', `${P.care.sections.length} section${P.care.sections.length === 1 ? '' : 's'}`, `<div class="ai-row" style="flex-wrap:wrap;gap:12px">${pgIn('care.title', 'Page title', P.care.title)}${pgIn('care.subtitle', 'Line under the title', P.care.subtitle)}</div>${care}<div class="pf-actions"><button type="button" class="btn-sm btn-primary-sm" onclick="pgAdd('care.sections',{id:'s'+Date.now().toString(36),tab:'New section',title:'New care section',image:'',alt:'',show:true,items:[{icon:'✨',title:'First tip',text:''}]})">+ Add a care section</button><button type="button" class="btn-sm btn-info-sm" onclick="pgReset('care')">Put the original back</button></div>`)}
+  ${sec('journal', '📖', 'The Journal', `${P.journal.posts.length} stor${P.journal.posts.length === 1 ? 'y' : 'ies'}`, `<div class="ai-row" style="flex-wrap:wrap;gap:12px">${pgIn('journal.label', 'Small heading', P.journal.label)}${pgIn('journal.title', 'Page title', P.journal.title)}</div>${posts}<div class="pf-actions"><button type="button" class="btn-sm btn-primary-sm" onclick="pgAdd('journal.posts',{id:'j'+Date.now().toString(36),date:ymd(new Date()),title:'New story',excerpt:'',body:'',image:'',alt:'',show:true})">+ Add a story</button><button type="button" class="btn-sm btn-info-sm" onclick="pgReset('journal')">Put the original back</button></div>`)}
+  ${sec('atelier', '🏛️', 'The Atelier', 'your story page', `<div class="ai-row" style="flex-wrap:wrap;gap:12px">${pgIn('atelier.heroTitle', 'Page title', A.heroTitle)}${pgIn('atelier.heading', 'Heading', A.heading)}</div>${pgImg('atelier.heroImage', 'Banner photo', A.heroImage)}${pgImg('atelier.image', 'Main photo', A.image)}${paras}<button type="button" class="btn-sm btn-info-sm" onclick="pgAdd('atelier.paragraphs','')">+ Add a paragraph</button><div class="note" style="margin:14px 0 6px"><b>Numbers shown under the story</b> (use only true numbers)</div>${stats}<div class="pf-actions"><button type="button" class="btn-sm btn-info-sm" onclick="pgAdd('atelier.stats',{value:'',label:''})">+ Add a number</button><button type="button" class="btn-sm btn-info-sm" onclick="pgReset('atelier')">Put the original back</button></div>`)}`;
+}
+
+// ---- Invoice Management: find and sort by person, month, year or date ----
+const INV = { q: '', cust: '', year: '', month: '', from: '', to: '', sort: 'date-desc', group: '' };
+const INV_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+function invFiltered() {
+  const q = INV.q.trim().toLowerCase(), digits = q.replace(/\D/g, '');
+  let l = db.invoices.filter(i => {
+    const d = String(i.date || '');
+    if (q && !(`${i.id} ${i.orderId} ${i.customer} ${i.email || ''} ${i.status || ''}`.toLowerCase().includes(q) || (digits.length >= 4 && String(i.phone || '').replace(/\D/g, '').includes(digits)))) return false;
+    if (INV.cust && invKey(i) !== INV.cust) return false;
+    if (INV.year && d.slice(0, 4) !== INV.year) return false;
+    if (INV.month && d.slice(5, 7) !== INV.month) return false;
+    if (INV.from && d < INV.from) return false;
+    if (INV.to && d > INV.to) return false;
+    return true;
+  });
+  const by = { 'date-desc': (a, b) => String(b.date).localeCompare(String(a.date)) || String(b.id).localeCompare(String(a.id)), 'date-asc': (a, b) => String(a.date).localeCompare(String(b.date)) || String(a.id).localeCompare(String(b.id)), 'amt-desc': (a, b) => b.amount - a.amount, 'amt-asc': (a, b) => a.amount - b.amount, 'cust-asc': (a, b) => String(a.customer).localeCompare(String(b.customer)) || String(b.date).localeCompare(String(a.date)), 'cust-desc': (a, b) => String(b.customer).localeCompare(String(a.customer)) || String(b.date).localeCompare(String(a.date)), 'id-asc': (a, b) => String(a.id).localeCompare(String(b.id), undefined, { numeric: true }) };
+  return l.sort(by[INV.sort] || by['date-desc']);
+}
+const invKey = i => (String(i.customer || '').trim().toLowerCase() + '|' + String(i.phone || '').replace(/\D/g, '').slice(-10));
+function invRow(inv) { return `<tr><td style="font-family:monospace;font-weight:600;">${esc(inv.id)}</td><td style="font-family:monospace;font-size:12px;">${esc(inv.orderId)}</td><td><div style="font-weight:500;">${esc(inv.customer)}</div><div style="font-size:11px;color:#888;">${esc(inv.email) || '—'}</div></td><td style="font-size:12px;color:#888;">${esc(inv.date)}</td><td style="font-weight:600;">${formatCurrency(inv.amount)}</td><td><span class="status-pill status-paid">${esc(inv.status)}</span></td><td><div class="action-buttons"><button class="btn-sm btn-info-sm" onclick="viewInvoice('${esc(inv.id)}')">View</button><button class="btn-sm" style="background:white;color:var(--gold);border:1px solid var(--gold);" onclick="resendInvoice('${esc(inv.id)}')">Resend</button></div></td></tr>`; }
+function invDraw() {
+  const body = el_('inv-body'), sum = el_('inv-sum'); if (!body) return; const l = invFiltered(), total = l.reduce((a, i) => a + (+i.amount || 0), 0);
+  const gk = { customer: i => i.customer || '—', month: i => String(i.date || '').slice(0, 7), year: i => String(i.date || '').slice(0, 4) }[INV.group];
+  let html = '';
+  if (!l.length) html = `<tr><td colspan="7" style="text-align:center;padding:40px;color:#888;">${db.invoices.length ? 'No invoice matches. Clear a filter or change the search.' : 'No invoices generated yet.'}</td></tr>`;
+  else if (gk) { const groups = new Map(); l.forEach(i => { const k = gk(i); (groups.get(k) || groups.set(k, []).get(k)).push(i); }); const label = k => INV.group === 'month' && /^\d{4}-\d{2}$/.test(k) ? INV_MONTHS[+k.slice(5) - 1] + ' ' + k.slice(0, 4) : k; html = [...groups].map(([k, g]) => `<tr class="inv-grp"><td colspan="7" style="background:var(--cream);font-weight:600;padding:10px 12px;">${esc(label(k))} <span style="font-weight:400;color:#888;">· ${g.length} invoice${g.length > 1 ? 's' : ''} · ${formatCurrency(g.reduce((a, i) => a + (+i.amount || 0), 0))}</span></td></tr>` + g.map(invRow).join('')).join(''); }
+  else html = l.map(invRow).join('');
+  body.innerHTML = html; sum.innerHTML = `<b>${l.length}</b> of ${db.invoices.length} invoice${db.invoices.length === 1 ? '' : 's'} · total <b>${formatCurrency(total)}</b>${l.length ? ` · average ${formatCurrency(total / l.length)}` : ''}`;
+}
+function invSet(k, v) { INV[k] = v; if (k === 'year' || k === 'month') { INV.from = INV.to = ''; const f = el_('inv-from'), t = el_('inv-to'); if (f) f.value = ''; if (t) t.value = ''; } if (k === 'from' || k === 'to') { INV.year = INV.month = ''; const y = el_('inv-year'), m = el_('inv-month'); if (y) y.value = ''; if (m) m.value = ''; } invDraw(); }
+function invClear() { Object.assign(INV, { q: '', cust: '', year: '', month: '', from: '', to: '', sort: 'date-desc', group: '' }); renderInvoices(el_('adminContent')); }
+function renderInvoices(content) {
+  const custs = new Map(); db.invoices.forEach(i => { if (!custs.has(invKey(i))) custs.set(invKey(i), i.customer || '—'); });
+  const years = [...new Set(db.invoices.map(i => String(i.date || '').slice(0, 4)).filter(y => /^\d{4}$/.test(y)))].sort().reverse();
+  const opt = (v, l, cur) => `<option value="${esc(v)}" ${cur === v ? 'selected' : ''}>${esc(l)}</option>`;
+  content.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;"><h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;margin:0;">Invoice Management</h3><button class="btn-sm btn-primary-sm" onclick="openTemplateEditor()">Edit Invoice Template</button></div>
+    <div class="admin-card inv-filters"><div class="ai-row" style="flex-wrap:wrap;gap:12px;align-items:flex-end;">
+      <label style="flex:2;min-width:220px;">Search<input id="inv-q" type="search" placeholder="Name, phone, invoice or order number" value="${esc(INV.q)}" oninput="invSet('q',this.value)"></label>
+      <label style="min-width:170px;">Customer<select id="inv-cust" onchange="invSet('cust',this.value)">${opt('', 'Everyone', INV.cust)}${[...custs].sort((a, b) => a[1].localeCompare(b[1])).map(([k, n]) => opt(k, n, INV.cust)).join('')}</select></label>
+      <label style="min-width:110px;">Year<select id="inv-year" onchange="invSet('year',this.value)">${opt('', 'All years', INV.year)}${years.map(y => opt(y, y, INV.year)).join('')}</select></label>
+      <label style="min-width:130px;">Month<select id="inv-month" onchange="invSet('month',this.value)">${opt('', 'All months', INV.month)}${INV_MONTHS.map((m, i) => opt(String(i + 1).padStart(2, '0'), m, INV.month)).join('')}</select></label></div>
+      <div class="ai-row" style="flex-wrap:wrap;gap:12px;align-items:flex-end;margin-top:10px;">
+      <label>From date<input id="inv-from" type="date" value="${esc(INV.from)}" onchange="invSet('from',this.value)"></label><label>To date<input id="inv-to" type="date" value="${esc(INV.to)}" onchange="invSet('to',this.value)"></label>
+      <label style="min-width:190px;">Sort by<select id="inv-sort" onchange="invSet('sort',this.value)">${[['date-desc', 'Date: newest first'], ['date-asc', 'Date: oldest first'], ['amt-desc', 'Amount: high to low'], ['amt-asc', 'Amount: low to high'], ['cust-asc', 'Customer: A to Z'], ['cust-desc', 'Customer: Z to A'], ['id-asc', 'Invoice number']].map(([v, l]) => opt(v, l, INV.sort)).join('')}</select></label>
+      <label style="min-width:170px;">Group by<select id="inv-group" onchange="invSet('group',this.value)">${[['', 'No grouping'], ['customer', 'Customer'], ['month', 'Month'], ['year', 'Year']].map(([v, l]) => opt(v, l, INV.group)).join('')}</select></label>
+      <button type="button" class="btn-sm btn-info-sm" onclick="invClear()">Clear</button></div>
+      <p id="inv-sum" class="note" style="margin:12px 0 0;"></p></div>
+    <div class="admin-card" style="overflow-x:auto;"><table class="admin-table" style="min-width:1000px;"><thead><tr><th>Invoice ID</th><th>Order ID</th><th>Customer</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead><tbody id="inv-body"></tbody></table></div>`;
+  invDraw();
+}
 function viewInvoice(invId) {
   const inv = db.invoices.find(x => x.id === invId); if (!inv) return;
   const o = db.orders.find(x => x.id === inv.orderId);
@@ -4027,7 +4040,7 @@ function renderSignature() {
   sec.style.display = g.show === false || !tiles.length ? 'none' : '';
   sec.innerHTML = `<div class="section-header"><div class="section-label">${esc(g.label)}</div><h2 class="section-title">${esc(g.title)}</h2></div><div class="curated-grid">${tiles.map(t => `<div class="curated-item" role="link" tabindex="0" data-cat="${esc(t.category)}" onclick="filterAndShowShop(this.dataset.cat)" onkeydown="if(event.key==='Enter')filterAndShowShop(this.dataset.cat)"><img src="${esc(safeImg(t.image))}" alt="${esc(t.title)}" loading="lazy"><div class="curated-overlay"><h3>${esc(t.title)}</h3><p>${esc(t.subtitle)}</p><a class="curated-link">View Collection</a></div></div>`).join('')}</div>`;
 }
-function renderHome() { renderOccasions(); renderRecentlySold(); renderRecent(); renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); ANN.sig = scheduleSignature(); renderAnnouncement(); }
+function renderHome() { renderOccasions(); renderRecentlySold(); renderRecent(); renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); ANN.sig = scheduleSignature(); renderAnnouncement(); renderPublicPages(); }
 
 // ---- admin: saving (applies to the storefront instantly, written to storage a moment later) ----
 let HOME_TIMER = null;
@@ -5807,14 +5820,40 @@ async function pfPhotoCheck() {
   if (gid_('pf-photocheck')) gid_('pf-photocheck').innerHTML = rows.join('');
 }
 // ---- one click: read the photos, then write the whole listing ----
-async function pfAiAll() {
-  if (!PF.images[0]) { showToast('Add a photo first', 'error'); return; }
-  if (!aiReady('photo')) { showToast(aiConnected() ? 'The photo helper is switched off (AI Helper tab).' : 'Claude is not connected yet (WhatsApp Assistant tab).', 'error'); return; }
-  await pfAiPhoto();
-  if (!PF.name.trim()) { const nm = [(PF.colours || [])[0], PF.fabric, PF.category && !isAccessory({ category: PF.category }) ? 'Saree' : PF.category].filter(Boolean).join(' '); if (nm) { PF.name = nm; const n = gid_('p-name'); if (n) n.value = nm; } }
-  if (PF.name.trim() && aiReady('describe')) await pfAiDescribe();
-  pfPhotoCheck();
+// ---- one click for the whole product form, and automatic fill when the category changes ----
+function pfCodeFor(cat) { const f = SKU_CATEGORIES.find(([, n]) => n.toLowerCase() === String(cat).toLowerCase()); if (f) return f[0]; const w = String(cat).replace(/[^A-Za-z ]/g, '').trim().split(/\s+/).filter(Boolean); return (w.length > 1 ? w.map(x => x[0]).join('') + w[0].slice(1) : (w[0] || 'XXX')).slice(0, 3).toUpperCase().padEnd(3, 'X'); }
+function pfSkuFor(cat) { const code = pfCodeFor(cat); let n = nextSkuStart(code); return `AP-${code}-${pad3(n)}`; }
+function pfApplySku() { if (PF.id || PF.skuTouched) return false; const sku = pfSkuFor(PF.category); if (sku === PF.sku) return false; PF.sku = sku; const i = gid_('p-sku'); if (i) i.value = sku; return true; }
+let PF_AUTO = 0;
+async function pfCategoryChanged() {
+  const skuChanged = pfApplySku(), id = ++PF_AUTO, st = gid_('pf-ai-status'), accessory = isAccessory({ category: PF.category });
+  if (PF.descTouched && PF.tagsTouched && PF.seoTouched) { if (skuChanged && st) st.textContent = '✨ SKU updated for ' + PF.category; return; }
+  const out = await aiCopy({ name: PF.name.trim() || (PF.category + (accessory ? '' : ' Saree')), category: PF.category, sku: PF.sku, price: PF.price, images: PF.images, colours: PF.colours && PF.colours.length ? PF.colours : undefined }, 0);
+  if (id !== PF_AUTO) return; // a newer choice is already being written
+  if (!PF.colours || !PF.colours.length) { PF.colours = out.colours || []; pfRenderColours(); }
+  if (!PF.descTouched) { PF.description = out.description; const d = gid_('p-desc'); if (d) d.value = out.description; }
+  if (!PF.tagsTouched) { PF.tags = out.tags.slice(0, 20); pfRenderTags(); }
+  if (!PF.seoTouched) { PF.seoTitle = out.seoTitle; PF.metaDescription = out.metaDescription; PF.altText = out.altText; ['pf-seo-title', 'pf-meta', 'pf-alt'].forEach((k, i) => { const e = gid_(k); if (e) e.value = [PF.seoTitle, PF.metaDescription, PF.altText][i]; }); }
+  if (!PF.slugTouched && PF.name.trim()) { PF.slug = slugify(PF.name); const sl = gid_('pf-slug'); if (sl) sl.value = PF.slug; }
+  pfRenderMeta(); PF.source = out.source; if (st) st.textContent = `✨ filled for ${PF.category}${skuChanged ? ', SKU ' + PF.sku : ''}: description, tags and SEO (edit freely; what you typed is kept)`;
 }
+async function pfAutoAll() {
+  const btn = gid_('pf-auto'); if (!btn || btn.disabled) return; const st = gid_('pf-ai-status'), say = t => { if (st) st.textContent = t; }, did = [], claude = aiReady('describe'), lang = (gid_('pf-lang') || {}).value || PF.lang || 'en';
+  btn.disabled = true; const old = btn.textContent; btn.textContent = '✨ Working…'; PF.lang = lang; PF_AUTO++;
+  try {
+    if (PF.images[0] && aiReady('photo')) { say('📷 reading the photo…'); if (await pfAiPhoto(true)) did.push('photo'); }
+    if (!PF.name.trim()) { const nm = [(PF.colours || [])[0], PF.fabric, isAccessory({ category: PF.category }) ? PF.category : 'Saree'].filter(Boolean).join(' ') || (PF.category + ' Saree'); PF.name = nm; const n = gid_('p-name'); if (n) n.value = nm; did.push('name'); }
+    if (pfApplySku()) did.push('SKU');
+    say('✨ writing the description, tags and SEO…'); let wrote = false;
+    if (claude) wrote = await pfAiDescribe(true);
+    if (!wrote) { PF.descTouched = false; await pfGenerate('all', true); did.push(claude ? 'description, tags and SEO (built-in, Claude was busy)' : 'description, tags and SEO'); } else did.push('description, tags and SEO (Claude)');
+    PF.descTouched = false; PF.tagsTouched = false; PF.seoTouched = false; pfPhotoCheck();
+    const note = lang !== 'en' && !wrote ? ' The built-in writer writes English only; connect Claude for ' + (AI_LANGS.find(x => x[0] === lang) || [0, lang])[1] + '.' : '';
+    say('✨ ' + did.join(', ') + ' done: please read and edit before publishing.' + note); showToast('✨ All filled in one go. Review it.', 'success');
+  } catch (e) { say(''); showToast(aiMsg(e), 'error'); }
+  btn.disabled = false; btn.textContent = old;
+}
+const pfAiAll = pfAutoAll;
 // ---- weekly business note on the dashboard ----
 const isoWeekKey = () => { const d = new Date(), t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())), day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day); const y = new Date(Date.UTC(t.getUTCFullYear(), 0, 1)); return t.getUTCFullYear() + '-W' + String(Math.ceil(((t - y) / 86400000 + 1) / 7)).padStart(2, '0'); };
 let WK_BUSY = false, WK_FAILED = false;
@@ -5925,7 +5964,7 @@ const aiReady = k => aiOn(k) && aiConnected();
 function aiToggle(k, on) { db.settings.ai = { ...aiCfg(), [k]: !!on }; saveDB(); renderAiHelper(el_('adminContent')); }
 async function aiCall(task, input) {
   if (!aiOn(task)) throw new Error('This AI helper is switched off (AI Helper tab → switches).');
-  if (!aiConnected()) throw new Error('Claude is not connected yet. Open the WhatsApp Assistant tab, enter the assistant address and admin token.');
+  if (!aiConnected()) throw new Error(BUILD === 'admin' ? 'Claude is not connected yet. Add your Claude key in Settings → Security & backup → Claude AI key.' : 'Claude is not connected yet. Open the WhatsApp Assistant tab, enter the assistant address and admin token.');
   return waCall('/api/ai', { method: 'POST', body: JSON.stringify({ task, input }) });
 }
 const aiMsg = e => (e && e.message) || 'Something went wrong';
@@ -5950,8 +5989,8 @@ function aiShopData(days) {
 }
 
 // ---- 1, 2, 10: product form ----
-async function pfAiDescribe() {
-  if (!PF.name.trim()) { showToast('Enter the product name first', 'error'); return; }
+async function pfAiDescribe(quiet) {
+  if (!PF.name.trim()) { showToast('Enter the product name first', 'error'); return false; }
   const st = gid_('pf-ai-status'); if (st) st.textContent = '✨ Claude is writing…';
   try {
     const r = await aiCall('describe', { name: PF.name.trim(), category: PF.category, kind: isAccessory({ category: PF.category }) ? 'accessory' : 'saree', fabric: PF.fabric, colours: PF.colours, occasions: occasionsOf({ category: PF.category, tags: PF.tags }), lang: PF.lang || 'en' }), d = r.data || {};
@@ -5961,12 +6000,12 @@ async function pfAiDescribe() {
     if (d.metaDescription) { PF.metaDescription = fitText(String(d.metaDescription), 160); gid_('pf-meta').value = PF.metaDescription; }
     if (d.altText) { PF.altText = fitText(String(d.altText), 125); gid_('pf-alt').value = PF.altText; }
     if (!PF.slugTouched) { PF.slug = slugify(PF.name); gid_('pf-slug').value = PF.slug; }
-    pfRenderMeta(); PF.source = 'claude'; if (st) st.textContent = '✨ written by Claude — please read and edit before publishing'; showToast('✨ Claude wrote a draft. Review it.', 'success');
-  } catch (e) { if (st) st.textContent = ''; showToast(aiMsg(e), 'error'); }
+    pfRenderMeta(); PF.source = 'claude'; if (st) st.textContent = '✨ written by Claude — please read and edit before publishing'; if (!quiet) showToast('✨ Claude wrote a draft. Review it.', 'success'); return true;
+  } catch (e) { if (st) st.textContent = ''; if (!quiet) showToast(aiMsg(e), 'error'); return false; }
 }
 function aiShrink(dataUrl, max = 768) { return new Promise((res, rej) => { const im = new Image(); im.onload = () => { const k = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); res(c.toDataURL('image/jpeg', 0.8)); }; im.onerror = () => rej(new Error('This photo could not be read')); im.src = dataUrl; }); }
-async function pfAiPhoto() {
-  const src = PF.images[0]; if (!src) { showToast('Add a photo first', 'error'); return; }
+async function pfAiPhoto(quiet) {
+  const src = PF.images[0]; if (!src) { showToast('Add a photo first', 'error'); return false; }
   const st = gid_('pf-ai-status'); if (st) st.textContent = '📷 Claude is looking at the photo…';
   try {
     const img = await aiShrink(src), r = await aiCall('photo', { image: img, categories: [...db.categories, ...db.accessoryCategories], fabrics: fabricChoices() }), d = r.data || {}, done = [];
@@ -5974,8 +6013,8 @@ async function pfAiPhoto() {
     if (d.fabric && !PF.fabric) { PF.fabric = String(d.fabric); const f = gid_('pf-fabric'); if (f) f.value = PF.fabric; PF.fabricTouched = true; done.push('fabric'); }
     if (d.category && [...db.categories, ...db.accessoryCategories].includes(d.category) && !PF.id && PF.category !== d.category) { PF.category = d.category; const c = gid_('p-cat'); if (c) c.value = d.category; done.push('category'); }
     const extra = [d.border, d.pattern, ...(Array.isArray(d.occasions) ? d.occasions : [])].filter(Boolean).map(String); if (extra.length) { PF.tags = uniqCI([...PF.tags, ...extra]).slice(0, 20); pfRenderTags(); done.push('tags'); }
-    if (st) st.textContent = done.length ? `📷 Claude suggests: ${done.join(', ')} — check them` : '📷 Claude could not tell much from this photo'; showToast(done.length ? '📷 Suggestions added. Check them.' : 'Nothing clear in the photo', done.length ? 'success' : '');
-  } catch (e) { if (st) st.textContent = ''; showToast(aiMsg(e), 'error'); }
+    if (st) st.textContent = done.length ? `📷 Claude suggests: ${done.join(', ')} — check them` : '📷 Claude could not tell much from this photo'; if (!quiet) showToast(done.length ? '📷 Suggestions added. Check them.' : 'Nothing clear in the photo', done.length ? 'success' : ''); return done.length > 0;
+  } catch (e) { if (st) st.textContent = ''; if (!quiet) showToast(aiMsg(e), 'error'); return false; }
 }
 async function pfAiTranslate() {
   const to = gid_('pf-lang') ? gid_('pf-lang').value : 'te'; if (!PF.description.trim()) { showToast('Write or generate the description first', 'error'); return; }
@@ -6249,10 +6288,10 @@ async function shopSync() {
   const api = SHOP_API(); if (!api) return;
   try {
     const r = await fetch(api + '/public/shop', { cache: 'no-cache' }); if (!r.ok) throw new Error('shop ' + r.status); const p = await r.json(); if (p.empty) return;
-    db.settings = Object.assign({}, db.settings, p.settings); db.categories = p.categories; db.accessoryCategories = p.accessoryCategories; db.products = p.products; if (p.home) db.home = p.home; db.bundles = p.bundles; db.coupons = p.coupons; db.accessorySeeded = true;
+    db.settings = Object.assign({}, db.settings, p.settings); db.categories = p.categories; db.accessoryCategories = p.accessoryCategories; db.products = p.products; if (p.home) db.home = p.home; if (p.pages) db.pages = p.pages; db.bundles = p.bundles; db.coupons = p.coupons; db.accessorySeeded = true;
     const u = currentUser(), mine = u ? (db.reviews || []).filter(x => x.userId === u.id && x.status !== 'approved') : []; db.reviews = [...p.reviews, ...mine];
     try { localStorage.setItem('ap_db_v70', JSON.stringify(db)); } catch (e) { /* storage full: the page still works from memory */ }
-    ensureProductFields(); syncHomeCats(); pruneCart(); renderProducts(); buildScrollTrack(); renderHome(); updateBadges(); updateFavBadge(); seoRefreshHome();
+    ensureProductFields(); syncHomeCats(); pruneCart(); renderProducts(); buildScrollTrack(); renderHome(); renderPublicPages(); updateBadges(); updateFavBadge(); seoRefreshHome();
   } catch (e) { /* offline or server down: keep showing the last copy */ }
 }
 
@@ -6300,7 +6339,7 @@ async function admEnter() {
   const g = await admApi('GET', '/admin/api/db'); ADM.version = g.version;
   const demo = !g.db; const fresh = normalizeDB(g.db || JSON.parse(JSON.stringify(defaultDB)));
   ['adminPin', 'otpEndpoint', 'aiEndpoint', 'assistantUrl'].forEach(k => { delete fresh.settings[k]; }); for (const k of Object.keys(db)) delete db[k]; Object.assign(db, fresh);
-  ADM.ready = true; document.getElementById('admGate').style.display = 'none'; init(); admApplyRole(); ov2Init();
+  ADM.ready = true; document.getElementById('admGate').style.display = 'none'; init(); admApplyRole(); ov2Init(); navRestore();
   isAdminView = true; document.getElementById('storefrontView').classList.add('hidden'); document.getElementById('adminView').classList.add('active'); document.body.classList.add('admin-on', 'adm-app'); switchAdminTab(admHashTab() || currentAdminTab || 'dashboard');
   if (demo) { ADM.dirty = true; admSetBadge('Starting with demo data. Import your own in Settings → Security & backup, or just edit this.'); admQueueSave(); }
   clearInterval(ADM.poll); ADM.poll = setInterval(admPoll, 20_000); admSetBadge();
@@ -6615,7 +6654,7 @@ const OV2 = { web: [], prev: null, priv: null, N: 12, timer: null, n: 0, C: null
 function ov2Store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
 function ov2Theme(dark) { document.documentElement.classList.toggle('dk', dark); ov2Store('ap_ui2_dark', dark ? '1' : '0'); if (OV2.C) ov2Chart(); setTimeout(() => ui2Guard(true), 30); }
 function ov2Init() {
-  if (!UI2) return; const s = ov2Store('ap_ui2_dark'); document.documentElement.classList.toggle('dk', s === null ? matchMedia('(prefers-color-scheme:dark)').matches : s === '1');
+  if (!UI2) return; window.addEventListener('resize', () => { if (OV2.C && el_('ov-chart')) ov2Chart(); }); const s = ov2Store('ap_ui2_dark'); document.documentElement.classList.toggle('dk', s === null ? matchMedia('(prefers-color-scheme:dark)').matches : s === '1');
   const sb = document.querySelector('.admin-sidebar'); if (sb && !sb.querySelector('.ui2-bar')) sb.insertAdjacentHTML('beforeend', '<div class="ui2-bar"><button type="button" id="ui2-theme" aria-label="Switch light or dark">◐ Light / dark</button><a href="/admin">Classic look</a></div>');
   ui2Watch(); const b = el_('ui2-theme'); if (b) b.onclick = () => ov2Theme(!document.documentElement.classList.contains('dk'));
 }
@@ -6968,6 +7007,7 @@ async function renderSocialAdmin(c) {
 }
 async function igAct(what, id, force) { try { await admApi('POST', '/admin/api/social/' + what, { id, force: !!force }); } catch (e) { showToast(e.message, 'error'); } renderSocialAdmin(document.getElementById('adminContent')); }
 function init() {
+  navRestore();
   if (BUILD === 'admin' && !ADM.ready) { admBoot(); return; }
   if (ensureProductFields() | syncHomeCats() | recalcRatings()) saveDB();
   initShopToolbar();

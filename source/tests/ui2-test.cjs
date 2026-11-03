@@ -56,6 +56,39 @@ const ROOT = process.cwd(), SETUP = 'setup-token-0123456789', PW = 'Correct-Hors
     ok('hovering the chart shows that month\'s figure', await N.evaluate(() => /Sales/.test(document.getElementById('ov-tip').innerText) && getComputedStyle(document.getElementById('ov-tip')).opacity === '1'));
     ok('Today list is built from the real work waiting (placed orders) and ticking one fills the bar', await N.evaluate(() => { const c = document.querySelector('#ov-tasks input'); if (!c) return false; c.click(); return true; }) && (await sleep(300), await N.evaluate(() => /1 of/.test(document.getElementById('ov-dn').innerText))));
     ok('the Instagram and WhatsApp previews show on the Overview', await N.evaluate(() => /Instagram/.test(document.getElementById('ov-ig').innerText) && /WhatsApp/.test(document.getElementById('ov-wa').innerText) && /never shown/.test(document.getElementById('ov-wa').innerText)));
+    // ---- everything new works in the new look too, wired to the same server ----
+    for (const [name, page] of [['new look', N], ['classic', C]]) {
+      await page.evaluate(() => switchAdminTab('dashboard')); await sleep(300);
+      const w0 = await page.evaluate(() => document.querySelector('.admin-main').getBoundingClientRect().left);
+      await page.click('#navToggle'); await sleep(300);
+      const closed = await page.evaluate(() => ({ side: getComputedStyle(document.querySelector('.admin-sidebar')).display, left: document.querySelector('.admin-main').getBoundingClientRect().left, icon: document.getElementById('navToggle').textContent, exp: document.getElementById('navToggle').getAttribute('aria-expanded'), vis: document.getElementById('navToggle').getBoundingClientRect().width > 20 }));
+      ok(name + ': the ‹ button closes the left menu, the page uses the full width, and the ☰ button stays to open it again', w0 > 200 && closed.side === 'none' && closed.left < 10 && closed.icon === '☰' && closed.exp === 'false' && closed.vis);
+      await page.reload(); await page.waitForSelector('#adm-pw').catch(() => { }); const needLogin = await page.$('#adm-pw'); if (needLogin) { await page.fill('#adm-pw', PW); await page.click('#adm-go'); await page.waitForFunction(() => document.body.classList.contains('adm-app'), null, { timeout: 15000 }); } await sleep(1200);
+      ok(name + ': the closed menu is remembered after a reload', await page.evaluate(() => document.body.classList.contains('nav-closed') && getComputedStyle(document.querySelector('.admin-sidebar')).display === 'none'));
+      await page.click('#navToggle'); await sleep(300);
+      ok(name + ': the ☰ button opens the menu again', await page.evaluate(() => !document.body.classList.contains('nav-closed') && getComputedStyle(document.querySelector('.admin-sidebar')).display !== 'none' && document.getElementById('navToggle').textContent === '‹'));
+    }
+    await N.evaluate(() => { db.invoices = [{ id: 'INV-1', orderId: 'O1', customer: 'Asha Rao', phone: '+919800000001', email: 'a@x.test', amount: 5000, date: '2026-01-15', status: 'sent' }, { id: 'INV-2', orderId: 'O2', customer: 'Bina Shah', phone: '+919800000002', email: '', amount: 12000, date: '2026-03-02', status: 'sent' }, { id: 'INV-3', orderId: 'O3', customer: 'Asha Rao', phone: '+919800000001', email: 'a@x.test', amount: 7000, date: '2026-03-20', status: 'sent' }]; invClear(); switchAdminTab('invoices'); }); await sleep(400);
+    const irows = () => N.evaluate(() => [...document.querySelectorAll('#inv-body tr:not(.inv-grp)')].map(r => r.children[0].innerText).join());
+    await N.fill('#inv-q', 'asha'); ok('new look · invoices: typing a name in the search box narrows the list', await irows() === 'INV-3,INV-1');
+    await N.fill('#inv-q', ''); await N.selectOption('#inv-month', '03'); await N.selectOption('#inv-year', '2026'); ok('new look · invoices: month and year drop-downs filter', await irows() === 'INV-3,INV-2');
+    await N.selectOption('#inv-sort', 'amt-desc'); ok('new look · invoices: sort by amount', await irows() === 'INV-2,INV-3');
+    await N.selectOption('#inv-group', 'customer'); ok('new look · invoices: group by customer shows subtotals', /Bina Shah\s*·\s*1 invoice/.test(await N.evaluate(() => document.getElementById('inv-body').innerText.replace(/\s+/g, ' '))));
+    await N.evaluate(() => { switchAdminTab('products'); }); await sleep(300); await N.evaluate(() => openProductForm());
+    await N.fill('#p-name', 'Rust Silk Saree'); await N.selectOption('#p-cat', 'Paithani'); await sleep(900);
+    const pf = await N.evaluate(() => ({ sku: document.getElementById('p-sku').value, d: document.getElementById('p-desc').value.length, tags: document.querySelectorAll('#pf-tags .chip').length }));
+    ok('new look · product form: choosing the category sets the SKU and writes the description and tags by itself', /^AP-PHT-\d{3}$/.test(pf.sku) && pf.d > 80 && pf.tags >= 5);
+    await N.evaluate(() => { document.getElementById('p-desc').value = ''; PF.description = ''; PF.descTouched = false; }); await N.click('#pf-auto'); await N.waitForFunction(() => document.getElementById('p-desc').value.length > 60, null, { timeout: 15000 });
+    ok('new look · product form: one click on Auto-fill everything works and says plainly when Claude is not connected', await N.evaluate(() => /Claude is not connected/.test(document.getElementById('pf-ai-note').innerText) && !/not connected yet\. Open the WhatsApp/.test(document.body.innerText)));
+    await N.evaluate(() => closeModal('adminModal')); await N.evaluate(() => switchAdminTab('pages')); await sleep(400);
+    ok('new look · Pages tab is in the menu and lists the care guide, journal and atelier editors', await N.evaluate(() => !!document.querySelector('.admin-nav-item[data-tab="pages"]') && /Saree care guide/i.test(document.getElementById('adminContent').innerText) && /The Atelier/i.test(document.getElementById('adminContent').innerText)));
+    await N.evaluate(() => { document.querySelector('.pg-sec[data-x]'); const d = [...document.querySelectorAll('.pg-sec')]; d.forEach(x => { x.open = true; }); }); const heading = 'Made by hand in Hyderabad ' + Date.now().toString(36);
+    await N.evaluate(h => { const i = [...document.querySelectorAll('.pg-sec input')].find(x => /Preserving the Art/.test(x.value)); i.value = h; i.dispatchEvent(new Event('input', { bubbles: true })); }, heading);
+    await N.evaluate(() => { pgAdd('journal.posts', { id: 'jn1', date: '2026-11-03', title: 'Written in the owner app', excerpt: 'Short', body: 'The full story.', image: '', alt: '', show: true }); }); await sleep(3500);
+    const pubPages = (await (await fetch(base + '/public/shop')).json()).pages;
+    ok('new look · Pages: what the owner writes reaches the public website data on the server (heading and a new story)', !!pubPages && pubPages.atelier.heading === heading && pubPages.journal.posts.some(x => x.title === 'Written in the owner app' && x.body === 'The full story.'));
+    await C.evaluate(async () => { await admPoll(); }); await sleep(600); await C.evaluate(() => switchAdminTab('pages')); await sleep(400);
+    ok('new look · Pages: the classic app sees the same pages', await C.evaluate(h => JSON.stringify(db.pages).includes(h), heading));
     // ---- both themes stay readable on every screen ----
     const scan = async (p, dark) => { await p.evaluate(d => ov2Theme(d), dark); const bad = []; for (const t of tabs) { await p.evaluate(x => switchAdminTab(x), t); await sleep(t === 'privacy' || t === 'growth' || t === 'ops' ? 1600 : 500);
       const r = await p.evaluate(() => { const parse = s => { const m = /rgba?\(([^)]+)\)/.exec(s); if (!m) return null; const v = m[1].split(/[ ,\/]+/).filter(Boolean).map(Number); return { r: v[0], g: v[1], b: v[2], a: v[3] == null || isNaN(v[3]) ? 1 : v[3] }; }, lum = c => { const f = x => { x /= 255; return x <= .03928 ? x / 12.92 : Math.pow((x + .055) / 1.055, 2.4); }; return .2126 * f(c.r) + .7152 * f(c.g) + .0722 * f(c.b); };
@@ -68,6 +101,6 @@ const ROOT = process.cwd(), SETUP = 'setup-token-0123456789', PW = 'Correct-Hors
     const bd = await scan(N, true); ok('dark theme: no unreadable text on any screen (contrast of at least 3:1)', bd.length === 0 || (console.log(bd), false));
     ok('the choice of light or dark is remembered in this browser', await N.evaluate(() => localStorage.getItem('ap_ui2_dark') === '1'));
     ok('no JavaScript errors in either app', errs.length === 0 || (console.log(errs), false));
-  } catch (e) { fails++; console.log('FAIL (crash)', e.message.split('\n').slice(0, 5).join(' | ')); }
+  } catch (e) { fails++; console.log('FAIL (crash)', e.stack.split('\n').slice(0, 9).join(' | '), errs.slice(0, 3)); }
   console.log(fails ? 'FAILED ' + fails : 'ALL PASSED'); await b.close(); srv.kill(); process.exit(fails ? 1 : 0);
 })();

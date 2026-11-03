@@ -43,7 +43,7 @@ const PUBLIC_SETTINGS = ['businessName', 'gstNumber', 'address', 'phone', 'email
 export function publicView(db) {
   const d = db || {}, pick = (o, ks) => Object.fromEntries(ks.filter(k => o && o[k] !== undefined).map(k => [k, o[k]]));
   return {
-    settings: pick(d.settings, PUBLIC_SETTINGS), categories: d.categories || [], accessoryCategories: d.accessoryCategories || [], products: d.products || [], home: d.home || null,
+    settings: pick(d.settings, PUBLIC_SETTINGS), categories: d.categories || [], accessoryCategories: d.accessoryCategories || [], products: d.products || [], home: d.home || null, pages: d.pages || null,
     bundles: (d.bundles || []).filter(b => b.active), coupons: (d.coupons || []).filter(c => c.active && c.announce).map(c => pick(c, ['code', 'type', 'discount', 'active', 'description', 'minOrder', 'expiresAt', 'announce', 'firstOrderOnly', 'oncePerCustomer', 'channel'])),
     reviews: (d.reviews || []).filter(r => r.status === 'approved').map(r => ({ id: r.id, productId: r.productId, name: String(r.name || '').split(' ')[0], rating: r.rating, title: r.title, text: r.text, photos: r.photos || [], status: 'approved', createdAt: r.createdAt, reply: r.reply || '', replyAt: r.replyAt || null })),
   };

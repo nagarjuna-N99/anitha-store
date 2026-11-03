@@ -70,6 +70,7 @@ const { chromium } = require(process.env.PW);
   ok('status shows AI-assisted draft', /AI-assisted/.test(await p.textContent('#pf-ai-status')));
   // edit everything
   const before = pf.description;
+  await p.evaluate(() => { document.getElementById('pf-more').open = true; });
   await p.click('#pf-gen'); await p.waitForFunction(b => PF.description !== b, before);
   ok('Regenerate gives a different version', true);
   await p.fill('#p-desc', 'My own hand-written description that I edited myself.');
