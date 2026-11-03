@@ -15,6 +15,7 @@ const { chromium } = require(process.env.PW);
   await ev(() => navigateTo('shop'));
 
   // ===== search =====
+  await ev(() => openNavSearch());
   const search = async q => { await p.fill('#shop-q', q); await p.waitForTimeout(450); return ev(() => visibleProducts().map(x => x.id)); };
   ok('all products listed by default', (await ev(() => visibleProducts().length)) === (await ev(() => sareeList().length)));
   ok('search by name word', (await search('maheswari')).includes('p3'));

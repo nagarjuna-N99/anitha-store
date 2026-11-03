@@ -1075,6 +1075,23 @@
         "endAt": ""
       }
     ],
+    "shopBanner": {
+      "enabled": true,
+      "image": "",
+      "eyebrow": "Our collection",
+      "title": "Handloom sarees, handpicked",
+      "subtitle": "Browse by weave, colour and occasion.",
+      "btnText": "",
+      "link": {
+        "type": "none",
+        "value": ""
+      },
+      "pos": "center",
+      "focus": "center",
+      "overlay": 45,
+      "zoom": 100,
+      "focusX": 50
+    },
     "arrivals": {
       "show": true,
       "label": "Handpicked",

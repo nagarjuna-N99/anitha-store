@@ -62,9 +62,9 @@ function visibleProducts() {
 }
 const shopFilterCount = () => (SHOP.occasion ? 1 : 0) + SHOP.fabrics.length + SHOP.colours.length + (SHOP.min !== '' || SHOP.max !== '' ? 1 : 0) + (SHOP.inStock ? 1 : 0);
 function initShopToolbar() {
+  const nsb = document.getElementById('navSearch'); if (nsb) nsb.innerHTML = `<div class="shop-search"><span aria-hidden="true">🔍</span><input id="shop-q" type="search" placeholder="Search sarees — try “kanchipuram”, “red silk”, “wedding”" oninput="shopSearch(this.value)" onkeydown="if(event.key==='Enter'){closeNavSearch();}" aria-label="Search sarees" autocomplete="off"><button type="button" class="shop-q-clear" id="shop-q-clear" aria-label="Clear search" onclick="shopSearch('',true)" style="display:none;">×</button></div><button type="button" class="nav-search-close" aria-label="Close search" onclick="closeNavSearch()">Close</button>`;
   const box = document.getElementById('shopToolbar'); if (!box) return;
   box.innerHTML = `<div class="shop-bar">
-    <div class="shop-search"><span aria-hidden="true">🔍</span><input id="shop-q" type="search" placeholder="Search sarees — try “kanchipuram”, “red silk”, “wedding”" oninput="shopSearch(this.value)" aria-label="Search sarees" autocomplete="off"><button type="button" class="shop-q-clear" id="shop-q-clear" aria-label="Clear search" onclick="shopSearch('',true)" style="display:none;">×</button></div>
     <select id="shop-sort" onchange="shopSort(this.value)" aria-label="Sort sarees"><option value="featured">Featured</option><option value="new">Newest first</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="name">Name A–Z</option><option value="rating">Top rated</option></select>
     <button type="button" class="btn-filters" id="shop-filter-btn" onclick="shopTogglePanel()" aria-expanded="false">⚙ Filters <span class="fcount" id="shop-fcount"></span></button></div>
     <div class="shop-panel" id="shop-panel"><div id="shop-panel-body"></div></div>
@@ -102,7 +102,7 @@ function shopEmptyHTML() {
   return `<div class="fav-empty" style="grid-column:1/-1;"><h2>${filtered ? 'No ' + kindWord(2) + ' match your search' : 'No products in this category yet'}</h2>${filtered ? `<p>Try fewer filters or a different word.</p><button class="btn-primary" style="margin-top:14px;background:var(--charcoal);color:var(--ivory);" onclick="shopClearAll()">Clear search &amp; filters</button>` : ''}</div>`;
 }
 let SHOP_T = null;
-function shopSearch(v, now) { SHOP.q = v; const i = document.getElementById('shop-q'); if (now && i) i.value = v; document.getElementById('shop-q-clear').style.display = v ? '' : 'none'; clearTimeout(SHOP_T); SHOP_T = setTimeout(renderProducts, now ? 0 : 120); }
+function shopSearch(v, now) { if (v && !document.getElementById('page-shop').classList.contains('active')) navigateTo('shop'); SHOP.q = v; const i = document.getElementById('shop-q'); if (now && i) i.value = v; document.getElementById('shop-q-clear').style.display = v ? '' : 'none'; clearTimeout(SHOP_T); SHOP_T = setTimeout(renderProducts, now ? 0 : 120); }
 function shopSort(v) { SHOP.sort = v; renderProducts(); }
 function shopTogglePanel() { SHOP.open = !SHOP.open; document.getElementById('shop-panel').classList.toggle('open', SHOP.open); document.getElementById('shop-filter-btn').setAttribute('aria-expanded', SHOP.open); if (SHOP.open) renderShopPanel(); }
 function shopToggle(kind, val, el) { const a = SHOP[kind], i = a.indexOf(val); if (i >= 0) a.splice(i, 1); else a.push(val); if (el) { el.classList.toggle('on'); el.setAttribute('aria-pressed', i < 0); } renderProducts(); }
@@ -118,5 +118,10 @@ function shopRemove(kind, val) {
 }
 function shopClearAll() { SHOP.occasion = ''; SHOP.fabrics = []; SHOP.colours = []; SHOP.min = ''; SHOP.max = ''; SHOP.inStock = false; shopSearch('', true); if (SHOP.open) renderShopPanel(); }
 function shopResetFilters() { SHOP.sort = 'featured'; shopClearAll(); }
-function shopFocusSearch() { navigateTo('shop'); setTimeout(() => { const i = document.getElementById('shop-q'); if (i) i.focus(); }, 60); }
+// The one search of the website lives in the top bar on every page: the 🔍 opens a search bar under the header; typing shows the results on the Collection page.
+function openNavSearch() { const p = document.getElementById('navSearch'), nv = document.querySelector('nav'); if (!p || !nv) return; p.style.top = Math.round(nv.getBoundingClientRect().bottom) + 'px'; p.hidden = false; setTimeout(() => { const i = document.getElementById('shop-q'); if (i) { i.focus(); i.select(); } }, 30); }
+function closeNavSearch() { const p = document.getElementById('navSearch'); if (p) p.hidden = true; }
+function shopFocusSearch() { const p = document.getElementById('navSearch'); if (p && !p.hidden) { closeNavSearch(); return; } openNavSearch(); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeNavSearch(); });
+document.addEventListener('click', e => { const p = document.getElementById('navSearch'); if (p && !p.hidden && !p.contains(e.target) && !(e.target.closest && e.target.closest('.nav-icon[aria-label="Search"]'))) closeNavSearch(); });
 

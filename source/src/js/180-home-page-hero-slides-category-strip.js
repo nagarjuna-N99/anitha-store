@@ -12,6 +12,7 @@ function defaultHome() {
       { category: 'Kanjeevaram', enabled: true, image: 'https://images.unsplash.com/photo-1596205849889-98e400c784c1?q=80&w=800' }
     ] },
     announcements: [{ id: 'an1', enabled: true, text: 'Complimentary Shipping on Orders Above ₹10,000 · Authentic Handloom Guarantee', startAt: '', endAt: '' }],
+    shopBanner: { enabled: true, image: '', eyebrow: 'Our collection', title: 'Handloom sarees, handpicked', subtitle: 'Browse by weave, colour and occasion.', btnText: '', link: { type: 'none', value: '' }, pos: 'center', focus: 'center', overlay: 45, zoom: 100, focusX: 50 },
     arrivals: { show: true, label: 'Handpicked', title: 'New Arrivals', ids: [] },
     signature: { show: true, label: 'Curated Edits', title: 'The Signature Collection', tiles: [
       { id: 'sg1', title: 'The Bridal Edit', subtitle: 'Pure Kanjeevaram', category: 'Kanjeevaram', image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=1200' },
@@ -24,7 +25,7 @@ function syncHomeCats() {
   const d = defaultHome(); let changed = false;
   if (!db.home || typeof db.home !== 'object') { db.home = d; changed = true; }
   const H = db.home;
-  ['hero', 'categories', 'arrivals', 'signature'].forEach(k => { if (!H[k] || typeof H[k] !== 'object') { H[k] = d[k]; changed = true; } });
+  ['hero', 'categories', 'arrivals', 'signature', 'shopBanner'].forEach(k => { if (!H[k] || typeof H[k] !== 'object') { H[k] = d[k]; changed = true; } });
   if (!Array.isArray(H.hero.slides)) { H.hero.slides = []; changed = true; }
   if (!Array.isArray(H.categories.items)) { H.categories.items = []; changed = true; }
   if (!Array.isArray(H.signature.tiles)) { H.signature.tiles = []; changed = true; }
@@ -62,6 +63,9 @@ function heroTypeVars(t) {
   return v;
 }
 // All slides share one look (font, size, weight, spacing...) so the banner feels like one design; the words and the colours (which depend on each photo) stay separate.
+// the slide editor also edits the Collection page banner: index -1 is the banner (same fields, same controls)
+const HSL = i => i < 0 ? db.home.shopBanner : db.home.hero.slides[i];
+const HSLV = i => i < 0 ? shopBannerSlide() : db.home.hero.slides[i];   // the slide as it is drawn (the banner borrows the first home photo until it has its own)
 const LOOK_KEYS = ['font', 'weight', 'style', 'size', 'case', 'spacing', 'lh', 'subSize', 'subFont', 'shadow', 'btnStyle', 'preset', 'auto', 'why'];
 const sameLook = () => !(db.home && db.home.hero && db.home.hero.sameLook === false);
 function heroEffType(s) {
@@ -71,8 +75,8 @@ function heroEffType(s) {
   ['ink', 'subInk', 'accentInk', 'btnBg', 'btnInk'].forEach(k => { if (own[k] !== undefined) out[k] = own[k]; }); return out;
 }
 function heroShareLook(i) {
-  if (!sameLook()) return; const src = db.home.hero.slides[i]; if (!src) return; const t = src.type || {};
-  db.home.hero.slides.forEach((x, j) => { if (j === i) return; x.type = x.type || {}; LOOK_KEYS.forEach(k => { if (t[k] === undefined) delete x.type[k]; else x.type[k] = t[k]; }); });
+  if (!sameLook()) return; const src = HSL(i); if (!src) return; const t = src.type || {};
+  [...db.home.hero.slides.map((x, j) => [x, j]), [db.home.shopBanner, -1]].forEach(([x, j]) => { if (j === i || !x) return; x.type = x.type || {}; LOOK_KEYS.forEach(k => { if (t[k] === undefined) delete x.type[k]; else x.type[k] = t[k]; }); });
 }
 function heroSlideHTML(s, i, active, tag) {
   const A = Math.max(0, Math.min(90, +s.overlay || 0)) / 100, pos = ['left', 'center', 'right'].includes(s.pos) ? s.pos : 'left', focus = ['top', 'center', 'bottom'].includes(s.focus) ? s.focus : 'center';
@@ -127,18 +131,18 @@ function heroAutoType(r) {
   t.why = why; return t;
 }
 function heroTypeSet(i, k, v) {
-  const s = db.home.hero.slides[i]; if (!s) return; s.type = s.type || {};
+  const s = HSL(i); if (!s) return; s.type = s.type || {};
   if (['size', 'spacing', 'lh', 'subSize', 'weight'].includes(k) && v !== '') v = +v;
   if (v === '' || v === null) delete s.type[k]; else s.type[k] = v;
   s.type.auto = false; if (k === 'font') ensureFont(v);
   if (LOOK_KEYS.includes(k)) heroShareLook(i);
-  homeLive(true); heroPreview(i); if (sameLook()) db.home.hero.slides.forEach((_, j) => { if (j !== i) heroPreview(j); });
+  homeLive(true); heroPreview(i); if (sameLook()) [...db.home.hero.slides.keys(), -1].forEach(j => { if (j !== i) heroPreview(j); });
 }
-function heroTypeReset(i) { const s = db.home.hero.slides[i]; if (!s) return; if (sameLook()) db.home.hero.slides.forEach(x => { delete x.type; }); else delete s.type; homeLive(true); renderHomeAdmin(document.getElementById('adminContent')); }
-function heroTypeAutoToggle(i, on) { const s = db.home.hero.slides[i]; if (!s) return; if (on) { heroStyleAuto(i, true); } else { s.type = s.type || {}; s.type.auto = false; homeLive(true); renderHomeAdmin(document.getElementById('adminContent')); } }
+function heroTypeReset(i) { const s = HSL(i); if (!s) return; if (sameLook()) { db.home.hero.slides.forEach(x => { delete x.type; }); delete db.home.shopBanner.type; } else delete s.type; homeLive(true); renderHomeAdmin(document.getElementById('adminContent')); }
+function heroTypeAutoToggle(i, on) { const s = HSL(i); if (!s) return; if (on) { heroStyleAuto(i, true); } else { s.type = s.type || {}; s.type.auto = false; homeLive(true); renderHomeAdmin(document.getElementById('adminContent')); } }
 async function heroStyleAuto(i, quiet) {
-  const s = db.home.hero.slides[i], b = document.getElementById('hty-auto-' + i); if (!s) return; if (b) { b.disabled = true; b.textContent = 'Reading the photo…'; }
-  try { const r = await heroAnalyze(s); s.type = heroAutoType(r); heroShareLook(i); s.theme = { ink: r.ink, accent: r.accent, btnBg: r.btnBg, btnInk: r.btnInk, headerBg: r.headerBg, headerInk: r.headerInk, tone: r.tone, v: 2 }; if (r.raised) s.overlay = r.overlay; homeLive(true); applyHeaderTheme(); renderHomeAdmin(document.getElementById('adminContent')); if (!quiet) showToast('Text style set: ' + s.type.why + '. Change anything below.', 'success'); }
+  const s = HSL(i), b = document.getElementById('hty-auto-' + i); if (!s) return; if (b) { b.disabled = true; b.textContent = 'Reading the photo…'; }
+  try { const r = await heroAnalyze(HSLV(i)); s.type = heroAutoType(r); heroShareLook(i); s.theme = { ink: r.ink, accent: r.accent, btnBg: r.btnBg, btnInk: r.btnInk, headerBg: r.headerBg, headerInk: r.headerInk, tone: r.tone, v: 2 }; if (r.raised) s.overlay = r.overlay; homeLive(true); applyHeaderTheme(); renderHomeAdmin(document.getElementById('adminContent')); if (!quiet) showToast('Text style set: ' + s.type.why + '. Change anything below.', 'success'); }
   catch (e) { if (b) { b.disabled = false; b.textContent = '✨ Auto-style the text for this photo'; } showToast(e.message || 'Could not read this photo', 'error'); }
 }
 const hueName = h => h < 15 || h >= 345 ? 'red' : h < 45 ? 'orange or brown' : h < 70 ? 'golden yellow' : h < 160 ? 'green' : h < 200 ? 'teal' : h < 255 ? 'blue' : h < 290 ? 'purple' : 'pink or magenta';
@@ -147,19 +151,19 @@ function heroLocalWords(r) {
   return [{ eyebrow: 'Est. Hyderabad', title: 'Woven slowly, worn for years', subtitle: `Pure handloom sarees in ${col} and more, chosen one by one.`, button: 'Shop the collection' }, { eyebrow: 'New arrivals', title: 'Handloom, the way it should be', subtitle: `Fresh from the loom: ${cats}.`, button: 'See what is new' }, { eyebrow: 'Handpicked', title: 'A saree with a story', subtitle: 'Each piece is selected for its weave, its colour and its maker.', button: 'Explore sarees' }];
 }
 async function heroWriteWords(i) {
-  const s = db.home.hero.slides[i], box = document.getElementById('hwd-' + i); if (!s || !box) return; box.innerHTML = '<span class="note">Thinking…</span>';
-  let r = { hue: 30, tone: 'light' }; try { r = await heroAnalyze(s); } catch (e) { }
+  const s = HSL(i), box = document.getElementById('hwd-' + i); if (!s || !box) return; box.innerHTML = '<span class="note">Thinking…</span>';
+  let r = { hue: 30, tone: 'light' }; try { r = await heroAnalyze(HSLV(i)); } catch (e) { }
   let v, ai = aiReady('hero');
   try { v = ai ? (await aiCall('hero', { colour: hueName(r.hue), tone: r.tone, categories: db.categories.slice(0, 8), current: { title: s.title, subtitle: s.subtitle } })).data.variants : heroLocalWords(r); } catch (e) { v = heroLocalWords(r); ai = false; }
   window.HERO_WORDS = v || [];
   box.innerHTML = `${ai ? '' : '<p class="note" style="margin:0 0 6px">Built-in drafts (connect Claude for richer ones).</p>'}${(v || []).map((x, n) => `<div class="hw-opt"><div><b>${esc(x.title)}</b><br><span class="note" style="margin:0">${esc(x.eyebrow || '')} · ${esc(x.subtitle || '')} · button: ${esc(x.button || '')}</span></div><button type="button" class="btn-sm btn-primary-sm" onclick="heroUseWords(${i},${n})">Use these words</button></div>`).join('')}`;
 }
-function heroUseWords(i, n) { const s = db.home.hero.slides[i], w = (window.HERO_WORDS || [])[n]; if (!s || !w) return; s.eyebrow = String(w.eyebrow || '').slice(0, 40); s.title = String(w.title || '').slice(0, 80); s.subtitle = String(w.subtitle || '').slice(0, 200); if (w.button) s.btnText = String(w.button).slice(0, 30); homeLive(true); renderHomeAdmin(document.getElementById('adminContent')); showToast('Words added. They are a draft: change anything you like.', 'success'); }
+function heroUseWords(i, n) { const s = HSL(i), w = (window.HERO_WORDS || [])[n]; if (!s || !w) return; s.eyebrow = String(w.eyebrow || '').slice(0, 40); s.title = String(w.title || '').slice(0, 80); s.subtitle = String(w.subtitle || '').slice(0, 200); if (w.button) s.btnText = String(w.button).slice(0, 30); homeLive(true); renderHomeAdmin(document.getElementById('adminContent')); showToast('Words added. They are a draft: change anything you like.', 'success'); }
 // the text style panel inside each slide
 function heroSameLook(on, i) { db.home.hero.sameLook = !!on; if (on) heroShareLook(i); homeLive(true); renderHomeAdmin(document.getElementById('adminContent')); }
 const HFOLD = new Set();
 const HERO_PRESETS = { Elegant: { font: 'Bodoni Moda', weight: 700, style: 'italic', size: 100 }, Bold: { font: 'Abril Fatface', weight: 400, style: 'normal', size: 100, shadow: 'soft' }, Modern: { font: 'Syne', weight: 700, style: 'normal', case: 'uppercase', spacing: 2, size: 75, lh: 1.2 }, Soft: { font: 'DM Serif Display', weight: 400, style: 'italic', size: 105 }, Classic: { font: 'Cormorant Garamond', weight: 600, style: 'italic', size: 105 } };
-function heroPreset(i, name) { const s = db.home.hero.slides[i], p = HERO_PRESETS[name]; if (!s || !p) return; s.type = Object.assign({ auto: false, preset: name, subSize: 100, lh: 1.1 }, p); ensureFont(p.font); heroShareLook(i); homeLive(true); renderHomeAdmin(document.getElementById('adminContent')); }
+function heroPreset(i, name) { const s = HSL(i), p = HERO_PRESETS[name]; if (!s || !p) return; s.type = Object.assign({ auto: false, preset: name, subSize: 100, lh: 1.1 }, p); ensureFont(p.font); heroShareLook(i); homeLive(true); renderHomeAdmin(document.getElementById('adminContent')); }
 // the one simple row: pick a look
 function heroLookUI(s, i) {
   const t = s.type || {}, auto = t.auto !== false, chip = (on, fn, label, id) => `<button type="button" class="hs-chip ${on ? 'on' : ''}" ${id ? `id="${id}"` : ''} onclick="${fn}">${label}</button>`;
@@ -181,12 +185,12 @@ function heroTypeUI(s, i) {
   </div>`;
 }
 async function heroMatch(i) {
-  const s = db.home.hero.slides[i], b = document.getElementById('hm-' + i); if (!s) return; if (b) { b.disabled = true; b.textContent = 'Reading the photo…'; }
-  try { const r = await heroAnalyze(s); s.theme = { ink: r.ink, accent: r.accent, btnBg: r.btnBg, btnInk: r.btnInk, headerBg: r.headerBg, headerInk: r.headerInk, tone: r.tone, v: 2 }; if (r.raised) s.overlay = r.overlay; homeLive(true); applyHeaderTheme(); renderHomeAdmin(document.getElementById('adminContent')); showToast(`Colours matched. Text contrast ${r.contrast}:1${r.raised ? '; the photo was darkened a little to keep the words readable' : ''}. The top bar and shop name follow the photo.`, 'success'); }
+  const s = HSL(i), b = document.getElementById('hm-' + i); if (!s) return; if (b) { b.disabled = true; b.textContent = 'Reading the photo…'; }
+  try { const r = await heroAnalyze(HSLV(i)); s.theme = { ink: r.ink, accent: r.accent, btnBg: r.btnBg, btnInk: r.btnInk, headerBg: r.headerBg, headerInk: r.headerInk, tone: r.tone, v: 2 }; if (r.raised) s.overlay = r.overlay; homeLive(true); applyHeaderTheme(); renderHomeAdmin(document.getElementById('adminContent')); showToast(`Colours matched. Text contrast ${r.contrast}:1${r.raised ? '; the photo was darkened a little to keep the words readable' : ''}. The top bar and shop name follow the photo.`, 'success'); }
   catch (e) { if (b) { b.disabled = false; b.textContent = '🎨 Match text and top-bar colours to this photo'; } showToast(e.message || 'Could not read this photo', 'error'); }
 }
-function heroThemeClear(i) { const s = db.home.hero.slides[i]; if (!s) return; delete s.theme; homeLive(true); applyHeaderTheme(); renderHomeAdmin(document.getElementById('adminContent')); }
-function heroZoomReset(i) { const s = db.home.hero.slides[i]; if (!s) return; s.zoom = 100; s.focusX = 50; homeLive(true); renderHomeAdmin(document.getElementById('adminContent')); }
+function heroThemeClear(i) { const s = HSL(i); if (!s) return; delete s.theme; homeLive(true); applyHeaderTheme(); renderHomeAdmin(document.getElementById('adminContent')); }
+function heroZoomReset(i) { const s = HSL(i); if (!s) return; s.zoom = 100; s.focusX = 50; homeLive(true); renderHomeAdmin(document.getElementById('adminContent')); }
 const AUTO_H = new WeakMap(), AUTO_T = {}, AUTO_SEEN = new Set();
 // The top bar is always a pale tint of the photo's main colour with a deep shade of the same colour for the name and menu, so it sits well on the ivory page.
 function navFromTheme(t) { const h = rgbHsl(...[1, 3, 5].map(i => parseInt(String(t.headerBg).slice(i, i + 2), 16)))[0]; return { bg: hslHex(h, 34, 95), ink: hslHex(h, 32, 14) }; }
@@ -206,11 +210,11 @@ window.addEventListener('scroll', () => { if (typeof navOverSync === 'function')
 // Automatic colours: when a hero photo is added or moved, the colours are picked again and saved with the slide.
 function heroAuto(i, raise, styleText) {
   clearTimeout(AUTO_T[i]); AUTO_T[i] = setTimeout(async () => {
-    const s = db.home && db.home.hero.slides[i]; if (!s || db.home.autoColours === false || !safeImg(s.image)) return;
-    try { const r = await heroAnalyze(s); s.theme = { ink: r.ink, accent: r.accent, btnBg: r.btnBg, btnInk: r.btnInk, headerBg: r.headerBg, headerInk: r.headerInk, tone: r.tone, v: 2 }; if (styleText && (!s.type || s.type.auto !== false)) { const peer = sameLook() && db.home.hero.slides.find(x => x !== s && x.type && x.type.font); if (peer) { s.type = s.type || {}; LOOK_KEYS.forEach(k => { if (peer.type[k] === undefined) delete s.type[k]; else s.type[k] = peer.type[k]; }); } else { s.type = heroAutoType(r); heroShareLook(i); } } if (raise && r.raised) s.overlay = r.overlay; homeLive(true); applyHeaderTheme(); if (isAdminView && currentAdminTab === 'home' && !/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName || '')) renderHomeAdmin(document.getElementById('adminContent')); } catch (e) { }
+    const s = db.home && HSL(i); if (!s || db.home.autoColours === false || !safeImg(s.image)) return;
+    try { const r = await heroAnalyze(HSLV(i)); s.theme = { ink: r.ink, accent: r.accent, btnBg: r.btnBg, btnInk: r.btnInk, headerBg: r.headerBg, headerInk: r.headerInk, tone: r.tone, v: 2 }; if (styleText && (!s.type || s.type.auto !== false)) { const peer = sameLook() && db.home.hero.slides.find(x => x !== s && x.type && x.type.font); if (peer) { s.type = s.type || {}; LOOK_KEYS.forEach(k => { if (peer.type[k] === undefined) delete s.type[k]; else s.type[k] = peer.type[k]; }); } else { s.type = heroAutoType(r); heroShareLook(i); } } if (raise && r.raised) s.overlay = r.overlay; homeLive(true); applyHeaderTheme(); if (isAdminView && currentAdminTab === 'home' && !/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName || '')) renderHomeAdmin(document.getElementById('adminContent')); } catch (e) { }
   }, 500);
 }
-function heroAutoAll() { (db.home.hero.slides || []).forEach((s, i) => { const key = s.id + '|' + String(s.image).slice(-40) + '|' + (s.zoom || 100); if ((!s.theme || s.theme.v !== 2) && safeImg(s.image) && !AUTO_SEEN.has(key)) { AUTO_SEEN.add(key); heroAuto(i, true); } }); }
+function heroAutoAll() { [...(db.home.hero.slides || []).map((s, i) => [s, i]), [shopBannerSlide(), -1]].forEach(([s, i]) => { const key = s.id + '|' + String(s.image).slice(-40) + '|' + (s.zoom || 100); if ((!s.theme || s.theme.v !== 2) && safeImg(s.image) && !AUTO_SEEN.has(key)) { AUTO_SEEN.add(key); heroAuto(i, true); } }); }
 function heroSwatches(t) { return t ? `<span class="hm-sw" title="Text" style="background:${esc(t.ink)}"></span><span class="hm-sw" title="Accent and button" style="background:${esc(t.accent)}"></span><span class="hm-sw" title="Top bar" style="background:${esc(t.headerBg)}"></span>` : ''; }
 
 function renderHero() {
@@ -233,7 +237,7 @@ function heroShow(k) {
 }
 function heroStep(d) { heroShow(HERO.i + d); }
 function heroGo(id) {
-  const s = db.home.hero.slides.find(x => x.id === id); if (!s || !s.link) return; const l = s.link;
+  const s = id === 'shopbanner' ? shopBannerSlide() : db.home.hero.slides.find(x => x.id === id); if (!s || !s.link) return; const l = s.link;
   if (l.type === 'shop') { navigateTo('shop'); filterProducts('all'); }
   else if (l.type === 'category' && db.categories.includes(l.value)) filterAndShowShop(l.value);
   else if (l.type === 'product') { const p = db.products.find(x => x.id === l.value); if (p) { navigateTo('shop'); openProductDetail(p.id); } }
@@ -261,7 +265,7 @@ function renderSignature() {
   sec.style.display = g.show === false || !tiles.length ? 'none' : '';
   sec.innerHTML = `<div class="section-header"><div class="section-label">${esc(g.label)}</div><h2 class="section-title">${esc(g.title)}</h2></div><div class="curated-grid">${tiles.map(t => `<div class="curated-item" role="link" tabindex="0" data-cat="${esc(t.category)}" onclick="filterAndShowShop(this.dataset.cat)" onkeydown="if(event.key==='Enter')filterAndShowShop(this.dataset.cat)"><img src="${esc(safeImg(t.image))}" alt="${esc(t.title)}" loading="lazy"><div class="curated-overlay"><h3>${esc(t.title)}</h3><p>${esc(t.subtitle)}</p><a class="curated-link">View Collection</a></div></div>`).join('')}</div>`;
 }
-function renderHome() { renderOccasions(); renderRecentlySold(); renderRecent(); renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); ANN.sig = scheduleSignature(); renderAnnouncement(); renderPublicPages(); }
+function renderHome() { renderShopBanner(); renderOccasions(); renderRecentlySold(); renderRecent(); renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); ANN.sig = scheduleSignature(); renderAnnouncement(); renderPublicPages(); }
 
 // ---- admin: saving (applies to the storefront instantly, written to storage a moment later) ----
 let HOME_TIMER = null;
@@ -269,14 +273,24 @@ function homeStatus(t) { const e = document.getElementById('home-status'); if (e
 function homeSaveSoon() { clearTimeout(HOME_TIMER); homeStatus('Saving…'); HOME_TIMER = setTimeout(homeFlush, 400); }
 function homeFlush() { if (HOME_TIMER === null) return true; clearTimeout(HOME_TIMER); HOME_TIMER = null; const ok = saveDB(); homeStatus(ok ? '✓ Saved — live on your store' : '⚠ Not saved (browser storage is full)'); return ok; }
 window.addEventListener('beforeunload', () => { if (HOME_TIMER !== null) homeFlush(); });
-function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); homeSaveSoon(); }
+// The banner at the top of the Collection page: a photo with words (the owner sets both; AI can colour and word it). It uses the same text look as the home page banner.
+function shopBannerSlide() {
+  const B = db.home.shopBanner || {}, first = (db.home.hero.slides.find(x => safeImg(x.image)) || {}).image || '';
+  return Object.assign({}, B, { id: 'shopbanner', image: safeImg(B.image) ? B.image : first, link: B.link || { type: 'none', value: '' } });
+}
+function renderShopBanner() {
+  const box = document.getElementById('shopBanner'); if (!box || !db.home) return; const B = db.home.shopBanner || {}, s = shopBannerSlide();
+  if (B.enabled === false || !safeImg(s.image) || !(s.title || s.subtitle)) { box.innerHTML = ''; box.style.display = 'none'; return; }
+  box.style.display = ''; box.innerHTML = `<div class="hero-slider shop-banner">${heroSlideHTML(s, -1, true, 'h2')}</div>`;
+}
+function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); homeSaveSoon(); }
 let HOME_PICK = null;
 function homePick(kind, idx) { HOME_PICK = { kind, idx }; document.getElementById('home-file').click(); }
 async function homeFileChosen(files) {
   const f = files[0], pick = HOME_PICK; document.getElementById('home-file').value = ''; if (!f || !pick) return;
   if (!/^image\//.test(f.type)) { showToast('Please choose an image file', 'error'); return; }
   let url; try { url = await fileToDataUrl(f, pick.kind === 'hero' ? 1920 : 1000); } catch (e) { showToast('Could not read that image', 'error'); return; }
-  const target = pick.kind === 'hero' ? db.home.hero.slides[pick.idx] : pick.kind === 'cat' ? db.home.categories.items[pick.idx] : db.home.signature.tiles[pick.idx];
+  const target = pick.kind === 'hero' ? HSL(pick.idx) : pick.kind === 'cat' ? db.home.categories.items[pick.idx] : db.home.signature.tiles[pick.idx];
   if (!target) return;
   const prev = target.image; target.image = url;
   if (!saveDB()) { target.image = prev; return; }
@@ -285,13 +299,13 @@ async function homeFileChosen(files) {
 
 // ---- admin: hero slides ----
 function heroSet(i, k, v) {
-  const s = db.home.hero.slides[i]; if (!s) return;
+  const s = HSL(i); if (!s) return;
   if (k === 'image') { v = String(v).trim(); if (v && !safeImg(v)) { showToast('Image link must start with https://', 'error'); return renderHomeAdmin(document.getElementById('adminContent')); } }
   if (k === 'overlay' || k === 'zoom' || k === 'focusX') v = +v;
   s[k] = v; homeLive(true); heroPreview(i); if (['image', 'zoom', 'focusX', 'focus', 'pos'].includes(k)) heroAuto(i, k === 'image', k === 'image');
 }
-function heroLinkType(i, t) { const s = db.home.hero.slides[i]; s.link = { type: t, value: t === 'category' ? db.categories[0] || '' : t === 'product' ? (db.products[0] || {}).id || '' : t === 'page' ? homePages()[0][0] : '' }; renderHomeAdmin(document.getElementById('adminContent')); homeLive(true); }
-function heroLinkValue(i, v) { const s = db.home.hero.slides[i]; if (s.link.type === 'url' && v.trim() && !/^https?:\/\//i.test(v.trim())) { showToast('Link must start with https://', 'error'); return; } s.link.value = v.trim(); homeLive(true); }
+function heroLinkType(i, t) { const s = HSL(i); s.link = { type: t, value: t === 'category' ? db.categories[0] || '' : t === 'product' ? (db.products[0] || {}).id || '' : t === 'page' ? homePages()[0][0] : '' }; renderHomeAdmin(document.getElementById('adminContent')); homeLive(true); }
+function heroLinkValue(i, v) { const s = HSL(i); if (s.link.type === 'url' && v.trim() && !/^https?:\/\//i.test(v.trim())) { showToast('Link must start with https://', 'error'); return; } s.link.value = v.trim(); homeLive(true); }
 // The slide preview is the real website, drawn at this device's own width and then scaled to fit, so fonts, colours and line spacing are exactly what visitors see.
 function heroPrevNav(s) {
   const t = s && s.theme, c = db.home.headerMatch !== false && t && t.headerBg ? navFromTheme(t) : null, st = c ? `--nav-bg:${c.bg};--nav-ink:${c.ink}` : '';
@@ -303,12 +317,12 @@ function heroFit(box) {
 }
 function heroFitAll() { document.querySelectorAll('.hs-win').forEach(heroFit); }
 window.addEventListener('resize', () => { if (typeof heroFitAll === 'function') heroFitAll(); });
-function heroPrevHTML(s, i) { return safeImg(s.image) ? `<div class="hs-stage">${heroPrevNav(s)}<div class="hero-slider">${heroSlideHTML(s, i, true, 'div')}</div></div>` : '<div class="hs-noimg" style="height:160px">No image yet — add a link or upload one</div>'; }
-function heroPreview(i) { const s = db.home.hero.slides[i], box = document.getElementById('hsprev-' + i); if (s && box) { box.innerHTML = heroPrevHTML(s, i); heroFit(box); } }
+function heroPrevHTML(s, i) { return safeImg(s.image) ? `<div class="hs-stage">${i < 0 ? '' : heroPrevNav(s)}<div class="hero-slider${i < 0 ? ' shop-banner' : ''}">${heroSlideHTML(s, i, true, 'div')}</div></div>` : '<div class="hs-noimg" style="height:160px">No image yet — add a link or upload one</div>'; }
+function heroPreview(i) { const s = HSLV(i), box = document.getElementById('hsprev-' + i); if (s && box) { box.innerHTML = heroPrevHTML(s, i); heroFit(box); } }
 function heroAdd() { db.home.hero.slides.push({ id: 'hs' + generateId(), enabled: true, image: '', focus: 'center', pos: 'left', overlay: 60, eyebrow: '', title: 'New slide', subtitle: '', btnText: 'Shop now', link: { type: 'shop', value: '' } }); renderHomeAdmin(document.getElementById('adminContent')); homeLive(true); window.scrollTo(0, document.body.scrollHeight); }
 function heroDel(i) { if (!confirm('Delete this slide?')) return; db.home.hero.slides.splice(i, 1); renderHomeAdmin(document.getElementById('adminContent')); homeLive(true); }
 function heroMove(i, d) { const a = db.home.hero.slides, j = i + d; if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; renderHomeAdmin(document.getElementById('adminContent')); homeLive(true); }
-function heroToggle(i, el) { const s = db.home.hero.slides[i]; s.enabled = !s.enabled; el.classList.toggle('active', s.enabled); el.setAttribute('aria-checked', s.enabled); homeLive(true); renderHomeAdmin(document.getElementById('adminContent')); }
+function heroToggle(i, el) { const s = HSL(i); s.enabled = !s.enabled; el.classList.toggle('active', s.enabled); el.setAttribute('aria-checked', s.enabled); homeLive(true); renderHomeAdmin(document.getElementById('adminContent')); }
 function heroSetting(k, v) { db.home.hero[k] = k === 'interval' ? +v : v; homeLive(true); }
 // ---- admin: categories on the home page ----
 function homeCatToggle(i) { const it = db.home.categories.items[i]; it.enabled = !it.enabled; homeLive(false); renderHomeAdmin(document.getElementById('adminContent')); }
@@ -347,10 +361,11 @@ function renderHomeAdmin(container) {
   const tog = (on, fn) => `<div class="toggle ${on ? 'active' : ''}" role="switch" tabindex="0" aria-checked="${!!on}" onclick="${fn}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"></div>`;
   const slideHTML = (s, i) => {
     const l = s.link || { type: 'none', value: '' };
+    const isB = i < 0;
     return `<div class="hs ${s.enabled ? '' : 'off'}">
-      <div class="hs-prev"><div class="hs-win" id="hsprev-${i}">${heroPrevHTML(s, i)}</div></div>
+      <div class="hs-prev"><div class="hs-win" id="hsprev-${i}">${heroPrevHTML(isB ? shopBannerSlide() : s, i)}</div></div>
       <div class="hs-fields">
-        <div class="hs-head"><strong>Slide ${i + 1}</strong>${s.enabled ? '' : '<span class="cchip">hidden</span>'}<span style="flex:1"></span><span class="hs-lbl">Show</span>${tog(s.enabled, `heroToggle(${i},this)`)}<button class="btn-sm btn-info-sm" onclick="heroMove(${i},-1)" ${i === 0 ? 'disabled' : ''} aria-label="Move up">↑</button><button class="btn-sm btn-info-sm" onclick="heroMove(${i},1)" ${i === hs.length - 1 ? 'disabled' : ''} aria-label="Move down">↓</button><button class="btn-sm btn-danger-sm" onclick="heroDel(${i})" aria-label="Delete slide">🗑</button></div>
+        ${isB ? `<div class="hs-head"><strong>Collection page banner</strong><span style="flex:1"></span><span class="hs-lbl">Show</span>${tog(s.enabled !== false, `heroToggle(-1,this)`)}</div>` : `<div class="hs-head"><strong>Slide ${i + 1}</strong>${s.enabled ? '' : '<span class="cchip">hidden</span>'}<span style="flex:1"></span><span class="hs-lbl">Show</span>${tog(s.enabled, `heroToggle(${i},this)`)}<button class="btn-sm btn-info-sm" onclick="heroMove(${i},-1)" ${i === 0 ? 'disabled' : ''} aria-label="Move up">↑</button><button class="btn-sm btn-info-sm" onclick="heroMove(${i},1)" ${i === hs.length - 1 ? 'disabled' : ''} aria-label="Move down">↓</button><button class="btn-sm btn-danger-sm" onclick="heroDel(${i})" aria-label="Delete slide">🗑</button></div>`}
         <div class="form-group"><label>Image</label><div class="hs-img-row"><input type="text" value="${esc(s.image.startsWith('data:') ? '' : s.image)}" placeholder="${s.image.startsWith('data:') ? 'Uploaded photo in use — paste a link to replace' : 'https://… image link'}" onchange="heroSet(${i},'image',this.value)"><button class="btn-sm btn-primary-sm" onclick="homePick('hero',${i})">⬆ Upload photo</button></div></div>
         <div class="hs-grid2"><div class="form-group"><label>Small heading</label><input type="text" value="${esc(s.eyebrow)}" onchange="heroSet(${i},'eyebrow',this.value)" oninput="heroSet(${i},'eyebrow',this.value)"></div><div class="form-group"><label>Title</label><input type="text" value="${esc(s.title)}" oninput="heroSet(${i},'title',this.value)"></div></div>
         <div class="form-group"><label>Description</label><textarea rows="2" oninput="heroSet(${i},'subtitle',this.value)">${esc(s.subtitle)}</textarea></div>
@@ -395,6 +410,12 @@ function renderHomeAdmin(container) {
         <div class="hc-thumb">${img ? `<img src="${esc(img)}" alt="">` : '<span>no photo</span>'}</div>
         <div class="hc-name"><strong>${esc(it.category)}</strong><small>${n} product${n === 1 ? '' : 's'} · ${it.image ? (it.image.startsWith('data:') ? 'uploaded photo' : 'custom link') : 'automatic photo'}</small></div>
         <div class="hc-actions"><input type="text" placeholder="Photo link (optional)" value="${esc(it.image && !it.image.startsWith('data:') ? it.image : '')}" onchange="homeCatImage(${i},this.value)"><button class="btn-sm btn-info-sm" onclick="homePick('cat',${i})">⬆ Upload</button>${it.image ? `<button class="btn-sm btn-info-sm" onclick="homeCatImage(${i},'')">Auto</button>` : ''}<button class="btn-sm btn-info-sm" onclick="homeCatMove(${i},-1)" ${i === 0 ? 'disabled' : ''} aria-label="Move up">↑</button><button class="btn-sm btn-info-sm" onclick="homeCatMove(${i},1)" ${i === items.length - 1 ? 'disabled' : ''} aria-label="Move down">↓</button></div></div>`; }).join('') || '<p style="color:#6b6862;">Create categories first (Categories tab).</p>'}
+    </div>
+
+    <div class="admin-card" id="shop-banner-card">
+      <h3>🖼 Collection page banner</h3>
+      <p class="note" style="margin:0 0 6px">The picture and words at the top of the Collection page. Everything works exactly like the home page slides above: photo, words, looks, colours and the ✨ AI buttons. Until you choose a photo it uses the first home page photo.</p>
+      ${slideHTML(H.shopBanner, -1)}
     </div>
 
     <div class="admin-card">

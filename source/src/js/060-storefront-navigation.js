@@ -15,7 +15,7 @@ function navigateTo(pageName) {
   if (!document.getElementById('page-' + pageName)) pageName = 'home';
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + pageName).classList.add('active');
-  window.scrollTo(0, 0);
+  window.scrollTo(0, 0); document.body.classList.toggle('pg-shop', pageName === 'shop');
   if (pageName === 'favourites') renderFavourites();
   if (pageName === 'faq') renderFaq();
   if (LEGAL_PAGES[pageName]) renderLegal(pageName);

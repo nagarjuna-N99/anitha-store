@@ -57,3 +57,7 @@ Each slide now shows only the photo, the words and one row of looks (Auto, Elega
 
 ## Update 7 (4 Nov 2026): one look for all slides
 All slides now share one text look, so the banner reads as one design. Pick a look on any slide (Auto, Elegant, Bold, Modern, Soft, Classic, or change any text option) and every slide follows. The words and the colours (each photo needs its own for readability) stay separate. A slide you add later takes the same look. To let one slide differ, untick **Same look on all slides** under the looks.
+
+## Update 8 (5 Nov 2026): the Collection page banner, and one search
+- The Collection page opens with a banner photo and words. Edit it under Home Page → **Collection page banner**. It uses **exactly the same editor as a home slide**: photo (upload or link; until you pick one it uses the first home page photo), small heading, title, description, button text and link, ✨ Suggest the words, the row of looks (Auto, Elegant, Bold, Modern, Soft, Classic), and under **More options** the photo position, zoom, move, darkness, every text option, colours and colour matching. The look is shared with the home slides, so a look chosen on either one changes both. Switch it off with its Show switch.
+- The website now has one search, in the top bar on every page. Tap the 🔍: a search bar opens under the header. Typing from any page shows the results on the Collection page. The extra search box that sat in the middle of the Collection page is gone (Sort and Filters stay).

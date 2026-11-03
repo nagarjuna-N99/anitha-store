@@ -22,21 +22,21 @@ const { chromium } = require(process.env.PW);
   // ===== admin tab =====
   await p.evaluate(() => toggleView());
   ok('admin menu has "Home Page" and it opens', await p.evaluate(() => { document.querySelector('.admin-nav-item[data-tab="home"]').click(); return document.getElementById('adminPageTitle').textContent === 'Home Page' && !!document.getElementById('hsprev-0'); }));
-  ok('lists every category (4 ticked), 1 slide editor', await p.evaluate(() => document.querySelectorAll('.hc-row').length === db.categories.length && document.querySelectorAll('.hc-chk:checked').length === 4 && document.querySelectorAll('.hs').length === 1));
+  ok('lists every category (4 ticked), 1 slide editor', await p.evaluate(() => document.querySelectorAll('.hc-row').length === db.categories.length && document.querySelectorAll('.hc-chk:checked').length === 4 && document.querySelectorAll('.hs:not(#shop-banner-card .hs)').length === 1));
   ok('slide preview shows the real hero (title + button)', await p.evaluate(() => /The Art of Slow Weaving/.test(document.getElementById('hsprev-0').innerText) && /Explore the Collection/i.test(document.getElementById('hsprev-0').innerText)));
 
   // ===== hero slides =====
   await p.click('button:has-text("Add slide")');
-  ok('add slide → editor has 2; new slide hidden on store until it has an image + warning free', await p.evaluate(() => document.querySelectorAll('.hs').length === 2 && document.querySelectorAll('#homeHero .hero-slide').length === 1));
-  const img2 = p.locator('.hs >> nth=1').locator('input[placeholder^="https"]').first();
+  ok('add slide → editor has 2; new slide hidden on store until it has an image + warning free', await p.evaluate(() => document.querySelectorAll('.hs:not(#shop-banner-card .hs)').length === 2 && document.querySelectorAll('#homeHero .hero-slide').length === 1));
+  const img2 = p.locator('.hs:not(#shop-banner-card .hs) >> nth=1').locator('input[placeholder^="https"]').first();
   await img2.fill('https://img.test/two.jpg'); await img2.press('Tab');
   ok('image link added → store shows 2 slides with arrows + dots (instantly)', await p.evaluate(() => document.querySelectorAll('#homeHero .hero-slide').length === 2 && document.querySelectorAll('#homeHero .hero-dots button').length === 2 && document.querySelectorAll('.hero-arrow').length === 2 && /two\.jpg/.test(document.querySelectorAll('#homeHero .hero-slide')[1].querySelector('.hero-img').getAttribute('style'))));
-  const t2 = p.locator('.hs >> nth=1').locator('input[type=text]').nth(3); // title
-  await p.evaluate(() => { document.querySelectorAll('.hs')[1].querySelectorAll('input[type=text]').forEach((e, i) => e.dataset.i = i); });
-  const titleBox = p.locator('.hs >> nth=1').locator('label:has-text("Title") + input');
+  const t2 = p.locator('.hs:not(#shop-banner-card .hs) >> nth=1').locator('input[type=text]').nth(3); // title
+  await p.evaluate(() => { document.querySelectorAll('.hs:not(#shop-banner-card .hs)')[1].querySelectorAll('input[type=text]').forEach((e, i) => e.dataset.i = i); });
+  const titleBox = p.locator('.hs:not(#shop-banner-card .hs) >> nth=1').locator('label:has-text("Title") + input');
   await titleBox.fill('Wedding Season');
   ok('typing a title updates the store AND the preview live', await p.evaluate(() => document.querySelectorAll('#homeHero .hero-slide')[1].querySelector('.hero-title').textContent === 'Wedding Season' && /Wedding Season/.test(document.getElementById('hsprev-1').innerText) && document.querySelectorAll('#homeHero .hero-slide')[1].querySelector('.hero-title').tagName === 'H2'));
-  await upload('.hs >> nth=1 >> button:has-text("Upload photo")');
+  await upload('.hs:not(#shop-banner-card .hs) >> nth=1 >> button:has-text("Upload photo")');
   await p.waitForFunction(() => db.home.hero.slides[1].image.startsWith('data:image/jpeg'));
   ok('photo upload stored (resized JPEG) and shown', await p.evaluate(() => /data:image\/jpeg/.test(document.querySelectorAll('#homeHero .hero-slide')[1].querySelector('.hero-img').getAttribute('style')) && !!document.querySelector('#hsprev-1 .hero-slide')));
 
@@ -56,7 +56,7 @@ const { chromium } = require(process.env.PW);
 
   // appearance + buttons
   await p.evaluate(() => document.querySelectorAll('.hs-fold').forEach(d => { d.open = true; })); await p.waitForTimeout(150);
-  const s1 = p.locator('.hs >> nth=0');
+  const s1 = p.locator('.hs:not(#shop-banner-card .hs) >> nth=0');
   await s1.locator('label:has-text("Text position") + select').selectOption('center');
   await s1.locator('label:has-text("Photo focus") + select').selectOption('top');
   await p.evaluate(() => { const r = document.querySelector('.hs input[type=range]'); r.value = 0; r.dispatchEvent(new Event('input')); });
@@ -80,16 +80,16 @@ const { chromium } = require(process.env.PW);
   await p.evaluate(() => { heroLinkType(0, 'shop'); });
 
   // hide / delete
-  await p.evaluate(() => { document.querySelectorAll('.hs')[1].querySelector('.toggle').click(); });
+  await p.evaluate(() => { document.querySelectorAll('.hs:not(#shop-banner-card .hs)')[1].querySelector('.toggle').click(); });
   ok('hiding a slide → store back to 1 slide, no slideshow controls', await p.evaluate(() => document.querySelectorAll('#homeHero .hero-slide').length === 1 && !document.querySelector('.hero-dots') && !!document.querySelector('.hs.off')));
-  await p.evaluate(() => { document.querySelectorAll('.hs')[0].querySelector('.toggle').click(); });
+  await p.evaluate(() => { document.querySelectorAll('.hs:not(#shop-banner-card .hs)')[0].querySelector('.toggle').click(); });
   ok('all slides hidden → hero removed + warning in admin', await p.evaluate(() => document.getElementById('homeHero').innerHTML.trim() === '' && /No visible slide/.test(document.getElementById('adminContent').innerText)));
-  await p.evaluate(() => { document.querySelectorAll('.hs')[0].querySelector('.toggle').click(); });
-  await p.evaluate(() => { document.querySelectorAll('.hs')[1].querySelector('.toggle').click(); });
+  await p.evaluate(() => { document.querySelectorAll('.hs:not(#shop-banner-card .hs)')[0].querySelector('.toggle').click(); });
+  await p.evaluate(() => { document.querySelectorAll('.hs:not(#shop-banner-card .hs)')[1].querySelector('.toggle').click(); });
   await p.evaluate(() => heroMove(1, -1));
   ok('reorder slides', await p.evaluate(() => db.home.hero.slides[0].title === 'Wedding Season' && document.querySelector('#homeHero h1').textContent === 'Wedding Season'));
   await p.evaluate(() => heroDel(0));
-  ok('delete slide', await p.evaluate(() => db.home.hero.slides.length === 1 && db.home.hero.slides[0].title === 'The Art of Slow Weaving' && document.querySelectorAll('.hs').length === 1));
+  ok('delete slide', await p.evaluate(() => db.home.hero.slides.length === 1 && db.home.hero.slides[0].title === 'The Art of Slow Weaving' && document.querySelectorAll('.hs:not(#shop-banner-card .hs)').length === 1));
 
   // ===== categories =====
   await p.evaluate(() => { document.querySelectorAll('.hc-chk')[0].click(); });
