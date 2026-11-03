@@ -2,6 +2,17 @@ import { respond } from './assistant.mjs';
 import { Catalogue } from './catalogue.mjs';
 import { heldMap } from './orders.mjs';
 
+// A customer who writes (in English, Hindi or Telugu) that they want their data deleted, to see it, to withdraw consent or to complain about privacy
+// gets a numbered privacy request straight away: the shop must answer these within 30 days whatever channel they use.
+export function privacyIntent(text) {
+  const t = String(text || '');
+  if (/\b(delete|erase|remove|forget)\b.{0,30}\b(my\s+)?(data|details|account|number|information|profile|me)\b/i.test(t) || /(डेटा|जानकारी|नंबर).{0,25}(हटा|मिटा|डिलीट)/.test(t) || /(డేటా|సమాచారం|నంబర్).{0,25}(తొలగ|డిలీట్)/.test(t)) return 'erase';
+  if (/\b(what|which)\b.{0,30}\b(data|information)\b.{0,30}\b(have|hold|store|stored|collected|keep)\b/i.test(t) || /\b(see|copy of|download|send me)\b.{0,20}\bmy\s+(data|information)\b/i.test(t)) return 'access';
+  if (/\b(withdraw|take back|cancel)\b.{0,20}\bconsent\b/i.test(t)) return 'withdraw';
+  if (/\bnominate\b/i.test(t)) return 'nominate';
+  if (/\b(privacy|data protection|dpdp)\b.{0,25}\b(complaint|grievance|request|issue)\b/i.test(t)) return 'grievance';
+  return null;
+}
 const OPT_OUT = /^\s*(stop|unsubscribe|opt[\s-]?out|cancel messages?)\s*[.!]*\s*$/i;
 const OPT_IN = /^\s*(start|subscribe|unstop)\s*[.!]*\s*$/i;
 const DAY = 24 * 3600 * 1000;
@@ -92,7 +103,9 @@ export class Pipeline {
     if (OPT_OUT.test(text)) { store.setOptOut(phone, true); const cc = store.s.carts?.[phone]; if (cc) { cc.items = []; cc.name = ''; cc.consent = { granted: false }; } this.log(conv, 'in', text); await this.say(sink, conv, MSG.optedOut); store.save(); return { optOut: true }; }
     if (OPT_IN.test(text) && store.isOptedOut(phone)) { store.setOptOut(phone, false); this.log(conv, 'in', text); await this.say(sink, conv, MSG.optedIn); store.save(); return { optIn: true }; }
     if (store.isOptedOut(phone)) return { skipped: 'opted-out' };
-    if (!test) this.wa.markRead(msg.id); // blue ticks + typing dots, only for people we may talk to
+    if (!test) this.wa.markRead(msg.id);
+    const pvIntent = this.privacy && !test ? privacyIntent(text) : null;
+    if (pvIntent) { const t = this.privacy.addTicket({ type: pvIntent, name: conv.name || 'WhatsApp customer', contact: phone, message: text.slice(0, 500), channel: 'whatsapp' }, '', { manual: true }); this.log(conv, 'in', text); await this.say(sink, conv, `Thank you. We have noted your privacy request (number ${t.id}). The shop owner will reply to you here within 30 days. For your safety we first check that it is really you before we show or erase anything.`); try { this.onPrivacy && this.onPrivacy(t); } catch { /* the request is saved anyway */ } store.save(); return { privacy: t.id }; } // blue ticks + typing dots, only for people we may talk to
 
     this.log(conv, 'in', text || `[${msg.type}]`); conv.unread = (conv.unread || 0) + 1;
 

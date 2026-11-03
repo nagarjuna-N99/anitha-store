@@ -3,7 +3,7 @@
 > **STANDING RULE (owner's instruction, 23 Oct 2026):** this record and the `HOW-IT-WORKS/` folder are updated **after every change or update**, in the same step as the change, never later. A change is not finished until (1) the code is tested, (2) a dated entry is added to the Change Log below, (3) any affected `HOW-IT-WORKS/` page is corrected, (4) `./check-record.sh` has been run (it fails if the record or how-it-works is behind the code).
 > Also standing: the owner wants chats remembered for later use; this record is that memory for the project.
 
-**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 462 automated checks) · **Browser test suites:** 24 (see §6)
+**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 499 automated checks) · **Browser test suites:** 25 (see §6)
 
 ---
 
@@ -111,6 +111,7 @@ Owner's guidance: *"we will setup everything after we host it"* — real hosting
 | `order-test.cjs` | 11 | paid WhatsApp orders imported into the store |
 | `coupon-test.cjs` | 18 | coupon rules in store and assistant |
 | `accessories-test.cjs` | 22 | accessory tabs/categories, filters and search per kind, Complete-the-look rows, Category Manager, product form groups, assistant export type |
+| `dpdp2-test.cjs` | 22 | website orders to the owner (accept, decline, retry queue), checking who is asking, logging a phone request, provider ticks, erased count, notice archive, Dashboard reminder, helper logins |
 | `admin-app-test.cjs` | 35 | the real owner app against the real server: account setup, sign-in, wrong-password and lockout screens, 2-step sign-in, saving and merging, the public website, session end, backup, Instagram dialog / schedule / post now |
 | `drafts-ready-test.cjs` | 22 | Ready-to-post drafts: details dialog, built-in and Claude AI fill, readiness, filters, Post now / Post all ready, SKU clash, Fill all |
 | `ai-test.cjs` | 35 | the ten AI helpers: built-in and Claude modes, privacy of what is sent, validation of AI fixes, switches, product form, reviews |
@@ -130,6 +131,13 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**3 Nov 2026 (DPDP round 2: website orders, identity check, erased list, helpers)**
+- Plain-words notes: HOW-IT-WORKS/21-privacy-round-2-what-changed.md. Website orders now reach the server (`wa-assistant/src/weborders.mjs`, `POST /public/order`) and show in Orders → "New from the website" (accept / decline); payment stays manual and pending. Site keeps a retry queue (`ap_pending_orders`).
+- Privacy: identity check before data/erase (server-enforced, 403 otherwise); log a request from phone/WhatsApp/Instagram/in person/email; WhatsApp assistant logs "delete my data" messages; provider erase tick-list; erased customers kept only as salted hashes and removed again on restore (`erase.mjs`, generated from `shared/erase-core.js`); notice archive; email-required checklist and Dashboard banner; overdue-request warnings; erase now also removes review photos, address history, gift data and log lines.
+- Team logins (owner / helper) with route-level limits.
+- Tests: server 499; new `tests/dpdp2-test.cjs` (22 checks). Not tested: real WhatsApp, a real mailbox, Render, a real breach. Limits: helpers' app still loads shop data; the site's customer sign-in stays in the visitor's browser.
+
 **11 Nov 2026 (DPDP Act: privacy notice, rights, erase, breach register, retention)**
 - Built from the owner's list (see HOW-IT-WORKS/20-privacy-dpdp.md). **Policy version 2.0**, notice version 2.0. The official Act text could not be opened in the session (sites blocked), so the list came from published summaries and general knowledge: have a lawyer/CA confirm.
 - **Customers**: an itemised **privacy notice in English, తెలుగు and हिन्दी** (sign-in, checkout, footer, My Account, and a one-time "updated notice" screen for existing customers with their message choices); **"I am 18 or older"** required at sign-in and checkout and recorded; consent log gets `age18` and `notice` rows; **My Account → Your privacy rights** (download my data, see what you hold, nominate someone, complain, erase my account) and a public **"Your privacy rights" form**; every request gets a number and a **30-day** reply date and reaches the owner (`POST /public/rights`, email alert when email is set up). Privacy policy rewritten (processors, AI service outside India, retention, rights, breach promise, age, the Board).

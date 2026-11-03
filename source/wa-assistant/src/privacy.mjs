@@ -3,33 +3,58 @@
 // app holds (customers, orders, invoices) is handled in the owner app itself; this module covers the server side.
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
+import { eraseCustomerCore, eDigits } from './erase.mjs';
 
 const DAY = 86400_000, D10 = p => String(p || '').replace(/\D/g, '').slice(-10);
+export const CHANNELS = { site: 'Website form', whatsapp: 'WhatsApp chat', phone: 'Phone call', instagram: 'Instagram', person: 'In person', email: 'Email' };
 export const RIGHT_TYPES = { access: 'See my data', correct: 'Correct my data', erase: 'Erase my data', withdraw: 'Withdraw my consent', nominate: 'Nominate someone', grievance: 'Complaint or question' };
 export const TICKET_DAYS = 30;          // what we promise; the law allows longer, we do not use it
 export const BOARD_HOURS = 72;          // report a breach to the Data Protection Board within 72 hours of finding it
 const PII_KEYS = ['customerName', 'name', 'address', 'street', 'city', 'pincode', 'email', 'phone', 'shipTo', 'contact'];
 
 export class Privacy {
-  constructor(dir, now = () => Date.now()) { this.dir = dir; this.now = now; this.f = { rights: path.join(dir, 'rights.json'), breaches: path.join(dir, 'breaches.json'), state: path.join(dir, 'privacy-state.json') }; this.rate = new Map(); }
+  constructor(dir, now = () => Date.now()) { this.dir = dir; this.now = now; this.f = { rights: path.join(dir, 'rights.json'), breaches: path.join(dir, 'breaches.json'), state: path.join(dir, 'privacy-state.json'), erased: path.join(dir, 'erased.json') }; this.rate = new Map(); this.verified = new Map(); this.codes = new Map(); }
   read(k, d) { try { return JSON.parse(fs.readFileSync(this.f[k], 'utf8')); } catch { return d; } }
   write(k, v) { const t = this.f[k] + '.tmp'; fs.writeFileSync(t, JSON.stringify(v), { mode: 0o600 }); fs.renameSync(t, this.f[k]); }
   // ---- rights requests ----
   limited(ip) { const t = this.now(), a = (this.rate.get(ip) || []).filter(x => t - x < 3600_000); a.push(t); this.rate.set(ip, a); if (this.rate.size > 3000) this.rate.clear(); return a.length > 5; }
-  addTicket({ type, name, contact, message }, ip = '') {
+  addTicket({ type, name, contact, message, channel = 'site' }, ip = '', { manual = false } = {}) {
     if (!RIGHT_TYPES[type]) throw Object.assign(new Error('Choose what you would like to do.'), { code: 422 });
     name = String(name || '').replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, 80); contact = String(contact || '').replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, 120); message = String(message || '').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '').trim().slice(0, 1500);
     if (!name) throw Object.assign(new Error('Please tell us your name.'), { code: 422 }); if (!(contact.includes('@') && contact.length >= 5) && contact.replace(/\D/g, '').length < 7) throw Object.assign(new Error('Please give a phone number or e-mail address where we can reach you.'), { code: 422 });
-    if (this.limited(ip || 'x')) throw Object.assign(new Error('Too many requests from this device. Please try again in an hour, or contact us directly.'), { code: 429 });
+    if (!manual && this.limited(ip || 'x')) throw Object.assign(new Error('Too many requests from this device. Please try again in an hour, or contact us directly.'), { code: 429 });
     const all = this.read('rights', { n: 0, tickets: [] }); if (all.tickets.filter(t => t.status === 'new').length >= 300) throw Object.assign(new Error('We cannot take more requests right now. Please contact us directly.'), { code: 503 });
-    all.n++; const at = this.now(), t = { id: 'PR-' + String(all.n).padStart(4, '0'), type, name, contact, message, status: 'new', createdAt: new Date(at).toISOString(), due: new Date(at + TICKET_DAYS * DAY).toISOString(), notes: [] }; all.tickets.unshift(t); this.write('rights', all); return t;
+    all.n++; const at = this.now(), t = { id: 'PR-' + String(all.n).padStart(4, '0'), type, name, contact, message, status: 'new', channel: CHANNELS[channel] ? channel : 'site', providers: {}, createdAt: new Date(at).toISOString(), due: new Date(at + TICKET_DAYS * DAY).toISOString(), notes: [] }; all.tickets.unshift(t); this.write('rights', all); return t;
   }
   tickets() { return this.read('rights', { tickets: [] }).tickets; }
-  updateTicket(id, { status, note }) {
+  updateTicket(id, { status, note, providers }) {
     const all = this.read('rights', { n: 0, tickets: [] }), t = all.tickets.find(x => x.id === String(id)); if (!t) throw Object.assign(new Error('Request not found.'), { code: 404 });
+    if (providers && typeof providers === 'object') { for (const k of ['wa', 'ig', 'pay', 'ai', 'host', 'courier', 'mail']) if (k in providers) t.providers[k] = !!providers[k]; }
     if (status !== undefined) { if (!['new', 'working', 'done', 'refused'].includes(status)) throw Object.assign(new Error('Unknown status.'), { code: 422 }); t.status = status; if (status === 'done' || status === 'refused') t.closedAt = new Date(this.now()).toISOString(); }
     if (note) t.notes.push({ at: new Date(this.now()).toISOString(), text: String(note).slice(0, 500) }); this.write('rights', all); return t;
   }
+
+  // ---- people who were erased: kept as one-way hashes, so a restored old backup can never bring them back ----
+  erasedData() { const d = this.read('erased', null); return d || { salt: crypto.randomBytes(16).toString('hex'), items: [] }; }
+  hashPhone(d, phone) { return crypto.createHash('sha256').update(d.salt + '|' + eDigits(phone)).digest('hex'); }
+  erasedAdd(phone) { if (eDigits(phone).length < 7) return false; const d = this.erasedData(), h = this.hashPhone(d, phone); if (!d.items.some(x => x.h === h)) d.items.push({ h, at: new Date(this.now()).toISOString() }); this.write('erased', d); return true; }
+  erasedCount() { return this.erasedData().items.length; }
+  // run on every restore / import: erase again whoever was erased before the backup was made
+  applyErasures(db, today = new Date(this.now() + 330 * 60_000).toISOString().slice(0, 10)) {
+    const d = this.erasedData(); if (!d.items.length || !db || !Array.isArray(db.users)) return 0; const set = new Set(d.items.map(x => x.h)); let n = 0;
+    for (const u of [...db.users]) if (eDigits(u.phone).length >= 7 && set.has(this.hashPhone(d, u.phone))) { eraseCustomerCore(db, u, today); n++; }
+    return n;
+  }
+  // ---- who is asking? the owner must check before showing or erasing anyone's data ----
+  isVerified(phone) { const k = eDigits(phone), v = this.verified.get(k); return !!v && v.until > this.now(); }
+  verifyManual(phone, method, note = '') { const k = eDigits(phone); if (k.length < 7) throw Object.assign(new Error('Enter the phone number.'), { code: 422 }); if (!['called-back', 'matched-details', 'signed-in', 'in-person'].includes(method)) throw Object.assign(new Error('Choose how you checked.'), { code: 422 }); if (String(note).trim().length < 3) throw Object.assign(new Error('Write a short note of what you checked.'), { code: 422 }); const until = this.now() + 30 * 60_000; this.verified.set(k, { until, method }); return { until: new Date(until).toISOString(), method }; }
+  codeStart(phone) { const k = eDigits(phone); if (k.length < 7) throw Object.assign(new Error('Enter the phone number.'), { code: 422 }); const code = String(100000 + crypto.randomInt(900000)); this.codes.set(k, { h: crypto.createHash('sha256').update(code).digest('hex'), exp: this.now() + 10 * 60_000, tries: 0 }); return code; }
+  codeCheck(phone, code) { const k = eDigits(phone), c = this.codes.get(k); if (!c || c.exp < this.now()) throw Object.assign(new Error('That code has expired. Send a new one.'), { code: 422 }); c.tries++; if (c.tries > 5) { this.codes.delete(k); throw Object.assign(new Error('Too many wrong codes. Send a new one.'), { code: 429 }); } if (crypto.createHash('sha256').update(String(code || '').trim()).digest('hex') !== c.h) throw Object.assign(new Error('That code is not right.'), { code: 422 }); this.codes.delete(k); const until = this.now() + 30 * 60_000; this.verified.set(k, { until, method: 'code-on-whatsapp' }); return { until: new Date(until).toISOString(), method: 'code-on-whatsapp' }; }
+  // ---- reminders about requests that are late or nearly late ----
+  attention(days = 5) { const t = this.now(), open = this.tickets().filter(x => x.status === 'new' || x.status === 'working'), late = open.filter(x => Date.parse(x.due) < t), soon = open.filter(x => Date.parse(x.due) >= t && Date.parse(x.due) - t <= days * DAY); return { open: open.length, late, soon }; }
+  // closed requests are kept three years as proof, then the personal details in them are blanked
+  sweepTickets(years = 3) { const all = this.read('rights', null); if (!all) return 0; const cut = this.now() - years * 365.25 * DAY; let n = 0; for (const t of all.tickets) if (t.closedAt && Date.parse(t.closedAt) < cut && t.name !== '(erased)') { t.name = '(erased)'; t.contact = ''; t.message = ''; t.notes = []; n++; } if (n) this.write('rights', all); return n; }
   // ---- breach register ----
   breaches() { return this.read('breaches', { n: 0, items: [] }).items; }
   addBreach({ what, dataTypes, affected, detectedAt, cause }) {

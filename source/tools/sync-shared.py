@@ -8,6 +8,7 @@ root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BLOCKS = [
   ('pincode-core', 'pincode.mjs', 'PIN_STATES, STATE_ALIASES, normState, statesOfPin, stateOfCity, addressCheck, DEFAULT_DELIVERY, addWorkingDays, fmtShortDate, deliveryEstimate'),
   ('slip-core', 'slip.mjs', 'packingSlipHtml'),
+  ('erase-core', 'erase.mjs', 'ANON, eDigits, anonOrderCore, scrubLogsCore, eraseCustomerCore, anonymiseExpiredCore'),
 ]
 p = os.path.join(root, 'anitha-store.html'); html = open(p, encoding='utf-8').read()
 for name, mjs, names in BLOCKS:

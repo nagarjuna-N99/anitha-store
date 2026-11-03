@@ -26,7 +26,7 @@ export class AdminAuth {
   constructor({ dir, setupToken, secureCookie = true, now = () => Date.now(), idleMs = 30 * 60_000, absoluteMs = 8 * 3600_000 }) {
     this.file = path.join(dir, 'admin.json'); this.auditFile = path.join(dir, 'admin-audit.log'); this.setupToken = String(setupToken || ''); this.secure = secureCookie; this.now = now; this.idleMs = idleMs; this.absMs = absoluteMs;
     fs.mkdirSync(dir, { recursive: true }); this.sessions = new Map(); this.fails = new Map();   // key (ip:… or acct) -> {n, first, lockedUntil}
-    this.s = { user: null }; try { this.s = JSON.parse(fs.readFileSync(this.file, 'utf8')); } catch { /* first run */ }
+    this.s = { user: null, staff: [] }; try { this.s = { staff: [], ...JSON.parse(fs.readFileSync(this.file, 'utf8')) }; } catch { /* first run */ }
   }
   save() { const t = this.file + '.tmp'; fs.writeFileSync(t, JSON.stringify(this.s), { mode: 0o600 }); fs.renameSync(t, this.file); }
   audit(ev, ip, ok = true, extra = '') { try { fs.appendFileSync(this.auditFile, JSON.stringify({ t: new Date(this.now()).toISOString(), ev, ip, ok, extra: String(extra).slice(0, 120) }) + '\n', { mode: 0o600 }); } catch { /* disk full: never break login */ } }
@@ -34,7 +34,7 @@ export class AdminAuth {
   get configured() { return !!this.s.user; }
   get twoFactorOn() { return !!(this.s.user && this.s.user.totp && this.s.user.totp.enabled); }
   hash(pw, salt = crypto.randomBytes(16)) { return { salt: salt.toString('base64'), hash: crypto.scryptSync(String(pw), salt, 64, SCRYPT).toString('base64') }; }
-  checkPw(pw) { const u = this.s.user; if (!u) return false; const h = crypto.scryptSync(String(pw), Buffer.from(u.salt, 'base64'), 64, SCRYPT); return crypto.timingSafeEqual(h, Buffer.from(u.hash, 'base64')); }
+  checkPw(pw, who = null) { const u = who || this.s.user; if (!u) return false; const h = crypto.scryptSync(String(pw), Buffer.from(u.salt, 'base64'), 64, SCRYPT); return crypto.timingSafeEqual(h, Buffer.from(u.hash, 'base64')); }
   static passwordProblem(pw) {
     pw = String(pw || ''); if (pw.length < 12) return 'Use at least 12 characters.'; if (pw.length > 200) return 'That password is too long.';
     if (COMMON.has(pw.toLowerCase())) return 'That password is too common.'; if (new Set(pw).size < 6) return 'Use more different characters.';
@@ -55,22 +55,23 @@ export class AdminAuth {
     this.s.user = { name: 'owner', ...this.hash(password), createdAt: new Date(this.now()).toISOString(), totp: null }; this.save(); this.audit('setup', ip, true); return { code: 200 };
   }
   // ---- login ----
-  login({ password, code }, ip, ua = '') {
-    const ik = 'ip:' + ip, ak = 'acct';
+  login({ name, password, code }, ip, ua = '') {
+    const nm = String(name || '').trim().toLowerCase(), staff = nm && nm !== 'owner' ? this.s.staff.find(x => x.name === nm) : null, ik = 'ip:' + ip, ak = nm && nm !== 'owner' ? 'acct:' + nm : 'acct';
     if (this.locked(ik) || this.locked(ak)) { this.audit('login', ip, false, 'locked'); return { code: 429, error: 'Too many wrong attempts. Try again in 15 minutes.', retryAfter: Math.ceil(this.retryAfter(ik, ak) / 1000) }; }
     const bad = why => { this.fail(ik, 5); this.fail(ak, 12); this.audit('login', ip, false, why); return { code: 401, error: 'Wrong password or code.' }; };
     if (!this.configured) { this.audit('login', ip, false, 'not set up'); return { code: 401, error: 'Wrong password or code.' }; }
+    if (nm && nm !== 'owner') { if (!staff || !this.checkPw(password, staff)) return bad('team password'); this.clear(ik); this.clear(ak); const s = this.newSession(ip, ua, staff.name, 'staff'); this.audit('login', ip, true, 'team: ' + staff.name); return { code: 200, ...s }; }
     if (!this.checkPw(password)) return bad('password');
     if (this.twoFactorOn) { if (!this.useTotp(code)) return bad('2fa'); }
-    this.clear(ik); this.clear(ak); const s = this.newSession(ip, ua); this.audit('login', ip, true); return { code: 200, ...s };
+    this.clear(ik); this.clear(ak); const s = this.newSession(ip, ua, 'owner', 'owner'); this.audit('login', ip, true); return { code: 200, ...s };
   }
   useTotp(code) {
     const t = this.s.user.totp; code = String(code || '').replace(/\s/g, ''); if (!/^\d{6}$/.test(code)) return false; const step = Math.floor(this.now() / 30_000);
     for (const d of [0, -1, 1]) { const st = step + d; if (eq(totp(t.secret, st), code)) { if (st <= (t.lastStep || 0)) return false; t.lastStep = st; this.save(); return true; } } return false;
   }
-  newSession(ip, ua) {
+  newSession(ip, ua, user = 'owner', role = 'owner') {
     const id = b64u(crypto.randomBytes(32)), csrf = b64u(crypto.randomBytes(24)), t = this.now();
-    this.sessions.set(sha(id).toString('hex'), { csrf, created: t, last: t, ip, ua: String(ua).slice(0, 120) });
+    this.sessions.set(sha(id).toString('hex'), { csrf, created: t, last: t, ip, ua: String(ua).slice(0, 120), user, role });
     if (this.sessions.size > 20) { const oldest = [...this.sessions.entries()].sort((a, b) => a[1].last - b[1].last)[0]; this.sessions.delete(oldest[0]); }
     return { sessionId: id, csrf };
   }
@@ -94,10 +95,20 @@ export class AdminAuth {
     }
     return { code: 200, session: s };
   }
+  // ---- team logins: the owner can give a helper their own name and password. A helper cannot open the Privacy tab, backups, keys, email or the team list. ----
+  teamList() { return this.s.staff.map(x => ({ name: x.name, role: x.role || 'staff', createdAt: x.createdAt })); }
+  teamAdd({ name, password }, ip) {
+    const nm = String(name || '').trim().toLowerCase(); if (!/^[a-z0-9._-]{3,30}$/.test(nm) || nm === 'owner') return { code: 422, error: 'Use 3 to 30 letters, digits, dots or dashes for the name (not "owner").' };
+    if (this.s.staff.some(x => x.name === nm)) return { code: 409, error: 'That name is already used.' }; if (this.s.staff.length >= 10) return { code: 422, error: 'You can add up to 10 people.' };
+    const p = AdminAuth.passwordProblem(password); if (p) return { code: 400, error: p }; this.s.staff.push({ name: nm, role: 'staff', ...this.hash(password), createdAt: new Date(this.now()).toISOString() }); this.save(); this.audit('team-add', ip, true, nm); return { code: 200 };
+  }
+  teamRemove({ name }, ip) { const nm = String(name || '').toLowerCase(), i = this.s.staff.findIndex(x => x.name === nm); if (i < 0) return { code: 404, error: 'Not found.' }; this.s.staff.splice(i, 1); this.save(); for (const [k, v] of [...this.sessions.entries()]) if (v.user === nm) this.sessions.delete(k); this.audit('team-remove', ip, true, nm); return { code: 200 }; }
+  teamPassword({ name, password }, ip) { const nm = String(name || '').toLowerCase(), u = this.s.staff.find(x => x.name === nm); if (!u) return { code: 404, error: 'Not found.' }; const p = AdminAuth.passwordProblem(password); if (p) return { code: 400, error: p }; Object.assign(u, this.hash(password)); this.save(); for (const [k, v] of [...this.sessions.entries()]) if (v.user === nm) this.sessions.delete(k); this.audit('team-password', ip, true, nm); return { code: 200 }; }
   // ---- password and two-factor management (all need the current password) ----
   changePassword({ current, next }, req, ip) {
-    if (!this.checkPw(current)) { this.fail('ip:' + ip, 5); this.audit('password', ip, false, 'wrong current'); return { code: 401, error: 'The current password is not right.' }; }
-    const p = AdminAuth.passwordProblem(next); if (p) return { code: 400, error: p }; Object.assign(this.s.user, this.hash(next)); this.save();
+    const sess = this.sessionFrom(req), me = sess && sess.role === 'staff' ? this.s.staff.find(x => x.name === sess.user) : this.s.user;
+    if (!this.checkPw(current, me)) { this.fail('ip:' + ip, 5); this.audit('password', ip, false, 'wrong current'); return { code: 401, error: 'The current password is not right.' }; }
+    const p = AdminAuth.passwordProblem(next); if (p) return { code: 400, error: p }; Object.assign(me, this.hash(next)); this.save();
     const keep = this.sessionFrom(req); for (const k of [...this.sessions.keys()]) if (!keep || k !== keep.key) this.sessions.delete(k); this.audit('password', ip, true); return { code: 200 };
   }
   twoFactorStart({ password }, ip) {

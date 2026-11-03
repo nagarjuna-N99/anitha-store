@@ -48,8 +48,8 @@ Browser tests need Playwright (`PW=$(npm root -g)/playwright`) and a Chromium. T
 Required to start the owner app: `DATA_DIR`, `ADMIN_SETUP_TOKEN` (first sign-up and encryption key: do not change it later), `PUBLIC_URL` (the server's own **https** address, no trailing slash), `ALLOWED_ORIGINS` (the website's origin), `SITE_URL`. Optional: `ANTHROPIC_API_KEY` (or paste it in the app: Settings → Security & backup), `CLAUDE_MODEL`, `IG_USER_ID`, `IG_ACCESS_TOKEN`, `IG_DAILY_CAP`, `WA_PHONE_NUMBER_ID`, `WA_ACCESS_TOKEN`, `WA_APP_SECRET`, `WA_VERIFY_TOKEN`, `OWNER_PHONE`, the template names (`ORDER_SHIPPED_TEMPLATE` …), `PAYMENT_PROVIDER`, `RAZORPAY_*`, `COOKIE_SECURE`, `ADMIN_ALLOWED_IPS`, `PINCODE_LOOKUP`, `FFMPEG_PATH`. The full list with defaults is `wa-assistant/src/config.mjs` and `.env.example`.
 
 ## Server routes
-Public: `GET /health`, `GET /public/shop`, `POST /public/hit`, `POST /public/rights` (privacy requests), `GET /media/<id>.jpg|.mp4`, `GET /admin` (the owner app page), WhatsApp `GET|POST /webhook`, `POST /payments/webhook`, `POST /cart/sync`, `/inbox` and `/test` pages.
-Owner (session + CSRF): `/admin/api/` `state, setup, login, logout, db (GET/PUT), version, import, password, 2fa/*, audit, ai-key (+/remove), email (+/remove, /test), growth (+/plan, /done), report/send (kind), report/preview (kind), report/prefs, privacy (+/ticket, /breach, /access, /erase, /sweep, /log), notify-tracking, social/(status, media, plan, post, cancel, now, retry), video/(upload, job, review)`.
+Public: `GET /health`, `GET /public/shop`, `POST /public/hit`, `POST /public/rights` (privacy requests), `POST /public/order` (website orders; text/plain JSON, origin-checked, rate-limited), `GET /media/<id>.jpg|.mp4`, `GET /admin` (the owner app page), WhatsApp `GET|POST /webhook`, `POST /payments/webhook`, `POST /cart/sync`, `/inbox` and `/test` pages.
+Owner (session + CSRF): `/admin/api/` `web-orders (+/update), team (+/add, /remove, /password; owner only), privacy/{verify-start, verify, ticket-new, summary}, state, setup, login, logout, db (GET/PUT), version, import, password, 2fa/*, audit, ai-key (+/remove), email (+/remove, /test), growth (+/plan, /done), report/send (kind), report/preview (kind), report/prefs, privacy (+/ticket, /breach, /access, /erase, /sweep, /log), notify-tracking, social/(status, media, plan, post, cancel, now, retry), video/(upload, job, review)`.
 Assistant (bearer `ADMIN_TOKEN` or the owner session): `/api/ai`, `/api/ai/reply`, `/api/inbox*`, `/api/orders/*`, `/api/carts*`, `/api/catalogue`, `/api/status`, `/api/test-chat`.
 
 ## The shop data object (`db`)
@@ -71,3 +71,7 @@ The repository has: the public site (`index.html`, `404.html`, logos), `render.y
 
 ## Not built yet (ideas the owner has asked about or deferred)
 Website checkout that creates orders on the server with a real payment gateway; customer login and reviews on the hosted site; automatic delivery status from India Post (no free public feed); on-screen captions inside the app (editing is done in CapCut/InShot, the app analyses); Instagram analytics beyond what the Graph API gives.
+
+
+## Round 2 files (3 Nov 2026)
+`shared/erase-core.js` -> `wa-assistant/src/erase.mjs` (also pasted in `anitha-store.html`), `wa-assistant/src/weborders.mjs` (website order inbox), team logins in `adminauth.mjs`. Setting `PRIVACY_OTP_TEMPLATE` (name of the approved WhatsApp template used for the verification code; default `otp_code`). Plain-words notes: guide 21.

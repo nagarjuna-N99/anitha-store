@@ -32,7 +32,7 @@ India's **Digital Personal Data Protection Act, 2023** and the **DPDP Rules, 202
 4. **Yearly**: read the breach steps again (tick the box), review the list of companies, ask your lawyer whether anything in the law or the Rules changed.
 
 ## Limits you should know
-- **Customer accounts on the public website are kept in each visitor's own browser** until stage 2 (website checkout connected to the server) is built. So "download my data" and "erase my account" on the site work on that device's copy and send a numbered request to you; the real erasing of what the owner app holds is done by you in the Privacy tab. The server-side chats, carts and orders are handled by the server routes.
+- **Customer accounts on the public website are kept in each visitor's own browser** (orders now reach the server since round 2, but the account itself stays in the browser; see guide 21). So "download my data" and "erase my account" on the site work on that device's copy and send a numbered request to you; the real erasing of what the owner app holds is done by you in the Privacy tab. The server-side chats, carts and orders are handled by the server routes.
 - **Disk encryption** of the hosting machine is a host setting, not something this app can do: when you move away from Render, choose a host with an encrypted disk (or encrypted volume) and note it in the checklist.
 - **GST/tax record periods**: the app uses 6 years; confirm with your CA.
 - Telugu and Hindi texts should be checked by a native speaker.

@@ -23,6 +23,7 @@ import { SecretStore } from './src/secrets.mjs';
 import { VideoLab } from './src/video.mjs';
 import { Analytics, istDay } from './src/analytics.mjs';
 import { Privacy, breachNotices } from './src/privacy.mjs';
+import { WebOrders } from './src/weborders.mjs';
 import { collect, renderEmail, localPlan } from './src/report.mjs';
 import { smtpSend, smtpVerify, emailOk } from './src/mailer.mjs';
 
@@ -51,6 +52,7 @@ export function createApp(overrides = {}, deps = {}) {
   const auth = deps.auth || new AdminAuth({ dir: cfg.dataDir, setupToken: cfg.adminSetupToken, secureCookie: cfg.cookieSecure, ...(deps.authOpts || {}) });
   const shop = deps.shop || new ShopData(cfg.dataDir), media = deps.media || new MediaStore(cfg.dataDir), ig = deps.ig || new IgClient(cfg, deps.fetch);
   const videos = deps.videos || new VideoLab({ dir: cfg.dataDir, media });
+  const weborders = deps.weborders || new WebOrders(cfg.dataDir, deps.now);
   const privacy = deps.privacy || new Privacy(cfg.dataDir, deps.now);
   const analytics = deps.analytics || new Analytics(cfg.dataDir, deps.now);
   const social = deps.social || new SocialQueue({ dir: cfg.dataDir, ig, media, cfg, now: deps.now });
@@ -59,6 +61,7 @@ export function createApp(overrides = {}, deps = {}) {
   const provider = deps.provider || makeProvider(cfg, deps.fetch);
   const orders = new Orders({ cfg, store, provider, say: (...a) => pipeline.sendSmart(...a), alertOwner: e => pipeline.notifyOwner(e, e.conv.phone.startsWith('test-')), makeCatalogue: () => pipeline.catalogue(), fetchImpl: deps.fetch });
   pipeline.orders = orders;
+  pipeline.privacy = privacy; pipeline.onPrivacy = t => notifyOwnerMail(`New privacy request ${t.id}: ${t.type}`, `A customer asked on WhatsApp.\n\nRequest: ${t.id} (${t.type})\nFrom: ${t.name}, ${t.contact}\nMessage: ${t.message}\n\nPlease reply by ${t.due.slice(0, 10)}. Open the owner app → Privacy tab.`);
   // Payment provider notifications. The signature is ALWAYS checked: an unsigned "paid" message can never mark an order paid.
   const onPaymentWebhook = async (raw, headers) => {
     if (!provider.verifyWebhook(raw, headers)) return 401;
@@ -135,6 +138,7 @@ export function createApp(overrides = {}, deps = {}) {
   const clockNow = () => (deps.now ? deps.now() : Date.now());
   const smtpCfg = () => { try { return JSON.parse(secrets.get('smtp') || 'null'); } catch { return null; } };
   const smtpMeta = () => { const c = smtpCfg(), m = secrets.meta('smtp'); return c ? { configured: true, host: c.host, port: c.port, secure: !!c.secure, user: c.user, from: c.from, to: c.to, hasPass: !!c.pass, updatedAt: m.updatedAt || null } : { configured: false }; };
+  const notifyOwnerMail = async (subject, text) => { const c = smtpCfg(); if (!c) return false; try { await smtpSend(c, { subject, text, html: '<pre style="font:14px Arial">' + text.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</pre>' }); return true; } catch { return false; } };
   const reportFile = path.join(cfg.dataDir, 'reports.json'), reportState = () => { try { return JSON.parse(fs.readFileSync(reportFile, 'utf8')); } catch { return {}; } }, saveReportState = o => { const t = reportFile + '.tmp'; fs.writeFileSync(t, JSON.stringify(o), { mode: 0o600 }); fs.renameSync(t, reportFile); };
   const growthCache = new Map();
   const addD = (ymd, n) => { const d = new Date(ymd + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
@@ -190,7 +194,7 @@ export function createApp(overrides = {}, deps = {}) {
   // once a day, remember the follower count so growth can be shown
   const snapshotTick = async () => { try { if (!ig.configured) return; const k = istDay(clockNow()); if (analytics.s.ig[k]) { analytics.save(); return; } const a = await ig.call('GET', cfg.ig.userId, { fields: 'followers_count,follows_count,media_count' }); analytics.snapshotIg({ followers: a.followers_count, follows: a.follows_count, media: a.media_count }); analytics.save(); } catch { analytics.save(); } };
 
-  const admin = adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, breachNotices, store, runSweep: () => { const r = Privacy.sweepStore(store, cfg.privacy, clockNow()); privacy.saveState({ ...privacy.state(), lastSweep: istDay(clockNow()), last: r }); return r; }, notifyOwner: async (subject, text) => { const c = smtpCfg(); if (!c) return false; try { await smtpSend(c, { subject, text, html: '<pre style="font:14px Arial">' + text.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</pre>' }); return true; } catch { return false; } }, smtpMeta, smtpSave: async o => { const old = smtpCfg() || {}, c = { host: String(o.host || '').trim().slice(0, 200), port: +o.port || (o.secure ? 465 : 587), secure: !!o.secure, user: String(o.user || '').trim().slice(0, 200), pass: o.pass ? String(o.pass).slice(0, 300) : old.pass || '', from: String(o.from || '').trim().slice(0, 200), to: String(o.to || '').trim().slice(0, 200) }; if (!c.host || !/^[\w.-]+$/.test(c.host)) throw Object.assign(new Error('Enter the mail server address, for example smtp.gmail.com'), { code: 422 }); if (!emailOk(c.to)) throw Object.assign(new Error('Enter the email address that should receive the report.'), { code: 422 }); if (!c.from) c.from = c.user && emailOk(c.user) ? c.user : c.to; await (deps.verifySmtp || smtpVerify)(c); secrets.set('smtp', JSON.stringify(c), { last4: false }); }, smtpRemove: () => secrets.remove('smtp'), smtpSendTest: async () => { const c = smtpCfg(); if (!c) throw Object.assign(new Error('Add your email settings first.'), { code: 422 }); await smtpSend(c, { subject: 'Test email from your shop app', text: 'This is a test. If you can read it, the weekly growth report will reach you here every Monday morning.', html: '<p>This is a test. If you can read it, the weekly growth report will reach you here every Monday morning.</p>' }); }, reportState, prefs, savePrefs: o => { const all = reportState(); saveReportState({ ...all, prefs: { weekly: !!o.weekly, monthly: !!o.monthly, daily: !!o.daily } }); }, json, readBody, ROOT });
+  const admin = adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, sendCode: async (phone, code) => { if (!cfg.waLive) return false; const d = String(phone).replace(/\D/g, ''); try { await pipeline.sendSmart(d.length === 10 ? '91' + d : d, `Your ${shop.get().db?.settings?.businessName || 'shop'} verification code is ${code}. It is only for a privacy request you made. Never share it with anyone else. It expires in 10 minutes.`, { template: cfg.privacyOtpTemplate, params: [code] }); return true; } catch { return false; } }, breachNotices, store, runSweep: () => { const r = Privacy.sweepStore(store, cfg.privacy, clockNow()); r.tickets = privacy.sweepTickets(3); r.webOrders = weborders.sweep(cfg.privacy.orderYears); privacy.saveState({ ...privacy.state(), lastSweep: istDay(clockNow()), last: r }); return r; }, notifyOwner: notifyOwnerMail, smtpMeta, smtpSave: async o => { const old = smtpCfg() || {}, c = { host: String(o.host || '').trim().slice(0, 200), port: +o.port || (o.secure ? 465 : 587), secure: !!o.secure, user: String(o.user || '').trim().slice(0, 200), pass: o.pass ? String(o.pass).slice(0, 300) : old.pass || '', from: String(o.from || '').trim().slice(0, 200), to: String(o.to || '').trim().slice(0, 200) }; if (!c.host || !/^[\w.-]+$/.test(c.host)) throw Object.assign(new Error('Enter the mail server address, for example smtp.gmail.com'), { code: 422 }); if (!emailOk(c.to)) throw Object.assign(new Error('Enter the email address that should receive the report.'), { code: 422 }); if (!c.from) c.from = c.user && emailOk(c.user) ? c.user : c.to; await (deps.verifySmtp || smtpVerify)(c); secrets.set('smtp', JSON.stringify(c), { last4: false }); }, smtpRemove: () => secrets.remove('smtp'), smtpSendTest: async () => { const c = smtpCfg(); if (!c) throw Object.assign(new Error('Add your email settings first.'), { code: 422 }); await smtpSend(c, { subject: 'Test email from your shop app', text: 'This is a test. If you can read it, the weekly growth report will reach you here every Monday morning.', html: '<p>This is a test. If you can read it, the weekly growth report will reach you here every Monday morning.</p>' }); }, reportState, prefs, savePrefs: o => { const all = reportState(); saveReportState({ ...all, prefs: { weekly: !!o.weekly, monthly: !!o.monthly, daily: !!o.daily } }); }, json, readBody, ROOT });
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, 'http://x'), route = `${req.method} ${url.pathname}`;
     try {
@@ -344,9 +348,15 @@ export function createApp(overrides = {}, deps = {}) {
   });
   const tick = () => { orders.sweep().catch(e => console.error('[sweep]', e)); const cat = store.loadCatalogue(); if (cat) runReminders({ cfg, store, wa, catalogue: new Catalogue(cat) }).catch(e => console.error('[cart-tick]', e)); };
   // once a day: erase what we no longer need (old chats, carts, order contact details)
-  const sweepTick = () => { try { const t = clockNow(), k = istDay(t), st = privacy.state(); if (st.lastSweep === k) return; const r = Privacy.sweepStore(store, cfg.privacy, t); privacy.saveState({ ...st, lastSweep: k, last: r }); } catch { /* never crash the timer */ } };
-  const socialTick = () => { social.tick().catch(() => {}); reportTick(); snapshotTick(); sweepTick(); };
-  return { server, cfg, store, pipeline, wa, tick, orders, provider, auth, shop, media, social, ig, socialTick, analytics, growth, reportTick, privacy, sweepTick };
+  const sweepTick = () => { try { const t = clockNow(), k = istDay(t), st = privacy.state(); if (st.lastSweep === k) return; const r = Privacy.sweepStore(store, cfg.privacy, t); r.tickets = privacy.sweepTickets(3); r.webOrders = weborders.sweep(cfg.privacy.orderYears); privacy.saveState({ ...st, lastSweep: k, last: r }); } catch { /* never crash the timer */ } };
+  // a short reminder email, once a day from 9:00 IST, while a privacy request is late or nearly late
+  const privacyDigestTick = async () => {
+    try { const t = clockNow(), ist = new Date(t + 330 * 60_000); if (ist.getUTCHours() < 9 || !smtpCfg()) return; const st = privacy.state(), k = istDay(t); if (st.digestDay === k) return; const at = privacy.attention(5); if (!at.late.length && !at.soon.length) return;
+      privacy.saveState({ ...st, digestDay: k });   // claimed first: never twice in a day
+      const line = x => `- ${x.id} (${x.type}) from ${x.name}: reply by ${x.due.slice(0, 10)}`; await smtpSend(smtpCfg(), { subject: `Privacy requests need attention: ${at.late.length} late, ${at.soon.length} due soon`, text: `${at.late.length ? 'LATE:\n' + at.late.map(line).join('\n') + '\n\n' : ''}${at.soon.length ? 'DUE IN THE NEXT 5 DAYS:\n' + at.soon.map(line).join('\n') + '\n\n' : ''}The law asks you to answer. Open the owner app → Privacy.`, html: '<p>Open the owner app → Privacy tab: some privacy requests are late or nearly late.</p>' }); } catch { /* try again tomorrow */ }
+  };
+  const socialTick = () => { social.tick().catch(() => {}); reportTick(); snapshotTick(); sweepTick(); privacyDigestTick(); };
+  return { server, cfg, store, pipeline, wa, tick, orders, provider, auth, shop, media, social, ig, socialTick, analytics, growth, reportTick, privacy, sweepTick, weborders, privacyDigestTick };
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

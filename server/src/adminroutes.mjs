@@ -4,17 +4,18 @@
 //   /public/shop      what the public website may see              read-only, no secrets
 //   /media/<id>.jpg   photos Instagram fetches                     unguessable addresses
 import fs from 'node:fs';
+import { CHANNELS } from './privacy.mjs';
 import path from 'node:path';
 import { publicView } from './shopdata.mjs';
 import { runAi, cleanPlan, localPlan, istIso } from './aihelper.mjs';
 
-export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
+export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
   const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY', 'Cross-Origin-Resource-Policy': 'same-origin', 'Cache-Control': 'no-store', ...(auth.secure ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' } : {}) };
   const CSP = "default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'";
   const ipOf = req => String(req.socket.remoteAddress || '').replace(/^::ffff:/, '');   // never trust X-Forwarded-For for security decisions
   const send = (res, r, extra = {}) => json(res, r.code || 200, r.code && r.code >= 400 ? { error: r.error, retryAfter: r.retryAfter } : r, { ...SEC, ...extra });
   const body = async (req, limit = 200_000) => { try { return JSON.parse((await readBody(req, limit)).toString('utf8') || '{}'); } catch (e) { throw Object.assign(new Error(e.code === 413 ? 'Too large.' : 'Bad request.'), { code: e.code === 413 ? 413 : 400 }); } };
-  let keyTries = [], reviewTries = [];
+  let keyTries = [], reviewTries = [], emailTries = [];
   const mask = s => s ? s.slice(0, 3) + '…' + s.slice(-3) : '';
 
   return async function handle(req, res, url, route) {
@@ -51,6 +52,18 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
         return json(res, 200, { ok: true, id: t.id, due: t.due }, cors), true;
       } catch (e) { return json(res, [422, 429, 503].includes(e.code) ? e.code : 500, { error: e.code ? e.message : 'Something went wrong. Please try again.' }, cors), true; }
     }
+    // ---------- an order placed on the public website ----------
+    if (route === 'OPTIONS /public/order' || route === 'POST /public/order') {
+      const o = req.headers.origin, okO = !!o && cfg.allowedOrigins.includes(o), cors = okO ? { 'Access-Control-Allow-Origin': o, 'Vary': 'Origin' } : {};
+      if (req.method === 'OPTIONS') { res.writeHead(204, { ...cors, 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Headers': 'content-type', 'Access-Control-Max-Age': '86400' }); res.end(); return true; }
+      if (!okO) return json(res, 403, { error: 'Not allowed from this website.' }), true;
+      try {
+        let b = {}; try { b = JSON.parse((await readBody(req, 160_000)).toString('utf8') || '{}'); } catch { return json(res, 400, { error: 'Something went wrong. Please try again.' }, cors), true; }
+        const xff = String(req.headers['x-forwarded-for'] || '').split(',').map(x => x.trim()).filter(Boolean), ip = xff.length ? xff[xff.length - 1] : ipOf(req), r = weborders.add(b, shop.get().db, ip);
+        notifyOwner(`New website order ${r.id}: ₹${r.order.total}`, `A customer placed an order on the website.\n\nOrder: ${r.id}\nCustomer: ${r.customer.name}, ${r.customer.phone}\nTotal: ₹${r.order.total}\nItems: ${r.order.items.map(i => `${i.name} x${i.quantity}`).join(', ')}\n${r.check.issues.length ? '\nCheck before accepting:\n- ' + r.check.issues.join('\n- ') + '\n' : ''}\nOpen the owner app → Orders to accept it, then message the customer on WhatsApp to confirm and take payment.`);
+        return json(res, 200, { ok: true, id: r.id }, cors), true;
+      } catch (e) { return json(res, [422, 429, 503].includes(e.code) ? e.code : 500, { error: e.code ? e.message : 'Something went wrong. Please try again.' }, cors), true; }
+    }
     // ---------- website counting (no cookies, nothing personal is stored) ----------
     if (route === 'OPTIONS /public/hit' || route === 'POST /public/hit') {
       const o = req.headers.origin, okO = !!o && cfg.allowedOrigins.includes(o), cors = okO ? { 'Access-Control-Allow-Origin': o, 'Vary': 'Origin' } : {};
@@ -66,7 +79,7 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
     // ---------- admin API ----------
     const p = url.pathname.slice('/admin/api'.length), read = req.method === 'GET';
     try {
-      if (route === 'GET /admin/api/state') { const s = auth.sessionFrom(req); send(res, { code: 200, configured: auth.configured, twoFactor: auth.twoFactorOn, signedIn: !!s, csrf: s ? s.csrf : null, instagram: !!ig.configured, claude: !!(cfg.anthropicKey && cfg.anthropicKey !== 'missing') }); return true; }
+      if (route === 'GET /admin/api/state') { const s = auth.sessionFrom(req); send(res, { code: 200, configured: auth.configured, twoFactor: auth.twoFactorOn, signedIn: !!s, role: s ? s.role || 'owner' : null, user: s ? s.user || 'owner' : null, csrf: s ? s.csrf : null, instagram: !!ig.configured, claude: !!(cfg.anthropicKey && cfg.anthropicKey !== 'missing') }); return true; }
       if (route === 'POST /admin/api/setup') { const b = await body(req, 5_000); const r = auth.setup(b, ip); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
       if (route === 'POST /admin/api/login') {
         if (!/^application\/json/i.test(req.headers['content-type'] || '')) return send(res, { code: 415, error: 'JSON only.' }), true;
@@ -74,13 +87,14 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
         if (r.code !== 200) return send(res, r), true; send(res, { code: 200, ok: true, csrf: r.csrf }, { 'Set-Cookie': auth.cookie(r.sessionId) }); return true;
       }
       const a = auth.authorize(req, { write: !read, upload: route === 'POST /admin/api/video/upload' }, ip); if (a.code !== 200) return send(res, a), true;
-      const wrote = (ev, extra = '') => auth.audit(ev, ip, true, extra);
+      const who = a.session.user || 'owner', role = a.session.role || 'owner', wrote = (ev, extra = '') => auth.audit(ev, ip, true, (who !== 'owner' ? `[${who}] ` : '') + extra);
+      if (role === 'staff' && /^\/admin\/api\/(privacy|email|report|ai-key|import|team|2fa|audit|growth\/(done|plan))/.test(url.pathname)) return send(res, { code: 403, error: 'Only the owner can do this.' }), true;
       if (route === 'POST /admin/api/logout') { auth.logout(req, ip); send(res, { code: 200, ok: true }, { 'Set-Cookie': auth.clearCookie() }); return true; }
 
       if (route === 'GET /admin/api/db') { const g = shop.get(); send(res, { code: 200, version: g.version, db: g.db }); return true; }
       if (route === 'PUT /admin/api/db') { const b = await body(req, 30_000_000); const r = shop.put(b.db, Number(b.baseVersion)); if (r.code === 200) wrote('save', `v${r.version}${r.merged ? ' merged' : ''}`); send(res, r); return true; }
       if (route === 'GET /admin/api/version') { send(res, { code: 200, version: shop.get().version }); return true; }
-      if (route === 'POST /admin/api/import') { const b = await body(req, 30_000_000); const r = shop.importAll(b.db); if (r.code === 200) wrote('import'); send(res, r); return true; }
+      if (route === 'POST /admin/api/import') { const b = await body(req, 30_000_000); const again = b.db && typeof b.db === 'object' ? privacy.applyErasures(b.db) : 0, r = shop.importAll(b.db); if (r.code === 200) { wrote('import', again ? `${again} erased customer(s) removed again` : ''); r.erasedAgain = again; } send(res, r); return true; }
       if (route === 'POST /admin/api/password') { const r = auth.changePassword(await body(req, 5_000), req, ip); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
       if (route === 'POST /admin/api/2fa/start') { send(res, auth.twoFactorStart(await body(req, 5_000), ip)); return true; }
       if (route === 'POST /admin/api/2fa/confirm') { const r = auth.twoFactorConfirm(await body(req, 5_000), ip); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
@@ -102,17 +116,27 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       if (route === 'POST /admin/api/growth/plan') { const b = await body(req, 1_000), d = ['thismonth', 'lastmonth'].includes(b.days) ? b.days : [7, 30, 90].includes(+b.days) ? +b.days : 7, r = await growth.build(d, false); send(res, { code: 200, ...(await growth.plan(r)) }); return true; }
       if (route === 'POST /admin/api/growth/done') { const b = await body(req, 1_000), d = ['thismonth', 'lastmonth'].includes(b.days) ? b.days : [7, 30, 90].includes(+b.days) ? +b.days : 7, r = await growth.build(d, false), a = r.actions.find(x => x.id === String(b.id || '')); if (!a) return send(res, { code: 404, error: 'That suggestion is no longer in the list.' }), true; analytics.markDone({ id: a.id, title: a.title, metric: a.metric, baseline: a.baseline }); analytics.save(); wrote('growth-done', a.id); send(res, { code: 200, ok: true }); return true; }
       if (route === 'GET /admin/api/email') { send(res, { code: 200, ...smtpMeta(), lastReport: reportState(), prefs: prefs() }); return true; }
-      if (route === 'POST /admin/api/email') { const now = Date.now(); keyTries = keyTries.filter(t => now - t < 60_000); if (keyTries.length >= 5) return send(res, { code: 429, error: 'Too many tries. Wait a minute.' }), true; keyTries.push(now); await smtpSave(await body(req, 3_000)); wrote('email-set'); send(res, { code: 200, ...smtpMeta() }); return true; }
+      if (route === 'POST /admin/api/email') { const now = Date.now(); emailTries = emailTries.filter(t => now - t < 60_000); if (emailTries.length >= 8) return send(res, { code: 429, error: 'Too many tries. Wait a minute.' }), true; emailTries.push(now); await smtpSave(await body(req, 3_000)); wrote('email-set'); send(res, { code: 200, ...smtpMeta() }); return true; }
       if (route === 'POST /admin/api/email/remove') { smtpRemove(); wrote('email-removed'); send(res, { code: 200, ...smtpMeta() }); return true; }
       if (route === 'POST /admin/api/email/test') { await smtpSendTest(); wrote('email-test'); send(res, { code: 200, ok: true }); return true; }
       if (route === 'POST /admin/api/report/prefs') { const b = await body(req, 500); savePrefs(b); wrote('report-prefs'); send(res, { code: 200, prefs: prefs() }); return true; }
       if (route === 'POST /admin/api/report/send') { const b = await body(req, 500), kind = ['weekly', 'monthly', 'daily'].includes(b.kind) ? b.kind : 'weekly', r = await growth.mail(kind, true); wrote('report-sent', kind); send(res, { code: 200, ok: true, ...r }); return true; }
       if (route === 'GET /admin/api/report/preview') { const k = url.searchParams.get('kind'); send(res, { code: 200, ...(await growth.preview(['weekly', 'monthly', 'daily'].includes(k) ? k : 'weekly')) }); return true; }
-      if (route === 'GET /admin/api/privacy') { send(res, { code: 200, tickets: privacy.tickets(), breaches: privacy.breaches().map(b => ({ ...b, notices: breachNotices(b, (shop.get().db || {}).settings || {}) })), retention: { ...cfg.privacy, ...privacy.state() }, twoFactor: auth.twoFactorOn, claude: !!cfg.anthropicKey && cfg.anthropicKey !== 'missing', email: smtpMeta().configured, ig: ig.configured }); return true; }
+      if (route === 'GET /admin/api/team') { send(res, { code: 200, team: auth.teamList() }); return true; }
+      if (route === 'POST /admin/api/team/add') { const r = auth.teamAdd(await body(req, 1_000), ip); send(res, r.code === 200 ? { code: 200, team: auth.teamList() } : r); return true; }
+      if (route === 'POST /admin/api/team/remove') { const r = auth.teamRemove(await body(req, 500), ip); send(res, r.code === 200 ? { code: 200, team: auth.teamList() } : r); return true; }
+      if (route === 'POST /admin/api/team/password') { const r = auth.teamPassword(await body(req, 1_000), ip); send(res, r.code === 200 ? { code: 200 } : r); return true; }
+      if (route === 'GET /admin/api/web-orders') { send(res, { code: 200, orders: weborders.list().slice(0, 100) }); return true; }
+      if (route === 'POST /admin/api/web-orders/update') { const b = await body(req, 2_000), r = weborders.update(b.id, b); wrote('web-order', `${r.id} ${r.status}`); send(res, { code: 200, order: r }); return true; }
+      if (route === 'GET /admin/api/privacy') { send(res, { code: 200, tickets: privacy.tickets(), breaches: privacy.breaches().map(b => ({ ...b, notices: breachNotices(b, (shop.get().db || {}).settings || {}) })), retention: { ...cfg.privacy, ...privacy.state() }, erasedCount: privacy.erasedCount(), channels: Object.entries(CHANNELS).map(([k, v]) => ({ k, v })), twoFactor: auth.twoFactorOn, claude: !!cfg.anthropicKey && cfg.anthropicKey !== 'missing', email: smtpMeta().configured, ig: ig.configured }); return true; }
       if (route === 'POST /admin/api/privacy/ticket') { const b = await body(req, 3_000); const t = privacy.updateTicket(b.id, b); wrote('privacy-ticket', `${t.id} ${t.status}`); send(res, { code: 200, ticket: t }); return true; }
       if (route === 'POST /admin/api/privacy/breach') { const b = await body(req, 4_000), r = b.id ? privacy.updateBreach(b.id, b) : privacy.addBreach(b); wrote('privacy-breach', r.id); send(res, { code: 200, breach: { ...r, notices: breachNotices(r, (shop.get().db || {}).settings || {}) } }); return true; }
-      if (route === 'POST /admin/api/privacy/access') { const b = await body(req, 1_000), r = Privacy.accessFromStore(store, b.phone); if (!r) return send(res, { code: 422, error: 'Enter the phone number.' }), true; wrote('privacy-access'); send(res, { code: 200, data: r }); return true; }
-      if (route === 'POST /admin/api/privacy/erase') { const b = await body(req, 1_000), r = Privacy.eraseFromStore(store, b.phone); if (!r) return send(res, { code: 422, error: 'Enter the phone number.' }), true; wrote('privacy-erase'); send(res, { code: 200, erased: r }); return true; }
+      if (route === 'POST /admin/api/privacy/verify-start') { const b = await body(req, 500), code = privacy.codeStart(b.phone), ok = await sendCode(b.phone, code); wrote('privacy-verify-start', ok ? 'sent' : 'not sent'); send(res, { code: 200, sent: ok, error: ok ? '' : 'WhatsApp is not connected, so a code cannot be sent. Check who it is another way.' }); return true; }
+      if (route === 'POST /admin/api/privacy/verify') { const b = await body(req, 1_000), r = b.method === 'code-on-whatsapp' ? privacy.codeCheck(b.phone, b.code) : privacy.verifyManual(b.phone, b.method, b.note); wrote('privacy-verify', r.method); send(res, { code: 200, ...r }); return true; }
+      if (route === 'POST /admin/api/privacy/access') { const b = await body(req, 1_000); if (String(b.phone || '').replace(/\D/g, '').length < 7) return send(res, { code: 422, error: 'Enter the phone number.' }), true; if (!privacy.isVerified(b.phone)) return send(res, { code: 403, error: 'Check who is asking first (Verify who it is).' }), true; const r = Privacy.accessFromStore(store, b.phone); if (!r) return send(res, { code: 422, error: 'Enter the phone number.' }), true; r.websiteOrders = weborders.accessByPhone(b.phone); wrote('privacy-access'); send(res, { code: 200, data: r }); return true; }
+      if (route === 'POST /admin/api/privacy/erase') { const b = await body(req, 1_000); if (String(b.phone || '').replace(/\D/g, '').length < 7) return send(res, { code: 422, error: 'Enter the phone number.' }), true; if (!privacy.isVerified(b.phone)) return send(res, { code: 403, error: 'Check who is asking first (Verify who it is).' }), true; const r = Privacy.eraseFromStore(store, b.phone); if (!r) return send(res, { code: 422, error: 'Enter the phone number.' }), true; r.websiteOrders = weborders.eraseByPhone(b.phone); privacy.erasedAdd(b.phone); wrote('privacy-erase'); send(res, { code: 200, erased: r }); return true; }
+      if (route === 'POST /admin/api/privacy/ticket-new') { const b = await body(req, 3_000), t = privacy.addTicket(b, '', { manual: true }); wrote('privacy-ticket-new', `${t.id} ${t.channel}`); send(res, { code: 200, ticket: t }); return true; }
+      if (route === 'GET /admin/api/privacy/summary') { const at = privacy.attention(5); send(res, { code: 200, open: at.open, late: at.late.length, soon: at.soon.length, email: smtpMeta().configured }); return true; }
       if (route === 'POST /admin/api/privacy/sweep') { const r = runSweep(); wrote('privacy-sweep'); send(res, { code: 200, erased: r }); return true; }
       if (route === 'POST /admin/api/privacy/log') { const b = await body(req, 500); if (['customers-viewed', 'customer-exported', 'backup-downloaded', 'customer-erased'].includes(b.event)) wrote('pii-' + b.event); send(res, { code: 200, ok: true }); return true; }
       if (route === 'POST /admin/api/social/plan') {
