@@ -3,7 +3,7 @@
 > **STANDING RULE (owner's instruction, 23 Oct 2026):** this record and the `HOW-IT-WORKS/` folder are updated **after every change or update**, in the same step as the change, never later. A change is not finished until (1) the code is tested, (2) a dated entry is added to the Change Log below, (3) any affected `HOW-IT-WORKS/` page is corrected, (4) `./check-record.sh` has been run (it fails if the record or how-it-works is behind the code).
 > Also standing: the owner wants chats remembered for later use; this record is that memory for the project.
 
-**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 531 automated checks) · **Browser test suites:** 30 (see §6)
+**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 531 automated checks) · **Browser test suites:** 31 (see §6)
 
 ---
 
@@ -113,6 +113,7 @@ Owner's guidance: *"we will setup everything after we host it"* — real hosting
 | `accessories-test.cjs` | 22 | accessory tabs/categories, filters and search per kind, Complete-the-look rows, Category Manager, product form groups, assistant export type |
 | `hero-theme-test.cjs` | 16 | hero zoom, colour matching of text, button and top bar, top bar following the hero, View home page |
 | `arrivals-pick-test.cjs` | 9 | choosing New Arrivals sarees |
+| `care-test.cjs` | 9 | Saree Care tabs, wash-care guide, photo link repair |
 | `agents-test.cjs` | 27 | the five AI helpers with and without Claude: order messages, privacy replies, weekly content, catalogue batch, Ops watcher note |
 | `pages-ai-invoices-test.cjs` | 55 | invoice search/sort/group, category auto-fill and one-click product AI, editable Care/Journal/Atelier pages |
 | `ui2-test.cjs` | 53 | the new owner look: same page as classic, all 23 screens identical, Overview numbers and website-order buttons, light/dark readable |
@@ -136,6 +137,9 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**4 Nov 2026 (Saree Care: full wash-care guide, photo links repaired)**
+- `careGuideLoad()` adds Washing, Drying & Ironing, Stains, Zari & Embroidery tabs (photos from the owner's own products); button in Pages → Saree Care. Doubled `?q=80&w=800` photo links repaired (seed and saved data); failing photos show a cream box. "Storage Tips not visible" could not be reproduced locally (all ticked tabs render). Guide: HOW-IT-WORKS/29-saree-care-guide.md. Test: `care-test.cjs` 9 checks.
 
 **4 Nov 2026 (My Account: tick boxes, less clutter)**
 - "Order updates", "Offers & new arrivals" (and "Cart reminders") are now tick boxes, not switches; ticking applies and logs the choice at once (`acctConsent` reads the box). The long note is shortened, and the empty "Back-in-stock alerts" and "My reviews" sections are hidden until there is something to show. Tests: shop-test and cart-test updated (+1 check).

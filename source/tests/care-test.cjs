@@ -1,0 +1,25 @@
+// Saree Care page: every ticked tab shows on the website, the full wash-care guide can be added, photos come from own products.
+const { chromium } = require(process.env.PW);
+(async () => {
+  const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' }); const ctx = await b.newContext({ viewport: { width: 1280, height: 900 } }), p = await ctx.newPage();
+  const errs = []; p.on('pageerror', e => errs.push(e.message)); p.on('dialog', d => d.accept()); await ctx.route(/^https?:\/\//, r => r.abort());
+  await p.goto('file://' + process.cwd() + '/anitha-store.html'); await p.waitForTimeout(500);
+  let fails = 0; const ok = (n, c) => { if (!c) fails++; console.log(c ? 'PASS' : 'FAIL', n); }, ev = (f, a) => p.evaluate(f, a), sleep = ms => new Promise(r => setTimeout(r, ms));
+  const tabs = () => ev(() => [...document.querySelectorAll('.care-tab')].map(t => t.textContent));
+  await ev(() => navigateTo('care')); await sleep(300);
+  ok('every ticked tab, including Storage Tips, shows on the website', JSON.stringify(await tabs()) === JSON.stringify(await ev(() => db.pages.care.sections.filter(s => s.show !== false).map(s => s.tab))) && (await tabs()).includes('Storage Tips'));
+  await ev(() => document.querySelectorAll('.care-tab')[3].click());
+  ok('opening Storage Tips shows its tips', await ev(() => { const s = document.querySelector('.care-section[data-sec=storage]'); return getComputedStyle(s).display !== 'none' && s.querySelectorAll('.care-list li').length === 4; }));
+  ok('no photo link is broken by a doubled "?q=80&w=800"', await ev(() => !JSON.stringify(db.pages).includes('?q=80&w=800?q=80')));
+  await ev(() => { db.pages.care.sections[0].image = 'https://x.example/a.jpg?q=80&w=800?q=80&w=800'; ensurePages(); });
+  ok('an already-saved doubled link is repaired', await ev(() => db.pages.care.sections[0].image.endsWith('a.jpg?q=80&w=800')));
+  await ev(() => { db.products[0].image = 'https://own.example/p1.jpg'; careGuideLoad(); }); await sleep(200);
+  const g = await ev(() => ({ ids: db.pages.care.sections.map(s => s.id), pic: db.pages.care.sections.find(s => s.id === 'wash').image, n: db.pages.care.sections.length, last: db.pages.care.sections[db.pages.care.sections.length - 1].id }));
+  ok('the guide adds Washing, Drying & Ironing, Stains, Zari tabs and keeps Storage', ['wash', 'drying', 'stains', 'zari', 'storage'].every(i => g.ids.includes(i)) && g.n === 8);
+  ok('the new tabs take photos from the owner\'s own products', /^https?:|^data:image/.test(g.pic) && await ev(() => db.products.some(p => p.image === db.pages.care.sections.find(s => s.id === 'wash').image)));
+  await ev(() => careGuideLoad()); ok('adding it twice does not duplicate', await ev(() => db.pages.care.sections.length === 8));
+  await ev(() => { db.pages.care.sections.find(s => s.id === 'zari').show = false; renderPublicPages(); navigateTo('care'); }); await sleep(200);
+  ok('a tab with "Show on the website" unticked is hidden', !(await tabs()).includes('Zari & Embroidery') && (await tabs()).includes('Storage Tips'));
+  ok('no JavaScript errors', errs.length === 0 || (console.log(errs), false));
+  console.log(fails ? 'FAILED ' + fails : 'ALL PASSED'); await b.close(); process.exit(fails ? 1 : 0);
+})();
