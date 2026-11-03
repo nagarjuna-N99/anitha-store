@@ -138,6 +138,9 @@ See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
 
+**4 Nov 2026 (Slide preview now matches the website exactly)**
+- Owner reported the Home Page slide preview did not match the website (font size, colours, line spacing). The preview used shrunken look-alike styles. It is now the real website drawn at the device's own width (header with shop name and menu, then the real hero) and scaled down to fit (`heroPrevHTML`, `heroFit`), so the title font, size, line spacing, colours and header are identical. Phone and computer both follow the device's own size. Test: hero-theme-test +3.
+
 **4 Nov 2026 (Shipping line moved to the bottom; A/P monogram back; automatic header and text colours from the hero photo)**
 - The "Complimentary shipping..." line no longer sits above the header. It now shows as a quiet strip just above the footer (same Announcements editor, schedule and rotation). Suggested other places: on the product page under Add to cart, in the cart/checkout.
 - The header shows the round A/P monogram again, next to the shop name in Bodoni Moda Bold Italic.

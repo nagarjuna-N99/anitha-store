@@ -39,3 +39,6 @@ Matching a photo no longer turns the top bar colour on by itself: switch **Top b
 - You no longer need the match button: when you add or change a hero photo, or move/zoom it, the text, button and top-bar colours are picked and saved by themselves. The button is still there to redo it.
 - The top bar is always light: a pale tint of the photo's main colour, with the shop name and menu in a deep shade of the same colour. It follows the photo by default; switch it off in Home Page → Hero slides.
 - The header shows the round A/P monogram. The "Complimentary shipping" line now sits just above the footer; edit it under Home Page → Announcements.
+
+## Update 3 (4 Nov 2026): the preview is the real website
+The picture under each slide is now the website itself (header with the shop name and menu, then the hero), drawn at your screen's width and scaled down to fit. Fonts, colours and line spacing are the same as visitors see on that kind of screen, only smaller.

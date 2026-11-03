@@ -489,8 +489,8 @@
   .hs-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; font-size: 13px; color: #555; } .hs-bar select { padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; background: white; }
   .hs-lbl { font-size: 11px; color: #6b6862; }
   .hs { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 20px; padding: 18px 0; border-top: 1px solid var(--border); } .hs.off { opacity: 0.6; }
-  .hs-prev .hero-slider.mini { height: 210px; min-height: 0; border-radius: 8px; } .hs-prev .hero-slide { opacity: 1; visibility: visible; }
-  .hs-prev .hero-content { padding: 0 20px; max-width: 100%; } .hs-prev .hero-slide.pos-right .hero-content { padding: 0 20px 0 0; } .hs-prev .hero-title { font-size: 24px; margin-bottom: 8px; } .hs-prev .hero-est { font-size: 8px; letter-spacing: 2px; margin-bottom: 6px; } .hs-prev .hero-subtitle { font-size: 11px; line-height: 1.5; margin-bottom: 10px; } .hs-prev .btn-primary { padding: 7px 14px; font-size: 8px; letter-spacing: 1px; }
+  .hs-prev { margin-top: 6px; } .hs-win { position: relative; overflow: hidden; border-radius: 8px; background: #2a2420; width: 100%; } .hs-stage { position: absolute; left: 0; top: 0; transform-origin: 0 0; background: var(--ivory, #FAF9F6); pointer-events: none; }
+  .hs-stage .hero-slide { opacity: 1; visibility: visible; } .hs-stage nav.hs-fnav { position: static; }
   .hs-noimg { height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; padding: 16px; color: #6b6862; font-size: 12px; background: #f1eee7; }
   .hs-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; } .hs-head button:disabled { opacity: 0.35; }
   .hs-img-row { display: flex; gap: 8px; align-items: center; } .hs-img-row input, .hs-img-row select { padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; min-width: 0; flex: 1; } .hs-img-row button { flex-shrink: 0; white-space: nowrap; padding: 10px 12px; }
@@ -4425,7 +4425,19 @@ function heroSet(i, k, v) {
 }
 function heroLinkType(i, t) { const s = db.home.hero.slides[i]; s.link = { type: t, value: t === 'category' ? db.categories[0] || '' : t === 'product' ? (db.products[0] || {}).id || '' : t === 'page' ? homePages()[0][0] : '' }; renderHomeAdmin(document.getElementById('adminContent')); homeLive(true); }
 function heroLinkValue(i, v) { const s = db.home.hero.slides[i]; if (s.link.type === 'url' && v.trim() && !/^https?:\/\//i.test(v.trim())) { showToast('Link must start with https://', 'error'); return; } s.link.value = v.trim(); homeLive(true); }
-function heroPreview(i) { const s = db.home.hero.slides[i], box = document.getElementById('hsprev-' + i); if (s && box) box.innerHTML = safeImg(s.image) ? heroSlideHTML(s, i, true, 'div') : '<div class="hs-noimg">No image yet — add a link or upload one</div>'; }
+// The slide preview is the real website, drawn at this device's own width and then scaled to fit, so fonts, colours and line spacing are exactly what visitors see.
+function heroPrevNav(s) {
+  const t = s && s.theme, c = db.home.headerMatch !== false && t && t.headerBg ? navFromTheme(t) : null, st = c ? `--nav-bg:${c.bg};--nav-ink:${c.ink}` : '';
+  return `<nav class="hs-fnav" style="${st}"><div class="nav-left" style="display:flex;align-items:center;gap:15px;"><button class="hamburger-btn" tabindex="-1" aria-hidden="true"><span></span><span></span><span></span></button><a class="nav-brand"><img class="brand-mark" alt="" src="${ICON_URI}" width="40" height="40"><span>Anitha Pemmasani</span></a></div><ul class="nav-links"><li><a>Home</a></li><li><a>Collection</a></li><li><a>Saree Care</a></li><li><a>Journal</a></li></ul><div class="nav-icons"><div class="nav-icon">🔍</div><div class="nav-icon">♡</div><div class="nav-icon">👤</div><div class="nav-icon">🛒</div></div></nav>`;
+}
+function heroFit(box) {
+  const st = box && box.querySelector('.hs-stage'); if (!st) return; const w = window.innerWidth, k = Math.min(1, box.clientWidth / w || 1);
+  st.style.width = w + 'px'; st.style.transform = `scale(${k})`; box.style.height = Math.ceil(st.offsetHeight * k) + 'px';
+}
+function heroFitAll() { document.querySelectorAll('.hs-win').forEach(heroFit); }
+window.addEventListener('resize', () => { if (typeof heroFitAll === 'function') heroFitAll(); });
+function heroPrevHTML(s, i) { return safeImg(s.image) ? `<div class="hs-stage">${heroPrevNav(s)}<div class="hero-slider">${heroSlideHTML(s, i, true, 'div')}</div></div>` : '<div class="hs-noimg" style="height:160px">No image yet — add a link or upload one</div>'; }
+function heroPreview(i) { const s = db.home.hero.slides[i], box = document.getElementById('hsprev-' + i); if (s && box) { box.innerHTML = heroPrevHTML(s, i); heroFit(box); } }
 function heroAdd() { db.home.hero.slides.push({ id: 'hs' + generateId(), enabled: true, image: '', focus: 'center', pos: 'left', overlay: 60, eyebrow: '', title: 'New slide', subtitle: '', btnText: 'Shop now', link: { type: 'shop', value: '' } }); renderHomeAdmin(document.getElementById('adminContent')); homeLive(true); window.scrollTo(0, document.body.scrollHeight); }
 function heroDel(i) { if (!confirm('Delete this slide?')) return; db.home.hero.slides.splice(i, 1); renderHomeAdmin(document.getElementById('adminContent')); homeLive(true); }
 function heroMove(i, d) { const a = db.home.hero.slides, j = i + d; if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; renderHomeAdmin(document.getElementById('adminContent')); homeLive(true); }
@@ -4469,7 +4481,7 @@ function renderHomeAdmin(container) {
   const slideHTML = (s, i) => {
     const l = s.link || { type: 'none', value: '' };
     return `<div class="hs ${s.enabled ? '' : 'off'}">
-      <div class="hs-prev"><div class="hero-slider mini" id="hsprev-${i}">${safeImg(s.image) ? heroSlideHTML(s, i, true, 'div') : '<div class="hs-noimg">No image yet — add a link or upload one</div>'}</div></div>
+      <div class="hs-prev"><div class="hs-win" id="hsprev-${i}">${heroPrevHTML(s, i)}</div></div>
       <div class="hs-fields">
         <div class="hs-head"><strong>Slide ${i + 1}</strong>${s.enabled ? '' : '<span class="cchip">hidden</span>'}<span style="flex:1"></span><span class="hs-lbl">Show</span>${tog(s.enabled, `heroToggle(${i},this)`)}<button class="btn-sm btn-info-sm" onclick="heroMove(${i},-1)" ${i === 0 ? 'disabled' : ''} aria-label="Move up">↑</button><button class="btn-sm btn-info-sm" onclick="heroMove(${i},1)" ${i === hs.length - 1 ? 'disabled' : ''} aria-label="Move down">↓</button><button class="btn-sm btn-danger-sm" onclick="heroDel(${i})" aria-label="Delete slide">🗑</button></div>
         <div class="form-group"><label>Image</label><div class="hs-img-row"><input type="text" value="${esc(s.image.startsWith('data:') ? '' : s.image)}" placeholder="${s.image.startsWith('data:') ? 'Uploaded photo in use — paste a link to replace' : 'https://… image link'}" onchange="heroSet(${i},'image',this.value)"><button class="btn-sm btn-primary-sm" onclick="homePick('hero',${i})">⬆ Upload photo</button></div></div>
@@ -4526,6 +4538,7 @@ function renderHomeAdmin(container) {
       </div>
     </div>`;
   homeSchedExtras(container);
+  heroFitAll(); setTimeout(heroFitAll, 60);
   window.scrollTo(0, y);
 }
 

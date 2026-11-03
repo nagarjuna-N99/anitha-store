@@ -46,6 +46,13 @@ const { chromium } = require(process.env.PW);
   await ev(() => { navigateTo('home'); }); await sleep(300);
   ok('Shop by occasion tiles are centred', await p.evaluate(() => { const g = document.querySelector('.occ-grid'); if (!g) return true; const k = [...g.children], l = k[0].getBoundingClientRect().left, r = k[k.length - 1].getBoundingClientRect().right, W = document.documentElement.clientWidth; return Math.abs(l - (W - r)) < 24; }));
   ok('the shop name in the top bar is set in bold italic Bodoni Moda', await ev(() => { const c = getComputedStyle(document.querySelector('.nav-brand')); return /Bodoni Moda/.test(c.fontFamily) && c.fontStyle === 'italic' && +c.fontWeight >= 700; }));
+  // ---- the preview is the real thing, scaled ----
+  await ev(() => { isAdminView = true; document.getElementById('storefrontView').classList.add('hidden'); document.getElementById('adminView').classList.add('active'); switchAdminTab('home'); }); await sleep(500);
+  const pv = await ev(() => { const w = document.getElementById('hsprev-0'); const k = parseFloat((w.querySelector('.hs-stage').style.transform.match(/scale\(([\d.]+)\)/) || [])[1]); const real = el => parseFloat(getComputedStyle(el).fontSize); const t = w.querySelector('.hero-title'); return { k, family: getComputedStyle(t).fontFamily, size: real(t), lh: getComputedStyle(t).lineHeight, shown: Math.round(t.getBoundingClientRect().height), w: w.getBoundingClientRect().width, stage: w.querySelector('.hs-stage').getBoundingClientRect().width, brand: /Bodoni/.test(getComputedStyle(w.querySelector('.nav-brand')).fontFamily), nav: !!w.querySelector('nav.hs-fnav') }; });
+  const site = await ev(() => { const t = document.querySelector('#homeHero .hero-title'); return { size: parseFloat(getComputedStyle(t).fontSize), lh: getComputedStyle(t).lineHeight, family: getComputedStyle(t).fontFamily }; });
+  ok('the slide preview uses exactly the website\'s title font, size and line spacing (only scaled to fit)', pv.size === site.size && pv.lh === site.lh && pv.family === site.family && pv.k > 0 && pv.k <= 1);
+  ok('the preview includes the website header with the same shop-name font', pv.nav && pv.brand);
+  ok('the scaled preview fits its box', Math.abs(pv.stage - pv.w) < 2);
   ok('no JavaScript errors', errs.length === 0 || (console.log(errs), false));
   console.log(fails ? 'FAILED ' + fails : 'ALL PASSED'); await b.close(); process.exit(fails ? 1 : 0);
 })();
