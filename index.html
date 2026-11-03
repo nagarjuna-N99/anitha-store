@@ -1120,6 +1120,7 @@ html.ui2 .admin-mobile-nav li, html.ui2 .admin-mobile-nav h3, html.ui2 .admin-mo
 html.ui2 .admin-mobile-nav li:hover, html.ui2 .admin-mobile-nav li.active { background: var(--o-chip); color: var(--o-ink); }
 html.ui2.dk .dash-ranges button, html.ui2.dk .seg button { background: var(--o-chip); color: var(--o-ink); }
 html.ui2.dk .dash-ranges button.on, html.ui2.dk .seg button.on, html.ui2.dk .seg button[aria-pressed="true"] { background: var(--o-glass-2); color: var(--o-ink); }
+html.ui2 .drawer { background: var(--o-bg); color: var(--o-ink); }
 
 </style>
 <style id="dsfix">
@@ -1176,6 +1177,9 @@ h1, h2, h3, h4, h5, h6 { font-weight: 600; }
 .ai-chips { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
 #resumeBar { border-top: 0; }
 .journal-grid { grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); }
+.cart-item button, .btn-sm-card { min-width: 44px; min-height: 44px; } .modal-close { width: 44px; height: 44px; } #storefrontView .btn-sm { min-height: 44px; }
+@media (min-width: 380px) { .footer-links li:first-child a { white-space: nowrap; } }
+.ai-chips { grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); }
 .hs-head, .hs-img-row, .hc-actions, .hs-fields .pf-actions { flex-wrap: wrap; } .hs-grid3, .hs-grid2 { grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr)); }
 .hs { grid-template-columns: minmax(min(260px, 100%), 340px) minmax(0, 1fr); } @media (max-width: 900px) { .hs { grid-template-columns: minmax(0, 1fr); } }
 .pg-wrap { max-width: 1000px; margin: 0 auto; padding: 80px 60px; } .pg-wrap > div:first-child { grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)) !important; }

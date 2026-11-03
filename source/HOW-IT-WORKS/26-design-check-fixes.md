@@ -39,3 +39,6 @@ The checker lives in `~/.claude/skills/hallmark` on the machine that ran it; it 
 
 ## Result
 Browser-check findings: **public site 291 to 135** (hard fails 192 to 68), **owner app 452 to 253** (hard fails 293 to 154). Fully cleared: visible focus on the public site, wrapping filter buttons, long text lines (public), tiny text (public), heading stubs and the script error. What is left is mostly the "not real" kind (stock photos that cannot load in the test, off-screen drawers, marketing-page rules) plus a short list: a few form-field edges, some small quantity buttons in the cart, a few dark-mode cart and menu details inside the owner app, and one long address link. The mobile audit and every test pass.
+
+## Follow-up (small items)
+Cart quantity buttons, card buttons and close buttons are now 44 px; the footer address stays on one line; AI Helper suggestion chips are wide enough for their text; the slide-in cart in the new look follows light and dark. Still left: uneven gaps between some sections, and one kind of field edge the checker flags (checkboxes).
