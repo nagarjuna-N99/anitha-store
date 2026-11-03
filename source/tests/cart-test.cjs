@@ -45,7 +45,7 @@ const { chromium } = require(process.env.PW);
   // withdrawal deletes server copy
   await ev(() => { closeModal('successModal'); closeAllDrawers(); document.querySelectorAll('.modal.active').forEach(m => m.classList.remove('active')); addToCart('p2'); closeAllDrawers(); }); await wait(3000);
   ok('new cart is synced again while consent stands', app.store.s.carts[ph].items.length === 1);
-  syncCalls.length = 0; await ev(() => { openAccount(); }); await p.click('.acct-pref:has-text("Cart reminders") .toggle'); await wait(3000);
+  syncCalls.length = 0; await ev(() => { openAccount(); }); await p.click('.acct-pref:has-text("Cart reminders") input'); await wait(3000);
   ok('turning reminders off → server copy deleted, consent false', app.store.s.carts[ph].items.length === 0 && app.store.s.carts[ph].consent.granted === false && syncCalls.at(-1).consent.granted === false);
   syncCalls.length = 0; await ev(() => { closeModal('accountModal'); addToCart('p1'); closeAllDrawers(); }); await wait(3000);
   ok('after withdrawing, later cart changes are NOT sent', syncCalls.length === 0 && app.store.s.carts[ph].items.length === 0);

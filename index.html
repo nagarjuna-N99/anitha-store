@@ -529,6 +529,7 @@
   .consent-sub { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #6b6862; font-weight: 600; margin: 12px 0 8px; padding-top: 10px; border-top: 1px dashed var(--border); }
   .chk { display: flex; gap: 10px; align-items: flex-start; font-size: 12px; line-height: 1.55; color: #444; margin-bottom: 8px; cursor: pointer; } .chk input { margin-top: 3px; width: 16px; height: 16px; flex-shrink: 0; accent-color: var(--gold); } .chk em { color: #6b6862; font-style: normal; }
   .acct-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; } .acct-h { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+  .acct-tick { justify-content: flex-start; cursor: pointer; } .acct-tick input { width: 22px; min-width: 22px; max-width: 22px; height: 22px; padding: 0; margin: 2px 0 0; flex: none; accent-color: #A67C52; cursor: pointer; }
   .acct-pref { display: flex; justify-content: space-between; gap: 14px; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
   .acct-addr { display: flex; justify-content: space-between; align-items: center; background: var(--cream); padding: 10px 12px; border-radius: 6px; margin-bottom: 8px; }
   .acct-order { display: flex; justify-content: space-between; background: var(--cream); padding: 10px 12px; border-radius: 6px; margin-bottom: 8px; }
@@ -2032,7 +2033,7 @@ function openAccount() { const u = currentUser(); if (!u) { openAuth(() => openA
 function renderAccount() {
   const u = currentUser(); if (!u) { closeModal('accountModal'); return; }
   const a = u.addr || {}, c = u.consents || {}, orders = db.orders.filter(o => o.userId === u.id).sort((x, y) => y.date.localeCompare(x.date));
-  const tg = (type, label, sub) => `<div class="acct-pref"><div><div style="font-weight:600;font-size:13px;">${label}</div><div class="note" style="margin:2px 0 0;">${sub}</div></div><div class="toggle ${c[type] ? 'active' : ''}" role="switch" tabindex="0" aria-checked="${!!c[type]}" onclick="acctConsent('${type}',this)"></div></div>`;
+  const tg = (type, label, sub) => `<label class="acct-pref acct-tick"><input type="checkbox" ${c[type] ? 'checked' : ''} onchange="acctConsent('${type}',this)"><span><span style="font-weight:600;font-size:14px;display:block;">${label}</span><span class="note" style="margin:2px 0 0;display:block;">${sub}</span></span></label>`;
   el_('accountBody').innerHTML = `
     <h2 style="font-family:'Cormorant Garamond',serif;font-size:30px;">My Account</h2>
     <p style="font-size:13px;color:var(--sage);margin-bottom:20px;">✓ Signed in with WhatsApp · ${esc(maskPhone(u.phone))}</p>
@@ -2050,7 +2051,7 @@ function renderAccount() {
         ${tg('orderUpdates', 'Order updates', 'Confirmation, shipping and delivery messages about your orders.')}
         ${tg('marketing', 'Offers &amp; new arrivals', 'Occasional messages about new collections and festive offers.')}
         ${waServer() ? tg('cartReminder', 'Cart reminders', 'A reminder (at most 2) if you leave sarees in your cart without ordering.') : ''}
-        <div class="note">Your choice applies immediately. You can change it at any time, or reply STOP to any message. ${c.updatedAt ? 'Last changed ' + esc(new Date(c.updatedAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })) + ' IST.' : ''} Login codes are always sent on WhatsApp when you sign in.</div>
+        <div class="note">Tick or untick any time. It applies at once. You can also reply STOP to any message.</div>
         <h4 class="acct-h" style="margin-top:22px;">My orders</h4>
         ${orders.length ? orders.map(o => `<div class="acct-order"><div><div style="font-family:monospace;font-size:12px;font-weight:600;">${esc(o.id)}</div><div style="font-size:11px;color:#6b6862;">${esc(o.date)} · ${o.items.length} item${o.items.length > 1 ? 's' : ''}</div></div><div style="text-align:right;"><div style="font-weight:600;font-size:13px;">${formatCurrency(o.total)}</div><span class="status-pill ${getStatusClass(o.status)}" style="font-size:9px;">${esc(prettyStatus(o.status))}</span><div><button class="linkbtn" onclick="openTrackOrder('${esc(o.id)}')">Track</button></div></div></div>`).join('') : '<p style="font-size:13px;color:#6b6862;">No orders yet.</p>'}
         ${abAccountHTML(u)}${acctExtraHTML(u)}${acctRightsHTML(u)}
@@ -2066,9 +2067,8 @@ function acctSave() {
   if (saveDB()) { showToast('Profile saved' + (u.addr.street ? ' · added to your address book as primary' : ''), 'success'); renderAccount(); }
 }
 function acctConsent(type, elx) {
-  const u = currentUser(); if (!u) return; const granted = !u.consents[type];
-  recordConsent(u, type, granted, 'account'); if (!saveDB()) return; if (type === 'cartReminder') cartSyncSoon();
-  elx.classList.toggle('active', granted); elx.setAttribute('aria-checked', granted);
+  const u = currentUser(); if (!u) return; const granted = !!elx.checked;
+  recordConsent(u, type, granted, 'account'); if (!saveDB()) { elx.checked = !granted; return; } if (type === 'cartReminder') cartSyncSoon();
   showToast(granted ? `✓ ${consentLabel[type]} turned on` : `${consentLabel[type]} turned off`, granted ? 'success' : '');
 }
 // ================= Privacy notice and rights (DPDP Act 2023) =================
@@ -4773,8 +4773,8 @@ function renderReviewsAdmin(container) {
 function acctExtraHTML(u) {
   const al = db.stockAlerts.filter(a => a.userId === u.id && a.status !== 'cancelled' && a.status !== 'skipped').sort((a, b) => b.createdAt.localeCompare(a.createdAt)), rv = db.reviews.filter(r => r.userId === u.id).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   const pn = id => (db.products.find(p => p.id === id) || { name: '(removed)' }).name;
-  return `<h4 class="acct-h" style="margin-top:22px;">Back-in-stock alerts</h4>${al.length ? al.map(a => `<div class="acct-order"><div><div style="font-size:13px;font-weight:600;">${esc(pn(a.productId))}</div><div style="font-size:11px;color:#6b6862;">${a.status === 'waiting' ? 'Waiting · asked ' + esc(fmtDate(a.createdAt)) : 'Notified ' + esc(fmtDate(a.notifiedAt))}</div></div>${a.status === 'waiting' ? `<button class="linkbtn" onclick="alertCancel('${a.id}','account')">Cancel</button>` : '<span class="cchip ok">sent</span>'}</div>`).join('') : '<p style="font-size:13px;color:#6b6862;">None. Tap “Notify me” on a sold-out saree.</p>'}
-    <h4 class="acct-h" style="margin-top:22px;">My reviews</h4>${rv.length ? rv.map(r => `<div class="acct-order"><div><div style="font-size:13px;font-weight:600;">${esc(pn(r.productId))}</div><div style="font-size:11px;color:#6b6862;">${starsHTML(r.rating)} · ${r.status === 'approved' ? 'published' : r.status === 'pending' ? 'waiting for approval' : 'not published'}</div></div><button class="linkbtn" onclick="rvDelete('${r.id}')">Delete</button></div>`).join('') : '<p style="font-size:13px;color:#6b6862;">None yet. Reviews open after your order is delivered.</p>'}`;
+  return `${al.length ? `<h4 class="acct-h" style="margin-top:22px;">Back-in-stock alerts</h4>` : ''}${al.length ? al.map(a => `<div class="acct-order"><div><div style="font-size:13px;font-weight:600;">${esc(pn(a.productId))}</div><div style="font-size:11px;color:#6b6862;">${a.status === 'waiting' ? 'Waiting · asked ' + esc(fmtDate(a.createdAt)) : 'Notified ' + esc(fmtDate(a.notifiedAt))}</div></div>${a.status === 'waiting' ? `<button class="linkbtn" onclick="alertCancel('${a.id}','account')">Cancel</button>` : '<span class="cchip ok">sent</span>'}</div>`).join('') : ''}
+    ${rv.length ? `<h4 class="acct-h" style="margin-top:22px;">My reviews</h4>` : ''}${rv.length ? rv.map(r => `<div class="acct-order"><div><div style="font-size:13px;font-weight:600;">${esc(pn(r.productId))}</div><div style="font-size:11px;color:#6b6862;">${starsHTML(r.rating)} · ${r.status === 'approved' ? 'published' : r.status === 'pending' ? 'waiting for approval' : 'not published'}</div></div><button class="linkbtn" onclick="rvDelete('${r.id}')">Delete</button></div>`).join('') : ''}`;
 }
 
 // ---- product form: fabric & colours (used by the shop filters) ----

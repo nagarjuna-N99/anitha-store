@@ -92,8 +92,9 @@ const { chromium } = require(process.env.PW);
 
   // ===== My Account =====
   await p.click('.nav-icon[aria-label="My account"]');
-  ok('My Account: profile, preferences, orders', await p.evaluate(() => document.getElementById('accountModal').classList.contains('active') && document.getElementById('ac-name').value === 'Asha Rao' && document.querySelectorAll('#accountBody .acct-order').length === 2 && document.querySelectorAll('#accountBody .acct-pref .toggle.active').length === 2));
-  await p.click('#accountBody .acct-pref >> nth=1 >> .toggle');
+  ok('My Account: profile, preferences, orders', await p.evaluate(() => document.getElementById('accountModal').classList.contains('active') && document.getElementById('ac-name').value === 'Asha Rao' && document.querySelectorAll('#accountBody .acct-order').length === 2 && document.querySelectorAll('#accountBody .acct-pref input:checked').length === 2));
+  ok('My Account message choices are tick boxes (no switches), and empty alert/review sections are hidden', await p.evaluate(() => document.querySelectorAll('#accountBody .acct-pref input[type=checkbox]').length >= 2 && !document.querySelector('#accountBody .acct-pref .toggle') && (db.alerts || []).length > 0 || !/None\. Tap/.test(document.getElementById('accountBody').innerText)));
+  await p.click('#accountBody .acct-pref >> nth=1 >> input');
   ok('withdrawing a permission applies instantly and is logged', await p.evaluate(id => db.users.find(u => u.id === id).consents.marketing === false && db.consentLog.filter(c => c.userId === id).slice(-1)[0].granted === false && db.consentLog.filter(c => c.userId === id).slice(-1)[0].source === 'account', u1.id));
   await p.fill('#ac-name', 'Asha R'); await p.fill('#ac-pin', '500002'); await p.click('#accountBody button:has-text("Save profile")');
   ok('profile editable', await p.evaluate(id => db.users.find(u => u.id === id).name === 'Asha R' && db.users.find(u => u.id === id).addr.pincode === '500002', u1.id));
