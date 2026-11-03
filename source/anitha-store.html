@@ -530,8 +530,10 @@
   .consent-box { border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; background: #fcfbf8; } .consent-box.invalid { border-color: var(--red); background: #fdf3f3; }
   .consent-sub { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #6b6862; font-weight: 600; margin: 12px 0 8px; padding-top: 10px; border-top: 1px dashed var(--border); }
   .chk { display: flex; gap: 10px; align-items: flex-start; font-size: 12px; line-height: 1.55; color: #444; margin-bottom: 8px; cursor: pointer; } .chk input { margin-top: 3px; width: 16px; height: 16px; flex-shrink: 0; accent-color: var(--gold); } .chk em { color: #6b6862; font-style: normal; }
+  .ac4-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}.ac4-av{width:52px;height:52px;border-radius:50%;background:var(--charcoal);color:var(--ivory);display:grid;place-items:center;font-family:'Cormorant Garamond',serif;font-size:21px;flex:none}
+  .ac4-list{display:grid;gap:10px;max-width:720px}.ac4-row{background:#fff;border:1px solid var(--border);border-radius:10px;padding:0 16px}.ac4-row[open]{border-color:var(--gold)}.ac4-row summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;cursor:pointer}.ac4-row summary::-webkit-details-marker{display:none}.ac4-row summary b{font-size:15px;display:block}.ac4-row summary small{display:block;color:#6b6862;font-size:12px;margin-top:2px}.ac4-row summary i{width:9px;height:9px;border-right:2px solid var(--gold);border-bottom:2px solid var(--gold);transform:rotate(-45deg);transition:transform .2s;flex:none;margin-right:4px}.ac4-row[open] summary i{transform:rotate(45deg)}.ac4-body{border-top:1px solid #eee5d6;padding:14px 0 16px}.ac4-body .acct-h:first-child{display:none}
   .acct-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; } .acct-h { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
-  .acct-tick { justify-content: flex-start; cursor: pointer; } .acct-tick input { width: 22px; min-width: 22px; max-width: 22px; height: 22px; padding: 0; margin: 2px 0 0; flex: none; accent-color: #A67C52; cursor: pointer; }
+  .acct-pref.acct-tick { justify-content: flex-start; align-items: flex-start; gap: 14px; cursor: pointer; text-align: left; } .acct-tick > span { flex: 1; min-width: 0; } .acct-tick input { width: 22px; min-width: 22px; max-width: 22px; height: 22px; padding: 0; margin: 2px 0 0; flex: none; accent-color: #A67C52; cursor: pointer; }
   .acct-pref { display: flex; justify-content: space-between; gap: 14px; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
   .acct-addr { display: flex; justify-content: space-between; align-items: center; background: var(--cream); padding: 10px 12px; border-radius: 6px; margin-bottom: 8px; }
   .acct-order { display: flex; justify-content: space-between; background: var(--cream); padding: 10px 12px; border-radius: 6px; margin-bottom: 8px; }
@@ -2118,32 +2120,31 @@ function processPayment() {
 
 // ---- My Account ----
 function openAccount() { const u = currentUser(); if (!u) { openAuth(() => openAccount()); return; } renderAccount(); el_('accountModal').classList.add('active'); maybeUpdatedNotice(); }
+const ACCT_OPEN = new Set(['details', 'msgs']);
 function renderAccount() {
   const u = currentUser(); if (!u) { closeModal('accountModal'); return; }
   const a = u.addr || {}, c = u.consents || {}, orders = db.orders.filter(o => o.userId === u.id).sort((x, y) => y.date.localeCompare(x.date));
   const tg = (type, label, sub) => `<label class="acct-pref acct-tick"><input type="checkbox" ${c[type] ? 'checked' : ''} onchange="acctConsent('${type}',this)"><span><span style="font-weight:600;font-size:14px;display:block;">${label}</span><span class="note" style="margin:2px 0 0;display:block;">${sub}</span></span></label>`;
+  const initials = (String(u.name || '').trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2) || '☺').toUpperCase();
+  const extra = acctExtraHTML(u), nAddr = abEnsure(u).length;
+  const row = (key, title, sub, body) => `<details class="ac4-row" ${ACCT_OPEN.has(key) ? 'open' : ''} ontoggle="this.open ? ACCT_OPEN.add('${key}') : ACCT_OPEN.delete('${key}')"><summary><span><b>${title}</b><small>${sub}</small></span><i aria-hidden="true"></i></summary><div class="ac4-body">${body}</div></details>`;
+  const lastOrder = orders[0] ? ` · last placed ${esc(orders[0].date)}` : '';
   el_('accountBody').innerHTML = `
-    <h2 style="font-family:'Cormorant Garamond',serif;font-size:30px;">My Account</h2>
-    <p style="font-size:13px;color:var(--sage);margin-bottom:20px;">✓ Signed in with WhatsApp · ${esc(maskPhone(u.phone))}</p>
-    <div class="acct-grid">
-      <div>
-        <h4 class="acct-h">Profile</h4>
-        <div class="form-group"><label>Full name</label><input id="ac-name" value="${esc(u.name)}"></div>
+    <div class="ac4-head"><span class="ac4-av" aria-hidden="true">${esc(initials)}</span><div><h2 style="font-family:'Cormorant Garamond',serif;font-size:28px;margin:0;">${esc(u.name || 'My Account')}</h2><p style="font-size:13px;color:var(--sage);margin:2px 0 0;">✓ Signed in with WhatsApp · ${esc(maskPhone(u.phone))}</p></div></div>
+    <div class="ac4-list">
+    ${row('details', 'Personal details', 'Name, email and address', `<div class="form-group"><label>Full name</label><input id="ac-name" value="${esc(u.name)}"></div>
         <div class="form-group"><label>Email (optional)</label><input id="ac-email" type="email" value="${esc(u.email)}"></div>
         <div class="form-group"><label>Address</label><input id="ac-street" value="${esc(a.street)}"></div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;"><div class="form-group"><label>City</label><input id="ac-city" value="${esc(a.city)}"></div><div class="form-group"><label>State</label><input id="ac-state" value="${esc(a.state)}"></div><div class="form-group"><label>Pincode</label><input id="ac-pin" value="${esc(a.pincode)}"></div></div>
-        <button class="btn-full" onclick="acctSave()">Save profile</button>
-      </div>
-      <div>
-        <h4 class="acct-h">WhatsApp messages</h4>
-        ${tg('orderUpdates', 'Order updates', 'Confirmation, shipping and delivery messages about your orders.')}
+        <button class="btn-full" onclick="acctSave()">Save profile</button>`)}
+    ${row('msgs', 'WhatsApp messages', `Order updates ${c.orderUpdates ? 'on' : 'off'} · Offers ${c.marketing ? 'on' : 'off'}`, `${tg('orderUpdates', 'Order updates', 'Confirmation, shipping and delivery messages about your orders.')}
         ${tg('marketing', 'Offers &amp; new arrivals', 'Occasional messages about new collections and festive offers.')}
         ${waServer() ? tg('cartReminder', 'Cart reminders', 'A reminder (at most 2) if you leave sarees in your cart without ordering.') : ''}
-        <div class="note">Tick or untick any time. It applies at once. You can also reply STOP to any message.</div>
-        <h4 class="acct-h" style="margin-top:22px;">My orders</h4>
-        ${orders.length ? orders.map(o => `<div class="acct-order"><div><div style="font-family:monospace;font-size:12px;font-weight:600;">${esc(o.id)}</div><div style="font-size:11px;color:#6b6862;">${esc(o.date)} · ${o.items.length} item${o.items.length > 1 ? 's' : ''}</div></div><div style="text-align:right;"><div style="font-weight:600;font-size:13px;">${formatCurrency(o.total)}</div><span class="status-pill ${getStatusClass(o.status)}" style="font-size:9px;">${esc(prettyStatus(o.status))}</span><div><button class="linkbtn" onclick="openTrackOrder('${esc(o.id)}')">Track</button></div></div></div>`).join('') : '<p style="font-size:13px;color:#6b6862;">No orders yet.</p>'}
-        ${abAccountHTML(u)}${acctExtraHTML(u)}${acctRightsHTML(u)}
-      </div>
+        <div class="note">Tick or untick any time. It applies at once. You can also reply STOP to any message.</div>`)}
+    ${row('orders', 'My orders', `${orders.length} order${orders.length === 1 ? '' : 's'}${lastOrder}`, `${orders.length ? orders.map(o => `<div class="acct-order"><div><div style="font-family:monospace;font-size:12px;font-weight:600;">${esc(o.id)}</div><div style="font-size:11px;color:#6b6862;">${esc(o.date)} · ${o.items.length} item${o.items.length > 1 ? 's' : ''}</div></div><div style="text-align:right;"><div style="font-weight:600;font-size:13px;">${formatCurrency(o.total)}</div><span class="status-pill ${getStatusClass(o.status)}" style="font-size:9px;">${esc(prettyStatus(o.status))}</span><div><button class="linkbtn" onclick="openTrackOrder('${esc(o.id)}')">Track</button></div></div></div>`).join('') : '<p style="font-size:13px;color:#6b6862;">No orders yet.</p>'}`)}
+    ${row('addr', 'Saved addresses', `${nAddr} saved`, abAccountHTML(u))}
+    ${extra ? row('extra', 'Alerts and reviews', 'Back-in-stock alerts, my reviews', extra) : ''}
+    ${row('privacy', 'Privacy and data', 'Your rights, erase account', acctRightsHTML(u))}
     </div>
     <div class="acct-foot"><a onclick="openLegalModal('terms')">Terms &amp; Conditions</a> · <a onclick="openLegalModal('privacy')">Privacy Policy</a> · <a onclick="openNotice()">Privacy notice</a> · <a onclick="acctDelete()" style="color:var(--red);">Erase my account</a><span style="flex:1"></span><button class="btn-sm btn-danger-sm" onclick="logout()">Sign out</button></div>`;
 }

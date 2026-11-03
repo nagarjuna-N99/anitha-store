@@ -31,7 +31,7 @@ const { chromium } = require(process.env.PW);
   await ev(() => waImportOrders()); await p.waitForTimeout(400);
   ok('importing again is harmless (no duplicates, no double stock cut)', await ev(([i1, s0]) => db.orders.filter(o => o.id === i1).length === 1 && db.products.find(x => x.id === 'p3').stock === s0.p3 - 1, [o1.id, stock0]));
   ok('imported orders show in the Orders tab without errors', await ev(() => { switchAdminTab('orders'); return /OR[0-9a-f]+/i.test(document.getElementById('adminContent').innerText); }));
-  ok('customers see the order in My Account', await ev(() => { setSession(db.users.find(u => u.name.startsWith('Priya')), null); openAccount(); const t = document.getElementById('accountModal').innerText; closeModal('accountModal'); return t.includes('OR'); }));
+  ok('customers see the order in My Account', await ev(() => { setSession(db.users.find(u => u.name.startsWith('Priya')), null); openAccount(); const t = document.getElementById('accountModal').textContent; closeModal('accountModal'); return t.includes('OR'); }));
   ok('no script errors', errs.length === 0); if (errs.length) console.log(errs);
   console.log(fails ? fails + ' FAILED' : 'ALL PASSED'); await b.close(); app.server.close(); process.exit(fails ? 1 : 0);
 })();
