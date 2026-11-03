@@ -54,3 +54,6 @@ On the home page the header has no bar: the name, menu and icons sit on the hero
 
 ## Update 6 (4 Nov 2026): simpler slide editor
 Each slide now shows only the photo, the words and one row of looks (Auto, Elegant, Bold, Modern, Soft, Classic). Tap a look and the font, weight, size and spacing change together. Auto matches the photo. Everything else (zoom, photo position, darkness, button link, every text option and colour) is inside **More options**, closed until you open it.
+
+## Update 7 (4 Nov 2026): one look for all slides
+All slides now share one text look, so the banner reads as one design. Pick a look on any slide (Auto, Elegant, Bold, Modern, Soft, Classic, or change any text option) and every slide follows. The words and the colours (each photo needs its own for readability) stay separate. A slide you add later takes the same look. To let one slide differ, untick **Same look on all slides** under the looks.

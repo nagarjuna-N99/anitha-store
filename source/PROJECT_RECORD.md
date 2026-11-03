@@ -138,6 +138,9 @@ See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
 
+**4 Nov 2026 (One look for all hero slides)**
+- Owner: all hero slides should follow the same style, only the words may differ. The text look (font, weight, size, capitals, spacing, line spacing, shadow, description size and font, button look) is now shared by every slide (`heroEffType`, `LOOK_KEYS`, `db.home.hero.sameLook`, default on). Choosing a look, changing any text option, or Auto-style applies to all slides; a new photo takes the existing look instead of inventing another; slides saved earlier with different looks follow the first slide's look automatically. Colours stay per photo (readability) and the words stay separate. A checkbox "Same look on all slides" under the looks can switch this off. Tests: hero-theme-test +5.
+
 **4 Nov 2026 (Hero slide editor simplified)**
 - Owner said the slide editor had become too complicated. Each slide now shows only: photo, small heading, title, description, button text, "Suggest the words", and one row of looks (Auto, Elegant, Bold, Modern, Soft, Classic; one tap sets font, weight, size, case and spacing). Everything else (photo position, zoom, darkness, button link, every text option, colour pickers, colour matching) is inside one folded "More options"; its open state is kept while editing. Tests updated (+2 checks).
 

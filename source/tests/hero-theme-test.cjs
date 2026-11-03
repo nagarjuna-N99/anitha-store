@@ -89,6 +89,14 @@ const { chromium } = require(process.env.PW);
   await ev(() => { aiOn = () => false; }).catch(() => { }); await ev(() => heroWriteWords(0)); await sleep(500);
   ok('Suggest the words gives three drafts that can be used', await ev(() => document.querySelectorAll('#hwd-0 .hw-opt').length === 3));
   await ev(() => heroUseWords(0, 1)); ok('using a draft fills small heading, title, description and button', await ev(() => db.home.hero.slides[0].title === 'Handloom, the way it should be' && !!db.home.hero.slides[0].btnText));
+  // ---- one look for all slides ----
+  await ev(() => { db.home.hero.sameLook = undefined; const S = db.home.hero.slides; while (S.length < 3) S.push(JSON.parse(JSON.stringify(Object.assign({}, S[0], { id: 'hx' + S.length, enabled: true })))); S.forEach(x => delete x.type); S[0].title = 'First words'; S[1].title = 'Second words'; S[1].type = { font: 'Gloock', size: 90 }; S[0].type = { font: 'Bodoni Moda', weight: 700 }; S[1].type.ink = '#ff0000'; heroPreset(0, 'Modern'); renderHome(); });
+  const same = await ev(() => { const S = db.home.hero.slides; const eff = S.map(x => heroEffType(x)); const css = [...document.querySelectorAll('#homeHero .hero-slide')].map(e => getComputedStyle(e.querySelector('.hero-title')).fontFamily + '|' + getComputedStyle(e.querySelector('.hero-title')).textTransform); return { fonts: [...new Set(eff.map(e => e.font))], css: [...new Set(css)], t: S.map(x => x.title).slice(0, 2), ink: eff[1].ink, ink0: eff[0].ink }; });
+  ok('choosing a look changes every slide to it; the words stay different', same.fonts.length === 1 && same.fonts[0] === 'Syne' && same.css.length === 1 && same.t[0] !== same.t[1]);
+  ok('colours stay separate for each slide', same.ink === '#ff0000' && same.ink0 !== '#ff0000');
+  await ev(() => { const S = db.home.hero.slides; S[2].type = { font: 'Gloock' }; }); ok('a slide with its own different look still follows the shared one', await ev(() => heroEffType(db.home.hero.slides[2]).font === 'Syne'));
+  await ev(() => { heroSameLook(false, 0); heroTypeSet(1, 'font', 'Fraunces'); }); ok('with "Same look" switched off a slide can differ', await ev(() => heroEffType(db.home.hero.slides[1]).font === 'Fraunces' && heroEffType(db.home.hero.slides[0]).font === 'Syne'));
+  await ev(() => { heroSameLook(true, 1); }); ok('switching it back on makes every slide match again', await ev(() => new Set(db.home.hero.slides.map(x => heroEffType(x).font)).size === 1));
   ok('no JavaScript errors', errs.length === 0 || (console.log(errs), false));
   console.log(fails ? 'FAILED ' + fails : 'ALL PASSED'); await b.close(); process.exit(fails ? 1 : 0);
 })();
