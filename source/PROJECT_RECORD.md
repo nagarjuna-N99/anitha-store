@@ -138,6 +138,12 @@ See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
 
+**4 Nov 2026 (Slimmer top bar with the full logo; shop name in Bodoni Moda Bold Italic; Shop by occasion centred)**
+- Top bar is about half the height (65px, was about 126px) and shows the **full logo** uncropped; on a dark bar it sits on a white tile. Matching a hero photo no longer switches "Top bar follows the hero photo" on by itself. "Shop by occasion" tiles are centred. The "Anitha Pemmasani" name uses Bodoni Moda Bold Italic (owner picked D from a font comparison; added to the Google Fonts link, falls back to Playfair Display, then Georgia). Tests: hero-theme-test updated (+2).
+
+**4 Nov 2026 (Slimmer top bar with the full logo; Shop by occasion centred)**
+- Top bar is about half the height (65px, was about 126px) and shows the **full logo** (flowers, A/P, name, Clothing Studio) uncropped instead of the round monogram. On a dark bar it sits on a white tile. Matching a hero photo no longer switches "Top bar follows the hero photo" on by itself; the switch stays the owner's choice. "Shop by occasion" tiles are centred. Five header drafts were shown for the owner to choose from. Tests: hero-theme-test updated (+1).
+
 **4 Nov 2026 (Saree Care: full wash-care guide, photo links repaired)**
 - `careGuideLoad()` adds Washing, Drying & Ironing, Stains, Zari & Embroidery tabs (photos from the owner's own products); button in Pages → Saree Care. Doubled `?q=80&w=800` photo links repaired (seed and saved data); failing photos show a cream box. "Storage Tips not visible" could not be reproduced locally (all ticked tabs render). Guide: HOW-IT-WORKS/29-saree-care-guide.md. Test: `care-test.cjs` 9 checks.
 

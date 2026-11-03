@@ -28,3 +28,9 @@ The slide shows three small swatches (text, accent, top bar). **Clear matched co
 ## Tests
 `tests/hero-theme-test.cjs` (16 checks): zoom and position on the website, the editor sliders, matching a dark photo and a pale photo (text and button contrast, top bar contrast), the top bar following on the home page only, switch off, clear, an unreadable photo. `home-test.cjs` updated for the new photo layer. `ui2-test.cjs` +2: View home page opens the website, and the sliders and button are in the new look.
 Not tested: the colours on real photos of your sarees (only synthetic photos), and other browsers.
+
+## Update (4 Nov 2026)
+Matching a photo no longer turns the top bar colour on by itself: switch **Top bar follows the hero photo's colours** on only if you want it. The top bar is slimmer and shows the full logo; on a dark bar the logo sits on a white tile.
+
+## Update (4 Nov 2026)
+Matching a photo no longer turns the top bar colour on by itself: switch **Top bar follows the hero photo's colours** on only if you want it. The top bar is slimmer and shows the full logo (on a dark bar it sits on a white tile). The shop name is set in Bodoni Moda Bold Italic.
