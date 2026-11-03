@@ -489,8 +489,9 @@
   .hs-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; font-size: 13px; color: #555; } .hs-bar select { padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; background: white; }
   .hs-lbl { font-size: 11px; color: #6b6862; }
   .hs { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 20px; padding: 18px 0; border-top: 1px solid var(--border); } .hs.off { opacity: 0.6; }
+.ship-note { margin: 4px 0 14px; padding: 10px 12px; background: var(--cream); border: 1px solid var(--border); border-radius: 4px; font-size: 13px; line-height: 1.5; color: var(--charcoal); } .ship-note span { color: var(--gold); }
   .hs-prev { margin-top: 6px; } .hs-win { position: relative; overflow: hidden; border-radius: 8px; background: #2a2420; width: 100%; } .hs-stage { position: absolute; left: 0; top: 0; transform-origin: 0 0; background: var(--ivory, #FAF9F6); pointer-events: none; }
-  .hs-stage .hero-slide { opacity: 1; visibility: visible; } .hs-stage nav.hs-fnav { position: static; }
+  .hs-stage .hero-slide { opacity: 1; visibility: visible; } .hs-stage nav.hs-fnav { position: absolute; left: 0; right: 0; top: 0; z-index: 5; background: linear-gradient(180deg, rgba(20,12,8,.6), rgba(20,12,8,0)); border-bottom-color: transparent; --nav-ink: #fff; }
   .hs-noimg { height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; padding: 16px; color: #6b6862; font-size: 12px; background: #f1eee7; }
   .hs-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; } .hs-head button:disabled { opacity: 0.35; }
   .hs-img-row { display: flex; gap: 8px; align-items: center; } .hs-img-row input, .hs-img-row select { padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; min-width: 0; flex: 1; } .hs-img-row button { flex-shrink: 0; white-space: nowrap; padding: 10px 12px; }
@@ -1182,6 +1183,8 @@ h1, h2, h3, h4, h5, h6 { font-weight: 600; }
 .hero-slide { overflow: hidden; } .hero-img, .hero-shade { position: absolute; inset: 0; } .hero-img { background-size: cover; background-repeat: no-repeat; transition: transform 0.4s ease; } .hero-content { position: relative; z-index: 2; }
 .hero-title, .hero-subtitle { color: var(--hero-ink, inherit); } .hero-est { color: var(--hero-accent, var(--gold-light)); }
 .hero-slide.themed .btn-primary { background: var(--hero-btn-bg); color: var(--hero-btn-ink); border-color: var(--hero-btn-bg); }
+body.nav-over nav { position: fixed; left: 0; right: 0; top: 0; box-sizing: border-box; } body.nav-over.nav-top nav { background: linear-gradient(180deg, rgba(20,12,8,.6), rgba(20,12,8,0)); border-bottom: 0; --nav-bg: transparent; --nav-ink: #fff; }
+@media (max-width: 640px) { #storefrontView nav .nav-left, .hs-fnav .nav-left { display: contents !important; } #storefrontView nav .nav-brand, .hs-fnav .nav-brand { order: 1; } #storefrontView nav .nav-icons, .hs-fnav .nav-icons { order: 2; } #storefrontView nav .hamburger-btn, .hs-fnav .hamburger-btn { order: 3; } }
 nav.dark .brand-mark { background: #fff; padding: 3px; box-sizing: border-box; } nav { background: var(--nav-bg, var(--ivory)); transition: background-color 0.6s ease, color 0.6s ease; } nav .nav-brand, nav .nav-links a, nav .nav-icon { color: var(--nav-ink, var(--charcoal)); } .hamburger-btn span { background: var(--nav-ink, var(--charcoal)); } .img-broken{background:var(--cream);color:transparent;font-size:0}.arr-cat{border:1px solid rgba(128,128,128,.25);border-radius:8px;margin:0 0 6px;padding:6px 10px}.arr-cat summary{cursor:pointer;font-weight:600}.arr-list{display:grid;gap:4px;padding:6px 0}.arr-item{margin:0}
 .hs-theme { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 4px 0 12px; } .hm-sw { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border); display: inline-block; } .hs-gap { flex: 1; }
 .journal-grid { grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); }
@@ -1328,7 +1331,7 @@ nav.dark .brand-mark { background: #fff; padding: 3px; box-sizing: border-box; }
       <div><div class="footer-title">Support</div><ul class="footer-links"><li><a onclick="openAccount()">My Account &amp; Orders</a></li><li><a onclick="navigateTo('faq')">FAQ</a></li><li><a onclick="openNotice()">Privacy notice</a></li><li><a onclick="openRights()">Your privacy rights</a></li><li><a onclick="openLegal('terms','shipping')">Shipping Policy</a></li><li><a onclick="openLegal('terms','returns')">Returns &amp; Exchanges</a></li><li><a onclick="openLegal('terms')">Terms &amp; Conditions</a></li><li><a onclick="openLegal('privacy')">Privacy Policy</a></li><li><a onclick="navigateTo('care')">Saree Care Guide</a></li></ul></div>
       <div><div class="footer-title">Contact</div><ul class="footer-links"><li><a>Hyderabad, Telangana, India</a></li><li><a href="tel:+919849646440">+91 98496 46440</a></li><li><a id="footWa" href="https://wa.me/919849646440">WhatsApp Support</a></li></ul></div>
     </div>
-    <div class="footer-bottom"><div>© 2026 Anitha Pemmasani. All rights reserved.</div><div class="footer-legal"><a class="fl" onclick="openLegal('terms')">Terms</a><a class="fl" onclick="openLegal('privacy')">Privacy</a><span>Payment is agreed with you on WhatsApp</span></div></div>
+    <div class="footer-bottom"><div>© 2026 Anitha Pemmasani. All rights reserved.</div><div class="footer-legal"><a class="fl" onclick="openLegal('terms')">Terms</a><a class="fl" onclick="openLegal('privacy')">Privacy</a></div></div>
   </footer>
 <div class="tabbar" id="tabBar" role="navigation" aria-label="Main">
     <button type="button" data-tab="home" onclick="tabGo('home')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10"/></svg><span>Home</span></button>
@@ -3169,12 +3172,14 @@ function productPageHTML(p, gk, opts = {}) {
     <p class="detail-desc">${esc(p.description || 'No description yet.')}</p>
     ${tagChips(p.tags)}
     <div class="tab-content active"><ul style="margin-top:14px;"><li><strong>SKU:</strong> ${esc(p.sku)}</li><li><strong>Availability:</strong> ${inStock ? (oneOfAKind(p) ? 'One of a kind' : p.stock <= 2 ? `Only ${p.stock} left` : 'In stock') : 'Sold out'}</li><li><strong>Category:</strong> ${esc(p.category)}</li>${p.rating ? `<li><strong>Rating:</strong> ${p.rating} (${p.reviews} reviews)</li>` : ''}</ul></div>
-    ${deliveryWidgetHTML(p, gk, opts.preview)}
+    ${deliveryWidgetHTML(p, gk, opts.preview)}${shipNoteHTML()}
     ${!inStock && !opts.preview ? `<button class="btn-full buy-btn" style="margin-bottom:10px;" onclick="openStockAlert('${p.id}')">${notifyLabel(p.id)}${myAlert(p.id) ? '' : ' when it is back'}</button>${isAccessory(p) ? '' : `<button class="btn-outline similar-btn" style="margin:0 0 10px;" onclick="openSimilarAlert('${p.id}')">${mySimilar(p.id) ? '✨ You will hear about similar sarees' : '✨ Tell me about similar sarees'}</button><button class="btn-outline request-btn" style="margin:0 0 10px;" onclick="openSimilarRequest('${p.id}')">💬 Request a similar piece</button>`}` : `<button class="btn-full buy-btn" style="margin-bottom:10px;" ${opts.preview ? 'disabled' : `onclick="addToCart('${p.id}');closeModal('productModal');"`}>Add to Cart</button>`}
     <button class="btn-outline" style="margin-top:0;" ${opts.preview ? 'disabled' : `onclick="openShare('${p.id}')"`}>🔗 Share this saree</button>${giftButtonHTML(p, opts.preview)}${waChatButtonHTML(p, opts.preview)}
   </div></div>`;
 }
 
+// The shop's current announcement (for example the free-shipping line) is also shown on every product page.
+function shipNoteHTML() { const a = db.home && activeAnnouncements()[0]; return a ? `<div class="ship-note" role="note">🚚 ${esc(a.text).replace(/ · /g, ' <span>·</span> ')}</div>` : ''; }
 // ---- preview (product page / shop card / search result, desktop or mobile) ----
 const PV = { p: null, tab: 'page', device: 'desktop' };
 function openPreview(p) { PV.p = p; PV.tab = 'page'; renderPreview(); gid_('previewModal').classList.add('active'); }
@@ -4334,8 +4339,14 @@ function applyHeaderTheme() {
   if (!t && s && db.home.headerMatch !== false && safeImg(s.image)) { if (!AUTO_H.has(s)) { AUTO_H.set(s, null); heroAnalyze(s).then(a => { AUTO_H.set(s, { headerBg: a.headerBg }); applyHeaderTheme(); }).catch(() => { }); } t = AUTO_H.get(s); }
   if (db.home.headerMatch !== false && t && t.headerBg && pg && pg.classList.contains('active')) { const c = navFromTheme(t); r.style.setProperty('--nav-bg', c.bg); r.style.setProperty('--nav-ink', c.ink); }
   else { r.style.removeProperty('--nav-bg'); r.style.removeProperty('--nav-ink'); }
-  nav.classList.remove('dark');
+  nav.classList.remove('dark'); navOverSync();
 }
+// On the home page the header is drawn straight on the hero photo (no bar). Once the visitor scrolls it becomes the light bar.
+function navOverSync() {
+  const pg = document.getElementById('page-home'), over = !!(pg && pg.classList.contains('active') && !isAdminView);
+  document.body.classList.toggle('nav-over', over); document.body.classList.toggle('nav-top', over && window.scrollY < 30);
+}
+window.addEventListener('scroll', () => { if (typeof navOverSync === 'function') navOverSync(); }, { passive: true });
 // Automatic colours: when a hero photo is added or moved, the colours are picked again and saved with the slide.
 function heroAuto(i, raise) {
   clearTimeout(AUTO_T[i]); AUTO_T[i] = setTimeout(async () => {
@@ -4428,7 +4439,7 @@ function heroLinkValue(i, v) { const s = db.home.hero.slides[i]; if (s.link.type
 // The slide preview is the real website, drawn at this device's own width and then scaled to fit, so fonts, colours and line spacing are exactly what visitors see.
 function heroPrevNav(s) {
   const t = s && s.theme, c = db.home.headerMatch !== false && t && t.headerBg ? navFromTheme(t) : null, st = c ? `--nav-bg:${c.bg};--nav-ink:${c.ink}` : '';
-  return `<nav class="hs-fnav" style="${st}"><div class="nav-left" style="display:flex;align-items:center;gap:15px;"><button class="hamburger-btn" tabindex="-1" aria-hidden="true"><span></span><span></span><span></span></button><a class="nav-brand"><img class="brand-mark" alt="" src="${ICON_URI}" width="40" height="40"><span>Anitha Pemmasani</span></a></div><ul class="nav-links"><li><a>Home</a></li><li><a>Collection</a></li><li><a>Saree Care</a></li><li><a>Journal</a></li></ul><div class="nav-icons"><div class="nav-icon">🔍</div><div class="nav-icon">♡</div><div class="nav-icon">👤</div><div class="nav-icon">🛒</div></div></nav>`;
+  return `<nav class="hs-fnav" ><div class="nav-left" style="display:flex;align-items:center;gap:15px;"><button class="hamburger-btn" tabindex="-1" aria-hidden="true"><span></span><span></span><span></span></button><a class="nav-brand"><img class="brand-mark" alt="" src="${ICON_URI}" width="40" height="40"><span>Anitha Pemmasani</span></a></div><ul class="nav-links"><li><a>Home</a></li><li><a>Collection</a></li><li><a>Saree Care</a></li><li><a>Journal</a></li></ul><div class="nav-icons"><div class="nav-icon">🔍</div><div class="nav-icon">♡</div><div class="nav-icon">👤</div><div class="nav-icon">🛒</div></div></nav>`;
 }
 function heroFit(box) {
   const st = box && box.querySelector('.hs-stage'); if (!st) return; const w = window.innerWidth, k = Math.min(1, box.clientWidth / w || 1);

@@ -42,3 +42,6 @@ Matching a photo no longer turns the top bar colour on by itself: switch **Top b
 
 ## Update 3 (4 Nov 2026): the preview is the real website
 The picture under each slide is now the website itself (header with the shop name and menu, then the hero), drawn at your screen's width and scaled down to fit. Fonts, colours and line spacing are the same as visitors see on that kind of screen, only smaller.
+
+## Update 4 (4 Nov 2026): header on the photo
+On the home page the header has no bar: the name, menu and icons sit on the hero photo. Scroll down and it turns into the light bar (tint of the photo). Other pages keep the normal bar. On a phone the bottom bar is unchanged. The shipping line now also shows on every product page, and the footer no longer says payment is agreed on WhatsApp.
