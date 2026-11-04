@@ -64,6 +64,7 @@ function renderProducts() {
   if (sig !== SHOP.sig) { SHOP.sig = sig; SHOP.shown = SHOP_PAGE; }
   const shown = list.slice(0, SHOP.shown), left = list.length - shown.length;
   grid.innerHTML = list.length ? shown.map(productCardHTML).join('') + (left > 0 ? `<div class="show-more" style="grid-column:1/-1;text-align:center;padding:14px 0 24px;"><button type="button" class="btn-outline" id="shop-more" style="max-width:320px;margin:0 auto;" onclick="shopMore()">Show ${Math.min(left, SHOP_PAGE)} more · ${left} left</button></div>` : '') : shopEmptyHTML();
+  if (typeof renderShopBanner === 'function') renderShopBanner();
   document.getElementById('shop-title').textContent = currentCategory === 'all' ? (SHOP.kind === 'accessory' ? 'Accessories' : 'All Sarees') : currentCategory;
   renderFilterButtons();
   shopMeta(list.length, categoryProducts().length);

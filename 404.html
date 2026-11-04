@@ -1731,6 +1731,7 @@ function renderProducts() {
   if (sig !== SHOP.sig) { SHOP.sig = sig; SHOP.shown = SHOP_PAGE; }
   const shown = list.slice(0, SHOP.shown), left = list.length - shown.length;
   grid.innerHTML = list.length ? shown.map(productCardHTML).join('') + (left > 0 ? `<div class="show-more" style="grid-column:1/-1;text-align:center;padding:14px 0 24px;"><button type="button" class="btn-outline" id="shop-more" style="max-width:320px;margin:0 auto;" onclick="shopMore()">Show ${Math.min(left, SHOP_PAGE)} more · ${left} left</button></div>` : '') : shopEmptyHTML();
+  if (typeof renderShopBanner === 'function') renderShopBanner();
   document.getElementById('shop-title').textContent = currentCategory === 'all' ? (SHOP.kind === 'accessory' ? 'Accessories' : 'All Sarees') : currentCategory;
   renderFilterButtons();
   shopMeta(list.length, categoryProducts().length);
@@ -4320,8 +4321,11 @@ function heroTypeVars(t) {
 }
 // All slides share one look (font, size, weight, spacing...) so the banner feels like one design; the words and the colours (which depend on each photo) stay separate.
 // the slide editor also edits the Collection page banner: index -1 is the banner (same fields, same controls)
-const HSL = i => i < 0 ? db.home.shopBanner : db.home.hero.slides[i];
-const HSLV = i => i < 0 ? shopBannerSlide() : db.home.hero.slides[i];   // the slide as it is drawn (the banner borrows the first home photo until it has its own)
+// Collection banners: -1 is the default banner, -2, -3 ... are the banners of each category (in the order of BAN_CATS)
+const BAN_CATS = () => [...db.categories, ...(db.accessoryCategories || [])];
+function catBannerObj(cat) { const m = db.home.categoryBanners = db.home.categoryBanners || {}; return m[cat] = m[cat] || { enabled: true, image: '', eyebrow: '', title: '', subtitle: '', btnText: '', link: { type: 'none', value: '' }, pos: 'center', focus: 'center', overlay: 45, zoom: 100, focusX: 50 }; }
+const HSL = i => i === -1 ? db.home.shopBanner : i < -1 ? catBannerObj(BAN_CATS()[-i - 2]) : db.home.hero.slides[i];
+const HSLV = i => i === -1 ? shopBannerSlide('all') : i < -1 ? shopBannerSlide(BAN_CATS()[-i - 2]) : db.home.hero.slides[i];   // the slide as it is drawn (the banner borrows the first home photo until it has its own)
 const LOOK_KEYS = ['font', 'weight', 'style', 'size', 'case', 'spacing', 'lh', 'subSize', 'subFont', 'shadow', 'btnStyle', 'preset', 'auto', 'why'];
 const sameLook = () => !(db.home && db.home.hero && db.home.hero.sameLook === false);
 function heroEffType(s) {
@@ -4521,6 +4525,9 @@ function renderSignature() {
   sec.style.display = g.show === false || !tiles.length ? 'none' : '';
   sec.innerHTML = `<div class="section-header"><div class="section-label">${esc(g.label)}</div><h2 class="section-title">${esc(g.title)}</h2></div><div class="curated-grid">${tiles.map(t => `<div class="curated-item" role="link" tabindex="0" data-cat="${esc(t.category)}" onclick="filterAndShowShop(this.dataset.cat)" onkeydown="if(event.key==='Enter')filterAndShowShop(this.dataset.cat)"><img src="${esc(safeImg(t.image))}" alt="${esc(t.title)}" loading="lazy"><div class="curated-overlay"><h3>${esc(t.title)}</h3><p>${esc(t.subtitle)}</p><a class="curated-link">View Collection</a></div></div>`).join('')}</div>`;
 }
+let BAN_SEL = -1;
+function banSelect(v) { BAN_SEL = +v; renderHomeAdmin(document.getElementById('adminContent')); }
+function banReset(i) { const c = BAN_CATS()[-i - 2]; if (db.home.categoryBanners) delete db.home.categoryBanners[c]; homeLive(false); renderHomeAdmin(document.getElementById('adminContent')); showToast('This category uses the automatic banner again', 'success'); }
 function renderHome() { renderShopBanner(); renderOccasions(); renderRecentlySold(); renderRecent(); renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); ANN.sig = scheduleSignature(); renderAnnouncement(); renderPublicPages(); }
 
 // ---- admin: saving (applies to the storefront instantly, written to storage a moment later) ----
@@ -4530,14 +4537,21 @@ function homeSaveSoon() { clearTimeout(HOME_TIMER); homeStatus('Saving…'); HOM
 function homeFlush() { if (HOME_TIMER === null) return true; clearTimeout(HOME_TIMER); HOME_TIMER = null; const ok = saveDB(); homeStatus(ok ? '✓ Saved — live on your store' : '⚠ Not saved (browser storage is full)'); return ok; }
 window.addEventListener('beforeunload', () => { if (HOME_TIMER !== null) homeFlush(); });
 // The banner at the top of the Collection page: a photo with words (the owner sets both; AI can colour and word it). It uses the same text look as the home page banner.
-function shopBannerSlide() {
+function shopBannerSlide(cat) {
   const B = db.home.shopBanner || {}, first = (db.home.hero.slides.find(x => safeImg(x.image)) || {}).image || '';
-  return Object.assign({}, B, { id: 'shopbanner', image: safeImg(B.image) ? B.image : first, link: B.link || { type: 'none', value: '' } });
+  const gen = Object.assign({}, B, { id: 'shopbanner', image: safeImg(B.image) ? B.image : first, link: B.link || { type: 'none', value: '' } });
+  if (!cat || cat === 'all') return gen;
+  // a category banner: whatever the owner filled in for it, and for the rest the category's own name, its count and one of its photos
+  const own = (db.home.categoryBanners || {})[cat], list = db.products.filter(x => x.category === cat), isAcc = (db.accessoryCategories || []).includes(cat), n = list.length;
+  const pic = (list.find(x => x.stock > 0 && safeImg(x.image)) || list.find(x => safeImg(x.image)) || {}).image || '';
+  const auto = { eyebrow: 'Our collection', title: cat, subtitle: `${n} ${isAcc ? (n === 1 ? 'accessory' : 'accessories') : (n === 1 ? 'saree' : 'sarees')}` };
+  const pick = k => own && String(own[k] || '').trim() ? own[k] : auto[k], sty = own || B;
+  return Object.assign({}, gen, { id: 'shopbanner-' + cat, eyebrow: pick('eyebrow'), title: pick('title'), subtitle: pick('subtitle'), image: own && safeImg(own.image) ? own.image : (pic || gen.image), enabled: B.enabled !== false && !(own && own.enabled === false), pos: sty.pos, focus: sty.focus, overlay: sty.overlay, zoom: sty.zoom, focusX: sty.focusX, theme: own ? own.theme : undefined, type: own ? own.type : undefined, btnText: own ? own.btnText : '', link: own && own.link ? own.link : { type: 'none', value: '' } });
 }
 function renderShopBanner() {
-  const box = document.getElementById('shopBanner'); if (!box || !db.home) return; const B = db.home.shopBanner || {}, s = shopBannerSlide();
-  if (B.enabled === false || !safeImg(s.image) || !(s.title || s.subtitle)) { box.innerHTML = ''; box.style.display = 'none'; return; }
-  box.style.display = ''; box.innerHTML = `<div class="hero-slider shop-banner">${heroSlideHTML(s, -1, true, 'h2')}</div>`;
+  const box = document.getElementById('shopBanner'); if (!box || !db.home) return; const s = shopBannerSlide(typeof currentCategory !== 'undefined' ? currentCategory : 'all');
+  const html = s.enabled === false || !safeImg(s.image) || !(s.title || s.subtitle) ? '' : `<div class="hero-slider shop-banner">${heroSlideHTML(s, -1, true, 'h2')}</div>`;
+  if (box._h === html) return; box._h = html; box.innerHTML = html; box.style.display = html ? '' : 'none';
 }
 function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); homeSaveSoon(); }
 let HOME_PICK = null;
@@ -4621,7 +4635,7 @@ function renderHomeAdmin(container) {
     return `<div class="hs ${s.enabled ? '' : 'off'}">
       <div class="hs-prev"><div class="hs-win" id="hsprev-${i}">${heroPrevHTML(isB ? shopBannerSlide() : s, i)}</div></div>
       <div class="hs-fields">
-        ${isB ? `<div class="hs-head"><strong>Collection page banner</strong><span style="flex:1"></span><span class="hs-lbl">Show</span>${tog(s.enabled !== false, `heroToggle(-1,this)`)}</div>` : `<div class="hs-head"><strong>Slide ${i + 1}</strong>${s.enabled ? '' : '<span class="cchip">hidden</span>'}<span style="flex:1"></span><span class="hs-lbl">Show</span>${tog(s.enabled, `heroToggle(${i},this)`)}<button class="btn-sm btn-info-sm" onclick="heroMove(${i},-1)" ${i === 0 ? 'disabled' : ''} aria-label="Move up">↑</button><button class="btn-sm btn-info-sm" onclick="heroMove(${i},1)" ${i === hs.length - 1 ? 'disabled' : ''} aria-label="Move down">↓</button><button class="btn-sm btn-danger-sm" onclick="heroDel(${i})" aria-label="Delete slide">🗑</button></div>`}
+        ${isB ? `<div class="hs-head"><strong>${i === -1 ? 'Default banner (All sarees)' : 'Banner: ' + esc(BAN_CATS()[-i - 2])}</strong><span style="flex:1"></span><span class="hs-lbl">Show</span>${tog(s.enabled !== false, `heroToggle(${i},this)`)}${i < -1 ? `<button class="btn-sm btn-info-sm" onclick="banReset(${i})">Use the automatic banner</button>` : ''}</div>` : `<div class="hs-head"><strong>Slide ${i + 1}</strong>${s.enabled ? '' : '<span class="cchip">hidden</span>'}<span style="flex:1"></span><span class="hs-lbl">Show</span>${tog(s.enabled, `heroToggle(${i},this)`)}<button class="btn-sm btn-info-sm" onclick="heroMove(${i},-1)" ${i === 0 ? 'disabled' : ''} aria-label="Move up">↑</button><button class="btn-sm btn-info-sm" onclick="heroMove(${i},1)" ${i === hs.length - 1 ? 'disabled' : ''} aria-label="Move down">↓</button><button class="btn-sm btn-danger-sm" onclick="heroDel(${i})" aria-label="Delete slide">🗑</button></div>`}
         <div class="form-group"><label>Image</label><div class="hs-img-row"><input type="text" value="${esc(s.image.startsWith('data:') ? '' : s.image)}" placeholder="${s.image.startsWith('data:') ? 'Uploaded photo in use — paste a link to replace' : 'https://… image link'}" onchange="heroSet(${i},'image',this.value)"><button class="btn-sm btn-primary-sm" onclick="homePick('hero',${i})">⬆ Upload photo</button></div></div>
         <div class="hs-grid2"><div class="form-group"><label>Small heading</label><input type="text" value="${esc(s.eyebrow)}" onchange="heroSet(${i},'eyebrow',this.value)" oninput="heroSet(${i},'eyebrow',this.value)"></div><div class="form-group"><label>Title</label><input type="text" value="${esc(s.title)}" oninput="heroSet(${i},'title',this.value)"></div></div>
         <div class="form-group"><label>Description</label><textarea rows="2" oninput="heroSet(${i},'subtitle',this.value)">${esc(s.subtitle)}</textarea></div>
@@ -4669,9 +4683,10 @@ function renderHomeAdmin(container) {
     </div>
 
     <div class="admin-card" id="shop-banner-card">
-      <h3>🖼 Collection page banner</h3>
-      <p class="note" style="margin:0 0 6px">The picture and words at the top of the Collection page. Everything works exactly like the home page slides above: photo, words, looks, colours and the ✨ AI buttons. Until you choose a photo it uses the first home page photo.</p>
-      ${slideHTML(H.shopBanner, -1)}
+      <h3>🖼 Collection page banners</h3>
+      <p class="note" style="margin:0 0 6px">The picture and words at the top of the Collection page. <b>Each category has its own banner.</b> Without any setup a category shows its name, how many pieces it has and one of its photos. Pick a category below to change its photo or words; it is edited exactly like a home page slide.</p>
+      <div class="form-group"><label>Edit the banner of</label><select id="ban-sel" onchange="banSelect(this.value)">${[-1, ...BAN_CATS().map((_, k) => -(k + 2))].map(v => { const c = v === -1 ? '' : BAN_CATS()[-v - 2], o = (H.categoryBanners || {})[c], own = !!o && (o.image || o.title || o.subtitle || o.eyebrow); return `<option value="${v}" ${BAN_SEL === v ? 'selected' : ''}>${v === -1 ? 'All sarees (the default banner)' : esc(c) + (own ? ' · own banner' : ' · automatic')}</option>`; }).join('')}</select></div>
+      ${slideHTML(HSL(BAN_SEL), BAN_SEL)}
     </div>
 
     <div class="admin-card">

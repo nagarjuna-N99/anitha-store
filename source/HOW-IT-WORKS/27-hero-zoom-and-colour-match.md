@@ -64,3 +64,6 @@ All slides now share one text look, so the banner reads as one design. Pick a lo
 
 ## Update 9 (5 Nov 2026): the Collection page layout
 The Collection page now has a title block (Home / The Collection, the title and how many sarees), one **Filter & sort** button (sort and filters are in the panel it opens), a line saying prices include taxes, and calmer saree cards on phones.
+
+## Update 10 (5 Nov 2026): a banner for each category
+When a customer opens a category on the Collection page, the banner shows that category: its name, how many pieces it has, and one of its photos. This works with no setup. To choose your own photo or words for a category, go to Home Page → **Collection page banners**, pick the category in "Edit the banner of" and edit it like a home slide (photo, words, looks, colours, ✨ AI buttons). **Use the automatic banner** puts one category back to automatic. The first choice in the list is the default banner for "All". Switching the default banner off hides every banner.
