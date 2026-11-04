@@ -117,6 +117,7 @@ Owner's guidance: *"we will setup everything after we host it"* — real hosting
 | `parts-test.cjs` | 8 | the website source parts and the joined file |
 | `addresses-test.cjs` | 25 | each page and saree has its own address, Back/Forward, old links |
 | `onebox-test.cjs` | 8 | one-server hosting: the server serves the real website, page addresses, 404 page, sitemap and the owner app from one address |
+| `redirect-test.cjs` | 7 | the old GitHub Pages address becomes a signpost to anithapemmasani.com (same page, search and #part kept; old site map removed) |
 | `product-page-test.cjs` | 22 | saree page: delivery line, details table, trust block, questions, related, sticky bar |
 | `agents-test.cjs` | 27 | the five AI helpers with and without Claude: order messages, privacy replies, weekly content, catalogue batch, Ops watcher note |
 | `pages-ai-invoices-test.cjs` | 55 | invoice search/sort/group, category auto-fill and one-click product AI, editable Care/Journal/Atelier pages |
@@ -141,6 +142,10 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**11 Nov 2026 (Old GitHub address now points to anithapemmasani.com)**
+- The shop now runs on its own AWS server at https://anithapemmasani.com (website, owner app, orders, data). `tools/publish-repo.sh` now publishes the GitHub Pages copy as a signpost (`tools/redirect-pages.py`): every page sends the visitor to the same page on the new address; the old site map is removed and robots.txt allows search engines to follow. To publish the full site to Pages again: `REDIRECT_TO= tools/publish-repo.sh ...`. Customers' saved cart, wish list and sign-in live in each browser per address, so a visitor's old saved items do not follow them to the new address.
+- Tests: `tests/redirect-test.cjs` (7 checks). Not tested: the real redirect on github.io (cannot be reached from here).
 
 **11 Nov 2026 (The new owner look is now the owner app at /admin)**
 - Owner: "we made admin2 which is not being displayed, replace admin with admin2". `/admin` (and `/admin/<screen>/`) now serves the new look (the same page with class `ui2`); `/admin2` is kept and is the identical page, so old bookmarks work. The old look is still reachable at `/admin?look=classic` in case it is needed. Same sign-in, same data, same API (`/admin/api/...` unchanged). Code: `wa-assistant/src/adminroutes.mjs`.

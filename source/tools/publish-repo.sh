@@ -14,6 +14,8 @@ python3 tools/make-changelog.py >/dev/null
 cp build/site/index.html "$REPO/index.html"
 for d in collection saree-care journal the-atelier faq terms privacy my-wishlist; do rm -rf "$REPO/$d"; [ -d build/site/$d ] && cp -r build/site/$d "$REPO/$d"; done   # one real page file per address
 cp build/site/404.html "$REPO/404.html"; [ -f build/site/sitemap.xml ] && cp build/site/sitemap.xml "$REPO/sitemap.xml" || true
+# the old GitHub Pages address now only points visitors to the shop's own address (since 5 Nov 2026). To publish a full copy there again: REDIRECT_TO= tools/publish-repo.sh ...
+REDIRECT_TO="${REDIRECT_TO-https://anithapemmasani.com}"; [ -n "$REDIRECT_TO" ] && python3 tools/redirect-pages.py "$REPO" "$REDIRECT_TO" >/dev/null || true
 cp shared/brand/logo.png "$REPO/logo.png"; cp shared/brand/icon-512.png "$REPO/logo-512.png"
 # 2. the deployable server (generated from wa-assistant, no tests)
 rm -rf "$REPO/server"; mkdir -p "$REPO/server"
