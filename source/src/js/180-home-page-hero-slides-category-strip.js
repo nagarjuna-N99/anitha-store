@@ -5,7 +5,8 @@ const safeImg = u => /^(https?:\/\/|data:image\/)/i.test(String(u || '')) ? Stri
 function defaultHome() {
   return {
     hero: { autoplay: true, interval: 6, slides: [{ id: 'hs1', enabled: true, image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=2574', focus: 'center', pos: 'left', overlay: 85, eyebrow: 'Est. Hyderabad', title: 'The Art of Slow Weaving', subtitle: 'Curated pure handloom sarees, honoring the legacy of Indian master artisans.', btnText: 'Explore the Collection', link: { type: 'shop', value: '' } }] },
-    categories: { show: true, items: [
+    quote: { show: true, text: 'Every thread is a story, woven slowly and worn for years.', by: 'Anitha Pemmasani' },
+    categories: { show: true, label: 'Shop by category', title: 'Find your weave', items: [
       { category: 'Tussar', enabled: true, image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=800' },
       { category: 'Maheswari', enabled: true, image: 'https://images.unsplash.com/photo-1583391733958-e04f9715d184?q=80&w=800' },
       { category: 'Banarasi', enabled: true, image: 'https://images.unsplash.com/photo-1610189012906-4b2a8f8e0c9b?q=80&w=800' },
@@ -25,7 +26,7 @@ function syncHomeCats() {
   const d = defaultHome(); let changed = false;
   if (!db.home || typeof db.home !== 'object') { db.home = d; changed = true; }
   const H = db.home;
-  ['hero', 'categories', 'arrivals', 'signature', 'shopBanner'].forEach(k => { if (!H[k] || typeof H[k] !== 'object') { H[k] = d[k]; changed = true; } });
+  ['hero', 'categories', 'arrivals', 'signature', 'shopBanner', 'quote'].forEach(k => { if (!H[k] || typeof H[k] !== 'object') { H[k] = d[k]; changed = true; } });
   if (!Array.isArray(H.hero.slides)) { H.hero.slides = []; changed = true; }
   if (!Array.isArray(H.categories.items)) { H.categories.items = []; changed = true; }
   if (!Array.isArray(H.signature.tiles)) { H.signature.tiles = []; changed = true; }
@@ -252,11 +253,22 @@ function catTileImage(i) {
   const p = db.products.find(x => x.category === i.category && x.image); return p ? p.image : '';
 }
 function renderHomeCategories() {
-  const sec = document.getElementById('collection'); if (!sec || !db.home) return;
-  const items = db.home.categories.items.filter(i => i.enabled && db.categories.includes(i.category));
-  sec.style.display = db.home.categories.show !== false && items.length ? '' : 'none';
-  sec.innerHTML = items.map(i => { const img = catTileImage(i); return `<div class="category-item" role="link" tabindex="0" data-cat="${esc(i.category)}" onclick="filterAndShowShop(this.dataset.cat)" onkeydown="if(event.key==='Enter')filterAndShowShop(this.dataset.cat)">${img ? `<img src="${esc(img)}" alt="${esc(i.category)} sarees" loading="lazy">` : '<div class="cat-ph"></div>'}<div class="category-overlay"><span class="category-name">${esc(i.category)}</span></div></div>`; }).join('');
+  const sec = document.getElementById('collection'), blk = document.getElementById('catBlock'); if (!sec || !db.home) return;
+  const items = db.home.categories.items.filter(i => i.enabled && db.categories.includes(i.category)), on = db.home.categories.show !== false && items.length;
+  sec.style.display = on ? '' : 'none'; if (blk) blk.style.display = on ? '' : 'none';
+  const lb = document.getElementById('catLabel'), tt = document.getElementById('catTitle'); if (lb) lb.textContent = db.home.categories.label || ''; if (tt) tt.textContent = db.home.categories.title || ''; if (lb) lb.style.display = db.home.categories.label ? '' : 'none'; if (tt) tt.style.display = db.home.categories.title ? '' : 'none';
+  sec.innerHTML = items.map(i => { const img = catTileImage(i); return `<div class="category-item" role="link" tabindex="0" data-cat="${esc(i.category)}" onclick="filterAndShowShop(this.dataset.cat)" onkeydown="if(event.key==='Enter')filterAndShowShop(this.dataset.cat)"><div class="cat-img">${img ? `<img src="${esc(img)}" alt="${esc(i.category)} sarees" loading="lazy">` : '<div class="cat-ph"></div>'}</div><span class="category-name">${esc(i.category)}</span></div>`; }).join('');
 }
+// a short quote between the banner and the categories (the owner writes it, or switches it off)
+function renderHomeQuote() {
+  const sec = document.getElementById('homeQuote'), q = db.home && db.home.quote; if (!sec) return;
+  if (!q || q.show === false || !String(q.text || '').trim()) { sec.innerHTML = ''; sec.style.display = 'none'; return; }
+  sec.style.display = ''; sec.innerHTML = `<blockquote class="hq"><span class="hq-orn" aria-hidden="true">✦</span><p>“${esc(String(q.text).trim().replace(/^[“"]|[”"]$/g, ''))}”</p>${String(q.by || '').trim() ? `<cite>${esc(q.by)}</cite>` : ''}</blockquote>`;
+}
+const QUOTE_IDEAS = ['Every thread is a story, woven slowly and worn for years.', 'A handloom saree is made by hand, one thread at a time.', 'Some things are worth waiting for. A handloom is one of them.', 'Wear the weave. Carry the story.', 'Slow weaving, lasting beauty.', 'Made by hands that have known the loom for generations.'];
+function quoteSet(k, v) { db.home.quote[k] = v; homeLive(false); }
+function quoteToggle(el) { const q = db.home.quote; q.show = q.show === false; el.classList.toggle('active', q.show !== false); el.setAttribute('aria-checked', q.show !== false); homeLive(false); }
+function quoteIdea() { const q = db.home.quote, i = (QUOTE_IDEAS.indexOf(q.text) + 1) % QUOTE_IDEAS.length; q.text = QUOTE_IDEAS[i]; homeLive(false); renderHomeAdmin(document.getElementById('adminContent')); }
 function renderArrivalsHead() {
   const a = db.home.arrivals, sec = document.getElementById('new-arrivals'); if (!sec) return;
   sec.style.display = a.show === false ? 'none' : '';
@@ -271,7 +283,7 @@ function renderSignature() {
 let BAN_SEL = -1;
 function banSelect(v) { BAN_SEL = +v; renderHomeAdmin(document.getElementById('adminContent')); }
 function banReset(i) { const c = BAN_CATS()[-i - 2]; if (db.home.categoryBanners) delete db.home.categoryBanners[c]; homeLive(false); renderHomeAdmin(document.getElementById('adminContent')); showToast('This category uses the automatic banner again', 'success'); }
-function renderHome() { renderShopBanner(); renderOccasions(); renderRecentlySold(); renderRecent(); renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); ANN.sig = scheduleSignature(); renderAnnouncement(); renderPublicPages(); }
+function renderHome() { renderHomeQuote(); renderShopBanner(); renderOccasions(); renderRecentlySold(); renderRecent(); renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); ANN.sig = scheduleSignature(); renderAnnouncement(); renderPublicPages(); }
 
 // ---- admin: saving (applies to the storefront instantly, written to storage a moment later) ----
 let HOME_TIMER = null;
@@ -296,7 +308,7 @@ function renderShopBanner() {
   const html = s.enabled === false || !safeImg(s.image) || !(s.title || s.subtitle) ? '' : `<div class="hero-slider shop-banner">${heroSlideHTML(s, -1, true, 'h2')}</div>`;
   if (box._h === html) return; box._h = html; box.innerHTML = html; box.style.display = html ? '' : 'none';
 }
-function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); homeSaveSoon(); }
+function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); renderHomeQuote(); homeSaveSoon(); }
 let HOME_PICK = null;
 function homePick(kind, idx) { HOME_PICK = { kind, idx }; document.getElementById('home-file').click(); }
 async function homeFileChosen(files) {
@@ -414,8 +426,16 @@ function renderHomeAdmin(container) {
       ${hs.map(slideHTML).join('') || '<p style="text-align:center;color:#6b6862;padding:24px;">No slides yet.</p>'}
     </div>
 
+    <div class="admin-card" id="quote-card">
+      <h3>❝ Quote under the banner</h3>
+      <div class="hs-bar"><span>Show a short quote between the banner and the categories</span>${tog(H.quote.show !== false, `quoteToggle(this)`)}</div>
+      <div class="form-group"><label>Quote</label><textarea rows="2" maxlength="160" oninput="quoteSet('text',this.value)">${esc(H.quote.text)}</textarea></div>
+      <div class="hs-grid2"><div class="form-group"><label>Signed by (optional)</label><input type="text" maxlength="60" value="${esc(H.quote.by)}" oninput="quoteSet('by',this.value)"></div><div class="form-group"><label>&nbsp;</label><button type="button" class="btn-sm btn-info-sm" onclick="quoteIdea()">✨ Suggest another quote</button></div></div>
+    </div>
+
     <div class="admin-card">
       <h3>🏷 Categories on the home page</h3>
+      <div class="hs-grid2"><div class="form-group"><label>Small heading above the categories</label><input type="text" maxlength="40" value="${esc(H.categories.label)}" oninput="homeSecText('categories','label',this.value)"></div><div class="form-group"><label>Title above the categories</label><input type="text" maxlength="60" value="${esc(H.categories.title)}" oninput="homeSecText('categories','title',this.value)"></div></div>
       <div class="hs-bar"><span>Show this strip</span>${tog(H.categories.show !== false, `homeSecToggle('categories',this)`)}<span class="note" style="margin:0;">${shown} of ${items.length} categories shown</span><span style="flex:1"></span><button class="btn-sm btn-info-sm" onclick="homeCatAll(true)">Select all</button><button class="btn-sm btn-info-sm" onclick="homeCatAll(false)">Clear</button></div>
       <div class="note" style="margin-bottom:10px;">Tick the categories you want customers to see, use ↑ ↓ to set the order. With no photo chosen, the newest product photo of that category is used. New categories you create start unticked.</div>
       ${items.map((it, i) => { const img = catTileImage(it), n = db.products.filter(p => p.category === it.category).length; return `<div class="hc-row ${it.enabled ? '' : 'off'}">

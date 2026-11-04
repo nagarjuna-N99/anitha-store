@@ -1026,8 +1026,15 @@
         }
       ]
     },
+    "quote": {
+      "show": true,
+      "text": "Every thread is a story, woven slowly and worn for years.",
+      "by": "Anitha Pemmasani"
+    },
     "categories": {
       "show": true,
+      "label": "Shop by category",
+      "title": "Find your weave",
       "items": [
         {
           "category": "Tussar",

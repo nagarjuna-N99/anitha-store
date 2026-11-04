@@ -67,3 +67,6 @@ The Collection page now has a title block (Home / The Collection, the title and 
 
 ## Update 10 (5 Nov 2026): a banner for each category
 When a customer opens a category on the Collection page, the banner shows that category: its name, how many pieces it has, and one of its photos. This works with no setup. To choose your own photo or words for a category, go to Home Page → **Collection page banners**, pick the category in "Edit the banner of" and edit it like a home slide (photo, words, looks, colours, ✨ AI buttons). **Use the automatic banner** puts one category back to automatic. The first choice in the list is the default banner for "All". Switching the default banner off hides every banner.
+
+## Update 11 (5 Nov 2026): space and a quote on the home page
+Under the home banner there is now space, then a short **quote**, then a heading and the **categories** with gaps between them and their names under the photos. In the owner app (Home Page): **Quote under the banner** has a switch, the text, an optional signature and **✨ Suggest another quote**; the Categories card has two boxes for the heading above the categories. Switching the category strip off hides its heading too.
