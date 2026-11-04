@@ -6,7 +6,7 @@
 
 Usage: python3 tools/build-split.py [--shop-api https://shop.example.com] [--site-url https://www.example.com/shop] [--index]
    (--index lets Google list the website; --site-url is the public address, used for each page's canonical link and sitemap.xml)
-Also writes one real page file per address (build/site/collection/index.html, saree-care/, journal/, the-atelier/, faq/, terms/, privacy/, my-wishlist/),
+Also writes one real page file per address (build/site/collection/index.html, saree-care/, journal/, faq/, terms/, privacy/, my-wishlist/),
 404.html (opens the right page for product and owner-made pages) and sitemap.xml.
 """
 import re, sys, os, argparse
@@ -60,7 +60,6 @@ PAGES = {
   'collection': ('Handloom Sarees Collection', 'Browse pure handloom sarees from Hyderabad: Tussar, Maheshwari, Banarasi, Kanjeevaram, Paithani, Mysore silk and Ponduru Khadi.'),
   'saree-care': ('Saree Care Guide', 'How to wash, dry, iron and store handloom silk, tussar and cotton sarees so they last for years.'),
   'journal': ('Journal', 'Stories from the loom: weaves, weavers and the care behind each handloom saree.'),
-  'the-atelier': ('The Atelier', 'The story of the shop, the weavers we work with and how every saree is chosen.'),
   'faq': ('Questions and Answers', 'Delivery, payment, care and returns: answers to common questions.'),
   'terms': ('Terms & Conditions', 'The terms for buying from ' + BRAND + '.'),
   'privacy': ('Privacy Policy', 'How ' + BRAND + ' looks after your personal data.'),
@@ -81,6 +80,7 @@ def page_head(h, path, title, desc):
 outdir = os.path.join(root, 'build', 'site')
 for d in list(PAGES) + ['product', 'page']:
     shutil.rmtree(os.path.join(outdir, d), ignore_errors=True)
+shutil.rmtree(os.path.join(outdir, 'the-atelier'), ignore_errors=True)   # the Atelier page was removed (5 Nov 2026): never leave an old folder behind
 for path, (title, desc) in PAGES.items():
     os.makedirs(os.path.join(outdir, path), exist_ok=True)
     open(os.path.join(outdir, path, 'index.html'), 'w', encoding='utf-8').write(page_head(site, path, title, desc))

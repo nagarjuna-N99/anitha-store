@@ -13,7 +13,7 @@ import { previewsOf } from './ops.mjs';
 import crypto from 'node:crypto';
 import { clientIp } from './clientip.mjs';
 
-export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, ops, opsReport, wa, watchRun, watchRead, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
+export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, notes, ops, opsReport, wa, watchRun, watchRead, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
   const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY', 'Cross-Origin-Resource-Policy': 'same-origin', 'Cache-Control': 'no-store', ...(auth.secure ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' } : {}) };
   const CSP = "default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'";
   const ipOf = req => clientIp(req, cfg.trustProxy);   // X-Forwarded-For is trusted only when TRUST_PROXY=1 and the connection is from this very machine
@@ -86,6 +86,16 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
         return json(res, 200, { ok: true, id: r.id }, cors), true;
       } catch (e) { return json(res, [422, 429, 503].includes(e.code) ? e.code : 500, { error: e.code ? e.message : 'Something went wrong. Please try again.' }, cors), true; }
     }
+    // ---------- "Notes from the loom" sign-up on the home page (an email and a tick; nothing is sent from here) ----------
+    if (route === 'OPTIONS /public/notes' || route === 'POST /public/notes') {
+      const o = req.headers.origin, okO = !!o && cfg.allowedOrigins.includes(o), cors = okO ? { 'Access-Control-Allow-Origin': o, 'Vary': 'Origin' } : {};
+      if (req.method === 'OPTIONS') { res.writeHead(204, { ...cors, 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Headers': 'content-type', 'Access-Control-Max-Age': '86400' }); res.end(); return true; }
+      if (!okO) return json(res, 403, { error: 'Not allowed from this website.' }, SEC), true;
+      try {
+        let b = {}; try { b = JSON.parse((await readBody(req, 2_000)).toString('utf8') || '{}'); } catch { return json(res, 400, { error: 'Something went wrong. Please try again.' }, cors), true; }
+        return json(res, 200, notes.add(b, ipOf(req)), cors), true;
+      } catch (e) { return json(res, [422, 429, 503].includes(e.code) ? e.code : 500, { error: e.code ? e.message : 'Something went wrong. Please try again.' }, cors), true; }
+    }
     // ---------- website counting (no cookies, nothing personal is stored) ----------
     if (route === 'OPTIONS /public/hit' || route === 'POST /public/hit') {
       const o = req.headers.origin, okO = !!o && cfg.allowedOrigins.includes(o), cors = okO ? { 'Access-Control-Allow-Origin': o, 'Vary': 'Origin' } : {};
@@ -152,6 +162,8 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       if (route === 'POST /admin/api/team/add') { const r = auth.teamAdd(await body(req, 1_000), ip); send(res, r.code === 200 ? { code: 200, team: auth.teamList() } : r); return true; }
       if (route === 'POST /admin/api/team/remove') { const r = auth.teamRemove(await body(req, 500), ip); send(res, r.code === 200 ? { code: 200, team: auth.teamList() } : r); return true; }
       if (route === 'POST /admin/api/team/password') { const r = auth.teamPassword(await body(req, 1_000), ip); send(res, r.code === 200 ? { code: 200 } : r); return true; }
+      if (route === 'GET /admin/api/notes') { send(res, { code: 200, items: notes.list().slice(0, 2000), total: notes.list().length }); return true; }
+      if (route === 'POST /admin/api/notes/remove') { const b = await body(req, 1_000), n = notes.remove(b.email); wrote('notes-remove', n ? 'one address removed' : 'not found'); send(res, { code: 200, removed: n }); return true; }
       if (route === 'GET /admin/api/web-orders') { send(res, { code: 200, orders: weborders.list().slice(0, 100) }); return true; }
       if (route === 'POST /admin/api/web-orders/update') { const b = await body(req, 2_000), r = weborders.update(b.id, b); wrote('web-order', `${r.id} ${r.status}`); send(res, { code: 200, order: r }); return true; }
       if (route === 'GET /admin/api/privacy') { send(res, { code: 200, tickets: privacy.tickets(), breaches: privacy.breaches().map(b => ({ ...b, notices: breachNotices(b, (shop.get().db || {}).settings || {}) })), retention: { ...cfg.privacy, ...privacy.state() }, erasedCount: privacy.erasedCount(), channels: Object.entries(CHANNELS).map(([k, v]) => ({ k, v })), twoFactor: auth.twoFactorOn, claude: !!cfg.anthropicKey && cfg.anthropicKey !== 'missing', email: smtpMeta().configured, ig: ig.configured }); return true; }

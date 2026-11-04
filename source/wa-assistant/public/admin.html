@@ -1223,6 +1223,43 @@ nav.dark .brand-mark { background: #fff; padding: 3px; box-sizing: border-box; }
 .footer-legal { display: flex; gap: 8px 18px; flex-wrap: wrap; justify-content: flex-end; }
 .coupon-section h3 { font-size: 14px; margin-bottom: 10px; font-weight: 600; }
 .nav-ico { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Calmer sizes on computers (screens wider than 900px), modelled on the reference shop: four cards across, small quiet buttons, smaller headings.
+   Phones keep their larger tap sizes (see 120-mobile.css and 140-phone-polish.css). */
+@media (min-width: 901px) {
+  .section-header { padding: 40px 20px 16px; } .section-title { font-size: 32px; } .section-label { font-size: 11px; letter-spacing: 3px; margin-bottom: 8px; }
+  .scrolling-section { padding: 24px 0 56px; } .scroll-track { gap: 22px; }
+  .scroll-card { width: 250px; } .scroll-card-img { height: auto; aspect-ratio: 3 / 4; } .scroll-card-body { padding: 12px 14px 14px; }
+  .scroll-card-tag { font-size: 10px; letter-spacing: 1.5px; margin-bottom: 4px; } .scroll-card-name { font-size: 17px; margin-bottom: 4px; } .scroll-card-price { font-size: 13px; margin-bottom: 10px; }
+  .scroll-actions { grid-template-columns: 1fr 1fr 34px 34px; gap: 6px; }
+  .btn-sm-card, .cart-item .btn-sm-card { min-height: 34px; min-width: 34px; padding: 4px 6px; font-size: 10px !important; letter-spacing: .08em; }
+  .product-grid { grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 22px; padding: 12px 40px 48px; max-width: 1500px; }
+  .product-img-wrap { height: auto; aspect-ratio: 3 / 4; }
+  .product-info, .product-body { padding-top: 12px; }
+  .product-name { font-size: 17px; margin-bottom: 4px; } .product-price { font-size: 14px; margin-bottom: 10px; }
+  .product-actions { gap: 6px; } .btn-card { min-height: 34px; font-size: 10.5px; padding: 6px 8px; }
+  .kind-tabs { max-width: 300px; margin-bottom: 8px; } .kind-tab { min-height: 34px; padding: 6px 16px; font-size: 11px; }
+  .filter-container { gap: 8px; padding: 10px 20px; } .filter-btn { min-height: 34px; padding: 6px 16px; font-size: 10.5px; letter-spacing: 1.5px; }
+  .btn-filters { min-height: 36px; padding: 6px 18px; font-size: 11px; }
+  .shop-bar select { padding: 8px 12px; font-size: 12px; }
+  .crumbs { margin-bottom: 4px; } .shop-sub { font-size: 11px; }
+}
+
+/* Notes from the loom (home page sign-up) and the owner's colour card */
+.home-notes { padding: 40px 6% 64px; } .hn-box { max-width: 1100px; margin: 0 auto; background: var(--cream); border: 1px solid var(--border); border-radius: 4px; padding: 44px 48px; display: grid; grid-template-columns: 1.05fr 1fr; gap: 44px; align-items: center; }
+.hn-copy .section-label { margin-bottom: 8px; } .hn-title { font-family: 'Cormorant Garamond', serif; font-size: 34px; font-weight: 500; line-height: 1.15; margin: 0 0 10px; } .hn-copy p { margin: 0; color: #4d4a45; line-height: 1.7; font-size: 15px; max-width: 46ch; }
+.hn-form { display: flex; flex-direction: column; gap: 10px; } .hn-lab { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #6b6862; }
+.hn-form input[type=email] { width: 100%; box-sizing: border-box; padding: 13px 14px; border: 1px solid var(--border); background: var(--ivory); font: inherit; font-size: 16px; color: var(--charcoal); border-radius: 2px; } .hn-form input[type=email]:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+.hn-agree { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.5; color: #4d4a45; cursor: pointer; } .hn-agree input { width: 20px; height: 20px; margin-top: 1px; flex: none; accent-color: var(--gold); }
+.hn-btn { padding: 14px 20px; min-height: 46px; background: var(--charcoal); color: var(--ivory); border: 0; font: inherit; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; font-weight: 600; cursor: pointer; border-radius: 2px; } .hn-btn:hover { background: var(--gold); } .hn-btn:disabled { opacity: .6; cursor: wait; }
+.hn-fine { margin: 0; font-size: 12px; color: #6b6862; line-height: 1.5; } .hn-fine a { color: var(--gold); text-decoration: underline; cursor: pointer; display: inline-block; padding: 8px 2px; margin: -8px 0; }
+.hn-msg { margin: 0; min-height: 18px; font-size: 13px; } .hn-msg.ok { color: #2f6b3d; } .hn-msg.bad { color: #9a2f2f; }
+@media (max-width: 800px) { .home-notes { padding: 26px 14px 44px; } .hn-box { grid-template-columns: 1fr; gap: 20px; padding: 26px 20px; } .hn-title { font-size: 28px; } }
+.th-presets { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0; } .th-preset, .th-draft { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font: inherit; font-size: 13px; cursor: pointer; min-width: 128px; text-align: left; } .th-draft { cursor: default; max-width: 230px; } .th-draft small { color: #6b6862; line-height: 1.35; }
+.th-sw { display: inline-flex; border-radius: 6px; overflow: hidden; border: 1px solid rgba(0,0,0,.12); } .th-sw i { display: block; width: 22px; height: 22px; }
+.th-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin: 12px 0; } .th-pick { display: flex; gap: 10px; align-items: center; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; } .th-pick input[type=color] { width: 44px; height: 44px; padding: 0; border: 0; background: none; cursor: pointer; flex: none; } .th-pick span { display: flex; flex-direction: column; font-size: 13px; } .th-pick small { color: #6b6862; font-size: 12px; }
+.th-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; } .th-ai label { display: block; font-size: 13px; margin-bottom: 6px; } .th-ai-row { display: flex; gap: 8px; flex-wrap: wrap; } .th-ai-row input { flex: 1 1 220px; min-height: 40px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; font: inherit; font-size: 16px; }
+.hn-list { display: flex; flex-direction: column; gap: 4px; margin: 0 0 10px; max-height: 220px; overflow: auto; } .hn-list > div { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 8px; background: #fff; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; } .hn-list small { margin-left: 8px; color: #6b6862; }
 </style>
 <style>.nav-toggle{position:fixed;top:14px;left:268px;z-index:60;width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--ivory);color:var(--charcoal);cursor:pointer;display:none;align-items:center;justify-content:center;font-size:18px;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.08)}body.admin-on .nav-toggle{display:flex}body.nav-closed .nav-toggle{left:14px}body.nav-closed .admin-sidebar{display:none}body.nav-closed .admin-main{margin-left:0;padding-left:64px}body.studio-focus .nav-toggle{display:none!important}@media (max-width:900px){body.admin-on .nav-toggle{display:none}}html.ui2 .nav-toggle{background:var(--o-glass-2);color:var(--o-ink);border-color:var(--o-line)}.pg-item{border:1px solid var(--border);border-radius:14px;padding:14px;margin:12px 0}.pg-item.pg-off{opacity:.7}.pg-head{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.pg-head b{flex:1;min-width:140px}.pg-tools{display:inline-flex;gap:6px}.pg-tip{border-top:1px dashed var(--border);padding:10px 0}.pg-sec>summary{cursor:pointer;min-height:40px;display:flex;align-items:center}.pg-item textarea,.pg-tip textarea{width:100%}</style>
 </head>
@@ -1317,6 +1354,7 @@ nav.dark .brand-mark { background: #fff; padding: 3px; box-sizing: border-box; }
     <section id="soldSection" class="sold-section" aria-label="Recently sold"></section>
     <section id="occasionSection" class="occ-section" aria-label="Shop by occasion"></section>
     <section id="recentSection" class="recent-section" aria-label="Recently viewed"></section>
+    <section class="home-notes" id="homeNotes" aria-label="Notes from the loom"></section>
   </div>
 
   <div id="page-shop" class="page">
@@ -1348,7 +1386,6 @@ nav.dark .brand-mark { background: #fff; padding: 3px; box-sizing: border-box; }
 
   <div id="page-journal" class="page"></div>
 
-  <div id="page-atelier" class="page"></div>
 
   <div class="top-banner" id="announceBar" role="status"></div>
 
@@ -1686,13 +1723,13 @@ function navigateTo(pageName) {
 function filterAndShowShop(category) { navigateTo('shop'); shopResetFilters(); filterProducts(category); }
 
 // ================= PAGE ADDRESSES (each page has its own web address, 5 Nov 2026) =================
-// On the public website every page has a real address: /collection/, /saree-care/, /journal/, /the-atelier/, /faq/, /terms/,
+// On the public website every page has a real address: /collection/, /saree-care/, /journal/, /faq/, /terms/,
 // /privacy/, /my-wishlist/, /page/<name>/ for pages the owner adds, and /product/<name>/ for each saree.
 // The build writes a real page file for every fixed address and a 404.html that opens the right page for the rest.
 // Old links such as #/product/<name>, #/faq, #/terms, #/cart and #/wishlist/... still work. Everything here is off in the owner
 // app and when the page is opened from a file, so those behave exactly as before.
-const ROUTE_PAGES = { shop: 'collection', care: 'saree-care', journal: 'journal', atelier: 'the-atelier', faq: 'faq', terms: 'terms', privacy: 'privacy', favourites: 'my-wishlist' };
-const ROUTE_RE = /\/(collection|saree-care|journal|the-atelier|faq|terms|privacy|my-wishlist|(?:page|product)\/[^/]+)\/?$/;
+const ROUTE_PAGES = { shop: 'collection', care: 'saree-care', journal: 'journal', faq: 'faq', terms: 'terms', privacy: 'privacy', favourites: 'my-wishlist' };
+const ROUTE_RE = /\/(collection|saree-care|journal|faq|terms|privacy|my-wishlist|(?:page|product)\/[^/]+)\/?$/;
 const PATH_MODE = BUILD === 'site' && /^https?:$/.test(location.protocol);
 const ROUTE_BASE = PATH_MODE ? (window.__BASE || location.pathname.replace(ROUTE_RE, '').replace(/\/(index|404)\.html$/, '').replace(/\/?$/, '/')) : '/';
 let ROUTE_SKIP = false;                                          // true while the browser Back/Forward buttons drive the page
@@ -1739,7 +1776,7 @@ if (PATH_MODE) document.addEventListener('click', e => {
   if (a && !e.defaultPrevented && e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) e.preventDefault();
 }, false);
 // a title, description and address for each page (search results and shared links)
-const PAGE_SEO = { shop: ['Handloom Sarees Collection', 'Browse pure handloom sarees from Hyderabad: Tussar, Maheshwari, Banarasi, Kanjeevaram, Paithani, Mysore silk and Ponduru Khadi.'], care: ['Saree Care Guide', 'How to wash, dry, iron and store handloom silk, tussar and cotton sarees so they last for years.'], journal: ['Journal', 'Stories from the loom: weaves, weavers and the care behind each handloom saree.'], atelier: ['The Atelier', 'The story of the shop, the weavers we work with and how every saree is chosen.'], faq: ['Questions and Answers', 'Delivery, payment, care and returns: answers to common questions.'], favourites: ['My Wishlist', 'The sarees you saved.'] };
+const PAGE_SEO = { shop: ['Handloom Sarees Collection', 'Browse pure handloom sarees from Hyderabad: Tussar, Maheshwari, Banarasi, Kanjeevaram, Paithani, Mysore silk and Ponduru Khadi.'], care: ['Saree Care Guide', 'How to wash, dry, iron and store handloom silk, tussar and cotton sarees so they last for years.'], journal: ['Journal', 'Stories from the loom: weaves, weavers and the care behind each handloom saree.'], faq: ['Questions and Answers', 'Delivery, payment, care and returns: answers to common questions.'], favourites: ['My Wishlist', 'The sarees you saved.'] };
 function pageSeo(page) {
   if (!PATH_MODE || page === 'home' || LEGAL_PAGES[page]) { if (PATH_MODE) setCanonical(routeUrl(page === 'home' ? 'home' : page)); return; }
   const c = typeof pgList === 'function' ? pgList().find(p => p.key === page) : null, base = PAGE_SEO[page] || [c ? (c.data && c.data.title) || c.label : '', ''];
@@ -3776,13 +3813,13 @@ function updateOrderStatus(orderId, newStatus) {
   if (askShip) openShipDialog(orderId);
 }
 
-// ================= Pages: Care guide, Journal, Atelier and any new page the owner adds (Admin → Pages) =================
-// Every page has a "Show on the website" switch. Built-in pages: db.pages.care / journal / atelier. New pages: db.pages.custom[] with a kind:
-//   story (like The Atelier) · stories (like The Journal) · tips (like the Care guide) · text (a simple page)
+// ================= Pages: Care guide, Journal and any new page the owner adds (Admin → Pages) =================
+// Every page has a "Show on the website" switch. Built-in pages: db.pages.care / journal. (The Atelier page was removed on 5 Nov 2026.) New pages: db.pages.custom[] with a kind:
+//   story (a banner, a photo, a heading and paragraphs) · stories (like The Journal) · tips (like the Care guide) · text (a simple page)
 function pagesSeed() { return {"care": {"title": "Saree Care Guide", "subtitle": "Preserve the beauty and longevity of your handloom treasures", "sections": [{"id": "silk", "tab": "Pure Silk", "title": "Pure Silk Care (Kanjeevaram & Banarasi)", "image": "https://images.unsplash.com/photo-1606293459339-aa5d34a7b0e1?q=80&w=800", "alt": "Silk care", "show": true, "items": [{"icon": "🫧", "title": "Washing", "text": "Dry clean only for heavily zari-worked sarees. For plain silks, use mild shampoo in cold water. Do not soak for more than 5 minutes."}, {"icon": "💧", "title": "Drying", "text": "Never wring or twist. Dry in shade, away from direct sunlight to prevent color fading."}, {"icon": "🔥", "title": "Ironing", "text": "Iron on the reverse side using low to medium heat. Place a cotton cloth between the iron and saree."}, {"icon": "✨", "title": "Special Note", "text": "Silk naturally develops a soft sheen over time. Avoid contact with perfumes directly on the fabric."}]}, {"id": "tussar", "tab": "Tussar & Raw Silk", "title": "Tussar & Raw Silk Care", "image": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=800", "alt": "Tussar care", "show": true, "items": [{"icon": "🫧", "title": "Washing", "text": "Hand wash gently with mild detergent in cold water. Tussar is delicate; avoid vigorous rubbing."}, {"icon": "💧", "title": "Drying", "text": "Roll in a clean towel to absorb excess water. Dry flat in shade. Never hang wet Tussar."}, {"icon": "🌡️", "title": "Ironing", "text": "Use low heat. Iron while slightly damp for best results. Always iron on the reverse side."}, {"icon": "🌿", "title": "Natural Texture", "text": "Tussar has a natural coarse texture and slubs. This is not a defect but a mark of authentic handloom."}]}, {"id": "cotton", "tab": "Cotton & Khadi", "title": "Cotton & Khadi Care", "image": "https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?q=80&w=800", "alt": "Cotton care", "show": true, "items": [{"icon": "🧺", "title": "Washing", "text": "Machine wash on gentle cycle or hand wash. Khadi may shrink slightly on first wash."}, {"icon": "☀️", "title": "Drying", "text": "Sun drying is acceptable for white cottons. For colored cottons, dry in shade."}, {"icon": "🔥", "title": "Ironing", "text": "Cotton can withstand high heat. Iron while damp for crisp finish."}, {"icon": "🌀", "title": "Wrinkles", "text": "Khadi and handloom cottons wrinkle easily. This is a sign of pure natural fiber."}]}, {"id": "storage", "tab": "Storage Tips", "title": "Long-term Storage", "image": "https://images.unsplash.com/photo-1583391733958-e04f9715d184?q=80&w=800", "alt": "Storage tips", "show": true, "items": [{"icon": "📦", "title": "Folding", "text": "Fold sarees along original lines. Refold every 3-4 months to prevent permanent crease damage."}, {"icon": "🌿", "title": "Natural Repellents", "text": "Use dried neem leaves, lavender sachets, or cedar blocks. Avoid naphthalene balls."}, {"icon": "🌬️", "title": "Breathing", "text": "Store in muslin cloth bags, never plastic. Plastic traps moisture and causes yellowing."}, {"icon": "☀️", "title": "Airing", "text": "Take sarees out once a season. Air them in shade for a few hours to keep fibers fresh."}]}]}, "journal": {"label": "Stories & Heritage", "title": "The Journal", "posts": [{"id": "j1", "date": "2026-10-12", "title": "The Ancient Art of Kalamkari", "excerpt": "Discover the centuries-old tradition of hand-painting myths and motifs on fabric using natural dyes.", "body": "Kalamkari means “pen work”. Two living traditions exist in Andhra Pradesh and Telangana. At Srikalahasti the artist draws freehand with a bamboo pen (kalam) and fills the colour in by hand. At Machilipatnam carved wooden blocks print the pattern.\n\nThe cloth is first soaked in a mix of buffalo milk and myrobalan (harada) so that it holds the dye. The colours come from plants and minerals: indigo for blue, madder for red, myrobalan and pomegranate rind for yellow and green, and iron acetate for black. Each colour needs its own wash and drying, so one piece can take weeks.\n\nCare: wash gently in cold water, dry in shade, and expect the natural dyes to soften a little with time. That is part of its character.", "image": "https://images.unsplash.com/photo-1602161490280-093915e84362?q=80&w=600", "alt": "Kalamkari", "show": true}, {"id": "j2", "date": "2026-10-05", "title": "How to Identify Pure Handloom Silk", "excerpt": "Learn the simple burn test and texture checks to distinguish authentic handloom silk.", "body": "A pure handloom silk saree is not always perfectly even. Small variations in the weave are normal and are what make each piece one of a kind. A few simple checks can help you, none of them is proof on its own.\n\nTouch: real silk feels smooth but warm, and does not feel slippery like polyester.\nThe burn test: with the seller's permission, burn a loose thread only (never the saree). Real silk burns slowly, smells like burnt hair and leaves a soft ash you can crush. Synthetic thread melts, smells like plastic and leaves a hard bead.\nThe weaver: ask which cluster the saree comes from and look for the Silk Mark or the weaver's tag.\n\nIf a price looks too low for the work involved, be careful.", "image": "https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?q=80&w=600", "alt": "Handloom silk", "show": true}, {"id": "j3", "date": "2026-09-28", "title": "Preserving Your Heirloom Saree", "excerpt": "Essential tips on storage, cleaning, and maintenance to ensure your sarees last for generations.", "body": "A good saree can last for generations if it is stored well.\n\n• Keep it in a soft cotton or muslin cloth. Plastic traps moisture.\n• Refold along different lines every few months so the creases do not cut the zari.\n• Keep it away from direct sunlight and from perfume or hairspray.\n• Air it in the shade once a season.\n• Use naphthalene-free repellents, away from the cloth.\n• Send zari silks to a dry cleaner who knows handlooms; do not machine wash.\n\nIf a stain happens, blot (do not rub) and take it to a professional soon.", "image": "https://images.unsplash.com/photo-1610189012906-4b2a8f8e0c9b?q=80&w=600", "alt": "Heirloom saree", "show": true}]}, "atelier": {"heroTitle": "The Atelier", "heroImage": "https://images.unsplash.com/photo-1596205849889-98e400c784c1?q=80&w=2000", "image": "https://images.unsplash.com/photo-1602161490280-093915e84362?q=80&w=1000", "heading": "Preserving the Art of Handloom", "paragraphs": ["Every saree at Anitha Pemmasani is a testament to the weaver's art. We work directly with artisan clusters across India, ensuring fair wages and preserving ancient weaving techniques.", "Our promise: every piece is rigorously quality-checked before dispatch. We celebrate the natural, beautiful variations that make each handloom saree truly one-of-a-kind."], "stats": [{"value": "10+", "label": "Years of Craft"}, {"value": "500+", "label": "Artisan Partners"}, {"value": "50+", "label": "Weaving Clusters"}]}}; }
-function defaultPages() { const d = JSON.parse(JSON.stringify(pagesSeed())); d.care.show = d.journal.show = d.atelier.show = true; d.custom = []; return d; }
-const PG_BUILTIN = [['care', '🧵', 'Saree Care'], ['journal', '📖', 'Journal'], ['atelier', '🏛️', 'The Atelier']];
-const PG_KINDS = { story: ['🏛️', 'Story page', 'Like The Atelier: a banner photo, a main photo, a heading, paragraphs and a few numbers.'], stories: ['📖', 'Stories page', 'Like The Journal: a grid of stories, each with a photo and a full text.'], tips: ['🧵', 'Tips page', 'Like the Care guide: tabs, each with a photo and a list of tips.'], text: ['📄', 'Simple text page', 'A title, an optional photo and paragraphs.'] };
+function defaultPages() { const d = JSON.parse(JSON.stringify(pagesSeed())); delete d.atelier; d.care.show = d.journal.show = true; d.custom = []; return d; }
+const PG_BUILTIN = [['care', '🧵', 'Saree Care'], ['journal', '📖', 'Journal']];
+const PG_KINDS = { story: ['🏛️', 'Story page', 'A banner photo, a main photo, a heading, paragraphs and a few numbers.'], stories: ['📖', 'Stories page', 'Like The Journal: a grid of stories, each with a photo and a full text.'], tips: ['🧵', 'Tips page', 'Like the Care guide: tabs, each with a photo and a list of tips.'], text: ['📄', 'Simple text page', 'A title, an optional photo and paragraphs.'] };
 function pgKindData(kind, title) {
   const t = title || 'New page', d = defaultPages();
   if (kind === 'story') return { heroTitle: t, heroImage: '', image: '', heading: t, paragraphs: [''], stats: [] };
@@ -3792,8 +3829,8 @@ function pgKindData(kind, title) {
 }
 function ensurePages() {
   const d = defaultPages(); if (!db.pages || typeof db.pages !== 'object' || Array.isArray(db.pages)) db.pages = d;
-  const P = db.pages; for (const k of ['care', 'journal', 'atelier']) { if (!P[k] || typeof P[k] !== 'object') P[k] = d[k]; if (P[k].show === undefined) P[k].show = true; }
-  P.care.sections = Array.isArray(P.care.sections) ? P.care.sections : []; for (const sec of P.care.sections) if (sec && typeof sec.image === 'string' && /\?q=80&w=800\?q=80&w=800/.test(sec.image)) sec.image = sec.image.replace('?q=80&w=800?q=80&w=800', '?q=80&w=800'); P.journal.posts = Array.isArray(P.journal.posts) ? P.journal.posts : []; P.atelier.paragraphs = Array.isArray(P.atelier.paragraphs) ? P.atelier.paragraphs : []; P.atelier.stats = Array.isArray(P.atelier.stats) ? P.atelier.stats : [];
+  const P = db.pages; delete P.atelier; for (const k of ['care', 'journal']) { if (!P[k] || typeof P[k] !== 'object') P[k] = d[k]; if (P[k].show === undefined) P[k].show = true; }
+  P.care.sections = Array.isArray(P.care.sections) ? P.care.sections : []; for (const sec of P.care.sections) if (sec && typeof sec.image === 'string' && /\?q=80&w=800\?q=80&w=800/.test(sec.image)) sec.image = sec.image.replace('?q=80&w=800?q=80&w=800', '?q=80&w=800'); P.journal.posts = Array.isArray(P.journal.posts) ? P.journal.posts : [];
   P.custom = (Array.isArray(P.custom) ? P.custom : []).filter(c => c && PG_KINDS[c.kind] && /^[a-z0-9]+$/i.test(String(c.id || '')));
   for (const c of P.custom) { if (!c.data || typeof c.data !== 'object') c.data = pgKindData(c.kind, c.title); if (c.show === undefined) c.show = true; if (c.showInMenu === undefined) c.showInMenu = true; const D = c.data; if (c.kind === 'tips') D.sections = Array.isArray(D.sections) ? D.sections : []; if (c.kind === 'stories') D.posts = Array.isArray(D.posts) ? D.posts : []; if (c.kind === 'story') { D.paragraphs = Array.isArray(D.paragraphs) ? D.paragraphs : []; D.stats = Array.isArray(D.stats) ? D.stats : []; } if (c.kind === 'text') D.paragraphs = Array.isArray(D.paragraphs) ? D.paragraphs : []; }
 }
@@ -3804,7 +3841,7 @@ function pgList() {
     ...P.custom.map((c, i) => ({ key: 'c-' + c.id, icon: PG_KINDS[c.kind][0], label: c.menu || c.title || 'Page', kind: c.kind, data: c.data, base: `custom.${i}.data`, showPath: `custom.${i}.show`, show: c.show !== false, menu: c.show !== false && c.showInMenu !== false, custom: true, idx: i, page: c }))];
 }
 const pageHidden = key => { if (!db.pages) return false; const x = pgList().find(p => p.key === key); return !!x && !x.show; };
-const homePages = () => [...HOME_PAGES_BASE, ...(db.pages ? pgList().filter(p => p.custom && p.show).map(p => [p.key, p.label]) : [])].filter(x => !/^(care|journal|atelier)$/.test(x[0]) || !pageHidden(x[0]));
+const homePages = () => [...HOME_PAGES_BASE, ...(db.pages ? pgList().filter(p => p.custom && p.show).map(p => [p.key, p.label]) : [])].filter(x => !/^(care|journal)$/.test(x[0]) || !pageHidden(x[0]));
 const pgDay = iso => { const d = new Date(String(iso || '') + 'T12:00:00'); return isNaN(d) ? String(iso || '') : d.toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }); };
 const CARE_ACTIVE = {};
 const pgImgTag = (src, alt, cls, st) => safeImg(src) ? `<img src="${esc(safeImg(src))}" onerror="this.classList.add('img-broken')" ${cls ? `class="${cls}"` : ''} alt="${esc(alt || '')}" ${st ? `style="${st}"` : ''} loading="lazy">` : '';
@@ -3821,7 +3858,7 @@ function pgHTMLStory(A) {
 }
 function pgHTMLText(D) { return `<section><div class="section-header"><h2 class="section-title">${esc(D.title)}</h2></div><div style="max-width:760px;margin:0 auto;padding:10px 24px 80px;">${pgImgTag(D.image, D.title, '', 'width:100%;max-height:420px;object-fit:cover;border-radius:4px;margin-bottom:26px;')}${D.paragraphs.map(t => `<p style="font-size:15px;line-height:1.9;color:#444;margin-bottom:18px;white-space:pre-line;">${esc(t)}</p>`).join('')}</div></section>`; }
 function renderPublicPages() {
-  ensurePages(); const pages = pgList(), anchor = el_('page-atelier'); if (!anchor) return;
+  ensurePages(); const pages = pgList(), anchor = el_('page-journal'); if (!anchor) return;
   document.querySelectorAll('.page[data-custom]').forEach(e => { if (!pages.some(p => 'page-' + p.key === e.id)) e.remove(); });
   for (const p of pages) {
     let box = el_('page-' + p.key); if (!box && p.custom) { box = document.createElement('div'); box.id = 'page-' + p.key; box.className = 'page'; box.dataset.custom = '1'; anchor.parentNode.insertBefore(box, anchor.nextSibling); } if (!box) continue;
@@ -4343,12 +4380,14 @@ function exportReportCSV() {
 
 // ================= HOME PAGE: HERO SLIDES, CATEGORY STRIP, SECTIONS =================
 // Everything on the storefront home page is driven by db.home, edited in Admin → Home Page (changes show instantly).
-const HOME_PAGES_BASE = [['care', 'Saree Care'], ['journal', 'Journal'], ['atelier', 'The Atelier'], ['favourites', 'Favourites'], ['terms', 'Terms & Conditions'], ['privacy', 'Privacy Policy']];
+const HOME_PAGES_BASE = [['care', 'Saree Care'], ['journal', 'Journal'], ['favourites', 'Favourites'], ['terms', 'Terms & Conditions'], ['privacy', 'Privacy Policy']];
 const safeImg = u => /^(https?:\/\/|data:image\/)/i.test(String(u || '')) ? String(u) : '';
 function defaultHome() {
   return {
     hero: { autoplay: true, interval: 6, slides: [{ id: 'hs1', enabled: true, image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=2574', focus: 'center', pos: 'left', overlay: 85, eyebrow: 'Est. Hyderabad', title: 'The Art of Slow Weaving', subtitle: 'Curated pure handloom sarees, honoring the legacy of Indian master artisans.', btnText: 'Explore the Collection', link: { type: 'shop', value: '' } }] },
     quote: { show: true, text: 'Every thread is a story, woven slowly and worn for years.', by: 'Anitha Pemmasani' },
+    notes: { show: true, label: 'Written with care', title: 'Notes from the loom', text: 'Now and then we write a short note: a new saree off the loom, how a weave is made, a reminder before a festival. A few lines, only when there is something worth saying.', button: 'Send me the notes' },
+    theme: { accent: '#8A6038', ink: '#2C2C2C', bg: '#FAF9F6', cream: '#F5F1EA', sage: '#5B6F61' },
     categories: { show: true, label: 'Shop by category', title: 'Find your weave', items: [
       { category: 'Tussar', enabled: true, image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=800' },
       { category: 'Maheswari', enabled: true, image: 'https://images.unsplash.com/photo-1583391733958-e04f9715d184?q=80&w=800' },
@@ -4369,7 +4408,7 @@ function syncHomeCats() {
   const d = defaultHome(); let changed = false;
   if (!db.home || typeof db.home !== 'object') { db.home = d; changed = true; }
   const H = db.home;
-  ['hero', 'categories', 'arrivals', 'signature', 'shopBanner', 'quote'].forEach(k => { if (!H[k] || typeof H[k] !== 'object') { H[k] = d[k]; changed = true; } });
+  ['hero', 'categories', 'arrivals', 'signature', 'shopBanner', 'quote', 'notes', 'theme'].forEach(k => { if (!H[k] || typeof H[k] !== 'object') { H[k] = d[k]; changed = true; } });
   if (!Array.isArray(H.hero.slides)) { H.hero.slides = []; changed = true; }
   if (!Array.isArray(H.categories.items)) { H.categories.items = []; changed = true; }
   if (!Array.isArray(H.signature.tiles)) { H.signature.tiles = []; changed = true; }
@@ -4626,7 +4665,7 @@ function renderSignature() {
 let BAN_SEL = -1;
 function banSelect(v) { BAN_SEL = +v; renderHomeAdmin(document.getElementById('adminContent')); }
 function banReset(i) { const c = BAN_CATS()[-i - 2]; if (db.home.categoryBanners) delete db.home.categoryBanners[c]; homeLive(false); renderHomeAdmin(document.getElementById('adminContent')); showToast('This category uses the automatic banner again', 'success'); }
-function renderHome() { renderHomeQuote(); renderShopBanner(); renderOccasions(); renderRecentlySold(); renderRecent(); renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); ANN.sig = scheduleSignature(); renderAnnouncement(); renderPublicPages(); }
+function renderHome() { applyTheme(); renderHomeNotes(); renderHomeQuote(); renderShopBanner(); renderOccasions(); renderRecentlySold(); renderRecent(); renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); ANN.sig = scheduleSignature(); renderAnnouncement(); renderPublicPages(); }
 
 // ---- admin: saving (applies to the storefront instantly, written to storage a moment later) ----
 let HOME_TIMER = null;
@@ -4651,7 +4690,7 @@ function renderShopBanner() {
   const html = s.enabled === false || !safeImg(s.image) || !(s.title || s.subtitle) ? '' : `<div class="hero-slider shop-banner">${heroSlideHTML(s, -1, true, 'h2')}</div>`;
   if (box._h === html) return; box._h = html; box.innerHTML = html; box.style.display = html ? '' : 'none';
 }
-function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); renderHomeQuote(); homeSaveSoon(); }
+function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); renderHomeQuote(); renderHomeNotes(); homeSaveSoon(); }
 let HOME_PICK = null;
 function homePick(kind, idx) { HOME_PICK = { kind, idx }; document.getElementById('home-file').click(); }
 async function homeFileChosen(files) {
@@ -4775,6 +4814,9 @@ function renderHomeAdmin(container) {
       <div class="form-group"><label>Quote</label><textarea rows="2" maxlength="160" oninput="quoteSet('text',this.value)">${esc(H.quote.text)}</textarea></div>
       <div class="hs-grid2"><div class="form-group"><label>Signed by (optional)</label><input type="text" maxlength="60" value="${esc(H.quote.by)}" oninput="quoteSet('by',this.value)"></div><div class="form-group"><label>&nbsp;</label><button type="button" class="btn-sm btn-info-sm" onclick="quoteIdea()">✨ Suggest another quote</button></div></div>
     </div>
+
+    ${themeCardHTML()}
+    ${notesCardHTML()}
 
     <div class="admin-card">
       <h3>🏷 Categories on the home page</h3>
@@ -6383,6 +6425,128 @@ function buyBarWatch() {
 function buyBarHTML(p) {
   const inStock = p.stock > 0; return `<div class="buy-bar"><div class="bb-price"><small>${esc(p.category)}</small><b>${p.price ? '₹ ' + money(p.price) : ''}</b></div>${inStock ? `<button type="button" class="btn-full bb-btn" onclick="addToCart('${p.id}');closeModal('productModal');">Add to cart</button>` : `<button type="button" class="btn-full bb-btn" onclick="openStockAlert('${p.id}')">${esc(notifyLabel(p.id))}</button>`}</div>`;
 }
+// ================= WEBSITE COLOURS + "NOTES FROM THE LOOM" =================
+// Colours: db.home.theme holds five colours that recolour the public website (set in Owner app → Home Page → Website colours).
+// Notes: a small sign-up on the home page (an email and a tick). Nothing is sent automatically; the owner reads the list and writes to these people herself.
+
+// ---- colours ----
+const THEME_DEFAULT = { accent: '#8A6038', ink: '#2C2C2C', bg: '#FAF9F6', cream: '#F5F1EA', sage: '#5B6F61' };
+const THEME_KEYS = [['accent', 'Main colour', 'Small headings, links, the Add button'], ['ink', 'Text and dark buttons', 'Almost black'], ['bg', 'Page background', 'Very light'], ['cream', 'Section background', 'A little deeper than the page'], ['sage', 'Second colour', 'Small details']];
+const THEME_PRESETS = [
+  { name: 'Heritage (original)', ...THEME_DEFAULT },
+  { name: 'Peacock', accent: '#0E5C63', ink: '#10282B', bg: '#F6FAF9', cream: '#E8F1EF', sage: '#5B7F7A' },
+  { name: 'Rose', accent: '#9B3A55', ink: '#2E1A22', bg: '#FCF7F8', cream: '#F6E9ED', sage: '#7A6A70' },
+  { name: 'Indigo', accent: '#33408F', ink: '#1A1D33', bg: '#F8F8FC', cream: '#E9EAF5', sage: '#5E6288' },
+  { name: 'Forest', accent: '#3F6B3A', ink: '#1B2A1A', bg: '#F8FAF6', cream: '#EAF0E4', sage: '#6C7F63' },
+  { name: 'Saffron', accent: '#A35A00', ink: '#2B1D0E', bg: '#FDF9F2', cream: '#F7EBD6', sage: '#7D7355' }
+];
+const isHex = v => /^#[0-9a-f]{6}$/i.test(String(v || ''));
+function themeGet() { const t = (db.home && db.home.theme) || {}, o = {}; Object.keys(THEME_DEFAULT).forEach(k => { o[k] = isHex(t[k]) ? t[k].toLowerCase() : THEME_DEFAULT[k].toLowerCase(); }); return o; }
+// keep every colour readable: dark enough text, an accent that reads on both backgrounds, page lighter than sections
+function themeFix(t) {
+  const o = { ...t }; let note = [];
+  const dark = (hex, bgs, need) => { const [h, s, l] = rgbHsl(...[1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16))); let L = l * 100, out = hex; for (let n = 0; n < 40 && bgs.some(b => hxRatio(out, b) < need); n++) { L = Math.max(4, L - 2); out = hslHex(h, s * 100, L); } return out; };
+  const a = dark(o.accent, [o.bg, o.cream], 4.5); if (a !== o.accent) { o.accent = a; note.push('main colour deepened so small text stays readable'); }
+  const i = dark(o.ink, [o.bg, o.cream], 7); if (i !== o.ink) { o.ink = i; note.push('text colour deepened'); }
+  if (hxLum(o.bg) < 0.8) { const [h, s] = rgbHsl(...[1, 3, 5].map(k => parseInt(o.bg.slice(k, k + 2), 16))); o.bg = hslHex(h, Math.min(s * 100, 40), 97); note.push('page background lightened'); }
+  if (hxLum(o.cream) < 0.6) { const [h, s] = rgbHsl(...[1, 3, 5].map(k => parseInt(o.cream.slice(k, k + 2), 16))); o.cream = hslHex(h, Math.min(s * 100, 40), 92); note.push('section background lightened'); }
+  const sg = dark(o.sage, [o.bg], 3); if (sg !== o.sage) o.sage = sg;
+  Object.keys(o).forEach(k => { o[k] = String(o[k]).toLowerCase(); });
+  return { theme: o, note: note.join('; ') };
+}
+function applyTheme() {
+  if (typeof BUILD !== 'undefined' && BUILD === 'admin') return;   // the owner app keeps its own colours; it shows swatches instead
+  const t = themeGet(), r = document.documentElement.style, [h, s] = rgbHsl(...[1, 3, 5].map(i => parseInt(t.accent.slice(i, i + 2), 16)));
+  r.setProperty('--gold', t.accent); r.setProperty('--charcoal', t.ink); r.setProperty('--ivory', t.bg); r.setProperty('--cream', t.cream); r.setProperty('--sage', t.sage); r.setProperty('--gold-light', hslHex(h, Math.min(60, s * 100), 74));
+}
+let THEME_PREV = null, THEME_DRAFTS = [], THEME_MSG = '';
+function themeSet(t, say) { THEME_PREV = { ...themeGet() }; const f = themeFix(t); db.home.theme = f.theme; THEME_MSG = (say || 'Colours changed.') + (f.note ? ' (' + f.note + ')' : ''); applyTheme(); homeSaveSoon(); const c = el_('adminContent'); if (c) renderHomeAdmin(c); }
+function themePick(k, v) { if (!isHex(v)) return; themeSet({ ...themeGet(), [k]: v }, 'Colour changed.'); }
+function themePreset(i) { const p = THEME_PRESETS[i]; if (p) themeSet({ accent: p.accent, ink: p.ink, bg: p.bg, cream: p.cream, sage: p.sage }, p.name + ' colours applied.'); }
+function themeUndo() { if (THEME_PREV) { const p = THEME_PREV; THEME_PREV = null; db.home.theme = { ...p }; THEME_MSG = 'Went back to the colours you had before.'; applyTheme(); homeSaveSoon(); const c = el_('adminContent'); if (c) renderHomeAdmin(c); } }
+function themeReset() { themeSet({ ...THEME_DEFAULT }, 'Back to the original colours.'); }
+async function themeFromPhoto() {
+  const s = (db.home.hero.slides || []).find(x => x.enabled !== false && safeImg(x.image)); if (!s) { THEME_MSG = 'Add a banner photo first (Banner slides above).'; return renderHomeAdmin(el_('adminContent')); }
+  try { const r = await heroAnalyze(s), h = r.hue, sat = Math.max(28, Math.min(62, r.sat * 100 + 18)); themeSet({ accent: hslHex(h, sat, 30), ink: hslHex(h, 30, 12), bg: hslHex(h, 35, 97), cream: hslHex(h, 30, 93), sage: hslHex((h + 40) % 360, 18, 40) }, 'Colours matched to your banner photo.'); }
+  catch (e) { THEME_MSG = (e && e.message) || 'Could not read the photo.'; renderHomeAdmin(el_('adminContent')); }
+}
+async function themeAi() {
+  const mood = (el_('theme-mood') || {}).value || ''; THEME_MSG = 'Asking Claude for ideas…'; THEME_DRAFTS = []; renderHomeAdmin(el_('adminContent'));
+  try {
+    const s = (db.home.hero.slides || []).find(x => x.enabled !== false && safeImg(x.image)); let photo = {}; if (s) { try { const r = await heroAnalyze(s); photo = { colour: hueName(r.hue), tone: r.tone, photoHex: r.accent }; } catch (e) { /* the photo is optional */ } }
+    const t = themeGet(), j = await aiCall('palette', { mood, ...photo, categories: db.categories.slice(0, 8), current: { accent: t.accent, ink: t.ink, bg: t.bg } });
+    THEME_DRAFTS = ((j.data && j.data.palettes) || []).filter(p => ['accent', 'ink', 'bg', 'cream', 'sage'].every(k => isHex(p[k]))).slice(0, 3).map(p => ({ name: String(p.name || 'Idea').slice(0, 30), why: String(p.why || '').slice(0, 120), accent: p.accent, ink: p.ink, bg: p.bg, cream: p.cream, sage: p.sage }));
+    THEME_MSG = THEME_DRAFTS.length ? 'Here are 3 ideas. Nothing changes until you press "Use these".' : 'Claude gave nothing usable. Try again with a few words about the mood.';
+  } catch (e) { THEME_MSG = aiMsg(e); }
+  renderHomeAdmin(el_('adminContent'));
+}
+function themeUseDraft(i) { const p = THEME_DRAFTS[i]; if (p) { THEME_DRAFTS = []; themeSet({ accent: p.accent, ink: p.ink, bg: p.bg, cream: p.cream, sage: p.sage }, p.name + ' colours applied.'); } }
+function themeCardHTML() {
+  const t = themeGet(), sw = p => `<span class="th-sw" aria-hidden="true">${['accent', 'ink', 'bg', 'cream', 'sage'].map(k => `<i style="background:${p[k]}"></i>`).join('')}</span>`, canAi = typeof aiReady === 'function' && aiReady('palette');
+  return `<div class="admin-card" id="theme-card"><h3>🎨 Website colours</h3>
+    <p class="note" style="margin:0 0 10px">Change the colours of the whole public website. Pick a ready set, match your banner photo, or let Claude suggest ideas. Words stay readable: colours that are too light for the text are deepened automatically.</p>
+    <div class="th-presets">${THEME_PRESETS.map((p, i) => `<button type="button" class="th-preset" onclick="themePreset(${i})">${sw(p)}<span>${esc(p.name)}</span></button>`).join('')}</div>
+    <div class="th-grid">${THEME_KEYS.map(([k, l, d]) => `<label class="th-pick"><input type="color" value="${t[k]}" onchange="themePick('${k}',this.value)" aria-label="${esc(l)}"><span><b>${esc(l)}</b><small>${esc(d)}</small></span></label>`).join('')}</div>
+    <div class="th-actions"><button type="button" class="btn-sm btn-info-sm" onclick="themeFromPhoto()">🖼 Match my banner photo</button><button type="button" class="btn-sm" onclick="themeUndo()"${THEME_PREV ? '' : ' disabled'}>↩ Undo</button><button type="button" class="btn-sm" onclick="themeReset()">Original colours</button></div>
+    <div class="th-ai"><label for="theme-mood"><b>✨ Ask Claude for colour ideas</b> (a few words about the feeling, optional)</label><div class="th-ai-row"><input id="theme-mood" type="text" maxlength="100" placeholder="e.g. peacock feathers, calm and festive" value=""><button type="button" class="btn-sm btn-info-sm" onclick="themeAi()"${canAi ? '' : ' title="Add your Claude key in Settings first"'}>Suggest 3 ideas</button></div></div>
+    ${THEME_DRAFTS.length ? `<div class="th-presets">${THEME_DRAFTS.map((p, i) => `<div class="th-draft">${sw(p)}<b>${esc(p.name)}</b><small>${esc(p.why)}</small><button type="button" class="btn-sm btn-info-sm" onclick="themeUseDraft(${i})">Use these</button></div>`).join('')}</div>` : ''}
+    ${THEME_MSG ? `<p class="note" role="status" style="margin:10px 0 0">${esc(THEME_MSG)}</p>` : ''}</div>`;
+}
+
+// ---- Notes from the loom ----
+const NOTES_CONSENT = 'I agree to receive occasional notes from Anitha Pemmasani by email. I can ask to stop at any time.';
+const NOTES_IDEAS = [
+  { title: 'Notes from the loom', text: 'Now and then we write a short note: a new saree off the loom, how a weave is made, a reminder before a festival. A few lines, only when there is something worth saying.' },
+  { title: 'A letter from the loom', text: 'When a special piece arrives or a weaver teaches us something new, we write it down and send it to you. Never every week, never a flood.' },
+  { title: 'Stay close to the weave', text: 'Hear first about one-of-a-kind pieces, and read small stories from the looms of Telangana and beyond. We write rarely and never share your address.' }
+];
+function notesDefault() { return { show: true, label: 'Written with care', title: NOTES_IDEAS[0].title, text: NOTES_IDEAS[0].text, button: 'Send me the notes' }; }
+function notesGet() { const n = (db.home && db.home.notes) || {}, d = notesDefault(); return { show: n.show !== false, label: n.label == null ? d.label : n.label, title: n.title || d.title, text: n.text || d.text, button: n.button || d.button }; }
+function renderHomeNotes() {
+  const sec = document.getElementById('homeNotes'); if (!sec) return; const n = notesGet();
+  if (!n.show) { sec.innerHTML = ''; sec.style.display = 'none'; return; }
+  sec.style.display = '';
+  sec.innerHTML = `<div class="hn-box"><div class="hn-copy">${n.label ? `<div class="section-label">${esc(n.label)}</div>` : ''}<h2 class="hn-title">${esc(n.title)}</h2><p>${esc(n.text)}</p></div>
+    <form class="hn-form" onsubmit="notesJoin(event)" novalidate><label for="hn-email" class="hn-lab">Your email address</label><input id="hn-email" type="email" inputmode="email" autocomplete="email" maxlength="120" placeholder="you@example.com">
+      <label class="hn-agree"><input type="checkbox" id="hn-ok"><span>${esc(NOTES_CONSENT)}</span></label>
+      <button type="submit" class="hn-btn" id="hn-btn">${esc(n.button)}</button>
+      <p class="hn-fine">We use your email only to send these notes. Read our <a onclick="navigateTo('privacy')">Privacy Policy</a>. To stop, just write to us and we will remove you.</p><p class="hn-msg" id="hn-msg" role="status" aria-live="polite"></p></form></div>`;
+}
+async function notesJoin(ev) {
+  ev.preventDefault(); const em = el_('hn-email').value.trim(), ok = el_('hn-ok').checked, msg = el_('hn-msg'), btn = el_('hn-btn'); msg.className = 'hn-msg';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { msg.textContent = 'Please enter a valid email address.'; msg.classList.add('bad'); return; }
+  if (!ok) { msg.textContent = 'Please tick the box to say you would like to receive our notes.'; msg.classList.add('bad'); return; }
+  const api = typeof window.__SHOP_API === 'string' ? window.__SHOP_API.replace(/\/+$/, '') : '';
+  if (!api) { msg.textContent = 'Thank you! (This is a practice copy of the shop, so nothing was saved.)'; msg.classList.add('ok'); return; }
+  btn.disabled = true;
+  try { const r = await fetch(api + '/public/notes', { method: 'POST', body: JSON.stringify({ email: em, consent: true }), credentials: 'omit' }), j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.error || 'Something went wrong. Please try again.'); el_('hn-email').value = ''; el_('hn-ok').checked = false; msg.textContent = 'Thank you. Your first note will reach you when we next have something to share.'; msg.classList.add('ok'); }
+  catch (e) { msg.textContent = (e && e.message) || 'Something went wrong. Please try again.'; msg.classList.add('bad'); }
+  btn.disabled = false;
+}
+function notesSet(k, v) { const n = db.home.notes = Object.assign(notesDefault(), db.home.notes || {}); n[k] = v; renderHomeNotes(); homeSaveSoon(); }
+function notesToggle(el) { const n = notesGet(); notesSet('show', !n.show); el.classList.toggle('active', !n.show); el.setAttribute('aria-checked', !n.show); }
+function notesIdea() { const n = notesGet(), i = (NOTES_IDEAS.findIndex(x => x.title === n.title) + 1) % NOTES_IDEAS.length; db.home.notes = Object.assign(notesDefault(), db.home.notes || {}, { title: NOTES_IDEAS[i].title, text: NOTES_IDEAS[i].text }); renderHomeNotes(); homeSaveSoon(); renderHomeAdmin(el_('adminContent')); }
+let NOTES_LIST = null;
+async function notesLoad() { if (typeof BUILD === 'undefined' || BUILD !== 'admin') return; try { NOTES_LIST = await admApi('GET', '/admin/api/notes'); } catch (e) { NOTES_LIST = { items: [], total: 0, error: true }; } const box = el_('notes-list'); if (box) box.innerHTML = notesListHTML(); }
+function notesListHTML() {
+  if (!NOTES_LIST) return '<p class="note">Loading…</p>'; const L = NOTES_LIST.items || [];
+  if (NOTES_LIST.error) return '<p class="note">Could not load the list. Try again in a moment.</p>';
+  return `<p class="note" style="margin:0 0 8px"><b>${NOTES_LIST.total || 0}</b> ${NOTES_LIST.total === 1 ? 'person has' : 'people have'} signed up. Nothing is sent automatically: you write to them yourself, from your own email.</p>${L.length ? `<div class="hn-list">${L.slice(0, 50).map(x => `<div><span>${esc(x.email)}<small>${esc(String(x.at).slice(0, 10))}</small></span><button type="button" class="btn-sm" onclick="notesRemove('${esc(x.email).replace(/'/g, '')}')">Remove</button></div>`).join('')}</div>` : ''}
+    ${L.length ? '<button type="button" class="btn-sm btn-info-sm" onclick="notesCsv()">⬇ Download the list (CSV)</button>' : ''}`;
+}
+async function notesRemove(email) { if (!confirm('Remove ' + email + ' from the notes list?')) return; try { await admApi('POST', '/admin/api/notes/remove', { email }); showToast('Removed', 'success'); } catch (e) { showToast(aiMsg(e), 'error'); } notesLoad(); }
+function notesCsv() { const rows = [['email', 'signed up', 'wording agreed to']].concat(((NOTES_LIST && NOTES_LIST.items) || []).map(x => [x.email, x.at, x.consent])), csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n'), a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'notes-signups.csv'; document.body.appendChild(a); a.click(); a.remove(); }
+function notesCardHTML() {
+  const n = notesGet(), tog = (on, fn) => `<div class="toggle ${on ? 'active' : ''}" role="switch" tabindex="0" aria-checked="${!!on}" onclick="${fn}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"></div>`;
+  setTimeout(notesLoad, 0);
+  return `<div class="admin-card" id="notes-card"><h3>✉ Notes from the loom</h3>
+    <div class="hs-bar"><span>Show the email sign-up at the bottom of the home page</span>${tog(n.show, 'notesToggle(this)')}</div>
+    <div class="hs-grid2"><div class="form-group"><label>Small heading</label><input type="text" maxlength="40" value="${esc(n.label)}" oninput="notesSet('label',this.value)"></div><div class="form-group"><label>Title</label><input type="text" maxlength="60" value="${esc(n.title)}" oninput="notesSet('title',this.value)"></div></div>
+    <div class="form-group"><label>Words</label><textarea rows="3" maxlength="260" oninput="notesSet('text',this.value)">${esc(n.text)}</textarea></div>
+    <div class="hs-grid2"><div class="form-group"><label>Button</label><input type="text" maxlength="30" value="${esc(n.button)}" oninput="notesSet('button',this.value)"></div><div class="form-group"><label>&nbsp;</label><button type="button" class="btn-sm btn-info-sm" onclick="notesIdea()">✨ Suggest other words</button></div></div>
+    <p class="note">Visitors must tick a box saying they agree. The exact words they agreed to are saved with their email. The list is below.</p>
+    <div id="notes-list">${notesListHTML()}</div></div>`;
+}
 // ================= OWNER DASHBOARD (interactive) + DRAFTS BY CATEGORY + ADD-TO-CART ANIMATION (29 Oct 2026) =================
 const DASH = { range: '30', metric: 'revenue', sel: null };
 const DASH_RANGES = [['1', 'Today'], ['7', '7 days'], ['30', '30 days'], ['90', '90 days'], ['365', '12 months'], ['all', 'All time']];
@@ -6669,7 +6833,7 @@ function cartAnim(btn) {
 // ================= AI HELPERS for the owner (30 Oct 2026) =================
 // Every helper only DRAFTS: nothing is sent to customers or saved without the owner pressing the button.
 // Connected = the assistant server address + admin token are set (WhatsApp Assistant tab); otherwise built-in drafts are used where they exist.
-const AI_FEATURES = [['describe', 'Product descriptions, tags & SEO'], ['photo', 'Read colours & fabric from a photo'], ['reply', 'WhatsApp reply suggestions (Inbox)'], ['write', 'Festival, offer & caption writer'], ['hero', 'Home page words (small heading, title, button)'], ['review', 'Review replies'], ['ask', 'Ask your shop'], ['summary', 'Weekly summary'], ['pricing', 'Pricing & stock ideas'], ['cleanup', 'Data clean-up'], ['translate', 'Translation (Telugu / Hindi / English)'], ['captionpack', 'Caption & hashtag pack (English + Telugu)'], ['followup', 'Follow-up message drafts'], ['orderdraft', 'Order message drafts'], ['privacydraft', 'Privacy request reply drafts'], ['contentweek', 'Weekly content writer']];
+const AI_FEATURES = [['describe', 'Product descriptions, tags & SEO'], ['photo', 'Read colours & fabric from a photo'], ['reply', 'WhatsApp reply suggestions (Inbox)'], ['write', 'Festival, offer & caption writer'], ['palette', 'Website colour ideas (Home Page → Website colours)'], ['hero', 'Home page words (small heading, title, button)'], ['review', 'Review replies'], ['ask', 'Ask your shop'], ['summary', 'Weekly summary'], ['pricing', 'Pricing & stock ideas'], ['cleanup', 'Data clean-up'], ['translate', 'Translation (Telugu / Hindi / English)'], ['captionpack', 'Caption & hashtag pack (English + Telugu)'], ['followup', 'Follow-up message drafts'], ['orderdraft', 'Order message drafts'], ['privacydraft', 'Privacy request reply drafts'], ['contentweek', 'Weekly content writer']];
 const AI_LANGS = [['en', 'English'], ['te', 'తెలుగు Telugu'], ['hi', 'हिन्दी Hindi']];
 const aiCfg = () => { const c = { master: true, ...(db.settings.ai || {}) }; AI_FEATURES.forEach(([k]) => { if (c[k] === undefined) c[k] = true; }); return c; };
 const aiOn = k => { const c = aiCfg(); return !!c.master && !!c[k]; };

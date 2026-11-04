@@ -80,6 +80,6 @@ Ops page: `wa-assistant/src/ops.mjs` and `opspage.mjs`, setting `OPS_TOKEN` (see
 
 New owner look: `/admin2`, `ui2css` block + `ov2*` + `ui2Guard` in `anitha-store.html` (see guide 23).
 
-Pages (Care/Journal/Atelier) are data in `db.pages`, drawn by `renderPublicPages`, edited in the Pages tab (see guide 24).
+Pages (Care/Journal) are data in `db.pages`, drawn by `renderPublicPages`, edited in the Pages tab (see guide 24).
 
 AI helpers (agents): `src/agents.mjs`, tasks in `src/aihelper.mjs`, watcher timer in `server.mjs` (see guide 25).

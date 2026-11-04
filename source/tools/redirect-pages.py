@@ -5,7 +5,7 @@ Every page file (home, each page folder, 404.html) becomes a tiny page that send
 (keeping the path, search and #part). The old site map is removed and robots.txt lets search engines follow the move."""
 import os, sys, json
 repo, target = sys.argv[1], sys.argv[2].rstrip('/'); prefix = (sys.argv[3] if len(sys.argv) > 3 else '/anitha-store').rstrip('/')
-PAGES = ['collection', 'saree-care', 'journal', 'the-atelier', 'faq', 'terms', 'privacy', 'my-wishlist']
+PAGES = ['collection', 'saree-care', 'journal', 'faq', 'terms', 'privacy', 'my-wishlist']
 def stub(path):
     url = target + path
     js = "var t=%s,p=location.pathname;if(p.indexOf(%s)===0)p=p.slice(%d);location.replace(t+(p||'/')+location.search+location.hash)" % (json.dumps(target), json.dumps(prefix + '/'), len(prefix))

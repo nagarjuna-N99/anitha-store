@@ -21,7 +21,7 @@ Plain-language pages for the owner and for anyone who takes over the project. Ke
 | `21-privacy-round-2-what-changed.md` | plain-words notes on privacy round 2: website orders, identity check, erased list, helper logins |
 | `22-ops-page.md` | the Ops page: what the developer's health check covers and how to add a check |
 | `23-new-owner-look.md` | the new owner look at /admin2: what it is, the new Overview, how it is kept identical to the classic app |
-| `24-invoices-product-ai-pages.md` | invoice search and sort, one-click product writing, and editing the Care guide, Journal and Atelier |
+| `24-invoices-product-ai-pages.md` | invoice search and sort, one-click product writing, and editing the Care guide and Journal |
 | `25-ai-agents.md` | the five AI helpers: Ops watcher, catalogue batch, order messages, privacy replies, weekly content |
 | `26-design-check-fixes.md` | the Hallmark design check: what was found, what was fixed, what was left |
 | `27-hero-zoom-and-colour-match.md` | hero photo zoom, matching text and top-bar colours to the photo, View home page |

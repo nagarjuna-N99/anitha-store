@@ -1,11 +1,11 @@
 // ================= PAGE ADDRESSES (each page has its own web address, 5 Nov 2026) =================
-// On the public website every page has a real address: /collection/, /saree-care/, /journal/, /the-atelier/, /faq/, /terms/,
+// On the public website every page has a real address: /collection/, /saree-care/, /journal/, /faq/, /terms/,
 // /privacy/, /my-wishlist/, /page/<name>/ for pages the owner adds, and /product/<name>/ for each saree.
 // The build writes a real page file for every fixed address and a 404.html that opens the right page for the rest.
 // Old links such as #/product/<name>, #/faq, #/terms, #/cart and #/wishlist/... still work. Everything here is off in the owner
 // app and when the page is opened from a file, so those behave exactly as before.
-const ROUTE_PAGES = { shop: 'collection', care: 'saree-care', journal: 'journal', atelier: 'the-atelier', faq: 'faq', terms: 'terms', privacy: 'privacy', favourites: 'my-wishlist' };
-const ROUTE_RE = /\/(collection|saree-care|journal|the-atelier|faq|terms|privacy|my-wishlist|(?:page|product)\/[^/]+)\/?$/;
+const ROUTE_PAGES = { shop: 'collection', care: 'saree-care', journal: 'journal', faq: 'faq', terms: 'terms', privacy: 'privacy', favourites: 'my-wishlist' };
+const ROUTE_RE = /\/(collection|saree-care|journal|faq|terms|privacy|my-wishlist|(?:page|product)\/[^/]+)\/?$/;
 const PATH_MODE = BUILD === 'site' && /^https?:$/.test(location.protocol);
 const ROUTE_BASE = PATH_MODE ? (window.__BASE || location.pathname.replace(ROUTE_RE, '').replace(/\/(index|404)\.html$/, '').replace(/\/?$/, '/')) : '/';
 let ROUTE_SKIP = false;                                          // true while the browser Back/Forward buttons drive the page
@@ -52,7 +52,7 @@ if (PATH_MODE) document.addEventListener('click', e => {
   if (a && !e.defaultPrevented && e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) e.preventDefault();
 }, false);
 // a title, description and address for each page (search results and shared links)
-const PAGE_SEO = { shop: ['Handloom Sarees Collection', 'Browse pure handloom sarees from Hyderabad: Tussar, Maheshwari, Banarasi, Kanjeevaram, Paithani, Mysore silk and Ponduru Khadi.'], care: ['Saree Care Guide', 'How to wash, dry, iron and store handloom silk, tussar and cotton sarees so they last for years.'], journal: ['Journal', 'Stories from the loom: weaves, weavers and the care behind each handloom saree.'], atelier: ['The Atelier', 'The story of the shop, the weavers we work with and how every saree is chosen.'], faq: ['Questions and Answers', 'Delivery, payment, care and returns: answers to common questions.'], favourites: ['My Wishlist', 'The sarees you saved.'] };
+const PAGE_SEO = { shop: ['Handloom Sarees Collection', 'Browse pure handloom sarees from Hyderabad: Tussar, Maheshwari, Banarasi, Kanjeevaram, Paithani, Mysore silk and Ponduru Khadi.'], care: ['Saree Care Guide', 'How to wash, dry, iron and store handloom silk, tussar and cotton sarees so they last for years.'], journal: ['Journal', 'Stories from the loom: weaves, weavers and the care behind each handloom saree.'], faq: ['Questions and Answers', 'Delivery, payment, care and returns: answers to common questions.'], favourites: ['My Wishlist', 'The sarees you saved.'] };
 function pageSeo(page) {
   if (!PATH_MODE || page === 'home' || LEGAL_PAGES[page]) { if (PATH_MODE) setCanonical(routeUrl(page === 'home' ? 'home' : page)); return; }
   const c = typeof pgList === 'function' ? pgList().find(p => p.key === page) : null, base = PAGE_SEO[page] || [c ? (c.data && c.data.title) || c.label : '', ''];

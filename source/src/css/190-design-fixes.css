@@ -92,3 +92,40 @@ nav.dark .brand-mark { background: #fff; padding: 3px; box-sizing: border-box; }
 .footer-legal { display: flex; gap: 8px 18px; flex-wrap: wrap; justify-content: flex-end; }
 .coupon-section h3 { font-size: 14px; margin-bottom: 10px; font-weight: 600; }
 .nav-ico { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Calmer sizes on computers (screens wider than 900px), modelled on the reference shop: four cards across, small quiet buttons, smaller headings.
+   Phones keep their larger tap sizes (see 120-mobile.css and 140-phone-polish.css). */
+@media (min-width: 901px) {
+  .section-header { padding: 40px 20px 16px; } .section-title { font-size: 32px; } .section-label { font-size: 11px; letter-spacing: 3px; margin-bottom: 8px; }
+  .scrolling-section { padding: 24px 0 56px; } .scroll-track { gap: 22px; }
+  .scroll-card { width: 250px; } .scroll-card-img { height: auto; aspect-ratio: 3 / 4; } .scroll-card-body { padding: 12px 14px 14px; }
+  .scroll-card-tag { font-size: 10px; letter-spacing: 1.5px; margin-bottom: 4px; } .scroll-card-name { font-size: 17px; margin-bottom: 4px; } .scroll-card-price { font-size: 13px; margin-bottom: 10px; }
+  .scroll-actions { grid-template-columns: 1fr 1fr 34px 34px; gap: 6px; }
+  .btn-sm-card, .cart-item .btn-sm-card { min-height: 34px; min-width: 34px; padding: 4px 6px; font-size: 10px !important; letter-spacing: .08em; }
+  .product-grid { grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 22px; padding: 12px 40px 48px; max-width: 1500px; }
+  .product-img-wrap { height: auto; aspect-ratio: 3 / 4; }
+  .product-info, .product-body { padding-top: 12px; }
+  .product-name { font-size: 17px; margin-bottom: 4px; } .product-price { font-size: 14px; margin-bottom: 10px; }
+  .product-actions { gap: 6px; } .btn-card { min-height: 34px; font-size: 10.5px; padding: 6px 8px; }
+  .kind-tabs { max-width: 300px; margin-bottom: 8px; } .kind-tab { min-height: 34px; padding: 6px 16px; font-size: 11px; }
+  .filter-container { gap: 8px; padding: 10px 20px; } .filter-btn { min-height: 34px; padding: 6px 16px; font-size: 10.5px; letter-spacing: 1.5px; }
+  .btn-filters { min-height: 36px; padding: 6px 18px; font-size: 11px; }
+  .shop-bar select { padding: 8px 12px; font-size: 12px; }
+  .crumbs { margin-bottom: 4px; } .shop-sub { font-size: 11px; }
+}
+
+/* Notes from the loom (home page sign-up) and the owner's colour card */
+.home-notes { padding: 40px 6% 64px; } .hn-box { max-width: 1100px; margin: 0 auto; background: var(--cream); border: 1px solid var(--border); border-radius: 4px; padding: 44px 48px; display: grid; grid-template-columns: 1.05fr 1fr; gap: 44px; align-items: center; }
+.hn-copy .section-label { margin-bottom: 8px; } .hn-title { font-family: 'Cormorant Garamond', serif; font-size: 34px; font-weight: 500; line-height: 1.15; margin: 0 0 10px; } .hn-copy p { margin: 0; color: #4d4a45; line-height: 1.7; font-size: 15px; max-width: 46ch; }
+.hn-form { display: flex; flex-direction: column; gap: 10px; } .hn-lab { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #6b6862; }
+.hn-form input[type=email] { width: 100%; box-sizing: border-box; padding: 13px 14px; border: 1px solid var(--border); background: var(--ivory); font: inherit; font-size: 16px; color: var(--charcoal); border-radius: 2px; } .hn-form input[type=email]:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+.hn-agree { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.5; color: #4d4a45; cursor: pointer; } .hn-agree input { width: 20px; height: 20px; margin-top: 1px; flex: none; accent-color: var(--gold); }
+.hn-btn { padding: 14px 20px; min-height: 46px; background: var(--charcoal); color: var(--ivory); border: 0; font: inherit; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; font-weight: 600; cursor: pointer; border-radius: 2px; } .hn-btn:hover { background: var(--gold); } .hn-btn:disabled { opacity: .6; cursor: wait; }
+.hn-fine { margin: 0; font-size: 12px; color: #6b6862; line-height: 1.5; } .hn-fine a { color: var(--gold); text-decoration: underline; cursor: pointer; display: inline-block; padding: 8px 2px; margin: -8px 0; }
+.hn-msg { margin: 0; min-height: 18px; font-size: 13px; } .hn-msg.ok { color: #2f6b3d; } .hn-msg.bad { color: #9a2f2f; }
+@media (max-width: 800px) { .home-notes { padding: 26px 14px 44px; } .hn-box { grid-template-columns: 1fr; gap: 20px; padding: 26px 20px; } .hn-title { font-size: 28px; } }
+.th-presets { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0; } .th-preset, .th-draft { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font: inherit; font-size: 13px; cursor: pointer; min-width: 128px; text-align: left; } .th-draft { cursor: default; max-width: 230px; } .th-draft small { color: #6b6862; line-height: 1.35; }
+.th-sw { display: inline-flex; border-radius: 6px; overflow: hidden; border: 1px solid rgba(0,0,0,.12); } .th-sw i { display: block; width: 22px; height: 22px; }
+.th-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin: 12px 0; } .th-pick { display: flex; gap: 10px; align-items: center; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; } .th-pick input[type=color] { width: 44px; height: 44px; padding: 0; border: 0; background: none; cursor: pointer; flex: none; } .th-pick span { display: flex; flex-direction: column; font-size: 13px; } .th-pick small { color: #6b6862; font-size: 12px; }
+.th-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; } .th-ai label { display: block; font-size: 13px; margin-bottom: 6px; } .th-ai-row { display: flex; gap: 8px; flex-wrap: wrap; } .th-ai-row input { flex: 1 1 220px; min-height: 40px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; font: inherit; font-size: 16px; }
+.hn-list { display: flex; flex-direction: column; gap: 4px; margin: 0 0 10px; max-height: 220px; overflow: auto; } .hn-list > div { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 8px; background: #fff; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; } .hn-list small { margin-left: 8px; color: #6b6862; }

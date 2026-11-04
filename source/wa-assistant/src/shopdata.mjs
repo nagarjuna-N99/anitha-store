@@ -43,7 +43,7 @@ const PUBLIC_SETTINGS = ['businessName', 'gstNumber', 'address', 'phone', 'email
 // Pages the owner has hidden (and hidden stories, tabs or whole new pages) never leave the server: the public website only gets what it may show.
 export function publicPages(pg) {
   if (!pg || typeof pg !== 'object') return null; const vis = x => x && x.show !== false, out = {};
-  for (const k of ['care', 'journal', 'atelier']) { const p = pg[k]; if (!p || typeof p !== 'object') continue; out[k] = vis(p) ? { ...p } : { show: false }; if (!vis(p)) continue; if (Array.isArray(p.sections)) out[k].sections = p.sections.filter(vis); if (Array.isArray(p.posts)) out[k].posts = p.posts.filter(vis); }
+  for (const k of ['care', 'journal']) { const p = pg[k]; if (!p || typeof p !== 'object') continue; out[k] = vis(p) ? { ...p } : { show: false }; if (!vis(p)) continue; if (Array.isArray(p.sections)) out[k].sections = p.sections.filter(vis); if (Array.isArray(p.posts)) out[k].posts = p.posts.filter(vis); }
   out.custom = (Array.isArray(pg.custom) ? pg.custom : []).filter(vis).map(c => { const d = { ...(c.data || {}) }; if (Array.isArray(d.sections)) d.sections = d.sections.filter(vis); if (Array.isArray(d.posts)) d.posts = d.posts.filter(vis); return { ...c, data: d }; });
   return out;
 }

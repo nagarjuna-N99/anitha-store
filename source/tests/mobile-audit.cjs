@@ -13,7 +13,7 @@ const SCREENS = [
   ['favourites', `favourites=['p1','p3','p9'];navigateTo('favourites')`], ['favourites empty', `favourites=[];navigateTo('favourites')`],
   ['faq (all open)', `navigateTo('faq');document.querySelectorAll('.faq-item').forEach(d=>d.open=true)`], ['care guide', `navigateTo('care')`],
   ['shared wishlist', `renderSharedWishlist([db.products[0].slug,db.products[2].slug]);navigateTo('wishlist')`],
-  ['terms page', `navigateTo('terms')`], ['privacy page', `navigateTo('privacy')`], ['journal', `navigateTo('journal')`], ['atelier', `navigateTo('atelier')`],
+  ['terms page', `navigateTo('terms')`], ['privacy page', `navigateTo('privacy')`], ['journal', `navigateTo('journal')`],
   ['menu drawer', `navigateTo('home');toggleStoreNav()`],
   ['product (saree + bundle)', `navigateTo('shop');db.products.find(x=>x.id==='p1').video='https://youtu.be/dQw4w9WgXcQ';db.products.find(x=>x.id==='p1').daylight=true;db.products.find(x=>x.id==='p1').images=['a.jpg','b.jpg','c.jpg'];openProductDetail('p1')`],
   ['product (sold out)', `navigateTo('shop');openProductDetail('p5')`], ['product (one of a kind)', `navigateTo('shop');openProductDetail('p4')`], ['product (accessory)', `navigateTo('shop');openProductDetail('p9')`],

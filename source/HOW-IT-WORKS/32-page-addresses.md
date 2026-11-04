@@ -7,7 +7,6 @@
 | Collection | `/collection/` |
 | Saree Care | `/saree-care/` |
 | Journal | `/journal/` |
-| The Atelier | `/the-atelier/` |
 | Questions | `/faq/` |
 | Terms | `/terms/` |
 | Privacy Policy | `/privacy/` |
@@ -37,3 +36,5 @@ Every screen of the owner app has its own address: `/admin/orders/`, `/admin/pro
 `tests/addresses-test.cjs` (25 checks): the page files and sitemap; opening each address directly; the menu links; clicking moves without reloading; Back and Forward; a saree address (open, direct visit, close); old links; an unknown address.
 Owner app: `tests/admin-app-test.cjs` (+4 checks: address follows the screen, Back, opening a screen directly) and the server test (+2).
 Not tested: the live GitHub Pages site, pages the owner adds, and a custom domain.
+
+**Removed 5 Nov 2026:** `/the-atelier/` no longer exists. The old address opens the home page.

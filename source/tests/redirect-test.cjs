@@ -3,7 +3,7 @@ const { execFileSync } = require('child_process'), fs = require('fs'), os = requ
 let fails = 0; const ok = (n, c, x) => { if (!c) { fails++; console.log('FAIL', n, x || ''); } else console.log('PASS', n); };
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'redir-')); fs.writeFileSync(path.join(dir, 'sitemap.xml'), 'old'); fs.writeFileSync(path.join(dir, 'robots.txt'), 'User-agent: *\nDisallow: /\n');
 execFileSync('python3', [path.join(__dirname, '../tools/redirect-pages.py'), dir, 'https://anithapemmasani.com/', '/anitha-store'], { stdio: 'ignore' });
-const files = ['index.html', '404.html', 'collection/index.html', 'saree-care/index.html', 'journal/index.html', 'the-atelier/index.html', 'faq/index.html', 'terms/index.html', 'privacy/index.html', 'my-wishlist/index.html'];
+const files = ['index.html', '404.html', 'collection/index.html', 'saree-care/index.html', 'journal/index.html', 'faq/index.html', 'terms/index.html', 'privacy/index.html', 'my-wishlist/index.html'];
 ok('every page file exists and names the new address', files.every(f => fs.existsSync(path.join(dir, f)) && fs.readFileSync(path.join(dir, f), 'utf8').includes('https://anithapemmasani.com')));
 const go = (file, pathname, search = '', hash = '') => { const h = fs.readFileSync(path.join(dir, file), 'utf8'), js = /<script>([\s\S]*?)<\/script>/.exec(h)[1]; let to = null; vm.runInNewContext(js, { location: { pathname, search, hash, replace: u => { to = u; } } }); return to; };
 ok('a page folder goes to the same page on the new address, keeping the search and #part', go('collection/index.html', '/anitha-store/collection/', '?cat=tussar', '#top') === 'https://anithapemmasani.com/collection/?cat=tussar#top');

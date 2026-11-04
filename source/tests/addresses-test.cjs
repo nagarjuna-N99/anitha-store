@@ -19,15 +19,15 @@ const root = path.join(__dirname, '..'), dir = path.join(root, 'build', 'site'),
   const go = async u => { await p.goto(ORIGIN + BASE + u); await sleep(600); };
   const state = () => ev(() => ({ path: location.pathname, page: (document.querySelector('.page.active') || {}).id, title: document.title, canon: (document.querySelector('link[rel=canonical]') || {}).href }));
   // ---- the files ----
-  for (const [pg, t] of [['collection', 'Handloom Sarees Collection'], ['saree-care', 'Saree Care Guide'], ['journal', 'Journal'], ['the-atelier', 'The Atelier'], ['faq', 'Questions and Answers'], ['terms', 'Terms &amp; Conditions'], ['privacy', 'Privacy Policy']]) {
+  for (const [pg, t] of [['collection', 'Handloom Sarees Collection'], ['saree-care', 'Saree Care Guide'], ['journal', 'Journal'], ['faq', 'Questions and Answers'], ['terms', 'Terms &amp; Conditions'], ['privacy', 'Privacy Policy']]) {
     const h = fs.readFileSync(path.join(dir, pg, 'index.html'), 'utf8');
     ok(`/${pg}/ is a real page file with its own title and canonical address`, h.includes(`<title>${t} | Anitha Pemmasani</title>`) && h.includes(`<link rel="canonical" href="${ORIGIN}/anitha-store/${pg}/">`));
   }
-  const sm = fs.readFileSync(path.join(dir, 'sitemap.xml'), 'utf8'); ok('sitemap.xml lists the home page and every public page', (sm.match(/<loc>/g) || []).length === 8 && sm.includes(`${ORIGIN}/anitha-store/collection/`));
+  const sm = fs.readFileSync(path.join(dir, 'sitemap.xml'), 'utf8'); ok('sitemap.xml lists the home page and every public page', (sm.match(/<loc>/g) || []).length === 7 && sm.includes(`${ORIGIN}/anitha-store/collection/`));
   // ---- opening an address directly ----
   await go('collection/'); let s = await state(); ok('opening /collection/ shows the collection page with its title and address', s.page === 'page-shop' && s.title === 'Handloom Sarees Collection | Anitha Pemmasani' && s.path === BASE + 'collection/' && s.canon === ORIGIN + BASE + 'collection/');
   await go('saree-care/'); s = await state(); ok('opening /saree-care/ shows Saree Care', s.page === 'page-care' && /Saree Care/.test(s.title));
-  await go('the-atelier/'); s = await state(); ok('opening /the-atelier/ shows The Atelier', s.page === 'page-atelier');
+  await go('the-atelier/'); s = await state(); ok('the removed /the-atelier/ address opens the home page, not a broken page', s.page === 'page-home', JSON.stringify(s));
   await go('terms/'); s = await state(); ok('opening /terms/ shows the Terms', s.page === 'page-terms' && /Terms/.test(s.title) && s.path === BASE + 'terms/');
   // ---- moving around ----
   await go(''); await ev(() => { window.__marker = 'same page'; });

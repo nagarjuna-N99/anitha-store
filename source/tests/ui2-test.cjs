@@ -84,17 +84,16 @@ const ROOT = process.cwd(), SETUP = 'setup-token-0123456789', PW = 'Correct-Hors
     await N.evaluate(() => { document.getElementById('p-desc').value = ''; PF.description = ''; PF.descTouched = false; }); await N.click('#pf-auto'); await N.waitForFunction(() => document.getElementById('p-desc').value.length > 60, null, { timeout: 15000 });
     ok('new look · product form: one click on Auto-fill everything works and says plainly when Claude is not connected', await N.evaluate(() => /Claude is not connected/.test(document.getElementById('pf-ai-note').innerText) && !/not connected yet\. Open the WhatsApp/.test(document.body.innerText)));
     await N.evaluate(() => closeModal('adminModal')); await N.evaluate(() => switchAdminTab('pages')); await sleep(400);
-    ok('new look · Pages tab is in the menu and lists the care guide, journal and atelier editors', await N.evaluate(() => !!document.querySelector('.admin-nav-item[data-tab="pages"]') && /Saree Care/i.test(document.getElementById('adminContent').innerText) && /The Atelier/i.test(document.getElementById('adminContent').innerText)));
-    await N.evaluate(() => { document.querySelector('.pg-sec[data-x]'); const d = [...document.querySelectorAll('.pg-sec')]; d.forEach(x => { x.open = true; }); }); const heading = 'Made by hand in Hyderabad ' + Date.now().toString(36);
-    await N.evaluate(h => { const i = [...document.querySelectorAll('.pg-sec input')].find(x => /Preserving the Art/.test(x.value)); i.value = h; i.dispatchEvent(new Event('input', { bubbles: true })); }, heading);
+    ok('new look · Pages tab is in the menu and lists the care guide and journal editors', await N.evaluate(() => !!document.querySelector('.admin-nav-item[data-tab="pages"]') && /Saree Care/i.test(document.getElementById('adminContent').innerText) && !/The Atelier/i.test(document.getElementById('adminContent').innerText)));
+    await N.evaluate(() => { document.querySelector('.pg-sec[data-x]'); const d = [...document.querySelectorAll('.pg-sec')]; d.forEach(x => { x.open = true; }); }); 
     await N.evaluate(() => { pgAdd('journal.posts', { id: 'jn1', date: '2026-11-03', title: 'Written in the owner app', excerpt: 'Short', body: 'The full story.', image: '', alt: '', show: true }); }); await sleep(3500);
     const pubPages = (await (await fetch(base + '/public/shop')).json()).pages;
-    ok('new look · Pages: what the owner writes reaches the public website data on the server (heading and a new story)', !!pubPages && pubPages.atelier.heading === heading && pubPages.journal.posts.some(x => x.title === 'Written in the owner app' && x.body === 'The full story.'));
+    ok('new look · Pages: what the owner writes reaches the public website data on the server (a new story; no Atelier page)', !!pubPages && !pubPages.atelier && pubPages.journal.posts.some(x => x.title === 'Written in the owner app' && x.body === 'The full story.'));
     await C.evaluate(async () => { await admPoll(); }); await sleep(600); await C.evaluate(() => switchAdminTab('pages')); await sleep(400);
-    ok('new look · Pages: the classic app sees the same pages', await C.evaluate(h => JSON.stringify(db.pages).includes(h), heading));
+    ok('new look · Pages: the classic app sees the same pages', await C.evaluate(h => JSON.stringify(db.pages).includes(h), 'Written in the owner app'));
 
     await N.evaluate(() => { switchAdminTab('pages'); }); await sleep(300); const nShow = await N.evaluate(() => document.querySelectorAll('.pg-show-in').length);
-    ok('new look · Pages: every page has a "Show on the website" switch, and there is an "Add a new page" form', nShow >= 3 && await N.evaluate(() => /Add a new page/i.test(document.getElementById('adminContent').innerText) && !!document.getElementById('pg-new-kind')));
+    ok('new look · Pages: every page has a "Show on the website" switch, and there is an "Add a new page" form', nShow >= 2 && await N.evaluate(() => /Add a new page/i.test(document.getElementById('adminContent').innerText) && !!document.getElementById('pg-new-kind')));
     await N.evaluate(() => { document.getElementById('pg-new-title').value = 'Our Weavers'; document.getElementById('pg-new-kind').value = 'story'; pgNewPage(); }); await sleep(3500);
     let pp = (await (await fetch(base + '/public/shop')).json()).pages;
     ok('new look · Pages: a brand-new page stays OUT of the public website data while it is hidden', pp.custom.length === 0 && !JSON.stringify(pp).includes('Our Weavers'));

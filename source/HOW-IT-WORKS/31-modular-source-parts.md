@@ -5,8 +5,8 @@ The whole shop front end was one file of 7,500 lines. It is now split into small
 
 ## Where things are
 - `src/css/` the styles, in order: base, storefront, drawers and modals, admin, image studio, cart and delivery, home page hero, login and account, product page, drafts, mobile, bottom tab bar, phone polish, owner dashboard, storefront extras, owner app new look, design fixes.
-- `src/html/` the page skeleton: head, `body-open`, `storefront` (header, home, collection, care, journal, atelier, footer, tab bar), `admin-view` (the owner app), tail.
-- `src/js/` one file per feature, in running order (helpers, build, database, navigation, storefront logic, login and consent, privacy notice, admin logic, image studio, forms, product page and SEO, pages (care, journal, atelier), AI agents, statements, home page and hero, search, banners, alerts, reviews, WhatsApp, cart follow-up, delivery, init, extras, dashboard, AI helpers, drafts, Instagram, social studio, growth, privacy). Files named `*-shared-*.js` are copies of `shared/*.js`: change `shared/` and run `tools/sync-shared.py`.
+- `src/html/` the page skeleton: head, `body-open`, `storefront` (header, home, collection, care, journal, footer, tab bar), `admin-view` (the owner app), tail.
+- `src/js/` one file per feature, in running order (helpers, build, database, navigation, storefront logic, login and consent, privacy notice, admin logic, image studio, forms, product page and SEO, pages (care, journal), AI agents, statements, home page and hero, search, banners, alerts, reviews, WhatsApp, cart follow-up, delivery, init, extras, dashboard, AI helpers, drafts, Instagram, social studio, growth, privacy). Files named `*-shared-*.js` are copies of `shared/*.js`: change `shared/` and run `tools/sync-shared.py`.
 - `src/manifest.json` the order the parts are joined in.
 
 ## How to work

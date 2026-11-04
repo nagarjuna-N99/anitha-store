@@ -3,7 +3,7 @@
 ## What was checked
 I installed the open-source **Hallmark** design checker and ran it two ways:
 1. **Code scan** of the public website and the owner app.
-2. **Browser check** of 43 real screens (14 public, 29 owner) at 7 widths from a small phone (320 px) to a wide screen (1920 px): home, shop, product, cart, checkout, My Account, sign-in, Care, Journal, Atelier, FAQ, Terms, Privacy, all 24 owner tabs, the product form, and the owner screens in dark mode.
+2. **Browser check** of 43 real screens (14 public, 29 owner) at 7 widths from a small phone (320 px) to a wide screen (1920 px): home, shop, product, cart, checkout, My Account, sign-in, Care, Journal, FAQ, Terms, Privacy, all 24 owner tabs, the product form, and the owner screens in dark mode.
 The checker lives in `~/.claude/skills/hallmark` on the machine that ran it; it is not part of your shop and is not deployed.
 
 ## What was fixed
@@ -19,7 +19,7 @@ The checker lives in `~/.claude/skills/hallmark` on the machine that ran it; it 
 - The slide-in menus now slide with `transform` (smooth) instead of `left`, and are hidden from keyboard and screen-reader users while closed.
 - The hero uses the small-screen height, so it no longer jumps when the address bar hides. The first hero slide shows even if scripts are slow or blocked.
 - The page clips sideways overflow in the modern way (`clip`) so sticky headers work.
-- Found by the phone audit while fixing: the Journal cards, the Atelier page and the Home Page editor were 20 to 60 px too wide on a 320 px phone. All three now fit.
+- Found by the phone audit while fixing: the Journal cards, the (since removed) Atelier page and the Home Page editor were 20 to 60 px too wide on a 320 px phone. All three now fit.
 **Look**
 - Small labels (form labels, table heads, tags, status, dates) are now plain sentence case, not tiny tracked capitals. Buttons and the menu keep capitals with light spacing.
 - One serif font (Cormorant Garamond) instead of two. Bold is semibold, so the page uses fewer font weights.

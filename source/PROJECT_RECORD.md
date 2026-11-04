@@ -3,7 +3,7 @@
 > **STANDING RULE (owner's instruction, 23 Oct 2026):** this record and the `HOW-IT-WORKS/` folder are updated **after every change or update**, in the same step as the change, never later. A change is not finished until (1) the code is tested, (2) a dated entry is added to the Change Log below, (3) any affected `HOW-IT-WORKS/` page is corrected, (4) `./check-record.sh` has been run (it fails if the record or how-it-works is behind the code).
 > Also standing: the owner wants chats remembered for later use; this record is that memory for the project.
 
-**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 551 automated checks) · **Browser test suites:** 34 (see §6)
+**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 561 automated checks) · **Browser test suites:** 34 (see §6)
 
 ---
 
@@ -116,7 +116,8 @@ Owner's guidance: *"we will setup everything after we host it"* — real hosting
 | `care-test.cjs` | 9 | Saree Care tabs, wash-care guide, photo link repair |
 | `parts-test.cjs` | 8 | the website source parts and the joined file |
 | `addresses-test.cjs` | 25 | each page and saree has its own address, Back/Forward, old links |
-| `onebox-test.cjs` | 8 | one-server hosting: the server serves the real website, page addresses, 404 page, sitemap and the owner app from one address |
+| `colours-notes-test.cjs` | 30 | calmer sizes on computers, "Notes from the loom" sign-up, website colours (presets, own colours, photo match, Claude ideas, readability guard) |
+| `onebox-test.cjs` | 9 | one-server hosting: the server serves the real website, page addresses, 404 page, sitemap and the owner app from one address |
 | `redirect-test.cjs` | 7 | the old GitHub Pages address becomes a signpost to anithapemmasani.com (same page, search and #part kept; old site map removed) |
 | `product-page-test.cjs` | 22 | saree page: delivery line, details table, trust block, questions, related, sticky bar |
 | `agents-test.cjs` | 27 | the five AI helpers with and without Claude: order messages, privacy replies, weekly content, catalogue batch, Ops watcher note |
@@ -142,6 +143,14 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**11 Nov 2026 (The Atelier page is removed)**
+- Owner: "we are removing atelier, set the page accordingly". The built-in **The Atelier** page is gone: its menu link (header and phone menu), the page, the address `/the-atelier/` (the old address opens the home page; the old folder is removed from the build and from the GitHub copy), its sitemap entry, its editor card in Pages, its place in the Home Page link list, and its public data (the server no longer publishes it; any old saved Atelier text is dropped). Care guide, Journal and the "Add a new page" kinds (including "Story page") stay. The home page sign-up block was renamed to **Notes from the loom** so the word does not remain. The page code file is now `src/js/150-pages-care-journal.js`.
+- Tests: updated `pages-ai-invoices-test.cjs`, `ui2-test.cjs`, `addresses-test.cjs`, `mobile-audit.cjs`, `redirect-test.cjs` and the server pages checks (public data has no Atelier). Not tested: the real GitHub Pages copy and the real server rebuild.
+
+**11 Nov 2026 (Calmer sizes, "Notes from the loom", website colours with Claude ideas)**
+- Owner: our sizes look too big next to the reference shop; add a "notes" block in our own words; in the owner app let me change the page colours, match them to the page, and offer an AI colour choice. **Sizes (computers only):** four cards across, 250px cards, 3:4 photos, small names/prices, slim 34px buttons/tabs/chips, smaller headings; phones unchanged. **Notes from the loom:** a block at the bottom of the home page (own wording, editable, "Suggest other words", on/off switch); the visitor gives an email and ticks the exact consent wording; `POST /public/notes` (`wa-assistant/src/notes.mjs`) keeps address, time and the wording agreed to; nothing is ever sent automatically; the owner sees the list in Home Page (Remove, CSV). **Website colours:** Home Page → Website colours: 6 ready sets, 5 pickers, "Match my banner photo", "Suggest 3 ideas" (Claude task `palette`, drafts only), Undo, Original colours, and an automatic readability guard. Guide: HOW-IT-WORKS/35-colours-notes-and-sizes.md.
+- Tests: server 561 (+10); new `tests/colours-notes-test.cjs` (30 checks); `onebox-test.cjs` +1 (a real sign-up saved on the real server). Not tested: Claude's real colour ideas, a real phone, real photos. To do for the owner: add one line about "email for the notes" to the Privacy Policy page text.
 
 **11 Nov 2026 (Old GitHub address now points to anithapemmasani.com)**
 - The shop now runs on its own AWS server at https://anithapemmasani.com (website, owner app, orders, data). `tools/publish-repo.sh` now publishes the GitHub Pages copy as a signpost (`tools/redirect-pages.py`): every page sends the visitor to the same page on the new address; the old site map is removed and robots.txt allows search engines to follow. To publish the full site to Pages again: `REDIRECT_TO= tools/publish-repo.sh ...`. Customers' saved cart, wish list and sign-in live in each browser per address, so a visitor's old saved items do not follow them to the new address.

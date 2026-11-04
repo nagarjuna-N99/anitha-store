@@ -1031,6 +1031,20 @@
       "text": "Every thread is a story, woven slowly and worn for years.",
       "by": "Anitha Pemmasani"
     },
+    "notes": {
+      "show": true,
+      "label": "Written with care",
+      "title": "Notes from the loom",
+      "text": "Now and then we write a short note: a new saree off the loom, how a weave is made, a reminder before a festival. A few lines, only when there is something worth saying.",
+      "button": "Send me the notes"
+    },
+    "theme": {
+      "accent": "#8A6038",
+      "ink": "#2C2C2C",
+      "bg": "#FAF9F6",
+      "cream": "#F5F1EA",
+      "sage": "#5B6F61"
+    },
     "categories": {
       "show": true,
       "label": "Shop by category",
@@ -1306,31 +1320,6 @@
           "image": "https://images.unsplash.com/photo-1610189012906-4b2a8f8e0c9b?q=80&w=600",
           "alt": "Heirloom saree",
           "show": true
-        }
-      ],
-      "show": true
-    },
-    "atelier": {
-      "heroTitle": "The Atelier",
-      "heroImage": "https://images.unsplash.com/photo-1596205849889-98e400c784c1?q=80&w=2000",
-      "image": "https://images.unsplash.com/photo-1602161490280-093915e84362?q=80&w=1000",
-      "heading": "Preserving the Art of Handloom",
-      "paragraphs": [
-        "Every saree at Anitha Pemmasani is a testament to the weaver's art. We work directly with artisan clusters across India, ensuring fair wages and preserving ancient weaving techniques.",
-        "Our promise: every piece is rigorously quality-checked before dispatch. We celebrate the natural, beautiful variations that make each handloom saree truly one-of-a-kind."
-      ],
-      "stats": [
-        {
-          "value": "10+",
-          "label": "Years of Craft"
-        },
-        {
-          "value": "500+",
-          "label": "Artisan Partners"
-        },
-        {
-          "value": "50+",
-          "label": "Weaving Clusters"
         }
       ],
       "show": true
