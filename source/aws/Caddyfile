@@ -1,0 +1,11 @@
+# Caddy gets and renews the free HTTPS certificate by itself. __DOMAIN__ is filled in by setup.sh.
+www.__DOMAIN__ {
+	redir https://__DOMAIN__{uri} permanent
+}
+__DOMAIN__ {
+	encode gzip zstd
+	request_body {
+		max_size 25MB
+	}
+	reverse_proxy 127.0.0.1:8787
+}

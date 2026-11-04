@@ -1,6 +1,7 @@
 import http from 'node:http';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import net from 'node:net';
 import os from 'node:os';
 import path from 'node:path';
 import { createApp } from '../server.mjs';
@@ -1274,6 +1275,36 @@ const adminGet = (base, p) => fetch(base + p, { headers: { Authorization: 'Beare
   const lim = mk({ adminAllowedIps: ['10.1.2.3'] }), lb = await up(lim);
   ok('optional IP allow-list: any other address gets a plain 404 for /admin and /admin/api (the owner app is invisible)', (await fetch(lb + '/admin')).status === 404 && (await fetch(lb + '/admin/api/state')).status === 404 && (await fetch(lb + '/health')).status === 200); lim.server.close();
   ok('inbox and test pages work with the owner session (no token to type)', /tok==='session'/.test(fs.readFileSync(path.join(ROOTDIR, 'public/inbox.html'), 'utf8')) && /\/admin\/api\/state/.test(fs.readFileSync(path.join(ROOTDIR, 'public/test.html'), 'utf8')));
+
+  // ---------- the website served from the same server (one-machine hosting) ----------
+  {
+    const { createSiteHost } = await import('../src/sitehost.mjs'), { clientIp } = await import('../src/clientip.mjs');
+    const sd = fs.mkdtempSync(path.join(os.tmpdir(), 'site-')); fs.mkdirSync(path.join(sd, 'faq')); fs.mkdirSync(path.join(sd, '.hidden'));
+    fs.writeFileSync(path.join(sd, 'index.html'), '<html>HOME PAGE</html>'); fs.writeFileSync(path.join(sd, 'faq', 'index.html'), '<html>FAQ PAGE</html>'); fs.writeFileSync(path.join(sd, '404.html'), '<html>OPENS PRODUCT PAGES</html>');
+    fs.writeFileSync(path.join(sd, 'sitemap.xml'), '<urlset/>'); fs.writeFileSync(path.join(sd, 'logo.png'), 'PNG'); fs.writeFileSync(path.join(sd, '.hidden', 'x.txt'), 'secret'); fs.writeFileSync(path.join(path.dirname(sd), 'outside-' + path.basename(sd) + '.txt'), 'OUTSIDE');
+    const host = mk({ siteDir: sd }), hb = await up(host), plain = mk({}), pb = await up(plain);
+    let r = await fetch(hb + '/'), t = await r.text();
+    ok('website on the same server: / is the home page, as html that is always re-checked', r.status === 200 && t === '<html>HOME PAGE</html>' && /text\/html/.test(r.headers.get('content-type')) && r.headers.get('cache-control') === 'no-cache' && r.headers.get('x-content-type-options') === 'nosniff');
+    r = await fetch(hb + '/faq/'); t = await r.text(); ok('website: a page folder opens its own page', r.status === 200 && t === '<html>FAQ PAGE</html>');
+    r = await fetch(hb + '/faq?x=1', { redirect: 'manual' }); ok('website: /faq without the slash goes to /faq/ and keeps the query', r.status === 301 && r.headers.get('location') === '/faq/?x=1');
+    r = await fetch(hb + '/sitemap.xml'); ok('website: sitemap and images are served with the right type and a short cache', r.status === 200 && /xml/.test(r.headers.get('content-type')) && /max-age/.test(r.headers.get('cache-control')) && (await fetch(hb + '/logo.png')).headers.get('content-type') === 'image/png');
+    r = await fetch(hb + '/product/some-saree'); t = await r.text(); ok('website: an unknown address gets the 404 page (it opens product pages) with a real 404 status', r.status === 404 && t === '<html>OPENS PRODUCT PAGES</html>');
+    r = await fetch(hb + '/', { method: 'HEAD' }); ok('website: HEAD works and sends no body', r.status === 200 && (await r.text()) === '');
+    r = await fetch(hb + '/', { method: 'POST', body: '{}' }); ok('website: only GET and HEAD are answered (a POST to / is a JSON 404)', r.status === 404 && /json/.test(r.headers.get('content-type')));
+    const raw = async p => { const u = new URL(hb); return await new Promise(res => { const s = net.connect(+u.port, u.hostname, () => s.write(`GET ${p} HTTP/1.1\r\nHost: x\r\nConnection: close\r\n\r\n`)); let d = ''; s.on('data', c => d += c); s.on('end', () => res(d)); }); };
+    const esc1 = await raw('/../outside-' + path.basename(sd) + '.txt'), esc2 = await raw('/%2e%2e/outside-' + path.basename(sd) + '.txt'), hid = await raw('/.hidden/x.txt');
+    ok('website: cannot read outside the site folder or hidden files (../, encoded ../, dot folders)', ![esc1, esc2, hid].some(x => /OUTSIDE|secret/.test(x)));
+    r = await fetch(hb + '/health'); ok('website: the shop server\'s own addresses still win (/health is the real health check)', (await r.json()).ok === true);
+    r = await fetch(hb + '/api/nothing'); ok('website: /api addresses stay the shop server\'s own (JSON answer, never a web page)', /json/.test(r.headers.get('content-type')) && !/html/.test(r.headers.get('content-type')));
+    r = await fetch(hb + '/admin'); ok('website: the owner app still opens at /admin', r.status === 200 && /ui2|admin|Owner|sign/i.test(await r.text()) || r.status === 404);
+    r = await fetch(pb + '/'); ok('without SITE_DIR the server answers exactly as before (/ is the old inbox page, the website is not served)', r.status === 200 && (await r.text()).length > 100 && (await fetch(pb + '/faq/')).status === 404);
+    ok('createSiteHost: available() is true only when index.html exists', createSiteHost(sd).available() && !createSiteHost(path.join(sd, 'nope')).available());
+    const rq = (addr, xff) => ({ socket: { remoteAddress: addr }, headers: xff ? { 'x-forwarded-for': xff } : {} });
+    ok('client address: without TRUST_PROXY the direct address is always used (a made-up header changes nothing)', clientIp(rq('::ffff:5.6.7.8', '9.9.9.9'), false) === '5.6.7.8');
+    ok('client address: with TRUST_PROXY, a connection from this machine uses the address the front door recorded (the last one)', clientIp(rq('127.0.0.1', '1.1.1.1, 49.37.10.20'), true) === '49.37.10.20' && clientIp(rq('::1', '49.37.10.20'), true) === '49.37.10.20');
+    ok('client address: with TRUST_PROXY, a connection from anywhere else cannot choose its address, and junk is ignored', clientIp(rq('5.6.7.8', '9.9.9.9'), true) === '5.6.7.8' && clientIp(rq('127.0.0.1', 'not an ip!'), true) === '127.0.0.1' && clientIp(rq('127.0.0.1', ''), true) === '127.0.0.1');
+    host.server.close(); plain.server.close();
+  }
   app.server.close(); igSrv.close();
 }
 claudeSrv.close(); graphSrv.close();

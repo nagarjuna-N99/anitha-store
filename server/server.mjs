@@ -3,6 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { loadConfig, ROOT } from './src/config.mjs';
+import { clientIp } from './src/clientip.mjs';
+import { createSiteHost } from './src/sitehost.mjs';
 import { Store } from './src/store.mjs';
 import { WhatsApp, verifySignature, parseWebhook } from './src/whatsapp.mjs';
 import { Pipeline } from './src/pipeline.mjs';
@@ -87,7 +89,7 @@ export function createApp(overrides = {}, deps = {}) {
     req.on('data', c => { n += c.length; if (n > limit) { reject(Object.assign(new Error('Body too large'), { code: 413 })); req.destroy(); } else chunks.push(c); });
     req.on('end', () => resolve(Buffer.concat(chunks))); req.on('error', reject);
   });
-  const sessionAdmin = req => auth.authorize(req, { write: req.method !== 'GET' && req.method !== 'HEAD' }, String(req.socket.remoteAddress || '')).code === 200;
+  const sessionAdmin = req => auth.authorize(req, { write: req.method !== 'GET' && req.method !== 'HEAD' }, clientIp(req, cfg.trustProxy)).code === 200;
   const isAdmin = req => isAdminToken(req) || sessionAdmin(req);
   const isAdminToken = req => { const h = req.headers.authorization || ''; return !!cfg.adminToken && cfg.adminToken.length >= 12 && h.startsWith('Bearer ') && safeEq(h.slice(7), cfg.adminToken); };
   const cors = req => {
@@ -211,6 +213,7 @@ export function createApp(overrides = {}, deps = {}) {
   };
   const watchTick = async () => { try { const t = clockNow(), ist = new Date(t + 330 * 60_000), h = ist.getUTCHours() + ist.getUTCMinutes() / 60, day = istDay(t); if (h < 8.25 || watchStore.read().day === day) return; watchStore.write({ ...watchStore.read(), day }); await watchRun(false); } catch { /* never crash the timer */ } };
   const admin = adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, ops, opsReport, wa, watchRun, watchRead: () => watchStore.read().last || null, reportState, sendCode: async (phone, code) => { if (!cfg.waLive) return false; const d = String(phone).replace(/\D/g, ''); try { await pipeline.sendSmart(d.length === 10 ? '91' + d : d, `Your ${shop.get().db?.settings?.businessName || 'shop'} verification code is ${code}. It is only for a privacy request you made. Never share it with anyone else. It expires in 10 minutes.`, { template: cfg.privacyOtpTemplate, params: [code] }); return true; } catch { return false; } }, breachNotices, store, runSweep: () => { const r = Privacy.sweepStore(store, cfg.privacy, clockNow()); r.tickets = privacy.sweepTickets(3); r.webOrders = weborders.sweep(cfg.privacy.orderYears); privacy.saveState({ ...privacy.state(), lastSweep: istDay(clockNow()), last: r }); return r; }, notifyOwner: notifyOwnerMail, smtpMeta, smtpSave: async o => { const old = smtpCfg() || {}, c = { host: String(o.host || '').trim().slice(0, 200), port: +o.port || (o.secure ? 465 : 587), secure: !!o.secure, user: String(o.user || '').trim().slice(0, 200), pass: o.pass ? String(o.pass).slice(0, 300) : old.pass || '', from: String(o.from || '').trim().slice(0, 200), to: String(o.to || '').trim().slice(0, 200) }; if (!c.host || !/^[\w.-]+$/.test(c.host)) throw Object.assign(new Error('Enter the mail server address, for example smtp.gmail.com'), { code: 422 }); if (!emailOk(c.to)) throw Object.assign(new Error('Enter the email address that should receive the report.'), { code: 422 }); if (!c.from) c.from = c.user && emailOk(c.user) ? c.user : c.to; await (deps.verifySmtp || smtpVerify)(c); secrets.set('smtp', JSON.stringify(c), { last4: false }); }, smtpRemove: () => secrets.remove('smtp'), smtpSendTest: async () => { const c = smtpCfg(); if (!c) throw Object.assign(new Error('Add your email settings first.'), { code: 422 }); await smtpSend(c, { subject: 'Test email from your shop app', text: 'This is a test. If you can read it, the weekly growth report will reach you here every Monday morning.', html: '<p>This is a test. If you can read it, the weekly growth report will reach you here every Monday morning.</p>' }); }, reportState, prefs, savePrefs: o => { const all = reportState(); saveReportState({ ...all, prefs: { weekly: !!o.weekly, monthly: !!o.monthly, daily: !!o.daily } }); }, json, readBody, ROOT });
+  const siteHost = cfg.siteDir ? createSiteHost(cfg.siteDir) : null;   // the public website, when SITE_DIR is set
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, 'http://x'), route = `${req.method} ${url.pathname}`;
     try {
@@ -283,7 +286,7 @@ export function createApp(overrides = {}, deps = {}) {
 
       // ---- admin pages & API ----
       if (route === 'GET /test') return page(res, 'test.html');
-      if (route === 'GET /inbox' || route === 'GET /') return page(res, 'inbox.html');
+      if (route === 'GET /inbox' || (route === 'GET /' && !siteHost)) return page(res, 'inbox.html');   // with the website on this server, / is the home page
 
       if (url.pathname.startsWith('/api/')) {
         const c = cors(req);
@@ -354,6 +357,7 @@ export function createApp(overrides = {}, deps = {}) {
         }
         return json(res, 404, { error: 'not found' }, c);
       }
+      if (siteHost && siteHost.serve(req, res, url)) return;
       json(res, 404, { error: 'not found' });
     } catch (e) {
       if (res.headersSent) return;

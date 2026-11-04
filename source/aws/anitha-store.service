@@ -1,0 +1,23 @@
+[Unit]
+Description=Anitha Pemmasani shop server (website, owner app, WhatsApp assistant)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=anitha
+Group=anitha
+WorkingDirectory=/opt/anitha-store/repo/server
+EnvironmentFile=/etc/anitha-store.env
+ExecStart=/usr/bin/node server.mjs
+Restart=always
+RestartSec=3
+# keep the server away from everything but its own data folder
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/anitha-store
+MemoryMax=1500M
+
+[Install]
+WantedBy=multi-user.target

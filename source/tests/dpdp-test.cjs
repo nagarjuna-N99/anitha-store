@@ -42,9 +42,9 @@ const { chromium } = require(process.env.PW || 'playwright'); const path = requi
   await ev(() => closeModal('rightsModal'));
   await ev(() => openRights('grievance')); await p.fill('#rt-name', 'X'); await p.fill('#rt-contact', 'abc'); await p.click('#rt-go'); t('rights form: a contact that is neither a phone number nor an email is refused', await ev(() => /phone number or email/.test(document.getElementById('rt-out').innerText))); await ev(() => closeModal('rightsModal'));
   // ---- download my data ----
-  await ev(() => { openAccount(); }); const dl = p.waitForEvent('download'); await p.click('#accountBody button:has-text("Download my data")'); const f = await dl; const mine = JSON.parse(fs.readFileSync(await f.path(), 'utf8'));
+  await ev(() => { openAccount(); ACCT_OPEN.add('privacy'); renderAccount(); }); const dl = p.waitForEvent('download'); await p.click('#accountBody button:has-text("Download my data")'); const f = await dl; const mine = JSON.parse(fs.readFileSync(await f.path(), 'utf8'));
   t('download my data: a JSON file with the profile, orders and consent history, and nobody else\'s data', mine.profile.name === 'Old Customer' && mine.orders.length >= 1 && mine.orders.every(o => o.userId === mine.profile.id) && mine.consentHistory.length >= 3 && mine.consentHistory.every(c => c.userId === mine.profile.id) && !JSON.stringify(mine).includes('9811100001'));
-  t('my account: shows "Your privacy rights" with the request numbers and the nominee', await ev(() => { const x = document.getElementById('accountBody').innerText; return /Your privacy rights/i.test(x) && /DEMO-0001/.test(x) && /Nominee/.test(x) && /Erase my account/.test(x); }));
+  t('my account: shows "Your privacy rights" with the request numbers and the nominee', await ev(() => { const x = document.getElementById('accountBody').textContent; return /Your privacy rights/i.test(x) && /DEMO-0001/.test(x) && /Nominee/.test(x) && /Erase my account/.test(x); }));
   // ---- erasing a customer: what goes, what the law keeps ----
   const r = await ev(() => {
     const today = todayY(), recent = ymd(new Date(Date.now() - 100 * 864e5)), u = newUser('+919811100003'); u.name = 'Erase Me'; u.email = 'e@x.com'; db.users.push(u);

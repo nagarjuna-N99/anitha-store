@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Runs every automated test: the assistant server (165 checks) and all browser suites. Needs: node 20+, `npm i -g playwright` (Chromium).
+# Runs every automated test: the assistant server and all browser suites. Needs: node 20+, `npm i -g playwright` (Chromium).
 cd "$(dirname "$0")"
 export PW="${PW:-$(npm root -g)/playwright}"
 python3 tools/build-split.py --shop-api http://127.0.0.1:8787 >/dev/null || exit 1   # the website and the owner app

@@ -107,6 +107,7 @@ const { chromium } = require(process.env.PW);
 
   // ===== address book in My Account =====
   await ev(() => { setSession(db.users.find(u => u.phone === '+919700012345'), null); openAccount(); });
+  await ev(() => { ACCT_OPEN.add('addr'); renderAccount(); });   // the Saved addresses row of My Account is folded until the customer opens it
   await p.click('#accountBody summary:has-text("Add an address")');
   await fill({ 'ab-label': 'Mother', 'ab-name': 'Lakshmi', 'ab-street': '22 Gandhi Road, Tirupati', 'ab-city': 'Tirupati', 'ab-state': 'Andhra Pradesh', 'ab-pin': '517501' }); await p.click('#accountBody button:has-text("Save address")');
   ok('add an address in My Account', await ev(() => currentUser().addresses.some(a => a.label === 'Mother' && a.pincode === '517501') && /Mother/.test(document.getElementById('accountBody').innerText)));

@@ -39,6 +39,16 @@ function relatedHTML(p) {
   const card = x => `<a class="rel-card" role="link" tabindex="0" onclick="openProductDetail('${x.id}')" onkeydown="if(event.key==='Enter')openProductDetail('${x.id}')"><div class="rel-img">${safeImg(x.image) ? `<img src="${esc(x.image)}" alt="${esc(x.name)}" loading="lazy">` : ''}${x.stock === 0 ? '<span class="rel-tag">Sold out</span>' : ''}</div><div class="rel-cat">${esc(x.category)}</div><div class="rel-name">${esc(x.name)}</div><div class="rel-price">₹ ${money(x.price)}</div></a>`;
   return `<section class="related" aria-label="You may also like"><h3>You may also like</h3><div class="rel-grid">${list.map(card).join('')}</div>${p.category ? `<p class="note" style="margin:12px 0 0;text-align:center"><a onclick="closeModal('productModal');filterAndShowShop('${esc(p.category).replace(/'/g, "\\'")}')">See all ${esc(p.category)} →</a></p>` : ''}</section>`;
 }
+// the sticky bar shows only once the page's own Add to cart button has scrolled out of sight, so the two never sit on top of each other
+function buyBarWatch() {
+  const bar = document.querySelector('#productModalBody .buy-bar'), btn = document.querySelector('#productModalBody .buy-btn'); if (!bar || !btn) return;
+  const upd = () => { const r = btn.getBoundingClientRect(); if (r.height) bar.classList.toggle('off', r.bottom > 0 && r.top < (window.innerHeight || 800)); };
+  window.__buyBarSync = upd;   // lets a test ask for the same re-check the next screen frame would do
+  clearInterval(window.__bbTimer); upd();
+  // photos loading and text wrapping move the button without any scroll, so it is re-checked a few times a second while the page is open (a cheap read, stops when the page closes)
+  window.__bbTimer = setInterval(() => { if (!document.body.contains(bar)) return clearInterval(window.__bbTimer); upd(); }, 100);
+  let sp = document.getElementById('productModalBody'); while (sp && sp !== document.body) { sp.addEventListener('scroll', upd, { passive: true }); sp = sp.parentElement; }
+}
 function buyBarHTML(p) {
   const inStock = p.stock > 0; return `<div class="buy-bar"><div class="bb-price"><small>${esc(p.category)}</small><b>${p.price ? '₹ ' + money(p.price) : ''}</b></div>${inStock ? `<button type="button" class="btn-full bb-btn" onclick="addToCart('${p.id}');closeModal('productModal');">Add to cart</button>` : `<button type="button" class="btn-full bb-btn" onclick="openStockAlert('${p.id}')">${esc(notifyLabel(p.id))}</button>`}</div>`;
 }

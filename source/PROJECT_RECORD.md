@@ -3,7 +3,7 @@
 > **STANDING RULE (owner's instruction, 23 Oct 2026):** this record and the `HOW-IT-WORKS/` folder are updated **after every change or update**, in the same step as the change, never later. A change is not finished until (1) the code is tested, (2) a dated entry is added to the Change Log below, (3) any affected `HOW-IT-WORKS/` page is corrected, (4) `./check-record.sh` has been run (it fails if the record or how-it-works is behind the code).
 > Also standing: the owner wants chats remembered for later use; this record is that memory for the project.
 
-**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 531 automated checks) · **Browser test suites:** 34 (see §6)
+**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 550 automated checks) · **Browser test suites:** 34 (see §6)
 
 ---
 
@@ -116,7 +116,8 @@ Owner's guidance: *"we will setup everything after we host it"* — real hosting
 | `care-test.cjs` | 9 | Saree Care tabs, wash-care guide, photo link repair |
 | `parts-test.cjs` | 8 | the website source parts and the joined file |
 | `addresses-test.cjs` | 25 | each page and saree has its own address, Back/Forward, old links |
-| `product-page-test.cjs` | 20 | saree page: delivery line, details table, trust block, questions, related, sticky bar |
+| `onebox-test.cjs` | 8 | one-server hosting: the server serves the real website, page addresses, 404 page, sitemap and the owner app from one address |
+| `product-page-test.cjs` | 22 | saree page: delivery line, details table, trust block, questions, related, sticky bar |
 | `agents-test.cjs` | 27 | the five AI helpers with and without Claude: order messages, privacy replies, weekly content, catalogue batch, Ops watcher note |
 | `pages-ai-invoices-test.cjs` | 55 | invoice search/sort/group, category auto-fill and one-click product AI, editable Care/Journal/Atelier pages |
 | `ui2-test.cjs` | 53 | the new owner look: same page as classic, all 23 screens identical, Overview numbers and website-order buttons, light/dark readable |
@@ -140,6 +141,11 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**11 Nov 2026 (Whole shop on one AWS server)**
+- Owner asked to move everything to one place on AWS. A Lightsail server (Mumbai, 2 GB, static IP) will run the shop server, which now also serves the public website, behind Caddy for HTTPS, for the domain anithapemmasani.com. New: `SITE_DIR` (server serves the built website: page folders, 404 page with real 404 status, sitemap, safe against `../` and hidden files; never answers the server's own addresses) in `wa-assistant/src/sitehost.mjs`; `TRUST_PROXY=1` so rate limits and sign-in lockouts see real visitor addresses (`wa-assistant/src/clientip.mjs`); `aws/` folder with `setup.sh`, `update.sh`, `backup.sh`, the service file and the Caddyfile. Without `SITE_DIR` nothing changes (Render keeps working). Guide: HOW-IT-WORKS/34-one-server-on-aws.md.
+- Also fixed three phone-screen problems that the phone audit flagged on the already-published pages: the saree page's sticky Add to cart bar sat on top of the page's own button (it now shows only once that button has scrolled out of sight), and the "Home" crumb on the Collection page and the "Terms" link on the saree page had tiny tap areas (made bigger, same look). Two old tests (`delivery-test`, `dpdp-test`) clicked inside My Account rows that start folded; they now open the row first (the page itself was fine). `mobile-audit` now lets the page apply its next-frame update before checking overlaps.
+- Tests: server 550 (+16); new `tests/onebox-test.cjs` (8 checks, real browser, real build). Not tested: a real Ubuntu run of `setup.sh`, the real HTTPS certificate, DNS, Meta/WhatsApp callbacks on the new address. The switch-over steps are in the guide and have not been done yet.
 
 **5 Nov 2026 (Home page: space under the banner, a quote, spaced categories; draft A)**
 - Owner said the home page looked clumsy and picked draft A. Under the banner there is now space, then a short quote, then a heading ("Shop by category / Find your weave") and the categories with space between them and their names under the photos (no longer touching the banner and each other). The owner edits all of it: Home Page → "Quote under the banner" (switch, text, optional signature, "Suggest another quote" from six built-in lines that promise nothing) and the two heading lines in the Categories card (`db.home.quote`, `db.home.categories.label/title`). Switching the categories off hides the heading too. Tests: care-test +8, home-test unchanged and passing.

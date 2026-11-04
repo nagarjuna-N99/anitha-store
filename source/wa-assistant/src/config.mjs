@@ -67,6 +67,8 @@ export function loadConfig(overrides = {}) {
     // Owner app (/admin): the first password is set once with this token. cookieSecure must stay on whenever the server is reached over https.
     adminSetupToken: env('ADMIN_SETUP_TOKEN'),
     adminAllowedIps: env('ADMIN_ALLOWED_IPS').split(',').map(x => x.trim().replace(/^::ffff:/, '')).filter(Boolean),
+    siteDir: env('SITE_DIR') ? path.resolve(ROOT, env('SITE_DIR')) : '',   // folder of the built public website; when set, this server also serves the website
+    trustProxy: env('TRUST_PROXY') === '1',   // behind our own HTTPS front door on this machine (see clientip.mjs)
     cookieSecure: env('COOKIE_SECURE', env('PUBLIC_URL').startsWith('http://') ? 'false' : 'true') !== 'false',
     // Instagram (Instagram Graph API, content publishing). Needs an Instagram professional account linked to a Facebook page.
     ig: { userId: env('IG_USER_ID'), token: env('IG_ACCESS_TOKEN'), graphUrl: env('IG_GRAPH_URL', 'https://graph.facebook.com/v21.0'), dailyCap: +env('IG_DAILY_CAP', '20') },

@@ -7,6 +7,6 @@ Added after studying a reference shop's saree page. Everything shows only facts 
 - **Why shop with us:** Pure handloom from Hyderabad · Free shipping above ₹10,000 · Dispatch in (your dispatch time) · (your return window)-day returns · Ask us on WhatsApp. The dispatch time and return days come from Settings; the return line is left out when the return window is 0. The first line uses the owner's own words.
 - **A few questions people ask:** five fold-open answers taken from the FAQ page (delivery, colour, payment, care, one-piece).
 - **You may also like:** up to four other sarees (accessories get accessories), chosen by same category, fabric, colours, tags and price; with "See all (category)".
-- **Sticky bar** at the bottom of the saree page with the price and **Add to cart** (or the back-in-stock alert when sold out).
+- **Sticky bar** at the bottom of the saree page with the price and **Add to cart** (or the back-in-stock alert when sold out). It stays hidden while the page's own Add to cart button is on screen and appears once that button has scrolled out of sight, so the two never sit on top of each other (`buyBarWatch`). The "Home" link above the Collection and the "Terms" link in "Why shop with us" have bigger tap areas on phones.
 
-Code: `src/js/345-product-page-more.js`. Test: `tests/product-page-test.cjs` (14 checks). Not tested on a real phone or with your real photos.
+Code: `src/js/345-product-page-more.js`. Test: `tests/product-page-test.cjs` (22 checks). Not tested on a real phone or with your real photos.

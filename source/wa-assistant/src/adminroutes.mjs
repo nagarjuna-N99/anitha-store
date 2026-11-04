@@ -11,11 +11,12 @@ import { runAi, cleanPlan, localPlan, istIso } from './aihelper.mjs';
 import { OPS_HTML } from './opspage.mjs';
 import { previewsOf } from './ops.mjs';
 import crypto from 'node:crypto';
+import { clientIp } from './clientip.mjs';
 
 export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, ops, opsReport, wa, watchRun, watchRead, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
   const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY', 'Cross-Origin-Resource-Policy': 'same-origin', 'Cache-Control': 'no-store', ...(auth.secure ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' } : {}) };
   const CSP = "default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'";
-  const ipOf = req => String(req.socket.remoteAddress || '').replace(/^::ffff:/, '');   // never trust X-Forwarded-For for security decisions
+  const ipOf = req => clientIp(req, cfg.trustProxy);   // X-Forwarded-For is trusted only when TRUST_PROXY=1 and the connection is from this very machine
   const send = (res, r, extra = {}) => json(res, r.code || 200, r.code && r.code >= 400 ? { error: r.error, retryAfter: r.retryAfter } : r, { ...SEC, ...extra });
   const body = async (req, limit = 200_000) => { try { return JSON.parse((await readBody(req, limit)).toString('utf8') || '{}'); } catch (e) { throw Object.assign(new Error(e.code === 413 ? 'Too large.' : 'Bad request.'), { code: e.code === 413 ? 413 : 400 }); } };
   let keyTries = [], reviewTries = [], emailTries = [], opsTries = [], watchTries = [];
