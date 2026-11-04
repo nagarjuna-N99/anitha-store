@@ -13,13 +13,13 @@ const ROOT = process.cwd(), SETUP = 'setup-token-0123456789', PW = 'Correct-Hors
   const mk = async (scheme = 'light') => { const c = await b.newContext({ viewport: { width: 1280, height: 900 }, colorScheme: scheme }); await c.route(/^https?:\/\/(?!127\.0\.0\.1)/, r => r.abort()); const p = await c.newPage(); p.on('pageerror', e => errs.push(e.message)); p.on('dialog', d => d.accept('Out of stock this week')); return p; };
   try {
     await fetch(base + '/admin/api/setup', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ setupToken: SETUP, password: PW }) });
-    const a1 = await (await fetch(base + '/admin')).text(), a2r = await fetch(base + '/admin2'), a2 = await a2r.text();
+    const a1 = await (await fetch(base + '/admin?look=classic')).text(), a2r = await fetch(base + '/admin2'), a2 = await a2r.text();
     ok('served beside the classic app: /admin2 is the same page with only the look switched on, with the same strict security headers', a2r.status === 200 && a2 === a1.replace('<html lang="en">', '<html lang="en" class="ui2">') && /frame-ancestors 'none'/.test(a2r.headers.get('content-security-policy')) && !/Correct-Horse|setup-token/.test(a2));
     ok('a stranger still cannot read shop data through it', (await fetch(base + '/admin/api/db')).status === 401);
     const sign = async (p, url) => { await p.goto(base + url); await p.waitForSelector('#adm-pw'); await p.fill('#adm-pw', PW); await p.click('#adm-go'); await p.waitForFunction(() => document.body.classList.contains('adm-app'), null, { timeout: 15000 }); await sleep(1200); };
     // ---- the classic app first: the reference ----
     const C = await mk(), N = await mk();
-    await sign(C, '/admin'); await sign(N, '/admin2');
+    await sign(C, '/admin?look=classic'); await sign(N, '/admin2');
     ok('the new look signs in with the same password and shows the new Overview on top of the full classic dashboard', await N.evaluate(() => document.documentElement.classList.contains('ui2') && /Shop Overview/i.test(document.getElementById('adminContent').innerText) && !!document.querySelector('#dash-classic .kpis') && !!document.getElementById('dash-weekly')));
     ok('the classic app is unchanged (no Overview, no new look)', await C.evaluate(() => !document.documentElement.classList.contains('ui2') && !/Shop Overview/i.test(document.getElementById('adminContent').innerText) && !!document.querySelector('.kpis')));
     // ---- the same data in both: seed a synthetic month of orders, save it, and the other window picks it up ----

@@ -3,7 +3,7 @@
 > **STANDING RULE (owner's instruction, 23 Oct 2026):** this record and the `HOW-IT-WORKS/` folder are updated **after every change or update**, in the same step as the change, never later. A change is not finished until (1) the code is tested, (2) a dated entry is added to the Change Log below, (3) any affected `HOW-IT-WORKS/` page is corrected, (4) `./check-record.sh` has been run (it fails if the record or how-it-works is behind the code).
 > Also standing: the owner wants chats remembered for later use; this record is that memory for the project.
 
-**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 550 automated checks) · **Browser test suites:** 34 (see §6)
+**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 551 automated checks) · **Browser test suites:** 34 (see §6)
 
 ---
 
@@ -141,6 +141,10 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**11 Nov 2026 (The new owner look is now the owner app at /admin)**
+- Owner: "we made admin2 which is not being displayed, replace admin with admin2". `/admin` (and `/admin/<screen>/`) now serves the new look (the same page with class `ui2`); `/admin2` is kept and is the identical page, so old bookmarks work. The old look is still reachable at `/admin?look=classic` in case it is needed. Same sign-in, same data, same API (`/admin/api/...` unchanged). Code: `wa-assistant/src/adminroutes.mjs`.
+- Tests: server 551 (+1: /admin = /admin2, classic at `?look=classic`); `ui2-test.cjs` now compares against `?look=classic`; `admin-app-test`, `dpdp2-test` pass on the new look. Not tested: every screen by hand on a phone in the new look (the phone audit and the 23-screen comparison already cover it).
 
 **11 Nov 2026 (Whole shop on one AWS server)**
 - Owner asked to move everything to one place on AWS. A Lightsail server (Mumbai, 2 GB, static IP) will run the shop server, which now also serves the public website, behind Caddy for HTTPS, for the domain anithapemmasani.com. New: `SITE_DIR` (server serves the built website: page folders, 404 page with real 404 status, sitemap, safe against `../` and hidden files; never answers the server's own addresses) in `wa-assistant/src/sitehost.mjs`; `TRUST_PROXY=1` so rate limits and sign-in lockouts see real visitor addresses (`wa-assistant/src/clientip.mjs`); `aws/` folder with `setup.sh`, `update.sh`, `backup.sh`, the service file and the Caddyfile. Without `SITE_DIR` nothing changes (Render keeps working). Guide: HOW-IT-WORKS/34-one-server-on-aws.md.

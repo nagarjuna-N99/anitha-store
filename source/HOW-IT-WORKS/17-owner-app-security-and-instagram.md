@@ -64,3 +64,6 @@ Code: `wa-assistant/src/secrets.mjs` (encrypted store), routes in `adminroutes.m
 **Insights (8 Nov 2026):** to read views, reach and followers the token also needs the permission `instagram_manage_insights`. See 18-growth-and-weekly-email.md.
 
 **Backups are encrypted (11 Nov 2026):** Settings → Security & backup → *Download an encrypted backup* asks for a password (8+ characters) and locks the file; restoring asks for it. See 20-privacy-dpdp.md.
+
+
+**Which look opens (5 Nov 2026):** the new look is the owner app. `/admin` and `/admin2` open the same page. The old look is only at `/admin?look=classic`.

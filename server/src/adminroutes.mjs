@@ -42,10 +42,11 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       const f = path.join(ROOT, 'public', 'admin.html'); if (!fs.existsSync(f)) return json(res, 404, { error: 'admin.html is not built yet (run tools/build-split.py)' }, SEC), true;
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Content-Security-Policy': CSP, ...SEC }); res.end(fs.readFileSync(f, 'utf8').replace('<html lang="en">', '<html lang="en" class="ui2">')); return true;
     }
-    // ---------- the admin page ----------
+    // ---------- the admin page: the new look is now THE owner app at /admin (decided 5 Nov 2026); the old look stays at /admin?look=classic ----------
     if (route === 'GET /admin' || route === 'GET /admin/' || (tabRoute && tabM[1] === 'admin')) {
       const f = path.join(ROOT, 'public', 'admin.html'); if (!fs.existsSync(f)) return json(res, 404, { error: 'admin.html is not built yet (run tools/build-split.py)' }, SEC), true;
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Content-Security-Policy': CSP, ...SEC }); res.end(fs.readFileSync(f)); return true;
+      const html = fs.readFileSync(f, 'utf8'), classic = url.searchParams.get('look') === 'classic';
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Content-Security-Policy': CSP, ...SEC }); res.end(classic ? html : html.replace('<html lang="en">', '<html lang="en" class="ui2">')); return true;
     }
     // ---------- public, read-only ----------
     if (route === 'GET /public/shop') {
