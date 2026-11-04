@@ -30,6 +30,7 @@ Plain-language pages for the owner and for anyone who takes over the project. Ke
 | `30-my-account-window.md` | the customer My Account window |
 | `31-modular-source-parts.md` | the website source is split into parts in src/ and joined |
 | `32-page-addresses.md` | each page and saree has its own web address |
+| `33-product-page-more.md` | delivery dates, details table, trust block, questions, related sarees and the sticky add bar on the saree page |
 | `19-developer-handover.md` | **start here if you are a developer or an AI**: layout, commands, rules, routes, settings, lessons |
 | `18-growth-and-weekly-email.md` | Growth tab, visit counting, live suggestions, weekly email, Instagram reminder |
 | `16-data-reference.md` | **every piece of data stored**: where it lives, each collection and its fields, the assistant server's data, what is sent to AI, privacy |

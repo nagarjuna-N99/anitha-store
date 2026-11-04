@@ -13,7 +13,7 @@ async function fileToDataUrl(file, max = 1600, q = 0.85) {
 function openProductForm(id = null, prefill = null) {
   const p = id ? db.products.find(x => x.id === id) : null, src = p || prefill || {};
   const images = src.images && src.images.length ? src.images.slice() : (src.image ? [src.image] : []);
-  PF = { id: p ? p.id : null, name: src.name || '', sku: src.sku || '', category: src.category || db.categories[0] || '', price: p ? p.price : (src.price || ''), stock: p ? p.stock : 1, images, video: src.video || '', description: src.description || '', tags: (src.tags || []).slice(), seoTitle: src.seoTitle || '', metaDescription: src.metaDescription || '', slug: src.slug || '', altText: src.altText || '', slugTouched: !!src.slug, variant: 0, source: '', fabric: src.fabric || FABRIC_BY_CAT[src.category || db.categories[0]] || '', fabricTouched: !!src.fabric, colours: (src.colours || []).slice(), daylight: !!src.daylight, skuTouched: !!(src.sku && (p || prefill)), descTouched: !!src.description, tagsTouched: !!(src.tags && src.tags.length), seoTouched: !!(src.seoTitle || src.metaDescription) };
+  PF = { id: p ? p.id : null, name: src.name || '', sku: src.sku || '', category: src.category || db.categories[0] || '', price: p ? p.price : (src.price || ''), stock: p ? p.stock : 1, images, video: src.video || '', description: src.description || '', tags: (src.tags || []).slice(), seoTitle: src.seoTitle || '', metaDescription: src.metaDescription || '', slug: src.slug || '', altText: src.altText || '', slugTouched: !!src.slug, variant: 0, source: '', fabric: src.fabric || FABRIC_BY_CAT[src.category || db.categories[0]] || '', fabricTouched: !!src.fabric, length: src.length || '', colours: (src.colours || []).slice(), daylight: !!src.daylight, skuTouched: !!(src.sku && (p || prefill)), descTouched: !!src.description, tagsTouched: !!(src.tags && src.tags.length), seoTouched: !!(src.seoTitle || src.metaDescription) };
   if (!PF.id && !PF.sku) PF.sku = pfSkuFor(PF.category);
   renderProductForm();
   if (!PF.description.trim() && PF.name.trim()) pfGenerate('all', true);
@@ -37,6 +37,7 @@ function renderProductForm() {
               <div class="form-group"><label>Stock Qty *</label><input type="number" id="p-stock" min="0" value="${q.stock}" oninput="pfSet('stock',this.value)"></div>
             </div>
             <div class="form-group"><label>Fabric <span class="pf-sub">(used for shop filters)</span></label><input type="text" id="pf-fabric" list="pf-fabric-list" value="${esc(q.fabric)}" oninput="pfSet('fabric',this.value)" placeholder="e.g. Pure Silk"><datalist id="pf-fabric-list">${FABRIC_SUGGEST.map(f => `<option value="${esc(f)}">`).join('')}</datalist></div>
+            <div class="form-group"><label>Length <span class="pf-sub">(shown on the saree page; leave empty to use your usual length from Settings)</span></label><input type="text" id="pf-length" value="${esc(q.length)}" oninput="pfSet('length',this.value)" placeholder="e.g. 5.5 metres + 0.8 metre blouse piece"></div>
             <div class="form-group"><label>Colours <span class="pf-sub">(used for shop filters)</span></label><div id="pf-colours" class="chips"></div><div class="pf-actions"><select id="pf-colour-add" onchange="pfAddColour(this.value);this.value=''" style="padding:8px;border:1px solid var(--border);border-radius:6px;font-size:12px;"><option value="">＋ Add colour…</option>${COLOR_NAMES.map(c => `<option value="${esc(c[0])}">${esc(c[0])}</option>`).join('')}</select><button type="button" class="btn-sm btn-info-sm" onclick="pfDetectColours()">✨ Detect from cover photo</button></div></div></div>
           <div class="pf-sec"><h4>Video URL <span class="pf-sub">(optional)</span></h4>
             <input type="text" id="pf-video" class="input-field" value="${esc(q.video)}" placeholder="https://youtu.be/…  or Vimeo / .mp4 link" oninput="pfSet('video',this.value)" style="font-size:13px;padding:11px;">
@@ -64,7 +65,7 @@ function renderProductForm() {
   pfRenderGallery(); pfRenderTags(); pfRenderMeta(); pfRenderColours();
 }
 function pfProduct() {
-  const q = PF; return { id: q.id || 'preview', name: q.name.trim(), sku: q.sku.trim().toUpperCase(), category: q.category, price: parseInt(q.price, 10) || 0, stock: parseInt(q.stock, 10) || 0, images: q.images, image: q.images[0] || '', video: q.video.trim(), fabric: (q.fabric || '').trim(), colours: (q.colours || []).slice(), description: q.description, tags: q.tags, seoTitle: q.seoTitle, metaDescription: q.metaDescription, slug: q.slug || slugify(q.name), altText: q.altText, daylight: !!q.daylight };
+  const q = PF; return { id: q.id || 'preview', name: q.name.trim(), sku: q.sku.trim().toUpperCase(), category: q.category, price: parseInt(q.price, 10) || 0, stock: parseInt(q.stock, 10) || 0, images: q.images, image: q.images[0] || '', video: q.video.trim(), fabric: (q.fabric || '').trim(), length: (q.length || '').trim(), colours: (q.colours || []).slice(), description: q.description, tags: q.tags, seoTitle: q.seoTitle, metaDescription: q.metaDescription, slug: q.slug || slugify(q.name), altText: q.altText, daylight: !!q.daylight };
 }
 function pfSet(k, v) {
   PF[k] = v;

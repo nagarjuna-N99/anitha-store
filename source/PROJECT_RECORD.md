@@ -3,7 +3,7 @@
 > **STANDING RULE (owner's instruction, 23 Oct 2026):** this record and the `HOW-IT-WORKS/` folder are updated **after every change or update**, in the same step as the change, never later. A change is not finished until (1) the code is tested, (2) a dated entry is added to the Change Log below, (3) any affected `HOW-IT-WORKS/` page is corrected, (4) `./check-record.sh` has been run (it fails if the record or how-it-works is behind the code).
 > Also standing: the owner wants chats remembered for later use; this record is that memory for the project.
 
-**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 531 automated checks) · **Browser test suites:** 33 (see §6)
+**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 531 automated checks) · **Browser test suites:** 34 (see §6)
 
 ---
 
@@ -116,6 +116,7 @@ Owner's guidance: *"we will setup everything after we host it"* — real hosting
 | `care-test.cjs` | 9 | Saree Care tabs, wash-care guide, photo link repair |
 | `parts-test.cjs` | 8 | the website source parts and the joined file |
 | `addresses-test.cjs` | 25 | each page and saree has its own address, Back/Forward, old links |
+| `product-page-test.cjs` | 20 | saree page: delivery line, details table, trust block, questions, related, sticky bar |
 | `agents-test.cjs` | 27 | the five AI helpers with and without Claude: order messages, privacy replies, weekly content, catalogue batch, Ops watcher note |
 | `pages-ai-invoices-test.cjs` | 55 | invoice search/sort/group, category auto-fill and one-click product AI, editable Care/Journal/Atelier pages |
 | `ui2-test.cjs` | 53 | the new owner look: same page as classic, all 23 screens identical, Overview numbers and website-order buttons, light/dark readable |
@@ -139,6 +140,9 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**5 Nov 2026 (Saree page: delivery date line, details table, why shop with us, questions, related sarees, sticky add bar)**
+- Owner studied a reference shop's saree page and picked these items. Delivery line under the price (uses the saved PIN, updates on check); details table (weave, colours, category, origin, length if set, care, SKU, availability, rating) replacing the short list; "Why shop with us" built only from the shop's own settings (free-shipping limit, dispatch time, return days, WhatsApp; return line hidden at 0); five FAQ answers on the page; "You may also like" (4, scored by category/fabric/colour/tags/price; accessories get accessories); sticky bottom bar with price and Add to cart (back-in-stock alert when sold out). Code `src/js/345-product-page-more.js`. Guide: HOW-IT-WORKS/33-product-page-more.md. Test: `product-page-test.cjs` 20 checks. Owner confirmed and extended the first line: "Every saree is picked by us, and each one is a single piece. Once it is sold, that exact saree will not be made again." **Length** added: per-saree box in the product form (`pf-length`, saved as `length`) and a shop-wide "Usual saree length" in Settings (`sareeLength`, default "5.5 metres, with a blouse piece", sent to the website through the public settings list); owner to confirm that default. Not done (not chosen): blouse stitching, WhatsApp Ask button, newsletter box, MRP strike-through.
 
 **5 Nov 2026 (Collection page tidied, like the reference page the owner sent)**
 - Title block: "Home / The Collection", the big title and the saree count (replaces "Shop by Category"). One **Filter & sort** button with the filter count; the sort choice moved inside its panel, so there is no second box on the page. Chips row now reads "Filtered ... Clear all". A line says "All displayed prices include taxes." (true: the shop's prices include GST). Calmer cards on phones: View details is an outlined button, Add to cart stays filled. Not copied (owner chose the other three): the floating WhatsApp button. Tests: care-test +5.

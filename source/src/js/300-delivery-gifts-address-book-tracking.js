@@ -24,7 +24,7 @@ function deliveryWidgetHTML(p, gk, preview) {
 function deliveryCheck(gk, price) {
   const pin = vv('dc-in-' + gk);
   if (!pinOk(pin)) { el_('dc-res-' + gk).innerHTML = '<div class="dc-bad">Please enter a valid 6-digit PIN code.</div>'; return; }
-  rememberPin(pin); el_('dc-res-' + gk).innerHTML = deliveryResultHTML(pin, price);
+  rememberPin(pin); el_('dc-res-' + gk).innerHTML = deliveryResultHTML(pin, price); if (typeof updateArrives === 'function') updateArrives(gk);
 }
 function giftButtonHTML(p, preview) {
   return p.stock > 0 && !preview ? `<button class="btn-outline" style="margin-top:10px;" onclick="giftThis('${p.id}')">🎁 Send this as a gift</button>` : '';

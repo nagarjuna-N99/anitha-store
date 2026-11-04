@@ -1190,6 +1190,13 @@ h1, h2, h3, h4, h5, h6 { font-weight: 600; }
 @media (max-width: 640px) { .btn-card.btn-view { background: #fff; color: var(--charcoal); border: 1px solid var(--charcoal); } .product-price { margin-bottom: 10px; } .product-actions { gap: 6px; } }
 .shop-meta .chips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; } .shop-meta .flabel { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #6b6862; }
 .price-note { text-align: center; font-size: 12px; color: #6b6862; margin: 4px 0 12px; }
+.arrives { display: flex; gap: 10px; align-items: flex-start; background: var(--cream); border-radius: 10px; padding: 10px 12px; margin: 10px 0 4px; } .arrives b { display: block; font-size: 14px; } .arrives span:not([aria-hidden]) { display: block; font-size: 12px; color: #6b6862; margin-top: 1px; }
+.dtable { width: 100%; border-collapse: collapse; margin: 14px 0; background: var(--cream); border-radius: 10px; overflow: hidden; } .dtable th { text-align: left; font-weight: 500; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #6b6862; padding: 10px 14px; width: 34%; vertical-align: top; } .dtable td { font-size: 14px; padding: 10px 14px 10px 0; } .dtable tr + tr th, .dtable tr + tr td { border-top: 1px solid rgba(0,0,0,.07); }
+.trust, .pp-faq, .related { padding: 18px 24px 4px; } .trust h3, .pp-faq h3, .related h3 { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 500; margin: 0 0 12px; } .trust-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; } .trust-it { display: flex; gap: 12px; align-items: flex-start; background: var(--cream); border-radius: 10px; padding: 12px 14px; } .trust-it > span { font-size: 20px; line-height: 1.2; } .trust-it b { display: block; font-size: 14px; } .trust-it small { display: block; font-size: 12px; color: #6b6862; margin-top: 2px; line-height: 1.45; } .trust-it a { color: var(--gold); text-decoration: underline; cursor: pointer; }
+.pp-faq .pp-q { border-top: 1px solid var(--border); padding: 0; } .pp-faq .pp-q:last-of-type { border-bottom: 1px solid var(--border); } .pp-faq summary { cursor: pointer; padding: 14px 0; font-weight: 600; font-size: 14px; list-style: none; display: flex; justify-content: space-between; gap: 12px; } .pp-faq summary::after { content: '+'; color: var(--gold); font-size: 18px; } .pp-faq details[open] summary::after { content: '–'; } .pp-faq summary::-webkit-details-marker { display: none; } .pp-faq .pp-q p { margin: 0 0 14px; font-size: 14px; line-height: 1.6; color: #555; }
+.rel-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; } .rel-card { cursor: pointer; display: block; color: inherit; text-decoration: none; } .rel-img { position: relative; aspect-ratio: 3 / 4; background: var(--cream); border-radius: 8px; overflow: hidden; } .rel-img img { width: 100%; height: 100%; object-fit: cover; display: block; } .rel-tag { position: absolute; left: 8px; top: 8px; background: #fff; color: var(--charcoal); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; } .rel-cat { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #6b6862; margin-top: 8px; } .rel-name { font-size: 14px; line-height: 1.3; margin-top: 2px; } .rel-price { font-size: 14px; font-weight: 600; margin-top: 4px; }
+@media (max-width: 700px) { .rel-grid { grid-template-columns: 1fr 1fr; } .trust, .pp-faq, .related { padding: 16px 16px 4px; } .dtable th { width: 38%; } }
+.buy-bar { position: sticky; bottom: 0; z-index: 5; display: flex; gap: 14px; align-items: center; background: #fff; border-top: 1px solid var(--border); padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -8px 20px rgba(0,0,0,.08); margin-top: 20px; } .bb-price { min-width: 0; } .bb-price small { display: block; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #6b6862; } .bb-price b { font-size: 18px; } .bb-btn { flex: 1; margin: 0; max-width: 360px; margin-left: auto; }
 .nav-search { position: fixed; left: 0; right: 0; z-index: 99; display: flex; gap: 10px; align-items: center; justify-content: center; background: var(--ivory); border-bottom: 1px solid var(--border); padding: 10px 16px; box-shadow: 0 8px 24px rgba(0,0,0,.12); } .nav-search[hidden] { display: none; } .nav-search .shop-search { flex: 1 1 auto; max-width: 720px; } .nav-search .shop-search input, .nav-search .shop-search input:focus, .nav-search .shop-search input:focus-visible { border: 0; outline: none; box-shadow: none; background: transparent; border-radius: 0; } .nav-search-close { border: 0; background: none; color: var(--gold); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; padding: 8px; }
 .hero-slide.btn-outline .btn-primary { background: transparent !important; color: var(--hero-btn-bg, #fff) !important; border: 1px solid var(--hero-btn-bg, #fff) !important; }
 .hero-slide.themed .btn-primary, .hero-slide.btn-custom .btn-primary { background: var(--hero-btn-bg); color: var(--hero-btn-ink); border-color: var(--hero-btn-bg); }
@@ -2570,6 +2577,7 @@ function renderAdminContent(tab) {
           <div class="note" style="margin-bottom:14px;">Leave empty for <strong>demo mode</strong>: the login code is shown on screen and no WhatsApp message is sent (for trying the flow only — not secure, do not launch like this). When set, the page calls <code>POST {url}/otp/send</code> {phone} and <code>POST {url}/otp/verify</code> {phone, code} on your server, which sends the code through the WhatsApp Business API.</div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;">
             <div class="form-group"><label>Dispatch time (shown in Terms)</label><input type="text" id="s-dispatch" value="${esc(s.dispatchTime)}"></div>
+            <div class="form-group"><label>Usual saree length (shown on every saree page; a saree can have its own)</label><input type="text" id="s-length" value="${esc(s.sareeLength === undefined ? DEFAULT_SAREE_LENGTH : s.sareeLength)}" placeholder="e.g. 5.5 metres with a blouse piece"></div>
             <div class="form-group"><label>Return window (days)</label><input type="number" id="s-returndays" min="0" value="${s.returnDays}"></div>
             <div class="form-group"><label>Grievance officer (Privacy Policy)</label><input type="text" id="s-grievance" value="${esc(s.grievanceOfficer)}" placeholder="Name, designation"></div>
           </div>
@@ -3169,11 +3177,11 @@ function productPageHTML(p, gk, opts = {}) {
   return `<div class="detail-grid"><div class="detail-gallery">${galleryHTML(p, gk)}</div><div class="detail-info">
     <div class="detail-cat">${esc(p.category)}</div>
     <h2 class="detail-name">${esc(p.name || 'Untitled product')}</h2>
-    <div class="detail-price">${p.price ? '₹ ' + money(p.price) : '<span style="color:#6b6862;font-size:16px;">Price not set</span>'}</div>${pageExtrasHTML(p, gk, opts)}
+    <div class="detail-price">${p.price ? '₹ ' + money(p.price) : '<span style="color:#6b6862;font-size:16px;">Price not set</span>'}</div>${arrivesHTML(p, gk)}${pageExtrasHTML(p, gk, opts)}
     ${p.reviews > 0 ? `<a class="rv-link" onclick="var r=document.getElementById('rv-root');if(r)r.scrollIntoView({behavior:'smooth'})">${starsHTML(p.rating)} <span>${p.rating} · ${p.reviews} review${p.reviews > 1 ? 's' : ''}</span></a>` : ''}
     <p class="detail-desc">${esc(p.description || 'No description yet.')}</p>
     ${tagChips(p.tags)}
-    <div class="tab-content active"><ul style="margin-top:14px;"><li><strong>SKU:</strong> ${esc(p.sku)}</li><li><strong>Availability:</strong> ${inStock ? (oneOfAKind(p) ? 'One of a kind' : p.stock <= 2 ? `Only ${p.stock} left` : 'In stock') : 'Sold out'}</li><li><strong>Category:</strong> ${esc(p.category)}</li>${p.rating ? `<li><strong>Rating:</strong> ${p.rating} (${p.reviews} reviews)</li>` : ''}</ul></div>
+    ${detailsTableHTML(p, inStock)}
     ${deliveryWidgetHTML(p, gk, opts.preview)}${shipNoteHTML()}
     ${!inStock && !opts.preview ? `<button class="btn-full buy-btn" style="margin-bottom:10px;" onclick="openStockAlert('${p.id}')">${notifyLabel(p.id)}${myAlert(p.id) ? '' : ' when it is back'}</button>${isAccessory(p) ? '' : `<button class="btn-outline similar-btn" style="margin:0 0 10px;" onclick="openSimilarAlert('${p.id}')">${mySimilar(p.id) ? '✨ You will hear about similar sarees' : '✨ Tell me about similar sarees'}</button><button class="btn-outline request-btn" style="margin:0 0 10px;" onclick="openSimilarRequest('${p.id}')">💬 Request a similar piece</button>`}` : `<button class="btn-full buy-btn" style="margin-bottom:10px;" ${opts.preview ? 'disabled' : `onclick="addToCart('${p.id}');closeModal('productModal');"`}>Add to Cart</button>`}
     <button class="btn-outline" style="margin-top:0;" ${opts.preview ? 'disabled' : `onclick="openShare('${p.id}')"`}>🔗 Share this saree</button>${giftButtonHTML(p, opts.preview)}${waChatButtonHTML(p, opts.preview)}
@@ -3435,7 +3443,7 @@ async function fileToDataUrl(file, max = 1600, q = 0.85) {
 function openProductForm(id = null, prefill = null) {
   const p = id ? db.products.find(x => x.id === id) : null, src = p || prefill || {};
   const images = src.images && src.images.length ? src.images.slice() : (src.image ? [src.image] : []);
-  PF = { id: p ? p.id : null, name: src.name || '', sku: src.sku || '', category: src.category || db.categories[0] || '', price: p ? p.price : (src.price || ''), stock: p ? p.stock : 1, images, video: src.video || '', description: src.description || '', tags: (src.tags || []).slice(), seoTitle: src.seoTitle || '', metaDescription: src.metaDescription || '', slug: src.slug || '', altText: src.altText || '', slugTouched: !!src.slug, variant: 0, source: '', fabric: src.fabric || FABRIC_BY_CAT[src.category || db.categories[0]] || '', fabricTouched: !!src.fabric, colours: (src.colours || []).slice(), daylight: !!src.daylight, skuTouched: !!(src.sku && (p || prefill)), descTouched: !!src.description, tagsTouched: !!(src.tags && src.tags.length), seoTouched: !!(src.seoTitle || src.metaDescription) };
+  PF = { id: p ? p.id : null, name: src.name || '', sku: src.sku || '', category: src.category || db.categories[0] || '', price: p ? p.price : (src.price || ''), stock: p ? p.stock : 1, images, video: src.video || '', description: src.description || '', tags: (src.tags || []).slice(), seoTitle: src.seoTitle || '', metaDescription: src.metaDescription || '', slug: src.slug || '', altText: src.altText || '', slugTouched: !!src.slug, variant: 0, source: '', fabric: src.fabric || FABRIC_BY_CAT[src.category || db.categories[0]] || '', fabricTouched: !!src.fabric, length: src.length || '', colours: (src.colours || []).slice(), daylight: !!src.daylight, skuTouched: !!(src.sku && (p || prefill)), descTouched: !!src.description, tagsTouched: !!(src.tags && src.tags.length), seoTouched: !!(src.seoTitle || src.metaDescription) };
   if (!PF.id && !PF.sku) PF.sku = pfSkuFor(PF.category);
   renderProductForm();
   if (!PF.description.trim() && PF.name.trim()) pfGenerate('all', true);
@@ -3459,6 +3467,7 @@ function renderProductForm() {
               <div class="form-group"><label>Stock Qty *</label><input type="number" id="p-stock" min="0" value="${q.stock}" oninput="pfSet('stock',this.value)"></div>
             </div>
             <div class="form-group"><label>Fabric <span class="pf-sub">(used for shop filters)</span></label><input type="text" id="pf-fabric" list="pf-fabric-list" value="${esc(q.fabric)}" oninput="pfSet('fabric',this.value)" placeholder="e.g. Pure Silk"><datalist id="pf-fabric-list">${FABRIC_SUGGEST.map(f => `<option value="${esc(f)}">`).join('')}</datalist></div>
+            <div class="form-group"><label>Length <span class="pf-sub">(shown on the saree page; leave empty to use your usual length from Settings)</span></label><input type="text" id="pf-length" value="${esc(q.length)}" oninput="pfSet('length',this.value)" placeholder="e.g. 5.5 metres + 0.8 metre blouse piece"></div>
             <div class="form-group"><label>Colours <span class="pf-sub">(used for shop filters)</span></label><div id="pf-colours" class="chips"></div><div class="pf-actions"><select id="pf-colour-add" onchange="pfAddColour(this.value);this.value=''" style="padding:8px;border:1px solid var(--border);border-radius:6px;font-size:12px;"><option value="">＋ Add colour…</option>${COLOR_NAMES.map(c => `<option value="${esc(c[0])}">${esc(c[0])}</option>`).join('')}</select><button type="button" class="btn-sm btn-info-sm" onclick="pfDetectColours()">✨ Detect from cover photo</button></div></div></div>
           <div class="pf-sec"><h4>Video URL <span class="pf-sub">(optional)</span></h4>
             <input type="text" id="pf-video" class="input-field" value="${esc(q.video)}" placeholder="https://youtu.be/…  or Vimeo / .mp4 link" oninput="pfSet('video',this.value)" style="font-size:13px;padding:11px;">
@@ -3486,7 +3495,7 @@ function renderProductForm() {
   pfRenderGallery(); pfRenderTags(); pfRenderMeta(); pfRenderColours();
 }
 function pfProduct() {
-  const q = PF; return { id: q.id || 'preview', name: q.name.trim(), sku: q.sku.trim().toUpperCase(), category: q.category, price: parseInt(q.price, 10) || 0, stock: parseInt(q.stock, 10) || 0, images: q.images, image: q.images[0] || '', video: q.video.trim(), fabric: (q.fabric || '').trim(), colours: (q.colours || []).slice(), description: q.description, tags: q.tags, seoTitle: q.seoTitle, metaDescription: q.metaDescription, slug: q.slug || slugify(q.name), altText: q.altText, daylight: !!q.daylight };
+  const q = PF; return { id: q.id || 'preview', name: q.name.trim(), sku: q.sku.trim().toUpperCase(), category: q.category, price: parseInt(q.price, 10) || 0, stock: parseInt(q.stock, 10) || 0, images: q.images, image: q.images[0] || '', video: q.video.trim(), fabric: (q.fabric || '').trim(), length: (q.length || '').trim(), colours: (q.colours || []).slice(), description: q.description, tags: q.tags, seoTitle: q.seoTitle, metaDescription: q.metaDescription, slug: q.slug || slugify(q.name), altText: q.altText, daylight: !!q.daylight };
 }
 function pfSet(k, v) {
   PF[k] = v;
@@ -4135,7 +4144,7 @@ function saveSettings() {
   if (document.getElementById('s-pin') && !v('s-pin').trim()) { alert('Admin PIN cannot be empty'); return; }
   if (v('s-otp').trim() && !/^https:\/\//i.test(v('s-otp').trim())) { alert('The WhatsApp login service URL must start with https://'); return; }
   if (v('s-site').trim() && !/^https?:\/\/[^\s/]+/i.test(v('s-site').trim())) { alert('Website address must start with https://'); return; }
-  Object.assign(db.settings, { businessName: v('s-name'), gstNumber: v('s-gst'), address: v('s-addr'), phone: v('s-phone'), email: v('s-email'), bankName: v('s-bank'), accountNumber: v('s-acc'), ifscCode: v('s-ifsc'), invoicePrefix: v('s-prefix'), gstRate: rate, selectedTemplate: v('s-template'), ...(document.getElementById('s-pin') ? { adminPin: v('s-pin').trim() } : {}), siteUrl: v('s-site').trim().replace(/\/$/, ''), metaDescription: v('s-metadesc').trim(), aiEndpoint: v('s-ai').trim(), otpEndpoint: v('s-otp').trim().replace(/\/$/, ''), dispatchTime: v('s-dispatch').trim() || '3–7 business days', returnDays: Math.max(0, parseInt(v('s-returndays'), 10) || 0), grievanceOfficer: v('s-grievance').trim() });
+  Object.assign(db.settings, { businessName: v('s-name'), gstNumber: v('s-gst'), address: v('s-addr'), phone: v('s-phone'), email: v('s-email'), bankName: v('s-bank'), accountNumber: v('s-acc'), ifscCode: v('s-ifsc'), invoicePrefix: v('s-prefix'), gstRate: rate, selectedTemplate: v('s-template'), ...(document.getElementById('s-pin') ? { adminPin: v('s-pin').trim() } : {}), siteUrl: v('s-site').trim().replace(/\/$/, ''), metaDescription: v('s-metadesc').trim(), aiEndpoint: v('s-ai').trim(), otpEndpoint: v('s-otp').trim().replace(/\/$/, ''), dispatchTime: v('s-dispatch').trim() || '3–7 business days', sareeLength: v('s-length').trim(), returnDays: Math.max(0, parseInt(v('s-returndays'), 10) || 0), grievanceOfficer: v('s-grievance').trim() });
   addLog('settings_updated', 'Business Settings', '-', 0, 0, 0, 'Settings updated'); SEO_DEFAULT.desc = db.settings.metaDescription || SEO_DEFAULT.desc; seoReset(); seoRefreshHome(); if (saveDB()) showToast('Settings saved!', 'success');
 }
 
@@ -4956,7 +4965,7 @@ function lookRowHTML(skipIds, title) {
   return `<section class="look-row" aria-label="${esc(title)}" style="margin:18px 0;"><h4 style="font-family:'Cormorant Garamond',serif;font-size:20px;margin-bottom:10px;">${esc(title)}</h4><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;">${list.map(a => `<div class="look-card" style="border:1px solid #eee;border-radius:6px;padding:8px;background:#fff;text-align:center;"><img src="${esc(a.image)}" alt="${esc(a.name)}" loading="lazy" style="width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:4px;cursor:pointer;" onclick="openProductDetail('${a.id}')"><div style="font-size:12px;margin:6px 0 2px;">${esc(a.name)}</div><div style="font-size:12px;font-weight:600;">₹ ${money(a.price)}</div><button type="button" class="btn-sm btn-primary-sm look-add" style="margin-top:6px;width:100%;" onclick="addToCart('${a.id}')">Add</button></div>`).join('')}</div></section>`;
 }
 function renderProductModal(p) {
-  document.getElementById('productModalBody').innerHTML = productPageHTML(p, 'gal-' + p.id) + (isAccessory(p) ? '' : lookRowHTML([], 'Complete the look')) + `<section class="reviews" id="rv-root" aria-label="Customer reviews"></section>`;
+  document.getElementById('productModalBody').innerHTML = productPageHTML(p, 'gal-' + p.id) + trustHTML() + productFaqHTML() + relatedHTML(p) + (isAccessory(p) ? '' : lookRowHTML([], 'Complete the look')) + `<section class="reviews" id="rv-root" aria-label="Customer reviews"></section>` + buyBarHTML(p);
   CUR_PID = p.id; renderReviews();
 }
 function renderReviews() {
@@ -5482,7 +5491,7 @@ function deliveryWidgetHTML(p, gk, preview) {
 function deliveryCheck(gk, price) {
   const pin = vv('dc-in-' + gk);
   if (!pinOk(pin)) { el_('dc-res-' + gk).innerHTML = '<div class="dc-bad">Please enter a valid 6-digit PIN code.</div>'; return; }
-  rememberPin(pin); el_('dc-res-' + gk).innerHTML = deliveryResultHTML(pin, price);
+  rememberPin(pin); el_('dc-res-' + gk).innerHTML = deliveryResultHTML(pin, price); if (typeof updateArrives === 'function') updateArrives(gk);
 }
 function giftButtonHTML(p, preview) {
   return p.stock > 0 && !preview ? `<button class="btn-outline" style="margin-top:10px;" onclick="giftThis('${p.id}')">🎁 Send this as a gift</button>` : '';
@@ -6199,6 +6208,50 @@ document.addEventListener('input', e => {
   if (!e.auto) placePredict(t.id);
 });
 document.addEventListener('focusin', e => { const t = e.target; if (!t || !PLACE_GROUPS[t.id] || t.getAttribute('list')) return; if (/city$/.test(t.id)) { t.setAttribute('list', 'dl-cities'); t.autocomplete = 'address-level2'; } else if (/state$/.test(t.id)) { t.setAttribute('list', 'dl-states'); t.autocomplete = 'address-level1'; } else { t.setAttribute('inputmode', 'numeric'); t.maxLength = 6; t.autocomplete = 'postal-code'; } });
+// ================= PRODUCT PAGE: delivery date line, details table, why shop with us, questions, related sarees, sticky add bar (5 Nov 2026) =================
+// Everything here only shows facts the shop really has (its own settings and catalogue). Nothing is promised that the shop does not offer.
+const DEFAULT_SAREE_LENGTH = '5.5 metres, with a blouse piece';
+const sareeLengthOf = p => String(p.length || (db.settings.sareeLength === undefined ? DEFAULT_SAREE_LENGTH : db.settings.sareeLength) || '').trim();
+const shipText = price => price > SHIP_FREE_ABOVE ? 'Free shipping' : `Shipping ₹${SHIP_FEE} (free above ₹${money(SHIP_FREE_ABOVE)})`;
+function arrivesInner(p) {
+  const pin = savedPin();
+  if (pin && pinOk(pin)) { const est = deliveryEstimate(deliveryCfg(), pin); if (est.ok && est.serviceable) return `<b>${esc(est.label)}</b><span>${esc(est.state)} · ${esc(shipText(p.price))}</span>`; }
+  return `<b>Delivery date</b><span>Enter your PIN code below to see it · ${esc(shipText(p.price))}</span>`;
+}
+function arrivesHTML(p, gk) { return p && p.price ? `<div class="arrives" id="arr-${gk}"><span aria-hidden="true">🚚</span><div>${arrivesInner(p)}</div></div>` : ''; }
+function updateArrives(gk) { const e = document.getElementById('arr-' + gk); const p = db.products.find(x => 'gal-' + x.id === gk); if (e && p) e.lastElementChild.innerHTML = arrivesInner(p); }
+const capFirst = t => String(t || '').replace(/^the /i, '').replace(/^./, c => c.toUpperCase());
+function detailsTableHTML(p, inStock) {
+  const kb = (typeof CAT_KB !== 'undefined' && CAT_KB[p.category]) || {}, rows = [], add = (k, v) => { if (v) rows.push(`<tr><th scope="row">${k}</th><td>${v}</td></tr>`); };
+  if (!isAccessory(p)) { add('Weave', esc(p.fabric || '')); add('Colours', esc((p.colours || []).join(', '))); }
+  add('Category', esc(p.category)); if (!isAccessory(p)) { add('Origin', esc(capFirst(kb.origin))); add('Length', esc(sareeLengthOf(p))); add('Care', esc(kb.care || '')); }
+  add('SKU', esc(p.sku)); add('Availability', inStock ? (oneOfAKind(p) ? 'One of a kind' : p.stock <= 2 ? `Only ${p.stock} left` : 'In stock') : 'Sold out');
+  if (p.rating) add('Rating', `${p.rating} (${p.reviews} review${p.reviews === 1 ? '' : 's'})`);
+  return `<table class="dtable" aria-label="Product details"><tbody>${rows.join('')}</tbody></table>`;
+}
+function trustHTML() {
+  const s = db.settings, rd = +s.returnDays || 0, items = [['🧵', 'Hand-picked, one of a kind', 'Every saree is picked by us, and each one is a single piece. Once it is sold, that exact saree will not be made again.'], ['🚚', `Free shipping above ₹${money(SHIP_FREE_ABOVE)}`, `Below that, shipping is ₹${SHIP_FEE}.`], ['📦', `Dispatch in ${esc(s.dispatchTime || '3–7 business days')}`, 'Track your order in My Account.']];
+  if (rd > 0) items.push(['↩', `${rd}-day returns`, 'The full policy is in our <a onclick="closeModal(\'productModal\');navigateTo(\'terms\')">Terms</a>.']);
+  if (s.waNumber || s.phone) items.push(['💬', 'Ask us on WhatsApp', 'Questions about this saree? We reply there.']);
+  return `<section class="trust" aria-label="Why shop with us"><h3>Why shop with us</h3><div class="trust-grid">${items.map(([i, t, d]) => `<div class="trust-it"><span aria-hidden="true">${i}</span><div><b>${t}</b><small>${d}</small></div></div>`).join('')}</div></section>`;
+}
+function productFaqHTML() {
+  const all = faqItems(), pick = [2, 1, 5, 6, 0].map(i => all[i]).filter(Boolean);
+  return `<section class="pp-faq" aria-label="Questions"><h3>A few questions people ask</h3>${pick.map(([q, a]) => `<details class="pp-q"><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}<p class="note" style="margin:10px 0 0"><a onclick="closeModal('productModal');navigateTo('faq')">See all questions →</a></p></section>`;
+}
+function relatedList(p, n = 4) {
+  const pool = db.products.filter(x => x.id !== p.id && isAccessory(x) === isAccessory(p)), tags = new Set((p.tags || []).map(t => String(t).toLowerCase())), cols = new Set((p.colours || []).map(c => String(c).toLowerCase()));
+  const score = x => (x.category === p.category ? 3 : 0) + (p.fabric && x.fabric === p.fabric ? 2 : 0) + (x.colours || []).filter(c => cols.has(String(c).toLowerCase())).length + (x.tags || []).filter(t => tags.has(String(t).toLowerCase())).length + (p.price && Math.abs(x.price - p.price) / p.price < 0.4 ? 1 : 0) + (x.stock > 0 ? 1 : 0);
+  return pool.map(x => [x, score(x)]).sort((a, b) => b[1] - a[1] || a[0].name.localeCompare(b[0].name)).slice(0, n).map(a => a[0]);
+}
+function relatedHTML(p) {
+  const list = relatedList(p); if (!list.length) return '';
+  const card = x => `<a class="rel-card" role="link" tabindex="0" onclick="openProductDetail('${x.id}')" onkeydown="if(event.key==='Enter')openProductDetail('${x.id}')"><div class="rel-img">${safeImg(x.image) ? `<img src="${esc(x.image)}" alt="${esc(x.name)}" loading="lazy">` : ''}${x.stock === 0 ? '<span class="rel-tag">Sold out</span>' : ''}</div><div class="rel-cat">${esc(x.category)}</div><div class="rel-name">${esc(x.name)}</div><div class="rel-price">₹ ${money(x.price)}</div></a>`;
+  return `<section class="related" aria-label="You may also like"><h3>You may also like</h3><div class="rel-grid">${list.map(card).join('')}</div>${p.category ? `<p class="note" style="margin:12px 0 0;text-align:center"><a onclick="closeModal('productModal');filterAndShowShop('${esc(p.category).replace(/'/g, "\\'")}')">See all ${esc(p.category)} →</a></p>` : ''}</section>`;
+}
+function buyBarHTML(p) {
+  const inStock = p.stock > 0; return `<div class="buy-bar"><div class="bb-price"><small>${esc(p.category)}</small><b>${p.price ? '₹ ' + money(p.price) : ''}</b></div>${inStock ? `<button type="button" class="btn-full bb-btn" onclick="addToCart('${p.id}');closeModal('productModal');">Add to cart</button>` : `<button type="button" class="btn-full bb-btn" onclick="openStockAlert('${p.id}')">${esc(notifyLabel(p.id))}</button>`}</div>`;
+}
 // ================= OWNER DASHBOARD (interactive) + DRAFTS BY CATEGORY + ADD-TO-CART ANIMATION (29 Oct 2026) =================
 const DASH = { range: '30', metric: 'revenue', sel: null };
 const DASH_RANGES = [['1', 'Today'], ['7', '7 days'], ['30', '30 days'], ['90', '90 days'], ['365', '12 months'], ['all', 'All time']];

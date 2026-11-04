@@ -241,6 +241,7 @@ function renderAdminContent(tab) {
           <div class="note" style="margin-bottom:14px;">Leave empty for <strong>demo mode</strong>: the login code is shown on screen and no WhatsApp message is sent (for trying the flow only — not secure, do not launch like this). When set, the page calls <code>POST {url}/otp/send</code> {phone} and <code>POST {url}/otp/verify</code> {phone, code} on your server, which sends the code through the WhatsApp Business API.</div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;">
             <div class="form-group"><label>Dispatch time (shown in Terms)</label><input type="text" id="s-dispatch" value="${esc(s.dispatchTime)}"></div>
+            <div class="form-group"><label>Usual saree length (shown on every saree page; a saree can have its own)</label><input type="text" id="s-length" value="${esc(s.sareeLength === undefined ? DEFAULT_SAREE_LENGTH : s.sareeLength)}" placeholder="e.g. 5.5 metres with a blouse piece"></div>
             <div class="form-group"><label>Return window (days)</label><input type="number" id="s-returndays" min="0" value="${s.returnDays}"></div>
             <div class="form-group"><label>Grievance officer (Privacy Policy)</label><input type="text" id="s-grievance" value="${esc(s.grievanceOfficer)}" placeholder="Name, designation"></div>
           </div>

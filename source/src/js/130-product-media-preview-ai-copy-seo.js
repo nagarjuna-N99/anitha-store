@@ -66,11 +66,11 @@ function productPageHTML(p, gk, opts = {}) {
   return `<div class="detail-grid"><div class="detail-gallery">${galleryHTML(p, gk)}</div><div class="detail-info">
     <div class="detail-cat">${esc(p.category)}</div>
     <h2 class="detail-name">${esc(p.name || 'Untitled product')}</h2>
-    <div class="detail-price">${p.price ? '₹ ' + money(p.price) : '<span style="color:#6b6862;font-size:16px;">Price not set</span>'}</div>${pageExtrasHTML(p, gk, opts)}
+    <div class="detail-price">${p.price ? '₹ ' + money(p.price) : '<span style="color:#6b6862;font-size:16px;">Price not set</span>'}</div>${arrivesHTML(p, gk)}${pageExtrasHTML(p, gk, opts)}
     ${p.reviews > 0 ? `<a class="rv-link" onclick="var r=document.getElementById('rv-root');if(r)r.scrollIntoView({behavior:'smooth'})">${starsHTML(p.rating)} <span>${p.rating} · ${p.reviews} review${p.reviews > 1 ? 's' : ''}</span></a>` : ''}
     <p class="detail-desc">${esc(p.description || 'No description yet.')}</p>
     ${tagChips(p.tags)}
-    <div class="tab-content active"><ul style="margin-top:14px;"><li><strong>SKU:</strong> ${esc(p.sku)}</li><li><strong>Availability:</strong> ${inStock ? (oneOfAKind(p) ? 'One of a kind' : p.stock <= 2 ? `Only ${p.stock} left` : 'In stock') : 'Sold out'}</li><li><strong>Category:</strong> ${esc(p.category)}</li>${p.rating ? `<li><strong>Rating:</strong> ${p.rating} (${p.reviews} reviews)</li>` : ''}</ul></div>
+    ${detailsTableHTML(p, inStock)}
     ${deliveryWidgetHTML(p, gk, opts.preview)}${shipNoteHTML()}
     ${!inStock && !opts.preview ? `<button class="btn-full buy-btn" style="margin-bottom:10px;" onclick="openStockAlert('${p.id}')">${notifyLabel(p.id)}${myAlert(p.id) ? '' : ' when it is back'}</button>${isAccessory(p) ? '' : `<button class="btn-outline similar-btn" style="margin:0 0 10px;" onclick="openSimilarAlert('${p.id}')">${mySimilar(p.id) ? '✨ You will hear about similar sarees' : '✨ Tell me about similar sarees'}</button><button class="btn-outline request-btn" style="margin:0 0 10px;" onclick="openSimilarRequest('${p.id}')">💬 Request a similar piece</button>`}` : `<button class="btn-full buy-btn" style="margin-bottom:10px;" ${opts.preview ? 'disabled' : `onclick="addToCart('${p.id}');closeModal('productModal');"`}>Add to Cart</button>`}
     <button class="btn-outline" style="margin-top:0;" ${opts.preview ? 'disabled' : `onclick="openShare('${p.id}')"`}>🔗 Share this saree</button>${giftButtonHTML(p, opts.preview)}${waChatButtonHTML(p, opts.preview)}

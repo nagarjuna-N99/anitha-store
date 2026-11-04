@@ -39,7 +39,7 @@ export function merge3(base, mine, theirs) {
   return out;
 }
 
-const PUBLIC_SETTINGS = ['businessName', 'gstNumber', 'address', 'phone', 'email', 'siteUrl', 'metaDescription', 'waNumber', 'waChatOn', 'waGreeting', 'giftWrapFee', 'delivery', 'dispatchTime', 'returnDays', 'grievanceOfficer', 'showRecentlySold', 'invoicePrefix', 'gstRate'];
+const PUBLIC_SETTINGS = ['businessName', 'gstNumber', 'address', 'phone', 'email', 'siteUrl', 'metaDescription', 'waNumber', 'waChatOn', 'waGreeting', 'giftWrapFee', 'delivery', 'dispatchTime', 'sareeLength', 'returnDays', 'grievanceOfficer', 'showRecentlySold', 'invoicePrefix', 'gstRate'];
 // Pages the owner has hidden (and hidden stories, tabs or whole new pages) never leave the server: the public website only gets what it may show.
 export function publicPages(pg) {
   if (!pg || typeof pg !== 'object') return null; const vis = x => x && x.show !== false, out = {};
