@@ -1,7 +1,7 @@
 // Two sign-ins, two jobs (decided 5 Nov 2026).
 //   OWNER  runs the business: sarees, categories, items, prices, shipping charge and GST, coupons and discounts, delivery rules, orders, invoices,
 //          statements, customers and their data (export, erase, privacy requests), reports, her own password and 2-step sign-in, backups.
-//   ADMIN  looks after the presentation and the technical side: the home page look (banner, quote, story chapters, Notes wording and sign-up list,
+//   ADMIN  looks after the presentation and the technical side: the home page look (banner, quote, moments, Notes wording and sign-up list,
 //          colours), the Pages, Image Studio, the Instagram and WhatsApp connections, Claude key, email settings, Ops, audit logs, creating the owner login.
 // Everything here is checked on the server. Hiding a menu item in the page is only a courtesy.
 export const OWNER = 'owner', ADMIN = 'admin';
@@ -9,8 +9,8 @@ export const ROLES = [OWNER, ADMIN];
 
 // owner-app screens each role may open (the page hides the rest; the server refuses the data behind them)
 export const TABS = {
-  owner: ['dashboard', 'products', 'categories', 'studio', 'drafts', 'bundles', 'orders', 'invoices', 'reviews', 'alerts', 'customers', 'coupons', 'delivery', 'statements', 'growth', 'privacy', 'social', 'whatsapp', 'ai', 'settings'],
-  admin: ['home', 'pages', 'social', 'whatsapp', 'promo', 'ai', 'ops', 'logs', 'settings'],
+  owner: ['dashboard', 'products', 'categories', 'studio', 'drafts', 'bundles', 'orders', 'invoices', 'reviews', 'alerts', 'customers', 'coupons', 'delivery', 'statements', 'growth', 'privacy', 'social', 'whatsapp', 'ai', 'guide', 'settings'],
+  admin: ['home', 'pages', 'social', 'whatsapp', 'promo', 'ai', 'ops', 'logs', 'guide', 'settings'],
 };
 export const HOME_TAB = { owner: 'dashboard', admin: 'home' };
 

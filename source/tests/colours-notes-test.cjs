@@ -69,7 +69,7 @@ const { chromium } = require(process.env.PW);
   ok('notes AI: with Claude it asks for wording from the mood and the current text, drops empty drafts and trims over-long ones', await ev(() => window.__aiNotes.task === 'notes' && window.__aiNotes.input.mood === 'like a letter' && !!window.__aiNotes.input.current.title && document.querySelectorAll('#notes-card .th-draft').length === 2 && [...document.querySelectorAll('#notes-card .th-draft')].every(d => d.textContent.length < 520)));
   await p.click('#notes-card .th-draft button'); await sleep(200);
   ok('notes AI: "Use these" puts the wording on the home page at once', await ev(() => db.home.notes.title === 'A letter from the loom' && db.home.notes.button === 'Write to me' && /A letter from the loom/.test(document.getElementById('homeNotes').textContent)));
-  ok('AI Helper switches: the three home-page helpers are listed so they can be switched off', await ev(() => ['Story chapter wording', 'Notes from the loom wording', 'Website colour ideas'].every(l => AI_FEATURES.some(f => f[1].startsWith(l)))));
+  ok('AI Helper switches: the three home-page helpers are listed so they can be switched off', await ev(() => ['Moments wording', 'Notes from the loom wording', 'Website colour ideas'].every(l => AI_FEATURES.some(f => f[1].startsWith(l)))));
   ok('no script errors', errs.length === 0, errs.join(' | '));
   await b.close(); console.log(fails ? fails + ' FAILED' : 'ALL PASSED'); process.exit(fails ? 1 : 0);
 })();

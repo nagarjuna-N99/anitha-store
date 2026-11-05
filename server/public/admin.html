@@ -1347,6 +1347,55 @@ html.ui2.dk .pr-tpl { background: #23211d; border-color: #3a362f; } html.ui2.dk 
 .adm-desc { margin: -6px 0 14px; padding: 8px 12px; font-size: .86rem; color: #5b564b; background: #f4efe3; border-left: 3px solid var(--gold, #b8923a); border-radius: 0 6px 6px 0; max-width: 860px; }
 .fld-help { display: block; margin-top: 3px; font-size: .74rem; line-height: 1.35; color: #7a7467; font-weight: 400; }
 html.ui2.dk .adm-desc { background: #23211d; color: #cfc9ba; }
+
+/* How it works page */
+.how-tools { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 12px; } .how-tools input { flex: 1; min-width: 200px; font: inherit; padding: 8px 10px; border: 1px solid #d8d2c4; border-radius: 6px; }
+.how-sec { border: 1px solid #e3ddcf; border-radius: 8px; margin: 8px 0; background: #fffdf8; } .how-sec > summary { padding: 11px 14px; cursor: pointer; list-style: none; display: flex; flex-direction: column; gap: 2px; } .how-sec > summary::-webkit-details-marker { display: none; }
+.how-does { font-size: .82rem; color: #6b6558; } .how-body { padding: 0 16px 14px; font-size: .88rem; } .how-body h4 { margin: 10px 0 4px; font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: #6b6558; } .how-body ul { margin: 0; padding-left: 18px; } .how-body li { margin: 3px 0; }
+.how-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; } .how-do { background: #eef7ef; border-radius: 6px; padding: 2px 12px 8px; } .how-dont { background: #fdeeed; border-radius: 6px; padding: 2px 12px 8px; }
+@media (max-width: 700px) { .how-cols { grid-template-columns: 1fr; } }
+html.ui2.dk .how-sec { background: #23211d; border-color: #3a362f; } html.ui2.dk .how-do { background: #1d2a1f; } html.ui2.dk .how-dont { background: #2d1e1d; }
+.how-t { display: block; }
+
+/* chapter collections picker */
+.ch-colls { margin-top: 8px; } .ch-colls-h { font-size: .8rem; font-weight: 600; margin-bottom: 4px; } .ch-chips { display: flex; flex-wrap: wrap; gap: 6px; } .ch-chip { display: inline-flex; align-items: center; gap: 5px; border: 1px solid #d8d2c4; border-radius: 16px; padding: 4px 11px; font-size: .8rem; cursor: pointer; background: #fff; } .ch-chip.on { background: #f3e7d3; border-color: #b8923a; } .ch-chip input { margin: 0; }
+.ch-sel { margin-top: 6px; display: flex; flex-direction: column; gap: 4px; } .ch-sel-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: .82rem; } .ch-sel-row > span { min-width: 150px; }
+html.ui2.dk .ch-chip { background: #23211d; border-color: #3a362f; } html.ui2.dk .ch-chip.on { background: #3a3123; }
+
+/* One size for all the moments (Home Page → Moments → Size): compact / standard / large / full screen. Standard = the calm default above. */
+#homeChapters[data-size="compact"] .chap-hero { aspect-ratio: auto; height: 190px; } #homeChapters[data-size="compact"] .chap-title { font-size: clamp(24px, 3vw, 32px); margin-bottom: 6px; } #homeChapters[data-size="compact"] .chap-words { font-size: 10.5px; } #homeChapters[data-size="compact"] .chap-no { margin-bottom: 4px; }
+@media (min-width: 901px) {
+  #homeChapters[data-size="compact"] .chap { max-width: 760px; }
+  #homeChapters[data-size="large"] .chap, #homeChapters[data-size="full"] .chap { max-width: min(1500px, 88vw); padding-top: 34px; }
+  #homeChapters[data-size="large"] .chap-hero { height: min(62vh, 640px); }
+  #homeChapters[data-size="full"] .chap-hero { height: min(90vh, 860px); border-radius: 0; width: 100vw; margin-left: calc(50% - 50vw); }
+  #homeChapters[data-size="large"] .chap-title, #homeChapters[data-size="full"] .chap-title { font-size: clamp(48px, 5.6vw, 88px); margin-bottom: 18px; }
+  #homeChapters[data-size="large"] .chap-words, #homeChapters[data-size="full"] .chap-words { font-size: 16px; letter-spacing: .24em; } #homeChapters[data-size="large"] .chap-no, #homeChapters[data-size="full"] .chap-no { font-size: 14px; margin-bottom: 16px; }
+  #homeChapters[data-size="large"] .chap-tile, #homeChapters[data-size="full"] .chap-tile { aspect-ratio: 4 / 5; } #homeChapters[data-size="large"] .chap-tile span, #homeChapters[data-size="full"] .chap-tile span { font-size: 22px; } #homeChapters[data-size="large"] .chap-quote p, #homeChapters[data-size="full"] .chap-quote p { font-size: 26px; }
+}
+@media (max-width: 900px) {
+  #homeChapters[data-size="compact"] .chap-hero { height: 170px; aspect-ratio: auto; }
+  #homeChapters[data-size="large"] .chap-hero { aspect-ratio: auto; height: 68vh; } #homeChapters[data-size="large"] .chap-title, #homeChapters[data-size="full"] .chap-title { font-size: clamp(34px, 9vw, 52px); }
+  #homeChapters[data-size="full"] .chap-hero { aspect-ratio: auto; height: 86vh; border-radius: 0; width: 100vw; margin-left: calc(50% - 50vw); }
+}
+.ch-size { margin: 8px 0 12px; } .ch-size-h { font-size: .85rem; margin-bottom: 6px; } .ch-size-btns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; } .ch-size-b { text-align: left; display: flex; flex-direction: column; gap: 3px; padding: 8px 10px; border: 1px solid #d8d2c4; border-radius: 8px; background: #fff; cursor: pointer; font: inherit; } .ch-size-b small { font-size: .72rem; color: #7a7467; line-height: 1.3; } .ch-size-b.on { border-color: #b8923a; background: #f3e7d3; box-shadow: 0 0 0 1px #b8923a; }
+.ch-size-pic { display: block; height: 38px; background: #ece7da; border-radius: 3px; position: relative; overflow: hidden; } .ch-size-pic i { position: absolute; left: 12%; right: 12%; top: 50%; transform: translateY(-50%); background: #141210; border-radius: 2px; height: 30%; } .ch-size-standard i { height: 45%; } .ch-size-large i { height: 70%; left: 6%; right: 6%; } .ch-size-full i { height: 94%; left: 0; right: 0; border-radius: 0; }
+@media (max-width: 640px) { .ch-size-btns { grid-template-columns: 1fr 1fr; } }
+html.ui2.dk .ch-size-b { background: #23211d; border-color: #3a362f; } html.ui2.dk .ch-size-b.on { background: #3a3123; } html.ui2.dk .ch-size-pic { background: #35322c; }
+
+/* website background layer + admin builder */
+#siteBg { position: fixed; inset: 0; z-index: -1; pointer-events: none; background-size: cover; background-position: center; background-repeat: no-repeat; }
+.bg-preview { height: 380px; max-width: 980px; border: 1px solid #d8d2c4; border-radius: 10px; background: #faf9f6 center / cover no-repeat; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; margin: 6px 0 12px; }
+.bg-mock { width: 62%; min-width: 260px; background: rgba(250,249,246,.9); border-radius: 6px; padding: 10px 14px 14px; text-align: center; box-shadow: 0 2px 14px rgba(0,0,0,.08); } .bg-mock-nav { display: flex; justify-content: space-between; align-items: center; font-size: 11px; border-bottom: 1px solid #ece7da; padding-bottom: 6px; } .bg-mock-nav b { font-family: 'Cormorant Garamond', serif; font-size: 15px; } .bg-mock-nav span { letter-spacing: .12em; color: #6b6558; font-size: 9px; }
+.bg-mock-hero { margin: 10px 0; padding: 26px 8px; background: #2a2622; color: #fff; border-radius: 4px; } .bg-mock-hero small { display: block; letter-spacing: .3em; font-size: 9px; opacity: .8; } .bg-mock-hero b { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 26px; } .bg-mock-hero i { color: #d9b99a; } .bg-mock p { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14px; margin: 0; color: #333; }
+.bg-ctl { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px 18px; margin: 4px 0 10px; } .bg-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; } .bg-chip { border: 1px solid #d8d2c4; border-radius: 16px; padding: 4px 11px; font: inherit; font-size: .8rem; background: #fff; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; } .bg-chip.on { background: #f3e7d3; border-color: #b8923a; box-shadow: 0 0 0 1px #b8923a; }
+.bg-sw { display: inline-flex; } .bg-sw i { width: 11px; height: 11px; display: block; } .bg-sw i:first-child { border-radius: 6px 0 0 6px; } .bg-sw i:last-child { border-radius: 0 6px 6px 0; }
+#bg-str { width: 100%; max-width: 280px; display: block; margin-top: 6px; } .bg-unsaved { color: #8a5a00; font-weight: 600; }
+.bg-ideas { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-top: 10px; } .bg-idea { border: 1px solid #e3ddcf; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 3px; background: #fffdf8; } .bg-idea-pic { height: 90px; border-radius: 5px; background: #faf9f6 center / cover no-repeat; border: 1px solid #ece7da; }
+.bg-looks { margin-top: 14px; }
+@media (max-width: 640px) { .bg-preview { height: 300px; } .bg-mock { width: 86%; } }
+html.ui2.dk .bg-chip, html.ui2.dk .bg-idea { background: #23211d; border-color: #3a362f; } html.ui2.dk .bg-chip.on { background: #3a3123; }
+@media (max-width: 640px) { .bg-chip, .ch-chip { min-height: 40px; padding: 8px 14px; } .bg-ideas .btn-sm, .bg-looks .btn-sm { min-height: 40px; } }
 </style>
 <style>.nav-toggle{position:fixed;top:14px;left:268px;z-index:60;width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--ivory);color:var(--charcoal);cursor:pointer;display:none;align-items:center;justify-content:center;font-size:18px;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.08)}body.admin-on .nav-toggle{display:flex}body.nav-closed .nav-toggle{left:14px}body.nav-closed .admin-sidebar{display:none}body.nav-closed .admin-main{margin-left:0;padding-left:64px}body.studio-focus .nav-toggle{display:none!important}@media (max-width:900px){body.admin-on .nav-toggle{display:none}}html.ui2 .nav-toggle{background:var(--o-glass-2);color:var(--o-ink);border-color:var(--o-line)}.pg-item{border:1px solid var(--border);border-radius:14px;padding:14px;margin:12px 0}.pg-item.pg-off{opacity:.7}.pg-head{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.pg-head b{flex:1;min-width:140px}.pg-tools{display:inline-flex;gap:6px}.pg-tip{border-top:1px dashed var(--border);padding:10px 0}.pg-sec>summary{cursor:pointer;min-height:40px;display:flex;align-items:center}.pg-item textarea,.pg-tip textarea{width:100%}</style>
 </head>
@@ -1402,6 +1451,7 @@ html.ui2.dk .adm-desc { background: #23211d; color: #cfc9ba; }
     <li data-tab="promo" onclick="switchAdminTab('promo'); closeAdminNav();">💬 WhatsApp promotions</li>
     <li data-tab="privacy" onclick="switchAdminTab('privacy'); closeAdminNav();">🛡️ Privacy</li>
     <li data-tab="pages" onclick="switchAdminTab('pages'); closeAdminNav();">📰 Pages</li>
+    <li data-tab="guide" onclick="switchAdminTab('guide'); closeAdminNav();">📖 How it works</li>
     <li data-tab="ops" onclick="switchAdminTab('ops'); closeAdminNav();">🩺 Ops</li>
     <li data-tab="logs" onclick="switchAdminTab('logs'); closeAdminNav();">📜 Audit Logs</li>
     <li data-tab="settings" onclick="switchAdminTab('settings'); closeAdminNav();">⚙️ Settings</li>
@@ -1524,6 +1574,7 @@ html.ui2.dk .adm-desc { background: #23211d; color: #cfc9ba; }
       <li class="admin-nav-item" data-tab="promo" onclick="switchAdminTab('promo')">💬 WhatsApp promotions</li>
       <li class="admin-nav-item" data-tab="privacy" onclick="switchAdminTab('privacy')">🛡️ Privacy</li>
       <li class="admin-nav-item" data-tab="pages" onclick="switchAdminTab('pages')">📰 Pages</li>
+      <li class="admin-nav-item" data-tab="guide" onclick="switchAdminTab('guide')">📖 How it works</li>
       <li class="admin-nav-item" data-tab="ops" onclick="switchAdminTab('ops')">🩺 Ops</li>
       <li class="admin-nav-item" data-tab="logs" onclick="switchAdminTab('logs')">📜 Audit Logs</li>
       <li class="admin-nav-item" data-tab="settings" onclick="switchAdminTab('settings')">⚙️ Settings</li>
@@ -2551,7 +2602,7 @@ function switchCareTab(tabName, btn) {
 }
 
 // ================= ADMIN LOGIC =================
-const ADMIN_TITLES = { privacy: 'Privacy & DPDP', growth: 'Growth & Insights', promo: 'WhatsApp promotions', dashboard: 'Dashboard', home: 'Home Page', reviews: 'Customer Reviews', whatsapp: 'WhatsApp Assistant', delivery: 'Delivery & Gifting', alerts: 'Back-in-stock Alerts', products: 'Products Catalog', categories: 'Category Manager', studio: 'Image Studio', drafts: 'Saved Drafts', orders: 'Orders Management', invoices: 'Invoice Management', customers: 'Customer Database', statements: 'Financial Statements', coupons: 'Coupon Manager', bundles: 'Bundles', ai: 'AI Helper', social: 'Instagram', logs: 'Audit Logs', settings: 'Business Settings' };
+const ADMIN_TITLES = { privacy: 'Privacy & DPDP', growth: 'Growth & Insights', promo: 'WhatsApp promotions', guide: 'How it works', dashboard: 'Dashboard', home: 'Home Page', reviews: 'Customer Reviews', whatsapp: 'WhatsApp Assistant', delivery: 'Delivery & Gifting', alerts: 'Back-in-stock Alerts', products: 'Products Catalog', categories: 'Category Manager', studio: 'Image Studio', drafts: 'Saved Drafts', orders: 'Orders Management', invoices: 'Invoice Management', customers: 'Customer Database', statements: 'Financial Statements', coupons: 'Coupon Manager', bundles: 'Bundles', ai: 'AI Helper', social: 'Instagram', logs: 'Audit Logs', settings: 'Business Settings' };
 // Orders tab (owner): how website orders reach you and whether they are approved without asking
 function orderFlowCardHTML() {
   if (BUILD === 'site' || (BUILD === 'admin' && typeof isAdminRole === 'function' && isAdminRole())) return '';   // the owner's page only
@@ -2726,6 +2777,7 @@ function renderAdminContent(tab) {
   if (tab === 'social') { if (BUILD === 'admin') renderSocialAdmin(content); else content.innerHTML = '<div class="admin-card"><h3>📸 Instagram</h3><p class="note">Instagram posting and scheduling work in the <b>owner app</b> (admin.html on your server), where the server can post for you. See HOW-IT-WORKS/17.</p></div>'; return; }
   if (tab === 'growth') { renderGrowth(content); return; }
   if (tab === 'promo') { renderPromo(content); return; }
+  if (tab === 'guide') { renderHowItWorks(content); return; }
   if (tab === 'privacy') { renderPrivacyAdmin(content); return; }
   if (tab === 'ops') { renderOpsAdmin(content); return; }
   if (tab === 'pages') { renderPagesAdmin(content); return; }
@@ -4789,7 +4841,7 @@ function renderSignature() {
 let BAN_SEL = -1;
 function banSelect(v) { BAN_SEL = +v; renderHomeAdmin(document.getElementById('adminContent')); }
 function banReset(i) { const c = BAN_CATS()[-i - 2]; if (db.home.categoryBanners) delete db.home.categoryBanners[c]; homeLive(false); renderHomeAdmin(document.getElementById('adminContent')); showToast('This category uses the automatic banner again', 'success'); }
-function renderHome() { applyTheme(); renderHomeChapters(); renderHomeNotes(); renderHomeQuote(); renderShopBanner(); renderOccasions(); renderRecentlySold(); renderRecent(); renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); ANN.sig = scheduleSignature(); renderAnnouncement(); renderPublicPages(); }
+function renderHome() { applyTheme(); if (typeof applyBackground === 'function') applyBackground(); renderHomeChapters(); renderHomeNotes(); renderHomeQuote(); renderShopBanner(); renderOccasions(); renderRecentlySold(); renderRecent(); renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); ANN.sig = scheduleSignature(); renderAnnouncement(); renderPublicPages(); }
 
 // ---- admin: saving (applies to the storefront instantly, written to storage a moment later) ----
 let HOME_TIMER = null;
@@ -4814,7 +4866,7 @@ function renderShopBanner() {
   const html = s.enabled === false || !safeImg(s.image) || !(s.title || s.subtitle) ? '' : `<div class="hero-slider shop-banner">${heroSlideHTML(s, -1, true, 'h2')}</div>`;
   if (box._h === html) return; box._h = html; box.innerHTML = html; box.style.display = html ? '' : 'none';
 }
-function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); renderHomeQuote(); renderHomeNotes(); renderHomeChapters(); homeSaveSoon(); }
+function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); renderHomeQuote(); renderHomeNotes(); renderHomeChapters(); if (typeof applyBackground === 'function') applyBackground(); homeSaveSoon(); }
 let HOME_PICK = null;
 function homePick(kind, idx) { HOME_PICK = { kind, idx }; document.getElementById('home-file').click(); }
 async function homeFileChosen(files) {
@@ -4939,6 +4991,7 @@ function renderHomeAdmin(container) {
       <div class="hs-grid2"><div class="form-group"><label>Signed by (optional)</label><input type="text" maxlength="60" value="${esc(H.quote.by)}" oninput="quoteSet('by',this.value)"></div><div class="form-group"><label>&nbsp;</label><button type="button" class="btn-sm btn-info-sm" onclick="quoteIdea()">✨ Suggest another quote</button></div></div>
     </div>
 
+    ${backgroundCardHTML()}
     ${chaptersCardHTML()}
     ${themeCardHTML()}
     ${notesCardHTML()}
@@ -6697,70 +6750,88 @@ function notesAiHTML() {
     ${NOTES_AI.msg ? `<p class="note" role="status" style="margin:8px 0 0">${esc(NOTES_AI.msg)}</p>` : ''}</div>`;
 }
 // ================= STORY CHAPTERS ON THE HOME PAGE =================
-// Short "chapters" by occasion: a big photo panel with a title, a line of weaves, a quote in the shop's own words and three category tiles.
-// The owner writes them in Owner app → Home Page → Story chapters. Use *word* in a title to set that word in italics.
+// Short "moments" by occasion: a big photo panel with a title, a line of weaves, a quote in the shop's own words and three category tiles.
+// The owner writes them in Owner app → Home Page → Moments. Use *word* in a title to set that word in italics.
 const CH_ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 function chaptersDefault() {
-  return { show: true, items: [
-    { id: 'ch1', show: true, title: 'A Tuesday *morning.*', words: 'Everyday · Tussar · Ponduru Khadi · Mysore Silk', quote: 'Light enough to forget you are wearing it, and kind enough to last the whole working day.', by: 'Anitha Pemmasani', image: '', tiles: [{ category: 'Tussar', image: '' }, { category: 'Ponduru Khadi', image: '' }, { category: 'Mysore Silk', image: '' }], link: 'Enter this chapter' },
-    { id: 'ch2', show: true, title: 'A cousin’s *wedding.*', words: 'Occasion · Maheswari · Banarasi · Paithani', quote: 'Not the bride, and not in the front row, but the one whose saree people still ask about the next morning.', by: 'Anitha Pemmasani', image: '', tiles: [{ category: 'Maheswari', image: '' }, { category: 'Banarasi', image: '' }, { category: 'Paithani', image: '' }], link: 'Enter this chapter' },
-    { id: 'ch3', show: true, title: 'A festival, *at home.*', words: 'Festive · Kanjeevaram · Banarasi', quote: 'Lamps on the window sill, flowers at the door, and a silk that has waited all year for this morning.', by: 'Anitha Pemmasani', image: '', tiles: [{ category: 'Kanjeevaram', image: '' }, { category: 'Banarasi', image: '' }, { category: 'Paithani', image: '' }], link: 'Enter this chapter' }
+  return { show: true, size: 'standard', items: [
+    { id: 'ch1', show: true, title: 'A Tuesday *morning.*', words: 'Everyday · Tussar · Ponduru Khadi · Mysore Silk', quote: 'Light enough to forget you are wearing it, and kind enough to last the whole working day.', by: 'Anitha Pemmasani', image: '', tiles: [{ category: 'Tussar', image: '' }, { category: 'Ponduru Khadi', image: '' }, { category: 'Mysore Silk', image: '' }], link: 'See these sarees' },
+    { id: 'ch2', show: true, title: 'A cousin’s *wedding.*', words: 'Occasion · Maheswari · Banarasi · Paithani', quote: 'Not the bride, and not in the front row, but the one whose saree people still ask about the next morning.', by: 'Anitha Pemmasani', image: '', tiles: [{ category: 'Maheswari', image: '' }, { category: 'Banarasi', image: '' }, { category: 'Paithani', image: '' }], link: 'See these sarees' },
+    { id: 'ch3', show: true, title: 'A festival, *at home.*', words: 'Festive · Kanjeevaram · Banarasi', quote: 'Lamps on the window sill, flowers at the door, and a silk that has waited all year for this morning.', by: 'Anitha Pemmasani', image: '', tiles: [{ category: 'Kanjeevaram', image: '' }, { category: 'Banarasi', image: '' }, { category: 'Paithani', image: '' }], link: 'See these sarees' }
   ] };
 }
 function chaptersGet() { const c = db.home && db.home.chapters; return c && Array.isArray(c.items) ? c : chaptersDefault(); }
+const chLink = c => { const l = String((c && c.link) || '').trim(); return !l || /^Enter this chapter$/i.test(l) ? 'See these sarees' : l; };
 const chEsc = t => esc(String(t || '')).replace(/\*([^*]+)\*/g, '<em>$1</em>');
 function renderHomeChapters() {
   const sec = document.getElementById('homeChapters'); if (!sec) return; const C = chaptersGet(), items = C.items.filter(c => c.show !== false);
   if (C.show === false || !items.length) { sec.innerHTML = ''; sec.style.display = 'none'; return; }
-  sec.style.display = '';
+  sec.style.display = ''; sec.dataset.size = chSizeOf();
   sec.innerHTML = items.map((c, n) => {
-    const img = safeImg(c.image), tiles = (c.tiles || []).filter(t => t && db.categories.includes(t.category)).slice(0, 3), first = tiles[0] ? tiles[0].category : '';
-    return `<article class="chap" aria-label="${esc(String(c.title || '').replace(/\*/g, ''))}"><div class="chap-hero${c.full ? ' full' : ''}"${img ? ` style="background-image:url('${esc(img).replace(/'/g, '%27')}')"` : ''}><div class="chap-in"><span class="chap-no">Chapter ${CH_ROMAN[n] || n + 1}</span><h2 class="chap-title">${chEsc(c.title)}</h2>${c.words ? `<p class="chap-words">${esc(c.words)}</p>` : ''}</div></div>
+    const img = safeImg(c.image), tiles = (c.tiles || []).filter(t => t && db.categories.includes(t.category)).slice(0, 6), first = tiles[0] ? tiles[0].category : '';
+    return `<article class="chap" aria-label="${esc(String(c.title || '').replace(/\*/g, ''))}"><div class="chap-hero"${img ? ` style="background-image:url('${esc(img).replace(/'/g, '%27')}')"` : ''}><div class="chap-in"><span class="chap-no">Moment ${CH_ROMAN[n] || n + 1}</span><h2 class="chap-title">${chEsc(c.title)}</h2>${c.words ? `<p class="chap-words">${esc(c.words)}</p>` : ''}</div></div>
       ${c.quote ? `<blockquote class="chap-quote"><p>“${esc(String(c.quote).replace(/^[“"]|[”"]$/g, ''))}”</p>${c.by ? `<cite>— ${esc(c.by)}</cite>` : ''}</blockquote>` : ''}
       ${tiles.length ? `<div class="chap-tiles">${tiles.map(t => { const im = safeImg(t.image) || catTileImage({ category: t.category, image: '' }); return `<div class="chap-tile" role="link" tabindex="0" data-cat="${esc(t.category)}" onclick="filterAndShowShop(this.dataset.cat)" onkeydown="if(event.key==='Enter')filterAndShowShop(this.dataset.cat)">${im ? `<img src="${esc(im)}" alt="${esc(t.category)} sarees" loading="lazy" onerror="this.style.display='none'">` : ''}<span>${esc(t.category)} →</span></div>`; }).join('')}</div>` : ''}
-      ${first ? `<a class="chap-enter" role="link" tabindex="0" data-cat="${esc(first)}" onclick="filterAndShowShop(this.dataset.cat)" onkeydown="if(event.key==='Enter')filterAndShowShop(this.dataset.cat)">${esc(c.link || 'Enter this chapter')} →</a>` : ''}</article>`;
+      ${first ? `<a class="chap-enter" role="link" tabindex="0" data-cat="${esc(first)}" onclick="filterAndShowShop(this.dataset.cat)" onkeydown="if(event.key==='Enter')filterAndShowShop(this.dataset.cat)">${esc(chLink(c))} →</a>` : ''}</article>`;
   }).join('');
 }
-// ---- owner: edit the chapters ----
+// ---- owner: edit the moments ----
 function chData() { if (!db.home.chapters || !Array.isArray(db.home.chapters.items)) db.home.chapters = chaptersDefault(); return db.home.chapters; }
 function chLive(redraw) { renderHomeChapters(); homeSaveSoon(); if (redraw) { const c = el_('adminContent'); if (c) renderHomeAdmin(c); } }
 function chSet(i, k, v) { const c = chData().items[i]; if (c) { c[k] = v; chLive(false); } }
 function chRemoveImg(i) { const c = chData().items[i]; if (!c) return; c.image = ''; chLive(true); showToast('Photo removed. The panel is plain dark again.', 'success'); }
-function chFullToggle(i) { const c = chData().items[i]; if (!c) return; c.full = !c.full; chLive(true); }
-// every heading photo in one place, visible at once (no need to open each chapter): thumbnail, upload / replace, remove, "fill the whole screen"
+function chTileToggle(i, cat) {
+  const c = chData().items[i]; if (!c || !db.categories.includes(cat)) return; c.tiles = (c.tiles || []).filter(t => t && t.category);
+  const k = c.tiles.findIndex(t => t.category === cat);
+  if (k >= 0) c.tiles.splice(k, 1); else { if (c.tiles.length >= 6) return showToast('Up to 6 collections under one moment. Untick one first.', 'error'); c.tiles.push({ category: cat, image: '' }); }
+  chLive(true);
+}
+function chTileMove(i, k, d) { const c = chData().items[i]; if (!c || !c.tiles) return; const j = k + d; if (j < 0 || j >= c.tiles.length) return; [c.tiles[k], c.tiles[j]] = [c.tiles[j], c.tiles[k]]; chLive(true); }
+function chTileOwn(i, k) { homePick('ctile', i + ',' + k); }
+function chTileOwnClear(i, k) { const c = chData().items[i]; if (c && c.tiles && c.tiles[k]) { c.tiles[k].image = ''; chLive(true); } }
+function chAiRow(i) { chAi(i).then(() => { const e = el_('ch-ai'); if (e) e.scrollIntoView({ block: 'center' }); }); }
+function chEdit(i) { const d = document.querySelectorAll('#chapters-card .ch-item')[i]; if (d) { d.open = true; d.scrollIntoView({ block: 'center' }); } }
+// one size for ALL the moments on the home page (chosen once, applied to every moment)
+const CH_SIZES = [['compact', 'Compact', 'A slim band. Quick to scroll past.'], ['standard', 'Standard', 'The calm default.'], ['large', 'Large', 'A wide, tall panel with big words, like a magazine opening.'], ['full', 'Full screen', 'Edge to edge and almost the height of the screen.']];
+const chSizeOf = () => { const k = (chaptersGet() || {}).size; return CH_SIZES.some(x => x[0] === k) ? k : 'standard'; };
+function chSize(k) { if (!CH_SIZES.some(x => x[0] === k)) return; chData().size = k; chLive(true); showToast('Moment size: ' + CH_SIZES.find(x => x[0] === k)[1] + '. It applies to every moment.', 'success'); }
+// every heading photo in one place, visible at once (no need to open each moment): thumbnail, upload / replace, remove, "fill the whole screen"
 function chPhotosHTML() {
   const C = chaptersGet(), tog = (on, fn) => `<div class="toggle ${on ? 'active' : ''}" role="switch" tabindex="0" aria-checked="${!!on}" onclick="${fn}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"></div>`;
-  return `<div class="ch-photos" id="ch-photos"><h4 class="dash-h4" style="margin:12px 0 4px">🖼 Full-width heading photos</h4>
-    <p class="note" style="margin:0 0 8px">The big photo behind each chapter heading on the home page. Add a landscape photo (wider than tall, at least 1600 px wide looks best). A soft dark layer keeps the words readable. Turn on “Fill the whole screen” for a tall, edge-to-edge panel.</p>
-    ${C.items.map((c, i) => { const im = safeImg(c.image); return `<div class="ch-photo-row"><div class="ch-thumb"${im ? ` style="background-image:url('${esc(im).replace(/'/g, '%27')}')"` : ''}>${im ? '' : '<small>no photo</small>'}</div><div class="ch-photo-main"><b>${esc(String(c.title || 'Chapter').replace(/\*/g, ''))}</b>${c.show === false ? ' <small>(hidden)</small>' : ''}<div class="th-actions" style="margin:6px 0 0"><button type="button" class="btn-sm btn-primary-sm" onclick="homePick('chap',${i})">⬆ ${im ? 'Replace photo' : 'Add photo'}</button>${im ? `<button type="button" class="btn-sm" onclick="chRemoveImg(${i})">Remove</button>` : ''}</div><div class="hs-bar" style="margin-top:6px"><span>Fill the whole screen</span>${tog(!!c.full, `chFullToggle(${i})`)}</div></div></div>`; }).join('')}</div>`;
+  return `<div class="ch-photos" id="ch-photos"><h4 class="dash-h4" style="margin:12px 0 4px">📚 Your moments: size, photo, collections, order, delete</h4>
+    <div class="ch-size" role="radiogroup" aria-label="Size of every moment"><div class="ch-size-h"><b>Size of the moments</b> <small>(one choice for all of them)</small></div><div class="ch-size-btns">${CH_SIZES.map(([k, l, d]) => `<button type="button" role="radio" aria-checked="${chSizeOf() === k}" class="ch-size-b ${chSizeOf() === k ? 'on' : ''}" onclick="chSize('${k}')"><span class="ch-size-pic ch-size-${k}" aria-hidden="true"><i></i></span><b>${l}</b><small>${d}</small></button>`).join('')}</div></div>
+    <p class="note" style="margin:0 0 8px">One row per moment. Choose the big photo behind its heading, the collections shown under it, its order, and delete it here. Add a landscape photo (wider than tall, at least 1600 px wide looks best). A soft dark layer keeps the words readable. The size above decides how tall and wide the panels are, for every moment.</p>
+    ${C.items.map((c, i) => { const im = safeImg(c.image), sel = (c.tiles || []).filter(t => t && db.categories.includes(t.category)); return `<div class="ch-photo-row"><div class="ch-thumb"${im ? ` style="background-image:url('${esc(im).replace(/'/g, '%27')}')"` : ''}>${im ? '' : '<small>no photo</small>'}</div><div class="ch-photo-main"><b>${esc(String(c.title || 'Moment').replace(/\*/g, ''))}</b>${c.show === false ? ' <small>(hidden)</small>' : ''}<div class="th-actions" style="margin:6px 0 0"><button type="button" class="btn-sm btn-primary-sm" onclick="homePick('chap',${i})">⬆ ${im ? 'Replace photo' : 'Add photo'}</button>${im ? `<button type="button" class="btn-sm" onclick="chRemoveImg(${i})">Remove photo</button>` : ''}<button type="button" class="btn-sm" onclick="chEdit(${i})">✎ Edit words</button><button type="button" class="btn-sm btn-info-sm" onclick="chAiRow(${i})">✨ Write all words</button><button type="button" class="btn-sm" onclick="chMove(${i},-1)" title="Move up">↑</button><button type="button" class="btn-sm" onclick="chMove(${i},1)" title="Move down">↓</button><button type="button" class="btn-sm" onclick="chToggle(${i})">${c.show === false ? '👁 Show' : '🙈 Hide'}</button><button type="button" class="btn-sm btn-danger-sm" onclick="chDel(${i})">🗑 Delete moment</button></div>
+      <div class="ch-colls"><div class="ch-colls-h">Collections shown under this moment <small>(${sel.length} of 6: tick the ones you want)</small></div><div class="ch-chips">${db.categories.map(k => `<label class="ch-chip ${sel.some(t => t.category === k) ? 'on' : ''}"><input type="checkbox" ${sel.some(t => t.category === k) ? 'checked' : ''} onchange="chTileToggle(${i},this.dataset.cat)" data-cat="${esc(k)}"> ${esc(k)}</label>`).join('') || '<small>Add categories first (Categories tab).</small>'}</div>
+      ${sel.length ? `<div class="ch-sel">${(c.tiles || []).map((t, k) => !t || !db.categories.includes(t.category) ? '' : `<div class="ch-sel-row"><span>${k + 1}. ${esc(t.category)}${t.image ? ' <small>(own photo)</small>' : ''}</span><button type="button" class="btn-sm" onclick="chTileMove(${i},${k},-1)" title="Earlier">↑</button><button type="button" class="btn-sm" onclick="chTileMove(${i},${k},1)" title="Later">↓</button><button type="button" class="btn-sm" onclick="chTileOwn(${i},${k})">⬆ Own photo</button>${t.image ? `<button type="button" class="btn-sm" onclick="chTileOwnClear(${i},${k})">Use the product photo</button>` : ''}</div>`).join('')}</div>` : '<small class="note">No collection ticked: this moment shows no tiles and no “See these sarees” link.</small>'}</div></div></div>`; }).join('')}</div>`;
 }
 function chToggle(i) { const c = chData().items[i]; if (c) { c.show = c.show === false; chLive(true); } }
 function chAllToggle() { const C = chData(); C.show = C.show === false; chLive(true); }
 function chTile(i, t, k, v) { const c = chData().items[i]; if (!c) return; c.tiles = c.tiles || []; while (c.tiles.length <= t) c.tiles.push({ category: '', image: '' }); c.tiles[t][k] = v; chLive(k === 'category'); }
-function chAdd() { const C = chData(); if (C.items.length >= 8) return showToast('Up to 8 chapters', 'error'); C.items.push({ id: 'ch' + Date.now().toString(36), show: true, title: 'A new *chapter.*', words: '', quote: '', by: 'Anitha Pemmasani', image: '', tiles: [], link: 'Enter this chapter' }); chLive(true); }
-function chDel(i) { if (!confirm('Delete this chapter?')) return; chData().items.splice(i, 1); chLive(true); }
+function chAdd() { const C = chData(); if (C.items.length >= 8) return showToast('Up to 8 moments', 'error'); C.items.push({ id: 'ch' + Date.now().toString(36), show: true, title: 'A new *moment.*', words: '', quote: '', by: 'Anitha Pemmasani', image: '', tiles: [], link: 'See these sarees' }); chLive(true); }
+function chDel(i) { if (!confirm('Delete this moment?')) return; chData().items.splice(i, 1); chLive(true); }
 function chMove(i, d) { const a = chData().items, j = i + d; if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; chLive(true); }
-function chRestore() { if (!confirm('Replace your chapters with the 3 sample chapters?')) return; db.home.chapters = chaptersDefault(); chLive(true); }
+function chRestore() { if (!confirm('Replace your moments with the 3 sample moments?')) return; db.home.chapters = chaptersDefault(); chLive(true); }
 function chaptersCardHTML() {
   const C = chaptersGet(), tog = (on, fn) => `<div class="toggle ${on ? 'active' : ''}" role="switch" tabindex="0" aria-checked="${!!on}" onclick="${fn}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"></div>`, cats = db.categories;
-  return `<div class="admin-card" id="chapters-card"><h3>📖 Story chapters</h3>
-    <p class="note" style="margin:0 0 8px">Short chapters by occasion on the home page: a photo panel, a title, a quote in your own words and three category tiles. Put *stars* around a word in the title to set it in italics.</p>
-    <div class="hs-bar"><span>Show the chapters on the home page</span>${tog(C.show !== false, 'chAllToggle()')}</div>
+  return `<div class="admin-card" id="chapters-card"><h3>📖 Moments</h3>
+    <p class="note" style="margin:0 0 8px">Short moments by occasion on the home page: a photo panel, a title, a quote in your own words and three category tiles. Put *stars* around a word in the title to set it in italics.</p>
+    <div class="hs-bar"><span>Show the moments on the home page</span>${tog(C.show !== false, 'chAllToggle()')}</div>
     ${chPhotosHTML()}
     ${chAiPanelHTML()}
-    <div class="ch-list">${C.items.map((c, i) => `<details class="ch-item"><summary>${esc(String(c.title || 'Chapter').replace(/\*/g, ''))}${c.show === false ? ' <small>(hidden)</small>' : ''}</summary><div class="ch-body">
-      <div class="hs-bar"><span>Show this chapter</span>${tog(c.show !== false, `chToggle(${i})`)}</div>
-      <div class="th-actions"><button type="button" class="btn-sm btn-info-sm" onclick="chAi(${i})">✨ Rewrite this chapter with Claude</button></div>
+    <div class="ch-list">${C.items.map((c, i) => `<details class="ch-item"><summary>${esc(String(c.title || 'Moment').replace(/\*/g, ''))}${c.show === false ? ' <small>(hidden)</small>' : ''}</summary><div class="ch-body">
+      <div class="hs-bar"><span>Show this moment</span>${tog(c.show !== false, `chToggle(${i})`)}</div>
+      <div class="th-actions"><button type="button" class="btn-sm btn-info-sm" onclick="chAi(${i})">✨ Rewrite this moment with Claude</button></div>
       <div class="hs-grid2"><div class="form-group"><label>Title</label><input type="text" maxlength="60" value="${esc(c.title)}" oninput="chSet(${i},'title',this.value)"></div><div class="form-group"><label>Line of weaves under the title</label><input type="text" maxlength="90" value="${esc(c.words)}" oninput="chSet(${i},'words',this.value)"></div></div>
       <div class="form-group"><label>Quote (your own words)</label><textarea rows="2" maxlength="180" oninput="chSet(${i},'quote',this.value)">${esc(c.quote)}</textarea></div>
-      <div class="hs-grid2"><div class="form-group"><label>Signed by</label><input type="text" maxlength="60" value="${esc(c.by)}" oninput="chSet(${i},'by',this.value)"></div><div class="form-group"><label>Link text</label><input type="text" maxlength="30" value="${esc(c.link)}" oninput="chSet(${i},'link',this.value)"></div></div>
+      <div class="hs-grid2"><div class="form-group"><label>Signed by</label><input type="text" maxlength="60" value="${esc(c.by)}" oninput="chSet(${i},'by',this.value)"></div><div class="form-group"><label>Link text</label><input type="text" maxlength="30" value="${esc(chLink(c))}" oninput="chSet(${i},'link',this.value)"></div></div>
       <div class="form-group"><label>Big photo (leave empty for a calm dark panel)</label><div class="hs-img-row"><input type="text" value="${esc(String(c.image || '').startsWith('data:') ? '' : c.image || '')}" placeholder="${String(c.image || '').startsWith('data:') ? 'Uploaded photo in use — paste a link to replace' : 'https://… image link'}" onchange="chSet(${i},'image',this.value)"><button class="btn-sm btn-primary-sm" onclick="homePick('chap',${i})">⬆ Upload photo</button></div></div>
-      <div class="ch-tiles">${[0, 1, 2].map(t => { const tl = (c.tiles || [])[t] || { category: '', image: '' }; return `<div class="form-group"><label>Tile ${t + 1}</label><select onchange="chTile(${i},${t},'category',this.value)"><option value="">(none)</option>${cats.map(k => `<option${k === tl.category ? ' selected' : ''}>${esc(k)}</option>`).join('')}</select><button class="btn-sm" style="margin-top:6px" onclick="homePick('ctile','${i},${t}')">⬆ Own photo</button></div>`; }).join('')}</div>
+      <p class="note" style="margin:6px 0 0">Which collections appear under this moment, the moment photo, its order and Delete are in <b>Your moments</b> at the top of this card.</p>
       <div class="th-actions"><button type="button" class="btn-sm" onclick="chMove(${i},-1)">↑ Up</button><button type="button" class="btn-sm" onclick="chMove(${i},1)">↓ Down</button><button type="button" class="btn-sm" onclick="chDel(${i})">🗑 Delete</button></div></div></details>`).join('')}</div>
-    <div class="th-actions"><button type="button" class="btn-sm btn-info-sm" onclick="chAdd()">＋ Add a chapter</button><button type="button" class="btn-sm" onclick="chRestore()">↺ Use the 3 sample chapters</button></div></div>`;
+    <div class="th-actions"><button type="button" class="btn-sm btn-info-sm" onclick="chAdd()">＋ Add a moment</button><button type="button" class="btn-sm" onclick="chRestore()">↺ Use the 3 sample moments</button></div></div>`;
 }
 
-// ---- ✨ AI help for the chapters: Claude drafts three chapters (or three rewrites of one); nothing changes until the owner presses "Use this" ----
+// ---- ✨ AI help for the chapters: Claude drafts three moments (or three rewrites of one); nothing changes until the owner presses "Use this" ----
 const CH_IDEAS = [
   { title: 'A rainy *afternoon.*', words: 'Everyday · Mysore Silk · Ponduru Khadi', quote: 'Tea on the verandah, the radio low, and a saree that feels like a soft old friend.', tiles: ['Mysore Silk', 'Ponduru Khadi', 'Tussar'] },
   { title: 'A visit to the *temple.*', words: 'Festive · Kanjeevaram · Maheswari', quote: 'Silk that rustles gently on the steps, and colours that look their best in morning light.', tiles: ['Kanjeevaram', 'Maheswari', 'Paithani'] },
@@ -6771,8 +6842,8 @@ let CH_AI = { drafts: [], target: null, msg: '', n: 0 };
 const chaiCats = () => db.categories || [];
 function chaiClean(v) {
   const s = (x, n) => String(x == null ? '' : x).replace(/\s+/g, ' ').trim().slice(0, n), cats = chaiCats();
-  const tiles = (Array.isArray(v && v.tiles) ? v.tiles : []).map(t => cats.find(c => c.toLowerCase() === s(t, 40).toLowerCase())).filter(Boolean).filter((c, i, a) => a.indexOf(c) === i).slice(0, 3);
-  const o = { title: s(v && v.title, 60), words: s(v && v.words, 90), quote: s(v && v.quote, 180), tiles }; return o.title && o.quote ? o : null;
+  const tiles = (Array.isArray(v && v.tiles) ? v.tiles : []).map(t => cats.find(c => c.toLowerCase() === s(t, 40).toLowerCase())).filter(Boolean).filter((c, i, a) => a.indexOf(c) === i).slice(0, 6);
+  const o = { title: s(v && v.title, 60), words: s(v && v.words, 90), quote: s(v && v.quote, 180), link: s(v && v.link, 28), tiles }; return o.title && o.quote ? o : null;
 }
 async function chAi(target) {
   const occ = ((el_('ch-ai-occ') || {}).value || '').trim() || (target !== 'new' && chData().items[target] ? String(chData().items[target].title || '').replace(/\*/g, '') : '');
@@ -6786,16 +6857,157 @@ async function chAi(target) {
 }
 function chAiUse(i) {
   const d = CH_AI.drafts[i]; if (!d) return; const C = chData(), tiles = d.tiles.map(cat => ({ category: cat, image: '' }));
-  if (CH_AI.target === 'new') { if (C.items.length >= 8) return showToast('Up to 8 chapters', 'error'); C.items.push({ id: 'ch' + Date.now().toString(36), show: true, title: d.title, words: d.words, quote: d.quote, by: 'Anitha Pemmasani', image: '', tiles, link: 'Enter this chapter' }); }
-  else { const c = C.items[CH_AI.target]; if (!c) return; c.title = d.title; c.words = d.words; c.quote = d.quote; c.tiles = tiles.map(t => { const old = (c.tiles || []).find(x => x.category === t.category); return old || t; }); }
+  if (CH_AI.target === 'new') { if (C.items.length >= 8) return showToast('Up to 8 moments', 'error'); C.items.push({ id: 'ch' + Date.now().toString(36), show: true, title: d.title, words: d.words, quote: d.quote, by: 'Anitha Pemmasani', image: '', tiles, link: d.link || 'See these sarees' }); }
+  else { const c = C.items[CH_AI.target]; if (!c) return; c.title = d.title; c.words = d.words; c.quote = d.quote; if (d.link) c.link = d.link; c.tiles = tiles.map(t => { const old = (c.tiles || []).find(x => x.category === t.category); return old || t; }); }
   CH_AI = { drafts: [], target: null, msg: 'Applied. You can still change any word.', n: CH_AI.n }; chLive(true);
 }
+// ✨ write ALL the words (title, line of weaves, quote, button text) for every moment you already have, keeping each one's collections and photos
+async function chAiAll() {
+  const occ = ((el_('ch-ai-occ') || {}).value || '').trim(), items = chData().items; if (!items.length) return showToast('Add a moment first.', 'error');
+  CH_AI = { drafts: [], all: [], target: 'all', msg: 'Asking Claude to write all the words…', n: CH_AI.n }; const c = el_('adminContent'); if (c) renderHomeAdmin(c);
+  let out = [], note = '';
+  try {
+    if (typeof aiReady === 'function' && aiReady('chapters')) { const j = await aiCall('chapters', { mode: 'all', occasion: occ, categories: chaiCats().slice(0, 12), items: items.map(x => ({ title: String(x.title || '').replace(/\*/g, ''), tiles: (x.tiles || []).map(t => t && t.category).filter(Boolean) })) }); out = Array.isArray(j.data && j.data.items) ? j.data.items : []; }
+  } catch (e) { note = aiMsg(e) + ' Filling the gaps with plain built-in words instead.'; }
+  const clean = (v, x) => { const f = chaiClean({ ...v, tiles: (x.tiles || []).map(t => t.category) }); return f ? { ...f, tiles: (x.tiles || []).map(t => t.category) } : null; };
+  CH_AI.all = items.map((x, i) => clean(out[i] || {}, x) || { title: String(x.title || 'A new *moment.*'), words: ['Occasion'].concat((x.tiles || []).map(t => t.category)).slice(0, 4).join(' · '), quote: x.quote || '', link: chLink(x), tiles: (x.tiles || []).map(t => t.category), builtin: true });
+  if (!out.length && !note) note = 'Claude is not connected, so these are plain built-in words (add the key in Settings → Security → Claude AI key for full wording).';
+  CH_AI.msg = note || 'Drafts ready for every moment. Nothing changes until you press Use.'; if (c) renderHomeAdmin(c);
+}
+function chAiAllUse(i) { const d = (CH_AI.all || [])[i], c = chData().items[i]; if (!d || !c) return; c.title = d.title; c.words = d.words; if (d.quote) c.quote = d.quote; if (d.link) c.link = d.link; const all = CH_AI.all; all[i] = null; CH_AI.msg = `Moment ${i + 1} updated. You can still change any word.`; chLive(true); }
+function chAiAllApply() { (CH_AI.all || []).forEach((d, i) => { if (d) { const c = chData().items[i]; if (c) { c.title = d.title; c.words = d.words; if (d.quote) c.quote = d.quote; if (d.link) c.link = d.link; } } }); CH_AI = { drafts: [], all: null, target: null, msg: 'All the words were updated. You can still change any of them.', n: CH_AI.n }; chLive(true); }
 function chAiPanelHTML() {
-  const on = typeof aiReady === 'function' && aiReady('chapters'), tgt = CH_AI.target === 'new' ? 'a new chapter' : CH_AI.target != null ? 'chapter ' + (CH_AI.target + 1) : '';
-  return `<div class="th-ai" id="ch-ai"><label for="ch-ai-occ"><b>✨ Write chapters with Claude</b> (a few words about the moment or occasion, optional)</label><div class="th-ai-row"><input id="ch-ai-occ" type="text" maxlength="100" placeholder="e.g. a morning at the temple, a daughter's engagement"><button type="button" class="btn-sm btn-info-sm" onclick="chAi('new')"${on ? '' : ' title="Add your Claude key in Settings for fresh ideas; built-in ideas show without it"'}>Suggest 3 chapters</button></div>
+  const on = typeof aiReady === 'function' && aiReady('chapters'), tgt = CH_AI.target === 'new' ? 'a new moment' : CH_AI.target != null ? 'moment ' + (CH_AI.target + 1) : '';
+  return `<div class="th-ai" id="ch-ai"><label for="ch-ai-occ"><b>✨ Write moments with Claude</b> (a few words about the occasion, optional)</label><div class="th-ai-row"><input id="ch-ai-occ" type="text" maxlength="100" placeholder="e.g. a morning at the temple, a daughter's engagement"><button type="button" class="btn-sm btn-info-sm" onclick="chAi('new')"${on ? '' : ' title="Add your Claude key in Settings for fresh ideas; built-in ideas show without it"'}>Suggest 3 new moments</button><button type="button" class="btn-sm btn-primary-sm" onclick="chAiAll()">✨ Write ALL the words for my moments</button></div>
+    <p class="note" style="margin:4px 0 0;font-size:.78rem">“Write ALL the words” rewrites the title, the line of weaves, the quote and the button text of every moment you have, and keeps each one's collections and photos. You choose what to keep.</p>
+    ${(CH_AI.all || []).some(Boolean) ? `<p class="note" style="margin:8px 0 0">Words for every moment <button type="button" class="btn-sm btn-primary-sm" onclick="chAiAllApply()">Use all</button></p><div class="th-presets">${CH_AI.all.map((d, i) => d ? `<div class="th-draft" style="max-width:320px"><small>Moment ${i + 1}${d.builtin ? ' (built-in)' : ''}</small><b>${esc(d.title.replace(/\*/g, ''))}</b><small>${esc(d.words)}</small>${d.quote ? `<small>“${esc(d.quote)}”</small>` : ''}<small>Button: ${esc(d.link || 'See these sarees')}</small><button type="button" class="btn-sm btn-info-sm" onclick="chAiAllUse(${i})">Use this</button></div>` : '').join('')}</div>` : ''}
     ${CH_AI.drafts.length ? `<p class="note" style="margin:8px 0 0">Drafts for ${esc(tgt)}:</p><div class="th-presets">${CH_AI.drafts.map((d, i) => `<div class="th-draft" style="max-width:300px"><b>${esc(d.title.replace(/\*/g, ''))}</b><small>${esc(d.words)}</small><small>“${esc(d.quote)}”</small>${d.tiles.length ? `<small>Tiles: ${esc(d.tiles.join(', '))}</small>` : ''}<button type="button" class="btn-sm btn-info-sm" onclick="chAiUse(${i})">Use this</button></div>`).join('')}</div>` : ''}
     ${CH_AI.msg ? `<p class="note" role="status" style="margin:8px 0 0">${esc(CH_AI.msg)}</p>` : ''}</div>`;
 }
+// ================= Website background (Home Page → Background, admin) =================
+// A soft, hand-drawn style backdrop behind the whole website: kalamkari paisleys and vines, peacocks and feathers, lotus, festival lamps.
+// All art is drawn here in code (original shapes, nothing copied or downloaded), placed at random positions from a "shuffle number" so the same number always gives the same picture.
+// The admin builds a look in the preview box first; nothing changes on the website until she presses "Put this on the website". Looks can be saved and swapped for a festival.
+const BG_PALETTES = {
+  heritage: { name: 'Heritage (indigo, madder, sand)', c: ['#2b3a67', '#a23b2a', '#d9c9a3', '#b8923a'] },
+  peacock: { name: 'Peacock (teal, blue, gold)', c: ['#0e5c63', '#2a7fb8', '#9fd3c7', '#c9a227'] },
+  festive: { name: 'Festive (maroon, saffron, gold)', c: ['#7a1f1f', '#d9731a', '#f2c46d', '#b8923a'] },
+  monsoon: { name: 'Monsoon (green, rose, mist)', c: ['#2f5d50', '#c76b8a', '#cfe3d4', '#b8923a'] },
+};
+const BG_STYLES = {
+  plain: { name: 'Plain (no pattern)', motifs: [], palette: 'heritage' },
+  kalamkari: { name: 'Kalamkari', motifs: ['paisley', 'flower', 'vine'], palette: 'heritage' },
+  peacock: { name: 'Peacocks', motifs: ['peacock', 'feather', 'lotus'], palette: 'peacock' },
+  festive: { name: 'Festival lamps', motifs: ['diya', 'star', 'flower', 'paisley'], palette: 'festive' },
+  lotus: { name: 'Lotus and leaves', motifs: ['lotus', 'vine', 'flower'], palette: 'monsoon' },
+  custom: { name: 'Claude’s idea', motifs: [], palette: 'heritage' },
+};
+const BG_DENSITY = { light: 12, medium: 22, rich: 36 };
+const BG_MOTIF_IDS = ['paisley', 'flower', 'vine', 'peacock', 'feather', 'lotus', 'diya', 'star'];
+const bgHex = v => /^#[0-9a-f]{6}$/i.test(String(v || '')) ? String(v).toLowerCase() : '';
+const bgRng = seed => { let a = (Number(seed) || 1) >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; };
+function bgClean(v) {
+  v = v && typeof v === 'object' ? v : {}; const style = BG_STYLES[v.style] ? v.style : 'plain', pal = BG_PALETTES[v.palette] || v.palette === 'custom' ? v.palette : (BG_STYLES[style].palette);
+  const colors = (Array.isArray(v.colors) ? v.colors : []).map(bgHex).filter(Boolean).slice(0, 4);
+  const motifs = (Array.isArray(v.motifs) ? v.motifs : []).filter(m => BG_MOTIF_IDS.includes(m)).filter((m, i, a) => a.indexOf(m) === i).slice(0, 6);
+  return { style, palette: pal === 'custom' && colors.length === 4 ? 'custom' : (BG_PALETTES[pal] ? pal : BG_STYLES[style].palette), colors: colors.length === 4 ? colors : [], motifs, density: BG_DENSITY[v.density] ? v.density : 'medium', strength: Math.min(0.4, Math.max(0.08, Number(v.strength) || 0.26)), seed: Math.max(1, Math.floor(Number(v.seed)) || 1), tint: bgHex(v.tint), name: String(v.name || '').replace(/[<>"]/g, '').slice(0, 40) };
+}
+const bgColors = s => s.palette === 'custom' && s.colors.length === 4 ? s.colors : (BG_PALETTES[s.palette] || BG_PALETTES.heritage).c;
+// ---- the art: each motif is drawn in a 100 x 100 box; c = [main line, accent, soft fill, gold] ----
+const BG_ART = {
+  paisley: (c, r) => `<path d="M50 6 C86 20 94 58 68 82 C50 98 22 90 18 66 C15 48 30 36 44 42 C55 47 54 62 44 63 C36 64 33 56 38 52" fill="${c[2]}" fill-opacity=".55" stroke="${c[0]}" stroke-width="2.4" stroke-linejoin="round"/><path d="M50 18 C74 28 80 54 64 72 C52 84 34 80 31 66" fill="none" stroke="${c[1]}" stroke-width="1.6" stroke-dasharray="1 4" stroke-linecap="round"/><circle cx="62" cy="36" r="3.2" fill="${c[1]}"/><circle cx="70" cy="52" r="2.6" fill="${c[3]}"/><circle cx="64" cy="68" r="2.2" fill="${c[1]}"/>`,
+  flower: (c, r) => Array.from({ length: 8 }, (_, i) => `<ellipse cx="50" cy="26" rx="9" ry="18" transform="rotate(${i * 45} 50 50)" fill="${c[1]}" fill-opacity=".45" stroke="${c[0]}" stroke-width="1.6"/>`).join('') + `<circle cx="50" cy="50" r="9" fill="${c[3]}" stroke="${c[0]}" stroke-width="1.6"/><circle cx="50" cy="50" r="3.4" fill="${c[0]}"/>` + Array.from({ length: 8 }, (_, i) => `<circle cx="${50 + 44 * Math.cos(i * Math.PI / 4 + .39)}" cy="${50 + 44 * Math.sin(i * Math.PI / 4 + .39)}" r="1.8" fill="${c[0]}"/>`).join(''),
+  vine: (c, r) => `<path d="M4 62 C24 28 44 86 64 52 S90 40 96 54" fill="none" stroke="${c[0]}" stroke-width="2.2" stroke-linecap="round"/>` + [[20, 44, -30], [38, 66, 160], [56, 54, -50], [74, 46, 140], [88, 50, -20]].map(([x, y, a]) => `<path d="M${x} ${y} q 8 -16 20 -8 q -6 16 -20 8z" transform="rotate(${a} ${x} ${y})" fill="${c[2]}" fill-opacity=".7" stroke="${c[0]}" stroke-width="1.4"/>`).join('') + `<circle cx="64" cy="52" r="3" fill="${c[1]}"/><circle cx="30" cy="52" r="2.4" fill="${c[1]}"/>`,
+  feather: (c, r) => `<path d="M50 98 C48 70 52 50 50 30" fill="none" stroke="${c[0]}" stroke-width="2"/>` + Array.from({ length: 11 }, (_, i) => { const y = 36 + i * 5.2, w = 15 - Math.abs(i - 3) * 1.1; return `<path d="M50 ${y} l ${-w} ${-7}M50 ${y} l ${w} ${-7}" stroke="${c[2]}" stroke-width="1.4" stroke-linecap="round"/>`; }).join('') + `<ellipse cx="50" cy="24" rx="15" ry="21" fill="${c[1]}" fill-opacity=".8" stroke="${c[0]}" stroke-width="1.4"/><ellipse cx="50" cy="25" rx="9.5" ry="14" fill="${c[3]}"/><ellipse cx="50" cy="26" rx="5" ry="8" fill="${c[0]}"/><ellipse cx="50" cy="26" rx="2" ry="3.4" fill="${c[2]}"/>`,
+  peacock: (c, r) => { let t = ''; for (let i = 0; i < 9; i++) { const a = (-165 + i * 15) * Math.PI / 180, x = 70 + 56 * Math.cos(a), y = 74 + 56 * Math.sin(a); t += `<path d="M70 74 L${x.toFixed(1)} ${y.toFixed(1)}" stroke="${c[0]}" stroke-width="1.4"/><ellipse cx="${(70 + 40 * Math.cos(a)).toFixed(1)}" cy="${(74 + 40 * Math.sin(a)).toFixed(1)}" rx="7" ry="20" transform="rotate(${(i * 15 - 165 + 90).toFixed(0)} ${(70 + 40 * Math.cos(a)).toFixed(1)} ${(74 + 40 * Math.sin(a)).toFixed(1)})" fill="${c[2]}" fill-opacity=".5" stroke="${c[1]}" stroke-width="1.1"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6" fill="${c[1]}"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.6" fill="${c[3]}"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.7" fill="${c[0]}"/>`; } return t + `<ellipse cx="54" cy="76" rx="19" ry="12" fill="${c[0]}"/><path d="M40 70 C30 60 32 46 33 37" fill="none" stroke="${c[0]}" stroke-width="6" stroke-linecap="round"/><circle cx="33" cy="33" r="5.2" fill="${c[0]}"/><path d="M28 32 l-7 2 l7 2z" fill="${c[3]}"/><path d="M33 28 l-2 -7 M36 28 l1 -7 M30 28 l-4 -6" stroke="${c[0]}" stroke-width="1.4"/><circle cx="31" cy="21" r="1.4" fill="${c[1]}"/><circle cx="37.5" cy="20.5" r="1.4" fill="${c[1]}"/><path d="M50 87 l-2 10 M58 87 l1 10" stroke="${c[0]}" stroke-width="1.6"/>`; },
+  lotus: (c, r) => [-62, -31, 0, 31, 62].map((a, i) => `<path d="M50 90 C30 70 30 40 50 14 C70 40 70 70 50 90z" transform="rotate(${a} 50 90)" fill="${c[1]}" fill-opacity="${0.22 + (2 - Math.abs(i - 2)) * 0.12}" stroke="${c[0]}" stroke-width="1.5"/>`).join('') + `<circle cx="50" cy="88" r="4" fill="${c[3]}" stroke="${c[0]}" stroke-width="1.2"/><path d="M26 94 q24 8 48 0" fill="none" stroke="${c[2]}" stroke-width="2.4" stroke-linecap="round"/>`,
+  diya: (c, r) => `<path d="M18 60 Q50 96 82 60 Z" fill="${c[1]}" fill-opacity=".8" stroke="${c[0]}" stroke-width="2"/><path d="M14 60 H86" stroke="${c[0]}" stroke-width="2.4" stroke-linecap="round"/><path d="M50 14 C64 32 62 48 50 56 C38 48 36 32 50 14z" fill="${c[3]}" stroke="${c[1]}" stroke-width="1.6"/><path d="M50 30 C56 38 55 46 50 50 C45 46 44 38 50 30z" fill="${c[2]}"/><path d="M36 74 q14 8 28 0" fill="none" stroke="${c[3]}" stroke-width="1.6"/><path d="M40 92 H60" stroke="${c[0]}" stroke-width="2"/>`,
+  star: (c, r) => { let p = ''; for (let i = 0; i < 16; i++) { const rad = i % 2 ? 17 : 42, a = i * Math.PI / 8 - Math.PI / 2; p += `${(50 + rad * Math.cos(a)).toFixed(1)},${(50 + rad * Math.sin(a)).toFixed(1)} `; } return `<polygon points="${p}" fill="${c[2]}" fill-opacity=".55" stroke="${c[0]}" stroke-width="1.8" stroke-linejoin="round"/><circle cx="50" cy="50" r="6" fill="${c[1]}"/>` + Array.from({ length: 16 }, (_, i) => `<circle cx="${(50 + 47 * Math.cos(i * Math.PI / 8)).toFixed(1)}" cy="${(50 + 47 * Math.sin(i * Math.PI / 8)).toFixed(1)}" r="1.5" fill="${c[3]}"/>`).join(''); },
+};
+// the whole picture as one SVG (W x H), motifs scattered at random positions: most near the left and right edges so the middle stays calm to read
+function bgSvg(spec, W = 1600, H = 1000) {
+  const s = bgClean(spec), style = BG_STYLES[s.style]; if (s.style === 'plain') return '';
+  const motifs = s.style === 'custom' ? (s.motifs.length ? s.motifs : ['paisley', 'flower']) : style.motifs, c = bgColors(s), rnd = bgRng(s.seed), n = BG_DENSITY[s.density], placed = []; let g = '';
+  for (let i = 0; i < n; i++) {
+    const id = motifs[Math.floor(rnd() * motifs.length)], size = (id === 'peacock' ? 190 : 125) * (0.65 + rnd() * 0.7); let x = 0, y = 0;
+    for (let t = 0; t < 25; t++) { const edge = rnd() < 0.72; x = edge ? (rnd() < 0.5 ? rnd() * 0.24 : 0.76 + rnd() * 0.24) * W : rnd() * W; y = rnd() * H; if (placed.every(p => Math.hypot(p[0] - x, p[1] - y) > (p[2] + size) * 0.5)) break; }
+    placed.push([x, y, size]); const rot = Math.round((rnd() - 0.5) * (id === 'peacock' ? 24 : 80)), k = size / 100, flip = rnd() < 0.5 ? -1 : 1;
+    g += `<g transform="translate(${x.toFixed(0)} ${y.toFixed(0)}) rotate(${rot}) scale(${(k * flip).toFixed(3)} ${k.toFixed(3)}) translate(-50 -50)">${BG_ART[id](c, rnd)}</g>`;
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"><g opacity="${s.strength}">${g}</g></svg>`;
+}
+const bgUrl = spec => { const svg = bgSvg(spec); return svg ? `url("data:image/svg+xml,${encodeURIComponent(svg)}")` : 'none'; };
+// ---- the website: one fixed layer behind everything ----
+function applyBackground() {
+  if (typeof BUILD !== 'undefined' && BUILD === 'admin') return;
+  const sf = document.getElementById('storefrontView'); if (!sf) return; let el = document.getElementById('siteBg');
+  const spec = db && db.home && db.home.background ? bgClean(db.home.background) : null;
+  if (!spec || spec.style === 'plain') { if (el) el.remove(); return; }
+  if (!el) { el = document.createElement('div'); el.id = 'siteBg'; el.setAttribute('aria-hidden', 'true'); sf.insertBefore(el, sf.firstChild); }
+  el.style.backgroundImage = bgUrl(spec); el.style.backgroundColor = spec.tint || ''; el.dataset.style = spec.style;
+}
+// ---- the admin card: build a look, see it big, then deploy ----
+const BG = { draft: null, ideas: [], msg: '', busy: false, saveName: '' };
+const bgCurrent = () => bgClean((db.home && db.home.background) || { style: 'plain' });
+const bgDraft = () => { if (!BG.draft) BG.draft = bgCurrent(); return BG.draft; };
+const bgSame = (a, b) => JSON.stringify(bgClean(a)) === JSON.stringify(bgClean(b));
+function bgIdeasBuiltin(text) {
+  const t = String(text || '').toLowerCase(), mk = (name, style, palette, density, note, extra) => bgClean({ style, palette, density, strength: 0.24, seed: 1 + Math.floor(Math.random() * 9000), name, ...extra }), out = [];
+  const pick = (re, ...ideas) => { if (re.test(t)) out.push(...ideas); };
+  pick(/diwali|deepavali|lamp|light/, mk('Diwali lamps', 'festive', 'festive', 'rich'), mk('Golden stars', 'festive', 'festive', 'medium', '', { motifs: ['star', 'diya'] }));
+  pick(/pongal|sankranti|harvest|ugadi|new year/, mk('Harvest flowers', 'lotus', 'monsoon', 'medium'), mk('Fresh kalamkari', 'kalamkari', 'heritage', 'medium'));
+  pick(/dasara|navaratri|dussehra|durga|temple/, mk('Temple lotus', 'lotus', 'festive', 'medium'), mk('Festive paisley', 'festive', 'festive', 'rich'));
+  pick(/wedding|bride|marriage/, mk('Wedding peacocks', 'peacock', 'peacock', 'medium'), mk('Gold paisley', 'kalamkari', 'festive', 'light'));
+  pick(/monsoon|rain|summer|cool|calm/, mk('Quiet lotus', 'lotus', 'monsoon', 'light'), mk('Soft kalamkari', 'kalamkari', 'monsoon', 'light'));
+  out.push(mk('Classic kalamkari', 'kalamkari', 'heritage', 'medium'), mk('Peacock garden', 'peacock', 'peacock', 'medium'), mk('Festival glow', 'festive', 'festive', 'medium'));
+  return out.filter((x, i, a) => a.findIndex(y => y.name === x.name) === i).slice(0, 3);
+}
+function bgIdeaFromAi(v) { if (!v || typeof v !== 'object') return null; const motifs = (Array.isArray(v.motifs) ? v.motifs : []).filter(m => BG_MOTIF_IDS.includes(m)); const colors = (Array.isArray(v.palette) ? v.palette : []).map(bgHex).filter(Boolean); if (!motifs.length) return null; return bgClean({ style: 'custom', motifs, palette: colors.length === 4 ? 'custom' : 'heritage', colors: colors.length === 4 ? colors : [], density: v.density, strength: v.strength, tint: v.tint, seed: 1 + Math.floor(Math.random() * 9000), name: v.name || 'Claude’s idea' }); }
+async function bgAsk() {
+  const occ = String((el_('bg-occ') || {}).value || '').trim(); BG.busy = true; BG.msg = 'Asking Claude…'; bgRedraw();
+  let ideas = [], note = '';
+  try { if (typeof aiReady === 'function' && aiReady('background')) { const j = await aiCall('background', { occasion: occ, current: bgCurrent().name || BG_STYLES[bgCurrent().style].name }); ideas = ((j.data && j.data.ideas) || []).map(bgIdeaFromAi).filter(Boolean).slice(0, 3); if (!ideas.length) note = 'Claude gave nothing usable. Showing built-in ideas instead.'; } } catch (e) { note = aiMsg(e) + ' Showing built-in ideas instead.'; }
+  if (!ideas.length) { ideas = bgIdeasBuiltin(occ); note = note || 'Claude is not connected, so these are built-in ideas (add the key in Settings → Security for fresh ones).'; }
+  BG.ideas = ideas; BG.msg = note; BG.busy = false; bgRedraw();
+}
+function bgPreviewHTML(spec) {
+  const u = bgUrl(spec), tint = bgClean(spec).tint;
+  return `<div class="bg-preview" id="bg-preview" style="background-image:${u.replace(/"/g, '&quot;')};${tint ? 'background-color:' + tint : ''}"><div class="bg-mock"><div class="bg-mock-nav"><b>Anitha Pemmasani</b><span>HOME · COLLECTION · SAREE CARE · JOURNAL</span></div><div class="bg-mock-hero"><small>MOMENT I</small><b>A Tuesday <i>morning.</i></b></div><p>“Light enough to forget you are wearing it, and kind enough to last the whole working day.”</p></div></div>`;
+}
+function backgroundCardHTML() {
+  const d = bgDraft(), cur = bgCurrent(), looks = (db.home && db.home.backgroundLooks) || [], same = bgSame(d, cur), chip = (on, fn, label) => `<button type="button" class="bg-chip ${on ? 'on' : ''}" aria-pressed="${on}" onclick="${fn}">${label}</button>`;
+  return `<div class="admin-card" id="bg-card"><h3>🎨 Website background</h3>
+    <p class="note" style="margin:0 0 8px">A soft pattern behind the whole website: kalamkari paisleys, peacocks, lotus, festival lamps. Build it below and watch the preview. <b>Nothing changes on the website until you press “Put this on the website”.</b> Change it for each festival, and save looks to bring them back later.</p>
+    <p class="note" id="bg-status" style="margin:0 0 6px"></p>
+    <div id="bg-preview-box">${bgPreviewHTML(d)}</div>
+    <div class="bg-ctl"><div><b>Style</b><div class="bg-chips">${Object.keys(BG_STYLES).filter(k => k !== 'custom' || d.style === 'custom').map(k => chip(d.style === k, `bgSet('style','${k}')`, esc(k === 'custom' ? 'Claude’s idea' + (d.name ? ': ' + d.name : '') : BG_STYLES[k].name))).join('')}</div></div>
+    <div><b>Colours</b><div class="bg-chips">${Object.keys(BG_PALETTES).map(k => chip(d.palette === k, `bgSet('palette','${k}')`, `<span class="bg-sw">${BG_PALETTES[k].c.map(x => `<i style="background:${x}"></i>`).join('')}</span> ${esc(BG_PALETTES[k].name.split(' (')[0])}`)).join('')}${d.palette === 'custom' ? chip(true, "bgSet('palette','custom')", `<span class="bg-sw">${d.colors.map(x => `<i style="background:${x}"></i>`).join('')}</span> From the idea`) : ''}</div></div>
+    <div><b>How full</b><div class="bg-chips">${['light', 'medium', 'rich'].map(k => chip(d.density === k, `bgSet('density','${k}')`, { light: 'Light', medium: 'Medium', rich: 'Rich' }[k])).join('')}</div></div>
+    <div><b>How strong</b> <small id="bg-str-v">${Math.round(d.strength * 100)}%</small><input id="bg-str" type="range" min="8" max="40" step="1" value="${Math.round(d.strength * 100)}" oninput="bgSet('strength',this.value/100,true)" aria-label="How strong the pattern is"></div>
+    <div><b>Positions</b> <small>(shuffle number <span id="bg-seed">${d.seed}</span>)</small><div class="bg-chips"><button type="button" class="bg-chip" onclick="bgShuffle()">🔀 Shuffle positions</button></div></div></div>
+    <div class="th-actions"><button type="button" class="btn-sm btn-primary-sm" id="bg-apply" onclick="bgApply()">🌐 Put this on the website</button><button type="button" class="btn-sm" onclick="bgRemove()">Remove the background</button><button type="button" class="btn-sm" onclick="bgReset()">↺ Back to what the website has now</button></div>
+    <div class="th-ai" id="bg-ai"><label for="bg-occ"><b>✨ Ask Claude for a background idea</b> (a festival or a feeling, optional)</label><div class="th-ai-row"><input id="bg-occ" type="text" maxlength="100" placeholder="e.g. Diwali, a wedding season, calm monsoon"><button type="button" class="btn-sm btn-info-sm" onclick="bgAsk()" ${BG.busy ? 'disabled' : ''}>Give me 3 ideas</button></div>
+      ${BG.ideas.length ? `<div class="bg-ideas">${BG.ideas.map((x, i) => `<div class="bg-idea"><div class="bg-idea-pic" style="background-image:${bgUrl(x).replace(/"/g, '&quot;')};${x.tint ? 'background-color:' + x.tint : ''}"></div><b>${esc(x.name || 'Idea')}</b><small>${esc(BG_STYLES[x.style].name)} · ${esc(x.density)}</small><button type="button" class="btn-sm btn-info-sm" onclick="bgUseIdea(${i})">Preview this</button></div>`).join('')}</div>` : ''}
+      ${BG.msg ? `<p class="note" role="status" style="margin:8px 0 0">${esc(BG.msg)}</p>` : ''}</div>
+    <div class="bg-looks"><b>Saved looks</b> <small>(for festivals and seasons)</small>${looks.length ? `<div class="hn-list">${looks.map(l => `<div><span>${esc(l.name)}<small>${esc(BG_STYLES[bgClean(l.spec).style].name)} · ${esc(bgClean(l.spec).density)}</small></span><span class="th-actions" style="margin:0"><button type="button" class="btn-sm" onclick="bgLookPreview('${l.id}')">Preview</button><button type="button" class="btn-sm btn-primary-sm" onclick="bgLookApply('${l.id}')">Put on website</button><button type="button" class="btn-sm" onclick="bgLookDel('${l.id}')">Delete</button></span></div>`).join('')}</div>` : '<p class="note">None yet. Build a look you like, give it a name (for example “Diwali 2026”) and save it.</p>'}
+      <div class="th-ai-row"><input id="bg-name" type="text" maxlength="40" placeholder="Name this look, e.g. Diwali 2026" value="${esc(BG.saveName)}" oninput="BG.saveName=this.value"><button type="button" class="btn-sm" onclick="bgSaveLook()">💾 Save this look</button></div></div></div>`;
+}
+function bgRedraw() { const c = el_('bg-card'); if (!c) return; const t = c.parentNode, y = window.scrollY; c.outerHTML = backgroundCardHTML(); bgStatus(); }
+function bgStatus() { const e = el_('bg-status'); if (!e) return; const same = bgSame(bgDraft(), bgCurrent()); e.innerHTML = same ? `On the website now: <b>${esc(bgCurrent().style === 'plain' ? 'no background' : (bgCurrent().name || BG_STYLES[bgCurrent().style].name))}</b>.` : `<b>Preview only</b>: this is not on the website yet. On the website now: ${esc(bgCurrent().style === 'plain' ? 'no background' : (bgCurrent().name || BG_STYLES[bgCurrent().style].name))}.`; e.className = 'note' + (same ? '' : ' bg-unsaved'); const b = el_('bg-apply'); if (b) b.disabled = same; }
+function bgLive() { const b = el_('bg-preview-box'); if (b) b.innerHTML = bgPreviewHTML(bgDraft()); const s = el_('bg-seed'); if (s) s.textContent = bgDraft().seed; bgStatus(); }
+function bgSet(k, v, soft) {
+  const d = bgDraft(); if (k === 'style') { const st = BG_STYLES[v]; d.style = v; if (v !== 'custom') { d.palette = st.palette; d.colors = []; d.motifs = []; d.name = ''; } } else d[k] = v;
+  BG.draft = bgClean(d); if (k === 'strength') { const e = el_('bg-str-v'); if (e) e.textContent = Math.round(BG.draft.strength * 100) + '%'; return bgLive(); } if (soft) return bgLive(); bgRedraw();
+}
+function bgShuffle() { BG.draft = bgClean({ ...bgDraft(), seed: 1 + Math.floor(Math.random() * 99999) }); bgLive(); }
+function bgUseIdea(i) { const x = BG.ideas[i]; if (!x) return; BG.draft = bgClean(x); bgRedraw(); const p = el_('bg-preview-box'); if (p) p.scrollIntoView({ block: 'center' }); }
+function bgReset() { BG.draft = bgCurrent(); bgRedraw(); }
+function bgApply() { const d = bgClean(bgDraft()); db.home.background = d; BG.draft = d; homeLive(false); if (typeof homeFlush === 'function') homeFlush(); applyBackground(); bgRedraw(); showToast('The background is now on the website.', 'success'); }
+function bgRemove() { if (!confirm('Remove the background from the website?')) return; BG.draft = bgClean({ style: 'plain' }); bgApply(); showToast('Background removed.', 'success'); }
+function bgSaveLook() { const name = String(BG.saveName || '').trim().slice(0, 40); if (!name) return showToast('Give the look a name first, for example Diwali 2026.', 'error'); const L = (db.home.backgroundLooks = db.home.backgroundLooks || []); if (L.length >= 12) return showToast('You can keep up to 12 looks. Delete one first.', 'error'); L.unshift({ id: 'bl' + Date.now().toString(36), name, spec: { ...bgClean(bgDraft()), name } }); BG.saveName = ''; homeLive(false); if (typeof homeFlush === 'function') homeFlush(); bgRedraw(); showToast('Saved. It stays here for next year.', 'success'); }
+function bgLookPreview(id) { const l = ((db.home && db.home.backgroundLooks) || []).find(x => x.id === id); if (!l) return; BG.draft = bgClean(l.spec); bgRedraw(); const p = el_('bg-preview-box'); if (p) p.scrollIntoView({ block: 'center' }); }
+function bgLookApply(id) { const l = ((db.home && db.home.backgroundLooks) || []).find(x => x.id === id); if (!l) return; BG.draft = bgClean(l.spec); bgApply(); }
+function bgLookDel(id) { if (!confirm('Delete this saved look?')) return; db.home.backgroundLooks = ((db.home && db.home.backgroundLooks) || []).filter(x => x.id !== id); homeLive(false); if (typeof homeFlush === 'function') homeFlush(); bgRedraw(); }
 // ================= OWNER DASHBOARD (interactive) + DRAFTS BY CATEGORY + ADD-TO-CART ANIMATION (29 Oct 2026) =================
 const DASH = { range: '30', metric: 'revenue', sel: null };
 const DASH_RANGES = [['1', 'Today'], ['7', '7 days'], ['30', '30 days'], ['90', '90 days'], ['365', '12 months'], ['all', 'All time']];
@@ -7082,7 +7294,7 @@ function cartAnim(btn) {
 // ================= AI HELPERS for the owner (30 Oct 2026) =================
 // Every helper only DRAFTS: nothing is sent to customers or saved without the owner pressing the button.
 // Connected = the assistant server address + admin token are set (WhatsApp Assistant tab); otherwise built-in drafts are used where they exist.
-const AI_FEATURES = [['describe', 'Product descriptions, tags & SEO'], ['photo', 'Read colours & fabric from a photo'], ['reply', 'WhatsApp reply suggestions (Inbox)'], ['write', 'Festival, offer & caption writer'], ['palette', 'Website colour ideas (Home Page → Website colours)'], ['repair', 'Repair assistant chat (Ops page: explains the checks, suggests repairs)'], ['chapters', 'Story chapter wording (Home Page → Story chapters)'], ['watemplate', 'WhatsApp template wording (WhatsApp promotions)'], ['notes', 'Notes from the loom wording (Home Page)'], ['hero', 'Home page words (small heading, title, button)'], ['review', 'Review replies'], ['ask', 'Ask your shop'], ['summary', 'Weekly summary'], ['pricing', 'Pricing & stock ideas'], ['cleanup', 'Data clean-up'], ['translate', 'Translation (Telugu / Hindi / English)'], ['captionpack', 'Caption & hashtag pack (English + Telugu)'], ['followup', 'Follow-up message drafts'], ['orderdraft', 'Order message drafts'], ['privacydraft', 'Privacy request reply drafts'], ['contentweek', 'Weekly content writer']];
+const AI_FEATURES = [['describe', 'Product descriptions, tags & SEO'], ['photo', 'Read colours & fabric from a photo'], ['reply', 'WhatsApp reply suggestions (Inbox)'], ['write', 'Festival, offer & caption writer'], ['palette', 'Website colour ideas (Home Page → Website colours)'], ['repair', 'Repair assistant chat (Ops page: explains the checks, suggests repairs)'], ['chapters', 'Moments wording (Home Page → Moments)'], ['background', 'Website background ideas (Home Page → Website background)'], ['watemplate', 'WhatsApp template wording (WhatsApp promotions)'], ['notes', 'Notes from the loom wording (Home Page)'], ['hero', 'Home page words (small heading, title, button)'], ['review', 'Review replies'], ['ask', 'Ask your shop'], ['summary', 'Weekly summary'], ['pricing', 'Pricing & stock ideas'], ['cleanup', 'Data clean-up'], ['translate', 'Translation (Telugu / Hindi / English)'], ['captionpack', 'Caption & hashtag pack (English + Telugu)'], ['followup', 'Follow-up message drafts'], ['orderdraft', 'Order message drafts'], ['privacydraft', 'Privacy request reply drafts'], ['contentweek', 'Weekly content writer']];
 const AI_LANGS = [['en', 'English'], ['te', 'తెలుగు Telugu'], ['hi', 'हिन्दी Hindi']];
 const aiCfg = () => { const c = { master: true, ...(db.settings.ai || {}) }; AI_FEATURES.forEach(([k]) => { if (c[k] === undefined) c[k] = true; }); return c; };
 const aiOn = k => { const c = aiCfg(); return !!c.master && !!c[k]; };
@@ -7786,6 +7998,7 @@ const ADM_NAV = [
   { id: 'look', label: 'Website look', hint: 'How the website looks and what its pages say.', tabs: ['home', 'pages'] },
   { id: 'privacy', label: 'Privacy & legal', hint: 'Customers’ rights and your legal duties.', tabs: ['privacy'] },
   { id: 'tech', label: 'AI, health & settings', hint: 'The helpers, the health of the server, and the settings.', tabs: ['ai', 'ops', 'logs', 'settings'] },
+  { id: 'help', label: 'Help', hint: 'How the shop works, and what to do and not to do.', tabs: ['guide'] },
 ];
 // what each page does, in plain words. `owner` / `admin` give a different line to that login when the page is shared.
 const ADM_DESC = {
@@ -7807,12 +8020,13 @@ const ADM_DESC = {
   whatsapp: { owner: 'Your WhatsApp assistant’s conversations: read them, take over a chat and answer yourself.', admin: 'Connect and test the WhatsApp assistant: the number, the greeting, the chat button and the test chat.', d: 'The WhatsApp assistant.' },
   promo: { d: 'WhatsApp promotions: counts of regular and promotion messages, what they cost, other running costs and total expenses, the message templates (with AI wording help) and the promotions sent to customers who said yes to offers.' },
   social: { d: 'Plan and post pictures and short videos to Instagram. You see a preview and approve each post. Nothing is posted without you.' },
-  home: { d: 'The look of the home page: the big banner, category tiles, the story chapters and their photos, quote, notes and the website colours.' },
+  home: { d: 'The look of the home page: the big banner, category tiles, the website background (kalamkari, peacocks, festival lamps), the moments (story sections) and their photos, quote, notes and the website colours.' },
   pages: { d: 'The words on the other pages: Saree Care, the Journal, FAQs and extra pages you add.' },
   privacy: { d: 'Customers’ privacy requests (see my data, correct it, erase it), the clean-up of old data and what you must tell customers. The law gives deadlines, so this page counts them.' },
   ai: { d: 'Switch each AI helper on or off. Helpers only write drafts; nothing reaches a customer until you approve it.' },
   ops: { d: 'Is the server healthy? Red and yellow lines say what needs attention, the repair assistant explains them in plain words, and safe repairs run by themselves.' },
   logs: { d: 'A record of who changed what and when. Use it to check that nothing happened that should not have.' },
+  guide: { d: 'One page that explains every part of the shop in plain words: what it does, how it works, what to do and what not to do. You can search it.' },
   settings: { owner: 'Your business details: name, GST, bank, invoice numbering and the policies shown to customers. Plus your own password and the backup.', admin: 'The technical settings: website address, search description, customer sign-in service and AI service. Plus passwords, 2-step sign-in, the Claude key and the owner login.', d: 'Settings.' },
 };
 const admDescOf = t => { const x = ADM_DESC[t]; if (!x) return ''; const role = (typeof ADM !== 'undefined' && ADM.role) || (typeof ADM_AS !== 'undefined' ? ADM_AS : ''); return x[role] || x.d || ''; };
@@ -7845,6 +8059,73 @@ function admSettingsHelp(root) {
   const role = BUILD === 'admin' ? (ADM.role || ADM_AS) : '';
   root.querySelectorAll('[data-for]').forEach(c => { const f = c.dataset.for; if (role && f !== 'both' && f !== role) c.style.display = 'none'; });
 }
+// ================= "How it works" page: one page in each login (Owner and Admin) =================
+// What each system does, how it works in plain words, what to do and what NOT to do. The text is written for each login: the owner sees the business side, the admin the technical side.
+const HOW_SECTIONS = [
+  { id: 'logins', who: ['owner', 'admin'], icon: '🔑', title: 'The two logins', does: 'The shop has two separate sign-ins so nobody can break what is not theirs.',
+    works: ['Owner (/owner, name + password): the business: sarees, categories, prices, orders, customers, coupons, delivery, invoices, photos and Instagram posts, privacy requests, the WhatsApp assistant chats, her own password and backup.', 'Admin (/admin, password): the look of the website (home page, pages, colours), WhatsApp and promotions setup, the AI helpers and Claude key, server health, owner login, security.', 'The server checks who you are on every click. A page that is not yours is simply not shown, and a direct address is refused.'],
+    do: ['Use your own login only. Sign out on a shared computer.', 'Choose a long password (12+ characters) and switch on 2-step sign-in.', 'Press Ctrl+Shift+R after the shop is updated if something looks old.'], dont: ['Never share your password, even with the person who helps you.', 'Never ask anyone to send a password or key in a chat or email.'] },
+  { id: 'products', who: ['owner'], icon: '📦', title: 'Products and categories', does: 'Everything you sell, shown on the website straight away.',
+    works: ['Products: photos, price, stock, fabric, colours, description. A product with stock 0 shows as sold out. Saving publishes it to the website within seconds.', 'Categories group sarees; Accessory categories group the extras. The Categories page has a switch to show or hide Accessories on the website (nothing is deleted).', 'Saved Drafts hold products you have not finished. Publish them when ready.'],
+    do: ['Keep stock numbers true; the website and orders trust them.', 'Add clear photos in daylight; the ☀ daylight photo shows the truest colour.', 'Use the AI helper for wording, then read and edit it.'], dont: ['Do not delete a product that has orders; hide it or set stock to 0.', 'Do not promise “pure silk” or a GI tag unless you can prove it.'] },
+  { id: 'orders', who: ['owner'], icon: '📋', title: 'Orders: from website to parcel', does: 'Takes a website order, asks you, and keeps the order and tracking up to date.',
+    works: ['A website order reaches your WhatsApp and email with everything: customer, phone, address, items with links, totals, gift note.', 'Reply YES WO-0001 to approve or NO WO-0001 reason to decline. Or press Accept in Orders. Or switch on “Approve website orders automatically” (only when everything is in stock and prices match).', 'After approval you get the pack-and-post details again, and an email you can print (address label and packing list).', 'After posting, reply TRACK order-number tracking-number on WhatsApp. The order becomes Shipped and the customer is told.', 'Payment is agreed with the customer on WhatsApp. Customers cannot cancel an order.'],
+    do: ['Reply from your own WhatsApp number only (the one saved in Orders → alerts).', 'Check the “⚠ Check first” lines before you say YES.', 'Print the email, pack, post, then reply TRACK the same day.'], dont: ['Do not approve an order you cannot fill; decline it with a reason and tell the customer.', 'Do not type the tracking number in the wrong order number: the reply tells you what it saved.', 'Do not offer cancellation.'] },
+  { id: 'delivery', who: ['owner'], icon: '🚚', title: 'Delivery, invoices and packing', does: 'Delivery areas and charges, tax invoices, packing slips, address labels.',
+    works: ['Delivery sets which PIN codes are served, the charge, free-delivery limit and gift wrap price. A PIN code never refuses an order: it only gives a warning.', 'Invoices use the GST rate and numbering from Settings. Print the packing slip and label from the order.', 'Tracking messages go to the customer by WhatsApp, once per tracking number.'],
+    do: ['Check the address on the label before posting.', 'Keep the GST rate right: it is printed on every invoice.'], dont: ['Do not change the invoice prefix in the middle of a month without telling your accountant.', 'Do not send a tracking number you have not seen on the receipt.'] },
+  { id: 'customers', who: ['owner'], icon: '👥', title: 'Customers, reviews and privacy', does: 'Who bought, what they agreed to, and their legal rights.',
+    works: ['Customers lists people and the permissions they gave (order updates, offers). Opening the list is written to the activity log.', 'Reviews: approve or hide, and reply. Only approved reviews are public.', 'Privacy shows requests to see, correct or erase data. The law gives deadlines, so the page counts days. Old chats and carts are cleaned automatically.'],
+    do: ['Answer privacy requests before the deadline shown.', 'Message only people who agreed (the system checks this for you).'], dont: ['Never copy the customer list to WhatsApp groups, spreadsheets or other apps.', 'Never message someone who sent STOP.', 'Never share a customer’s address or phone with anyone else.'] },
+  { id: 'offers', who: ['owner'], icon: '🎟️', title: 'Coupons and bundles', does: 'Discounts and sets sold together.',
+    works: ['A coupon has a code, an amount or percent, dates and a use limit. Customers type it at checkout.', 'A bundle sells chosen products together at one price.'],
+    do: ['Set an end date and a limit on every coupon.', 'Check the price after the discount is not below your cost.'], dont: ['Do not promise a discount in a post that no coupon backs.', 'Do not write “guaranteed” sales or views anywhere.'] },
+  { id: 'studio', who: ['owner'], icon: '🎨', title: 'Image Studio and Instagram', does: 'Make clean photos and post to Instagram with your approval.',
+    works: ['Image Studio removes a background, adds the shop mark and crops pictures. Results go to a product or Saved Drafts.', 'Instagram: you plan a post, see the preview and approve. A daily limit protects the account. Nothing is posted without you.', 'AI can suggest captions and times. They are drafts only.'],
+    do: ['Look at the preview on a phone-sized screen before approving.', 'Use your own photos or ones you have the right to use.'], dont: ['Do not post customers’ photos or names without their permission.', 'Do not post more than the daily limit.'] },
+  { id: 'assistant', who: ['owner', 'admin'], icon: '💬', title: 'The WhatsApp assistant', does: 'Answers customers on WhatsApp 24 hours a day, hands over to you when needed.',
+    works: ['Customers write to the shop number; the assistant answers about sarees, prices, delivery and orders using only your catalogue and policies.', 'When it cannot help, or the customer asks for a person, the chat is handed to you (“human” mode). Reply from the WhatsApp tab. The assistant stays quiet in that chat until you give it back.', 'STOP stops all messages to that customer; START brings them back.', 'Outside 24 hours after the customer last wrote, only approved templates can be sent.'],
+    do: ['Reply to handed-over chats the same day.', 'Keep the catalogue and policies up to date; the assistant only knows what you wrote.'], dont: ['Do not message people who sent STOP.', 'Do not use the assistant to promise delivery dates the courier controls.'], adminDo: ['Keep the WhatsApp number, access token and webhook settings correct (WhatsApp tab).', 'Test with the test chat after any change.'], adminDont: ['Never paste the WhatsApp token into a chat or email.', 'Do not switch to “live” until the Meta templates are approved.'] },
+  { id: 'look', who: ['admin'], icon: '🏠', title: 'Website look: Home Page and Pages', does: 'How the website looks and what its pages say.',
+    works: ['Home Page: banner slides, category tiles, the quote, notes and the website colours (AI can suggest colour sets). Moments: one Size for all of them (Compact, Standard, Large, Full screen), and under “Your moments” each moment has its own photo, order, Hide and Delete, and tick boxes for which collections appear under it (up to 6).', 'Website background: a soft hand-drawn pattern (kalamkari, peacocks, lotus, festival lamps) behind the whole site. Build it in the big preview box, ask Claude for ideas, and nothing changes on the website until you press “Put this on the website”. Save looks for each festival.', 'Pages: Saree Care, Journal, FAQ and extra pages. Changes appear on the website within seconds.', 'Hidden items stay saved but are not shown.'],
+    do: ['Use wide, sharp landscape photos (1600 px or more) for heading panels.', 'Try the ✨ Write ALL the words button, then read and change what you like.', 'Check the result on a phone: most visitors use one.', 'Keep the background faint (about 20 to 30 %) so every word stays easy to read.'], dont: ['Do not use pictures you do not own.', 'Do not put promises of sales, views or results in any text.', 'Do not remove the Terms, Privacy or contact details.'] },
+  { id: 'promo', who: ['admin'], icon: '📣', title: 'WhatsApp promotions, templates and costs', does: 'Counts every WhatsApp message, shows what it costs, and sends promotions with consent.',
+    works: ['Every message sent is counted as regular (free in the 24-hour window), order update, promotion or sign-in code, with the price you entered.', 'Templates are drafted here (AI helps with wording) and approved by Meta; you mark them Approved.', 'A promotion goes only to customers who said yes to offers and not STOP, only 9 am to 9 pm, within a daily limit, once per person, after you confirm the head-count and cost.', 'Other running costs are added by hand to give total expenses.'],
+    do: ['Check Meta’s current price list for India and edit the prices.', 'Always send a test to your own number first.', 'Keep the “Reply STOP to stop offers” line.'], dont: ['Never promise a discount that does not exist.', 'Do not send promotions to people who did not agree.', 'Do not raise the daily limit to “just get it done”.'] },
+  { id: 'ai', who: ['owner', 'admin'], icon: '✨', title: 'AI helpers', does: 'Writes drafts: descriptions, captions, replies, colours, template wording.',
+    works: ['Every helper has its own switch (AI Helper tab). Claude must be connected (the key is stored encrypted on the server).', 'AI output is always a draft. Nothing reaches a customer until you approve it.', 'Without Claude, plain built-in versions are used for some helpers.'],
+    do: ['Read and correct every draft.', 'Switch off helpers you do not use.'], dont: ['Do not paste customers’ names, phones or addresses into AI boxes.', 'Do not trust numbers or facts you did not give it.'], adminDo: ['Add the Claude key in Settings → Security (only the last 4 characters are ever shown).'], adminDont: ['Never put the key in a message, email or the website text.'] },
+  { id: 'ops', who: ['admin'], icon: '🩺', title: 'Ops, repair assistant and self-heal', does: 'Tells you if the server is healthy and fixes safe things by itself.',
+    works: ['Ops checks the server, data, security, website, orders, WhatsApp, AI, Instagram, email and privacy. Red = fix now; yellow = look at it; green/blue = fine or expected (for example WhatsApp not live yet).', 'Auto-repair runs every 10 minutes and only does three safe things: the daily privacy clean-up, making data files private again, saving a known-good copy of the shop data.', 'The repair chat explains problems in plain words and can only suggest repairs; you press the button.', 'A separate server script restarts the shop or web server if they stop, and frees disk space. It runs every 5 minutes.'],
+    do: ['Look at Ops after every update and once a week.', 'Download an encrypted backup regularly and keep it somewhere safe.', 'Keep auto-repair ON.'], dont: ['Never delete shop data to “clean up”.', 'Do not run commands you cannot explain in one line.', 'Do not switch off 2-step sign-in or security checks to make a warning go away.'] },
+  { id: 'security', who: ['admin'], icon: '🛡️', title: 'Security, logins and backups', does: 'Keeps the shop and customers’ data safe.',
+    works: ['Passwords are stored as one-way hashes. Five wrong tries lock sign-in for 15 minutes. Every sign-in and change is written to the audit log.', '2-step sign-in adds a 6-digit code from an authenticator app.', 'The owner login is created and reset here. Changing a password signs that person out everywhere.', 'Backups are encrypted with a password you choose; without that password a backup cannot be opened.'],
+    do: ['Switch 2-step sign-in ON.', 'Check the sign-in activity list for unknown places.', 'Write the backup password down somewhere safe.'], dont: ['Never keep passwords or keys in files on the website.', 'Do not reuse the same password for admin and owner.'] },
+  { id: 'settings', who: ['owner', 'admin'], icon: '⚙️', title: 'Settings', does: 'The details printed on invoices and shown to customers (owner), and the technical settings (admin).',
+    works: ['Owner: business name, GST, address, bank, invoice numbering, dispatch time, return days, grievance officer, your own password and backup.', 'Admin: website address, search description, customer sign-in service, AI service, passwords, 2-step, Claude key, owner login.', 'Each field has a one-line explanation under it. Saving changes only the fields on your own page.'],
+    do: ['Keep dispatch time and return days true: they are promises in the Terms.', 'Name a grievance officer: the law asks for one.'], dont: ['Do not change the GST rate unless your accountant says so.', 'Do not leave the customer sign-in service empty on the live site (that is demo mode with the code shown on screen).'] },
+  { id: 'rules', who: ['owner', 'admin'], icon: '📜', title: 'Rules that never change', does: 'The shop’s promises, built into the system.',
+    works: ['Customers have no cancel option. A PIN code never refuses an order.', 'Nothing is sent to a customer without their agreement; STOP is always obeyed.', 'AI writes drafts only; you approve.', 'Nobody can promise views or sales; do not write copy that does.', 'No customer data is kept in the code or shared with other apps. Old data is cleaned automatically.', 'The shop is not part of WhatsApp, Meta, Instagram or any court or government body, and says so.'],
+    do: ['When unsure, ask before changing a setting.', 'Read the warning in a dialog before pressing OK.'], dont: ['Do not try to get around a rule; ask for it to be changed instead.'] },
+];
+const howRole = () => (typeof ADM !== 'undefined' && ADM.role) || (typeof ADM_AS !== 'undefined' ? ADM_AS : 'admin');
+function renderHowItWorks(c) {
+  const role = howRole(), L = items => `<ul>${(items || []).map(t => `<li>${esc(t)}</li>`).join('')}</ul>`;
+  const secs = HOW_SECTIONS.filter(s => s.who.includes(role));
+  c.innerHTML = `<div class="admin-card" id="how-page"><h3 style="margin:0 0 4px">📖 How the shop works: ${role === 'owner' ? 'for the owner' : 'for the admin'}</h3>
+    <p class="note" style="margin:0 0 10px">What each part does, how it works, and what to do and not to do. Open a section to read it.</p>
+    <div class="how-tools"><input id="how-q" type="search" maxlength="60" placeholder="Search this page (for example: tracking, backup, STOP)" oninput="howFilter()"><button type="button" class="btn-sm" onclick="howAll(true)">Open all</button><button type="button" class="btn-sm" onclick="howAll(false)">Close all</button></div>
+    <div id="how-list">${secs.map(s => { const d = [...(s.do || []), ...(role === 'admin' ? s.adminDo || [] : [])], n = [...(s.dont || []), ...(role === 'admin' ? s.adminDont || [] : [])]; return `<details class="how-sec" data-id="${s.id}"><summary><span class="how-t">${s.icon} <b>${esc(s.title)}</b></span><span class="how-does">${esc(s.does)}</span></summary>
+      <div class="how-body"><h4>How it works</h4>${L(s.works)}<div class="how-cols"><div class="how-do"><h4>✅ Do</h4>${L(d)}</div><div class="how-dont"><h4>⛔ Do not</h4>${L(n)}</div></div></div></details>`; }).join('')}</div>
+    <p id="how-none" class="note" style="display:none">Nothing matches. Try another word.</p>
+    <p class="note" style="margin-top:12px">The same text is in the project guides (HOW-IT-WORKS folder). If something here is wrong or missing, tell the developer.</p></div>`;
+}
+function howFilter() {
+  const q = String((document.getElementById('how-q') || {}).value || '').toLowerCase().trim(); let n = 0;
+  document.querySelectorAll('#how-list .how-sec').forEach(d => { const hit = !q || d.textContent.toLowerCase().includes(q); d.style.display = hit ? '' : 'none'; if (hit) { n++; if (q) d.open = true; } });
+  const none = document.getElementById('how-none'); if (none) none.style.display = n ? 'none' : '';
+}
+function howAll(open) { document.querySelectorAll('#how-list .how-sec').forEach(d => { if (d.style.display !== 'none') d.open = open; }); }
 // ================= Privacy & DPDP (owner app) =================
 // What the law asks of the shop, in one place: requests from customers, finding / exporting / erasing a customer, the clean-up of
 // old data, the breach register, who handles the data, and a checklist of what is still missing.
@@ -8214,7 +8495,7 @@ async function renderSocialAdmin(c) {
 async function igAct(what, id, force) { try { await admApi('POST', '/admin/api/social/' + what, { id, force: !!force }); } catch (e) { showToast(e.message, 'error'); } renderSocialAdmin(document.getElementById('adminContent')); }
 
 // ---- menu icons: one drawn icon set (no emoji) in the owner menus; the customer menu is words only ----
-const NAV_ICONS = {"promo": "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2zM8 9h8M8 13h5", "dashboard": "M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z", "home": "M3 11l9-8 9 8M5 10v10h14V10", "products": "M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8", "categories": "M20 12l-8 8-9-9V3h8l9 9zM7.5 7.5h.01", "studio": "M12 3a9 9 0 100 18c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.3A3.7 3.7 0 0021 10.7C21 6.4 17 3 12 3zM7.5 11.5h.01M10 7.5h.01M15 7.5h.01", "drafts": "M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9zM14 3v6h6M8 13h8M8 17h5", "orders": "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 3h6v4H9zM9 12h6M9 16h6", "reviews": "M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z", "delivery": "M1 6h13v10H1zM14 9h4l3 3v4h-7M6 19a2 2 0 100-4 2 2 0 000 4zM17 19a2 2 0 100-4 2 2 0 000 4z", "whatsapp": "M21 12a8 8 0 01-11.7 7L4 20.5l1.5-5.3A8 8 0 1121 12z", "alerts": "M18 8a6 6 0 10-12 0c0 7-3 8-3 8h18s-3-1-3-8M10 21h4", "invoices": "M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6", "customers": "M16 19v-1a4 4 0 00-4-4H7a4 4 0 00-4 4v1M9.5 10a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM21 19v-1a4 4 0 00-3-3.9M16 3.1a3.5 3.5 0 010 6.8", "statements": "M3 20h18M6 16v-5M11 16V6M16 16v-8M21 16v-3", "coupons": "M3 9a2 2 0 000 6v3h18v-3a2 2 0 010-6V6H3zM13 6v12", "bundles": "M20 12v9H4v-9M2 7h20v5H2zM12 21V7M12 7a3 3 0 10-3-3c0 1.7 3 3 3 3zM12 7a3 3 0 113-3c0 1.7-3 3-3 3z", "ai": "M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z", "growth": "M3 17l6-6 4 4 8-8M15 7h6v6", "privacy": "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z", "pages": "M4 4h16v16H4zM8 9h8M8 13h8M8 17h5", "ops": "M3 12h4l3-8 4 16 3-8h4", "logs": "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01", "settings": "M12 15a3 3 0 100-6 3 3 0 000 6zM12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1", "social": "M18 8a3 3 0 100-6 3 3 0 000 6zM6 15a3 3 0 100-6 3 3 0 000 6zM18 22a3 3 0 100-6 3 3 0 000 6zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4"};
+const NAV_ICONS = {"guide": "M4 4h12a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4zM8 8h7M8 12h7", "promo": "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2zM8 9h8M8 13h5", "dashboard": "M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z", "home": "M3 11l9-8 9 8M5 10v10h14V10", "products": "M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8", "categories": "M20 12l-8 8-9-9V3h8l9 9zM7.5 7.5h.01", "studio": "M12 3a9 9 0 100 18c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.3A3.7 3.7 0 0021 10.7C21 6.4 17 3 12 3zM7.5 11.5h.01M10 7.5h.01M15 7.5h.01", "drafts": "M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9zM14 3v6h6M8 13h8M8 17h5", "orders": "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 3h6v4H9zM9 12h6M9 16h6", "reviews": "M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z", "delivery": "M1 6h13v10H1zM14 9h4l3 3v4h-7M6 19a2 2 0 100-4 2 2 0 000 4zM17 19a2 2 0 100-4 2 2 0 000 4z", "whatsapp": "M21 12a8 8 0 01-11.7 7L4 20.5l1.5-5.3A8 8 0 1121 12z", "alerts": "M18 8a6 6 0 10-12 0c0 7-3 8-3 8h18s-3-1-3-8M10 21h4", "invoices": "M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6", "customers": "M16 19v-1a4 4 0 00-4-4H7a4 4 0 00-4 4v1M9.5 10a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM21 19v-1a4 4 0 00-3-3.9M16 3.1a3.5 3.5 0 010 6.8", "statements": "M3 20h18M6 16v-5M11 16V6M16 16v-8M21 16v-3", "coupons": "M3 9a2 2 0 000 6v3h18v-3a2 2 0 010-6V6H3zM13 6v12", "bundles": "M20 12v9H4v-9M2 7h20v5H2zM12 21V7M12 7a3 3 0 10-3-3c0 1.7 3 3 3 3zM12 7a3 3 0 113-3c0 1.7-3 3-3 3z", "ai": "M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z", "growth": "M3 17l6-6 4 4 8-8M15 7h6v6", "privacy": "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z", "pages": "M4 4h16v16H4zM8 9h8M8 13h8M8 17h5", "ops": "M3 12h4l3-8 4 16 3-8h4", "logs": "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01", "settings": "M12 15a3 3 0 100-6 3 3 0 000 6zM12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1", "social": "M18 8a3 3 0 100-6 3 3 0 000 6zM6 15a3 3 0 100-6 3 3 0 000 6zM18 22a3 3 0 100-6 3 3 0 000 6zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4"};
 function navIcons() {
   const strip = t => t.replace(/^[\s\p{Extended_Pictographic}\uFE0F\u200D]+/u, '');
   document.querySelectorAll('.admin-nav-item[data-tab], .admin-mobile-nav li[data-tab]').forEach(li => { if (li.querySelector('.nav-ico')) return; const d = NAV_ICONS[li.dataset.tab]; li.textContent = strip(li.textContent); if (d) li.insertAdjacentHTML('afterbegin', `<svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`); });

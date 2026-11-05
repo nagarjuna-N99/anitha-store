@@ -1,5 +1,5 @@
 // ================= ADMIN LOGIC =================
-const ADMIN_TITLES = { privacy: 'Privacy & DPDP', growth: 'Growth & Insights', promo: 'WhatsApp promotions', dashboard: 'Dashboard', home: 'Home Page', reviews: 'Customer Reviews', whatsapp: 'WhatsApp Assistant', delivery: 'Delivery & Gifting', alerts: 'Back-in-stock Alerts', products: 'Products Catalog', categories: 'Category Manager', studio: 'Image Studio', drafts: 'Saved Drafts', orders: 'Orders Management', invoices: 'Invoice Management', customers: 'Customer Database', statements: 'Financial Statements', coupons: 'Coupon Manager', bundles: 'Bundles', ai: 'AI Helper', social: 'Instagram', logs: 'Audit Logs', settings: 'Business Settings' };
+const ADMIN_TITLES = { privacy: 'Privacy & DPDP', growth: 'Growth & Insights', promo: 'WhatsApp promotions', guide: 'How it works', dashboard: 'Dashboard', home: 'Home Page', reviews: 'Customer Reviews', whatsapp: 'WhatsApp Assistant', delivery: 'Delivery & Gifting', alerts: 'Back-in-stock Alerts', products: 'Products Catalog', categories: 'Category Manager', studio: 'Image Studio', drafts: 'Saved Drafts', orders: 'Orders Management', invoices: 'Invoice Management', customers: 'Customer Database', statements: 'Financial Statements', coupons: 'Coupon Manager', bundles: 'Bundles', ai: 'AI Helper', social: 'Instagram', logs: 'Audit Logs', settings: 'Business Settings' };
 // Orders tab (owner): how website orders reach you and whether they are approved without asking
 function orderFlowCardHTML() {
   if (BUILD === 'site' || (BUILD === 'admin' && typeof isAdminRole === 'function' && isAdminRole())) return '';   // the owner's page only
@@ -174,6 +174,7 @@ function renderAdminContent(tab) {
   if (tab === 'social') { if (BUILD === 'admin') renderSocialAdmin(content); else content.innerHTML = '<div class="admin-card"><h3>📸 Instagram</h3><p class="note">Instagram posting and scheduling work in the <b>owner app</b> (admin.html on your server), where the server can post for you. See HOW-IT-WORKS/17.</p></div>'; return; }
   if (tab === 'growth') { renderGrowth(content); return; }
   if (tab === 'promo') { renderPromo(content); return; }
+  if (tab === 'guide') { renderHowItWorks(content); return; }
   if (tab === 'privacy') { renderPrivacyAdmin(content); return; }
   if (tab === 'ops') { renderOpsAdmin(content); return; }
   if (tab === 'pages') { renderPagesAdmin(content); return; }

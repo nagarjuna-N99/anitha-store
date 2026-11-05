@@ -10,6 +10,7 @@ const ADM_NAV = [
   { id: 'look', label: 'Website look', hint: 'How the website looks and what its pages say.', tabs: ['home', 'pages'] },
   { id: 'privacy', label: 'Privacy & legal', hint: 'Customers’ rights and your legal duties.', tabs: ['privacy'] },
   { id: 'tech', label: 'AI, health & settings', hint: 'The helpers, the health of the server, and the settings.', tabs: ['ai', 'ops', 'logs', 'settings'] },
+  { id: 'help', label: 'Help', hint: 'How the shop works, and what to do and not to do.', tabs: ['guide'] },
 ];
 // what each page does, in plain words. `owner` / `admin` give a different line to that login when the page is shared.
 const ADM_DESC = {
@@ -31,12 +32,13 @@ const ADM_DESC = {
   whatsapp: { owner: 'Your WhatsApp assistant’s conversations: read them, take over a chat and answer yourself.', admin: 'Connect and test the WhatsApp assistant: the number, the greeting, the chat button and the test chat.', d: 'The WhatsApp assistant.' },
   promo: { d: 'WhatsApp promotions: counts of regular and promotion messages, what they cost, other running costs and total expenses, the message templates (with AI wording help) and the promotions sent to customers who said yes to offers.' },
   social: { d: 'Plan and post pictures and short videos to Instagram. You see a preview and approve each post. Nothing is posted without you.' },
-  home: { d: 'The look of the home page: the big banner, category tiles, the story chapters and their photos, quote, notes and the website colours.' },
+  home: { d: 'The look of the home page: the big banner, category tiles, the website background (kalamkari, peacocks, festival lamps), the moments (story sections) and their photos, quote, notes and the website colours.' },
   pages: { d: 'The words on the other pages: Saree Care, the Journal, FAQs and extra pages you add.' },
   privacy: { d: 'Customers’ privacy requests (see my data, correct it, erase it), the clean-up of old data and what you must tell customers. The law gives deadlines, so this page counts them.' },
   ai: { d: 'Switch each AI helper on or off. Helpers only write drafts; nothing reaches a customer until you approve it.' },
   ops: { d: 'Is the server healthy? Red and yellow lines say what needs attention, the repair assistant explains them in plain words, and safe repairs run by themselves.' },
   logs: { d: 'A record of who changed what and when. Use it to check that nothing happened that should not have.' },
+  guide: { d: 'One page that explains every part of the shop in plain words: what it does, how it works, what to do and what not to do. You can search it.' },
   settings: { owner: 'Your business details: name, GST, bank, invoice numbering and the policies shown to customers. Plus your own password and the backup.', admin: 'The technical settings: website address, search description, customer sign-in service and AI service. Plus passwords, 2-step sign-in, the Claude key and the owner login.', d: 'Settings.' },
 };
 const admDescOf = t => { const x = ADM_DESC[t]; if (!x) return ''; const role = (typeof ADM !== 'undefined' && ADM.role) || (typeof ADM_AS !== 'undefined' ? ADM_AS : ''); return x[role] || x.d || ''; };

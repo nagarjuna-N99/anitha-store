@@ -23,13 +23,14 @@ const { chromium } = require(process.env.PW);
   ok('switching it back on brings the accessories back at once', await ev(() => db.settings.showAccessories === true && !!document.getElementById('kind-accessory') && accessoryList().length > 0));
   // ---- heading photos tool ----
   await ev(() => switchAdminTab('home')); await sleep(500);
-  ok('Home Page: a "Full-width heading photos" tool lists every chapter at once, without opening anything', await ev(() => document.querySelectorAll('#ch-photos .ch-photo-row').length === 3 && /Full-width heading photos/.test(document.getElementById('ch-photos').innerText) && document.querySelectorAll('#ch-photos button').length >= 3));
+  ok('Home Page: a "Your moments" tool lists every chapter at once, without opening anything', await ev(() => document.querySelectorAll('#ch-photos .ch-photo-row').length === 3 && /Your moments/.test(document.getElementById("ch-photos").innerText) && document.querySelectorAll('#ch-photos button').length >= 3));
   ok('each row says "Add photo" while there is none, and there is no Remove button yet', await ev(() => [...document.querySelectorAll('#ch-photos .btn-primary-sm')].every(x => /Add photo/.test(x.textContent)) && ![...document.querySelectorAll('#ch-photos button')].some(x => /Remove/.test(x.textContent))));
   const img = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="700"><rect width="1600" height="700" fill="#b88a6a"/></svg>');
   await ev(i => { chData().items[0].image = i; chLive(true); }, img); await sleep(300);
   ok('with a photo: the row shows it, offers Replace and Remove, and the website panel uses it', await ev(() => /Replace photo/.test(document.querySelector('#ch-photos .ch-photo-row').innerText) && /Remove/.test(document.querySelector('#ch-photos .ch-photo-row').innerText) && /background-image/.test(document.querySelector('#homeChapters .chap-hero').getAttribute('style') || '') && /background-image/.test(document.querySelector('#ch-photos .ch-thumb').getAttribute('style'))));
-  await ev(() => document.querySelector('#ch-photos .ch-photo-row .toggle').click()); await sleep(300);
-  ok('"Fill the whole screen" makes that panel tall and edge-to-edge on the website', await ev(() => { const h = document.querySelector('#homeChapters .chap-hero'); return h.classList.contains('full') && chData().items[0].full === true; }));
+  await ev(() => chSize('full')); await sleep(300);
+  ok('Full screen size makes the panels tall and edge-to-edge on the website', await ev(() => document.getElementById('homeChapters').dataset.size === 'full' && getComputedStyle(document.querySelector('#homeChapters .chap-hero')).borderRadius === '0px'));
+  await ev(() => chSize('standard'));
   await ev(() => chRemoveImg(0)); await sleep(200);
   ok('Remove puts the plain dark panel back', await ev(() => !chData().items[0].image && !/background-image/.test(document.querySelector('#homeChapters .chap-hero').getAttribute('style') || '')));
   ok('uploads of heading photos keep up to 1920 px (full-width quality)', await ev(() => /pick.kind === 'chap'/.test(homeFileChosen.toString())));

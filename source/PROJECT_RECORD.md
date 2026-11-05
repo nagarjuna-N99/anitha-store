@@ -119,7 +119,7 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 ## 6. Test suites (all passing on 12 Nov 2026; known slow spots: sign-in timeouts under load and the phone-speed test near its limit pass when rerun alone)
 | Suite | Checks | Covers |
 |---|---|---|
-| `wa-assistant` (`npm test`) | 653 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
+| `wa-assistant` (`npm test`) | 656 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
 | `smoke2.cjs` | 10 | orders, invoices, reports |
 | `studio-test2.cjs` / `studio-test3.cjs` | 50 / 61 | Image Studio, drafts, product form, AI copy |
 | `shop-test.cjs` | 56 | favourites, share links, OTP login, consents, Terms/Privacy |
@@ -136,6 +136,9 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 | `care-test.cjs` | 9 | Saree Care tabs, wash-care guide, photo link repair |
 | `parts-test.cjs` | 8 | the website source parts and the joined file |
 | `addresses-test.cjs` | 25 | each page and saree has its own address, Back/Forward, old links |
+| `background-test.cjs` | 30 | website background builder: art, preview, deploy, saved looks, Claude ideas |
+| `chapters-tools-test.cjs` | 33 | chapter rows: delete, order, hide, collection tick boxes |
+| `how-it-works-test.cjs` | 12 | How it works page for owner and admin, search, do / do-not lists |
 | `orderflow-test.cjs` | 8 | Orders tab card: auto-approval switch, owner WhatsApp number |
 | `menu-groups-test.cjs` | 14 | menu sorted into groups, page descriptions, Settings split by login |
 | `accessories-switch-test.cjs` | 14 | Accessories on/off on the website, full-width heading photos tool |
@@ -169,6 +172,22 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**12 Nov 2026 (Website background: kalamkari, peacocks, festival looks, preview before deploy)**
+- Owner: "the background poster also looks too empty; add an option in admin to change the background with some kalamkari works in a random positioning and peacock art works or something related to our subject, add a box for ask Claude for background idea and also put a decent size box to view how it looks before it is deployed; with this we can replace the background according to the festivals". New Admin card **Home Page → Website background** (guide 43): original hand-drawn motifs (kalamkari paisley, flowers, vines, peacocks, feathers, lotus, festival lamps, stars) placed at random but repeatable positions (shuffle number), four colour sets, how full / how strong, a large preview box with a sample of the real page, **Put this on the website** only on request, **Ask Claude for 3 ideas** (checked, preview only), and up to 12 saved looks for festivals.
+- Tests: new `tests/background-test.cjs` (30 checks); server 656 (+1, the `background` AI task). Not tested: Claude's real ideas, a real phone.
+
+**12 Nov 2026 (Moments: new wording, one size for all, AI writes all the words)**
+- Owner: "using the same word as chapter looks like we copied, get new terms for that; also add AI suggestion option for the complete text on the story chapters", then "add option to put this size also for story chapter and make it in such a way that the sizes are universal for all the stories, but there should be size selection option" (a reference page with a wide, tall panel and big words). The feature is renamed **Moments** ("Moment I", button "See these sarees →"); a **Size** selector (Compact / Standard / Large / Full screen) sets one size for all moments, computer and phone; **✨ Write ALL the words** drafts title, line of weaves, quote and button text for every moment (Use this / Use all), keeping collections and photos (guide 36).
+- Tests: `chapters-tools-test.cjs` 33 checks (size, universal, AI), chapters/accessories/colour suites updated; server 655 (+1). Not tested: Claude's real wording, a real phone.
+
+**12 Nov 2026 (Story chapters: Delete, order and a collection picker for each chapter)**
+- Owner: "there is no delete a chapter option and tools to select which collection appears under a chapter, that is very important". Delete, order, hide and the per-chapter collection choice existed only inside each collapsed chapter (and the choice was three fixed drop-downs), so they were not found. Now the "Your chapters" block lists every chapter with **Delete chapter**, ↑ ↓, Hide, Edit words, photo buttons, and a **tick box for every collection** (up to 6 per chapter), with order and own photo for each chosen collection; the website follows at once (guide 36).
+- Tests: new `tests/chapters-tools-test.cjs` (15 checks); chapters, accessories and menu suites updated. Not tested: a real phone.
+
+**12 Nov 2026 (How it works page in both logins)**
+- Owner: "add a dedicated page in owner profile and the admin profile showing how each system works and what it does, what to do and what not to do in the back end". New **Help → How it works** page in both logins (guide 42): per login, each system explained (what it does, how it works) with a green Do list and a red Do-not list, searchable, with Open all / Close all. Owner sees the business side; admin the technical side.
+- Tests: new `tests/how-it-works-test.cjs` (12 checks); `menu-groups-test.cjs` updated (9 groups, 26 pages); server 654 (+1). Not tested: a real phone.
 
 **12 Nov 2026 (Website orders: WhatsApp approval, auto-approval, pack-and-post email, tracking by reply)**
 - Owner: when someone orders, send the full details (item links, address, everything) to the owner on WhatsApp and ask for approval; an auto-approval option for in-stock orders in the owner's Orders page; once approved send the details again on WhatsApp and by email so she can print and post it; a reply option to save the tracking; all order details and tracking updated by themselves. Built as guide 41 (`orderflow.mjs`): YES/NO/TRACK replies from the owner's own number, automatic approval only when stock and prices match, a printable email, tracking saved to the order with Shipped status and the customer told on WhatsApp (if they agreed). The Accept button now uses the same server step. Two utility templates must be created in Meta (guide 41). Image Studio stays in the Owner login only (the owner makes the photos and posts); it was moved to Admin by a misreading and put back the same day.

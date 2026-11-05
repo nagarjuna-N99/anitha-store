@@ -1040,6 +1040,7 @@
     },
     "chapters": {
       "show": true,
+      "size": "standard",
       "items": [
         {
           "id": "ch1",
@@ -1063,7 +1064,7 @@
               "image": ""
             }
           ],
-          "link": "Enter this chapter"
+          "link": "See these sarees"
         },
         {
           "id": "ch2",
@@ -1087,7 +1088,7 @@
               "image": ""
             }
           ],
-          "link": "Enter this chapter"
+          "link": "See these sarees"
         },
         {
           "id": "ch3",
@@ -1111,7 +1112,7 @@
               "image": ""
             }
           ],
-          "link": "Enter this chapter"
+          "link": "See these sarees"
         }
       ]
     },

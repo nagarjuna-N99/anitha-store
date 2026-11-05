@@ -286,7 +286,7 @@ function renderSignature() {
 let BAN_SEL = -1;
 function banSelect(v) { BAN_SEL = +v; renderHomeAdmin(document.getElementById('adminContent')); }
 function banReset(i) { const c = BAN_CATS()[-i - 2]; if (db.home.categoryBanners) delete db.home.categoryBanners[c]; homeLive(false); renderHomeAdmin(document.getElementById('adminContent')); showToast('This category uses the automatic banner again', 'success'); }
-function renderHome() { applyTheme(); renderHomeChapters(); renderHomeNotes(); renderHomeQuote(); renderShopBanner(); renderOccasions(); renderRecentlySold(); renderRecent(); renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); ANN.sig = scheduleSignature(); renderAnnouncement(); renderPublicPages(); }
+function renderHome() { applyTheme(); if (typeof applyBackground === 'function') applyBackground(); renderHomeChapters(); renderHomeNotes(); renderHomeQuote(); renderShopBanner(); renderOccasions(); renderRecentlySold(); renderRecent(); renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); ANN.sig = scheduleSignature(); renderAnnouncement(); renderPublicPages(); }
 
 // ---- admin: saving (applies to the storefront instantly, written to storage a moment later) ----
 let HOME_TIMER = null;
@@ -311,7 +311,7 @@ function renderShopBanner() {
   const html = s.enabled === false || !safeImg(s.image) || !(s.title || s.subtitle) ? '' : `<div class="hero-slider shop-banner">${heroSlideHTML(s, -1, true, 'h2')}</div>`;
   if (box._h === html) return; box._h = html; box.innerHTML = html; box.style.display = html ? '' : 'none';
 }
-function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); renderHomeQuote(); renderHomeNotes(); renderHomeChapters(); homeSaveSoon(); }
+function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); renderHomeQuote(); renderHomeNotes(); renderHomeChapters(); if (typeof applyBackground === 'function') applyBackground(); homeSaveSoon(); }
 let HOME_PICK = null;
 function homePick(kind, idx) { HOME_PICK = { kind, idx }; document.getElementById('home-file').click(); }
 async function homeFileChosen(files) {
@@ -436,6 +436,7 @@ function renderHomeAdmin(container) {
       <div class="hs-grid2"><div class="form-group"><label>Signed by (optional)</label><input type="text" maxlength="60" value="${esc(H.quote.by)}" oninput="quoteSet('by',this.value)"></div><div class="form-group"><label>&nbsp;</label><button type="button" class="btn-sm btn-info-sm" onclick="quoteIdea()">✨ Suggest another quote</button></div></div>
     </div>
 
+    ${backgroundCardHTML()}
     ${chaptersCardHTML()}
     ${themeCardHTML()}
     ${notesCardHTML()}

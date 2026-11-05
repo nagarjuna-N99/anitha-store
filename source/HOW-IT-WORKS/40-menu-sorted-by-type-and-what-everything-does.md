@@ -75,6 +75,13 @@ The left menu of **both** the Owner app (`/owner`) and the Admin app (`/admin`) 
 | `logs` | – | ✔ | A record of who changed what and when. Use it to check that nothing happened that should not have. |
 | `settings` | ✔ | ✔ | **Owner:** Your business details: name, GST, bank, invoice numbering and the policies shown to customers. Plus your own password and the backup.<br>**Admin:** The technical settings: website address, search description, customer sign-in service and AI service. Plus passwords, 2-step sign-in, the Claude key and the owner login. |
 
+## Help
+*How the shop works, and what to do and not to do.*
+
+| Page | Owner | Admin | What it does |
+|---|---|---|---|
+| `guide` | ✔ | ✔ | One page that explains every part of the shop in plain words: what it does, how it works, what to do and what not to do. You can search it. |
+
 ## Settings, split by login
 | Card | Who changes it | Field | What it does |
 |---|---|---|---|
