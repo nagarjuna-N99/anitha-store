@@ -18,7 +18,7 @@ The left menu of **both** the Owner app (`/owner`) and the Admin app (`/admin`) 
 | `categories` | ✔ | – | The groups sarees and accessories are sorted into on the website. Add or delete a category, and switch Accessories on or off on the website. |
 | `bundles` | ✔ | – | Sets of products sold together at one price (for example a saree with a blouse). Customers see them on the website. |
 | `coupons` | ✔ | – | Discount codes customers type at checkout. You choose the amount, the dates and how many times a code can be used. |
-| `studio` | – | ✔ | Photo tools (admin only): remove a background, add the shop mark and crop for the website and for posts. The result is saved to a product or to Saved Drafts. |
+| `studio` | ✔ | – | Photo tools for the owner: remove a background, add the shop mark and crop pictures for the website and for Instagram posts. The result is saved to a product or to Saved Drafts. |
 | `drafts` | ✔ | – | Products you started but have not published. Finish them when the photos and details are ready, then publish. |
 
 ## Orders & customers

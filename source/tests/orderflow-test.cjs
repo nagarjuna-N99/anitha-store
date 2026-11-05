@@ -14,7 +14,7 @@ const { chromium } = require(process.env.PW);
   await ev(() => { const i = document.getElementById('of-phone'); i.value = '+91 98765-43210 abc'; i.dispatchEvent(new Event('change', { bubbles: true })); }); await sleep(150);
   ok('the owner\'s WhatsApp number is saved as digits only', await ev(() => db.settings.ownerWhatsapp === '+919876543210'));
   ok('the Orders tab is not changed otherwise (dispatch list and orders table still there)', await ev(() => /Dispatch list/.test(document.getElementById('adminContent').innerText) && !!document.querySelector('#adminContent table.admin-table')));
-  ok('Image Studio is in the admin menu only: the owner role does not list it', await ev(async () => { return !(typeof ADM_NAV === 'undefined') && ADM_DESC.studio.d.includes('admin only'); }));
+  ok('Image Studio is described as the owner\'s tool', await ev(() => /for the owner/.test(ADM_DESC.studio.d)));
   ok('no script errors', errs.length === 0, errs.join('|'));
   await b.close(); console.log(fails ? fails + ' FAILED' : 'ALL PASSED'); process.exit(fails ? 1 : 0);
 })();

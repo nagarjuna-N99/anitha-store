@@ -9,8 +9,8 @@ export const ROLES = [OWNER, ADMIN];
 
 // owner-app screens each role may open (the page hides the rest; the server refuses the data behind them)
 export const TABS = {
-  owner: ['dashboard', 'products', 'categories', 'drafts', 'bundles', 'orders', 'invoices', 'reviews', 'alerts', 'customers', 'coupons', 'delivery', 'statements', 'growth', 'privacy', 'social', 'whatsapp', 'ai', 'settings'],
-  admin: ['home', 'pages', 'studio', 'social', 'whatsapp', 'promo', 'ai', 'ops', 'logs', 'settings'],
+  owner: ['dashboard', 'products', 'categories', 'studio', 'drafts', 'bundles', 'orders', 'invoices', 'reviews', 'alerts', 'customers', 'coupons', 'delivery', 'statements', 'growth', 'privacy', 'social', 'whatsapp', 'ai', 'settings'],
+  admin: ['home', 'pages', 'social', 'whatsapp', 'promo', 'ai', 'ops', 'logs', 'settings'],
 };
 export const HOME_TAB = { owner: 'dashboard', admin: 'home' };
 

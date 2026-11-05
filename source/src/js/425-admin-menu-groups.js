@@ -18,7 +18,7 @@ const ADM_DESC = {
   categories: { d: 'The groups sarees and accessories are sorted into on the website. Add or delete a category, and switch Accessories on or off on the website.' },
   bundles: { d: 'Sets of products sold together at one price (for example a saree with a blouse). Customers see them on the website.' },
   coupons: { d: 'Discount codes customers type at checkout. You choose the amount, the dates and how many times a code can be used.' },
-  studio: { d: 'Photo tools (admin only): remove a background, add the shop mark and crop for the website and for posts. The result is saved to a product or to Saved Drafts.' },
+  studio: { d: 'Photo tools for the owner: remove a background, add the shop mark and crop pictures for the website and for Instagram posts. The result is saved to a product or to Saved Drafts.' },
   drafts: { d: 'Products you started but have not published. Finish them when the photos and details are ready, then publish.' },
   orders: { d: 'Every order: confirm, pack, ship and add the tracking number. Customers get their updates by WhatsApp. Customers cannot cancel an order.' },
   invoices: { d: 'Tax invoices and packing slips for orders. Print them or send them. The numbering and GST rate come from Settings.' },

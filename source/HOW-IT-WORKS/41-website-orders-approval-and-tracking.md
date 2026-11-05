@@ -23,7 +23,7 @@ WhatsApp only lets the shop start a chat with an approved template. While the ow
 Create them in Meta (category Utility), mark them Approved in the WhatsApp promotions → Templates list for your own record, and the names can be changed with the two environment settings.
 
 ## Also changed
-- **Image Studio is now in the Admin login only** (removed from the Owner menu).
+- **Image Studio belongs to the Owner login only** (she makes the photos and posts). It was briefly moved to Admin by mistake and put back the same day.
 - The old behaviour of the Accept button (done in the browser) is replaced by the same server step, so every route behaves the same.
 
 ## Not tested
