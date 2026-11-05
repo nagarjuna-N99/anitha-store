@@ -3,17 +3,18 @@
 > **STANDING RULE (owner's instruction, 23 Oct 2026):** this record and the `HOW-IT-WORKS/` folder are updated **after every change or update**, in the same step as the change, never later. A change is not finished until (1) the code is tested, (2) a dated entry is added to the Change Log below, (3) any affected `HOW-IT-WORKS/` page is corrected, (4) `./check-record.sh` has been run (it fails if the record or how-it-works is behind the code).
 > Also standing: the owner wants chats remembered for later use; this record is that memory for the project.
 
-**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 575 automated checks) · **Browser test suites:** 34 (see §6)
+**Last updated:** 12 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 575 automated checks) · **Browser test suites:** 43 (see §6)
 
 ---
 
 ## 1. What the project is
 A saree shop for **Anitha Pemmasani, Hyderabad** (pure handloom: Tussar, Maheswari, Banarasi, Kanjeevaram, Paithani, Mysore silk, Ponduru Khadi). Customers are mostly **women shopping on phones**.
-It has two parts:
-1. **The store** — one HTML file: storefront + admin portal. Data lives in the browser (`localStorage` key `ap_db_v70`) in this demo phase. Admin PIN default `1234`.
-2. **The WhatsApp assistant** — a separate small Node server (folder `wa-assistant`) that answers customers on the shop's WhatsApp number with the Claude API, sends cart reminders, takes orders and sends payment links. Optional until the shop is hosted.
+**Live since 5 Nov 2026 at https://anithapemmasani.com**, on ONE Amazon Lightsail server (Mumbai, 2 GB, static IP) that runs everything: the public website, the owner app, the WhatsApp assistant, orders and data. Caddy gives it HTTPS. The old GitHub Pages address now only sends visitors to the new address; Render is no longer needed (nothing real was kept there). It has these parts:
+1. **The store** — the website is written as small parts in `src/` (css, html, js) and joined into one page file `anitha-store.html`; `tools/build-split.py` builds the public site and the owner app from it. The server serves the website (`SITE_DIR`) and the owner app (`/admin`, `/owner`).
+2. **The server** (`wa-assistant/`, Node 20) — holds the shop's data (JSON files in `/var/lib/anitha-store`), answers customers on WhatsApp with the Claude API (when connected), sends cart reminders, takes orders and payment links, posts to Instagram, writes the AI drafts, keeps the audit log.
+3. **Two sign-ins (5 Nov 2026):** the **Owner** (`/owner`, the business: sarees, prices, orders, customers, discounts, privacy, backups) and the **Admin** (`/admin`, the look of the website and the technical side). Rules are in `wa-assistant/src/roles.mjs` and are enforced on the server (guide 37).
 
-Owner's guidance: *"we will setup everything after we host it"* — real hosting, payments and WhatsApp accounts come later; everything is being prepared and tested in advance with fake/mock services.
+Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are connected later, one at a time; everything is built and tested in advance with fake/mock services. The live site still shows the starter demo products and sample photos until real ones are added.
 
 ## 2. Current state at a glance
 | Area | Status |
@@ -45,14 +46,25 @@ Owner's guidance: *"we will setup everything after we host it"* — real hosting
 | Order help buttons (**Track order**, **Help & support**), **no cancel** | Built, tested |
 | Order tracking: statuses, tracking page, courier link, WhatsApp updates | Built, tested |
 | GST invoice PDF on WhatsApp, review request after delivery | Built, tested (accountant should check the invoice) |
-| Hosting, real WhatsApp keys, real Claude key, real payment gateway | **Not done — waiting for hosting** |
+| **Hosting on one AWS Lightsail server** at anithapemmasani.com (HTTPS, daily data backup, `anitha-update`) | **Done 5 Nov 2026**; the old GitHub address redirects (guide 34) |
+| **Two logins: Owner (/owner) and Admin (/admin)**, enforced on the server | Built, tested (guide 37) |
+| Per-page web addresses, sitemap, 404 page for products | Built, tested (guide 32) |
+| Collection banners per category, one top-bar search, calmer sizes on computers (home, Collection, saree cards) | Built, tested (guides 27, 35, 36) |
+| Saree page extras: delivery date, details table with length, why shop with us, questions, related sarees, sticky Add bar | Built, tested (guide 33) |
+| Home page: quote, story chapters (editable), New Arrivals cards, Notes from the loom sign-up (email + tick, nothing sent automatically), website colours (6 sets, pickers, photo match) | Built, tested (guides 35, 36) |
+| ✨ AI help for chapters, Notes wording and website colours (drafts only, switches in AI Helper, built-in fallbacks without Claude) | Built, tested with mocks |
+| The Atelier page | **Removed 5 Nov 2026** |
+| Real WhatsApp (Meta) keys, Instagram connection, Razorpay keys, email settings, real products and photos | **Not done yet.** Only the Claude key is set. The owner connects these when ready |
 
 ## 3. Files in this folder (this folder is the whole project — nothing else lives elsewhere)
 | Path | What |
 |---|---|
 | `PROJECT_RECORD.md` | this file |
 | `HOW-IT-WORKS/` | plain-language pages explaining each part (index: `00-README.md`) |
-| `anitha-store.html` | **the store** (the working file) |
+| `src/` | **the website source**: `css/`, `html/`, `js/` parts and `manifest.json`; `python3 tools/join-parts.py` joins them into `anitha-store.html` (never edit that file by hand) |
+| `anitha-store.html` | the joined store file (generated) |
+| `aws/` | the one-server setup: `setup.sh` (install), `update.sh` (`anitha-update`), `backup.sh` (daily, 14 days), `anitha-store.service`, `Caddyfile` |
+| `tools/` | `join-parts.py`, `build-split.py` (public site and owner app), `publish-repo.sh` (to GitHub; also makes the old GitHub address a signpost via `redirect-pages.py`), `refresh-exports.sh`, `sync-shared.py`, `make-changelog.py` |
 | `wa-assistant/` | **the WhatsApp assistant server** (Node; has its own `README.md`, `.env.example`, `tests/`) |
 | `tests/` | the browser test suites (`*.cjs`) |
 | `run-tests.sh` | runs every test (server + all browser suites) |
@@ -79,12 +91,20 @@ Owner's guidance: *"we will setup everything after we host it"* — real hosting
 | Help buttons: **Track order** + **Help & support** (owner's choice, 26 Oct 2026) replace Change address / Talk to Anitha | One simple entry to support; the assistant then changes the address, answers, or hands over |
 | One shared source for PIN/delivery/packing-slip code (`shared/`, synced into store and server by `tools/sync-shared.py`, drift fails `check-record.sh`) | The store and the assistant must give identical answers |
 | Data minimisation: no cart stored without cart-reminder consent; withdrawal/STOP deletes it | Privacy. |
+| **One server for everything** (AWS Lightsail, Mumbai) instead of GitHub Pages + Render (owner's decision, 4 Nov 2026) | One place, one bill, same-address website and API; the shop's data is plain files on a disk, which fits a server better than Lambda. |
+| **Two logins with two jobs** (owner's decision, 5 Nov 2026) | The owner runs the business; the admin looks after the look and the technical side and cannot see customers. Enforced on the server, not only in menus. |
+| **Notes from the loom collects only an email, a tick and the wording agreed to; nothing is sent automatically** | Consent first; the owner writes to these people herself. |
+| **The Atelier page removed** (5 Nov 2026) | Owner's decision; its address now opens the home page. |
+| Calmer sizes on computers only; phones keep large tap sizes | Looks like the reference shop on a computer without making phone buttons hard to tap. |
 
 ## 5. Not built / known limits (honest list)
-- Hosting, domain, HTTPS, real login service (`/otp/send`, `/otp/verify`, token check) — **needed before launch**.
+- Hosting, domain and HTTPS are **done** (AWS, 5 Nov 2026). The customer one-time-code login service (`/otp/send`, `/otp/verify`) is still **not connected**.
 - Real Claude, WhatsApp (Meta) and payment-gateway behaviour is **untested against the real services**; everything was tested against mocks. The Razorpay adapter is written from public docs.
 - Demo OTP shows the code on screen — insecure by design until the real login service exists.
-- Review photos and all data are in browser storage (~5 MB) until a backend exists.
+- The shop's data now lives on the server. A customer's cart, wish list and sign-in are still kept in their own browser, per address.
+- The AWS account is on the Free plan: **upgrade before the credits or 4 May 2027**, or the server stops. Turn on Lightsail automatic snapshots as a second backup.
+- Notes sign-ups: add one line about "email for the notes" to the Privacy Policy page text.
+- The live site still shows starter demo products and sample photos; the home banner photo and real products must be added in the owner app.
 - AI product copy is rule-based unless the owner's own endpoint is set.
 - Legal text (Terms/Privacy) is a template; a lawyer should review it.
 - Offer/festival broadcast messages, refunds automation, COD, partial payments: not built.
@@ -96,10 +116,10 @@ Owner's guidance: *"we will setup everything after we host it"* — real hosting
 - Bundles apply to website orders only; WhatsApp chat orders use discount codes. Bulk upload takes photos as web links only (no image files in the CSV). Status images from photos hosted on another site may be blocked by the browser.
 - Stock sync between website and WhatsApp orders is pull-based ("Add paid orders to the store" button) until a shared backend exists.
 
-## 6. Test suites (all passing on 27 Oct 2026)
+## 6. Test suites (all passing on 12 Nov 2026; known slow spots: sign-in timeouts under load and the phone-speed test near its limit pass when rerun alone)
 | Suite | Checks | Covers |
 |---|---|---|
-| `wa-assistant` (`npm test`) | 354 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
+| `wa-assistant` (`npm test`) | 575 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
 | `smoke2.cjs` | 10 | orders, invoices, reports |
 | `studio-test2.cjs` / `studio-test3.cjs` | 50 / 61 | Image Studio, drafts, product form, AI copy |
 | `shop-test.cjs` | 56 | favourites, share links, OTP login, consents, Terms/Privacy |
@@ -144,6 +164,10 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**12 Nov 2026 (All records brought up to date)**
+- Owner: "update all the records". The record's front sections (what the project is, the state at a glance, the files, key decisions, the known limits, the test table) still described the demo days; they now describe the live shop: one AWS server at anithapemmasani.com, the two logins, the website source in `src/`, the story chapters, Notes from the loom, website colours and AI help, the removed Atelier, the redirect of the old GitHub address, and what is still not done (real WhatsApp/Instagram/Razorpay/email connections, real products and photos, upgrading the AWS plan before 4 May 2027, one Privacy Policy line for the Notes). `AGENTS.md`, `CLAUDE.md` and guides 19, 21, 22, 23 were corrected the same way. Test counts: server 575, 43 browser suites.
+- No code changed. `./check-record.sh` passes.
 
 **12 Nov 2026 (Smaller story-chapter and Signature Collection tiles on computers)**
 - Owner: the tiles looked huge and ugly. On computers the story chapters are now in a narrower column (880px): photo panel 260px high, tiles about 280px squares (were about 550px, 4:5), smaller title and quote; the Signature Collection tiles are 260px high in a 920px column with gaps and rounded corners (were 550px full-width halves). Phones: chapter photo 4:3 (was square), Signature tiles 240px (was 360px). CSS only, last block of `src/css/190-design-fixes.css`.

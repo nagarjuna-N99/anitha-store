@@ -15,5 +15,10 @@ This is the Anitha Pemmasani saree shop (public website + owner app + Node serve
 - **Never put secrets or personal data in git**: no tokens, keys, passwords, customer names or phone numbers. Use synthetic data in tests. The server keeps secrets encrypted on its own disk.
 - Keep answers to the owner short and plain; they use a phone and are not a programmer.
 
+## Where it runs, and who signs in (5 Nov 2026)
+- **Live at https://anithapemmasani.com** on one AWS Lightsail server (Mumbai). Update it by pushing to GitHub `main`, then on the server run `sudo anitha-update` (guide 34). GitHub Pages only redirects to the new address (`tools/publish-repo.sh`; `REDIRECT_TO= tools/publish-repo.sh ...` publishes the full site there again).
+- **Two sign-ins, enforced on the server** (`wa-assistant/src/roles.mjs`, guide 37): **Owner** at `/owner` (the business: sarees, prices, orders, customers, discounts, privacy, backups) and **Admin** at `/admin` (the look: home page, Pages, colours; and the technical side). Any new owner-app screen or `/admin/api` route must be placed in the right login and tested.
+- On computers the sizes are calm (see the last blocks of `src/css/190-design-fixes.css`); phones keep large tap sizes. The Atelier page is removed.
+
 ## Commands
 `./run-tests.sh` · `./check-record.sh` · `python3 tools/build-split.py --shop-api https://<server> --index` · `./tools/refresh-exports.sh` · `tools/publish-repo.sh <repo>` (details in the handover guide).
