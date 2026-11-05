@@ -4,7 +4,7 @@
 
 ## Two ways to open it
 1. **Stand-alone (for the developer): `https://<your server>/ops`.** Its own key, `OPS_TOKEN`, no owner login: it works even if the owner app is broken or locked. Set `OPS_TOKEN` in the Render environment (24+ random characters); if empty or shorter the page does not exist (404). The key is typed on the page and kept only in that tab (no cookie). Eight wrong tries lock it for 15 minutes; wrong tries go in the activity log (`ops-login`). Give it to the developer only.
-2. **Inside the owner app: 🩺 Ops** (owner only; helpers get 403).
+2. **Inside the owner app: 🩺 Ops** (admin only since 5 Nov 2026; the owner login gets 403).
 
 ## Previews: Instagram and WhatsApp
 - **📸 Instagram:** connected or not, posts today against the daily limit, queued / posted / failed counts, last follower count, and the **latest 6 posts** (photo, product, caption, time, status, error, link to the live post).

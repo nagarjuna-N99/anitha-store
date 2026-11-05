@@ -12,7 +12,7 @@ Goal: website, owner app, WhatsApp assistant, orders and data all on **one machi
 
 **Files** (all in `aws/`): `setup.sh` (one-time install), `update.sh` (`anitha-update`: download newest version from GitHub, rebuild the website for the domain, restart), `backup.sh` (daily 03:30, keeps 14 days in `/var/backups/anitha-store`), `anitha-store.service`, `Caddyfile`.
 
-**First-time setup (on the server, as root):** `git clone https://github.com/nagarjuna-N99/anitha-store.git /opt/anitha-store/repo && bash /opt/anitha-store/repo/source/aws/setup.sh anithapemmasani.com`. It prints the one-time owner-app setup code at the end.
+**First-time setup (on the server, as root):** `git clone https://github.com/nagarjuna-N99/anitha-store.git /opt/anitha-store/repo && bash /opt/anitha-store/repo/source/aws/setup.sh anithapemmasani.com`. It prints the one-time first-time setup code at the end. That first account is the **Admin** (`/admin`); create the **Owner** login in Settings (guide 37) and give her `/owner`.
 
 **Updating later:** push to GitHub `main`, then on the server run `anitha-update`. (Render and GitHub Pages also deploy from `main` while they are still on.)
 

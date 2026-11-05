@@ -13,6 +13,7 @@ async function shopSync() {
   } catch (e) { /* offline or server down: keep showing the last copy */ }
 }
 
+const ADM_AS = document.documentElement.dataset.as === 'owner' ? 'owner' : 'admin';   // which address this page was opened from (/owner or /admin)
 const ADM = { ready: false, signedIn: false, csrf: '', version: 0, state: null, dirty: false, inflight: false, timer: 0, poll: 0, ig: false, claude: false, igJobs: [] };
 async function admApi(method, path, body) {
   const r = await fetch(path, { method, credentials: 'same-origin', headers: { 'Content-Type': 'application/json', ...(ADM.csrf ? { 'X-CSRF-Token': ADM.csrf } : {}) }, body: body === undefined ? undefined : JSON.stringify(body) });
@@ -25,13 +26,13 @@ function admGate(mode, msg) {
   if (!g) { g = document.createElement('div'); g.id = 'admGate'; g.setAttribute('role', 'dialog'); g.setAttribute('aria-modal', 'true'); document.body.appendChild(g); }
   const st = ADM.state || {}, setup = mode === 'setup', twofa = st.twoFactor;
   g.innerHTML = `<form class="adm-box" onsubmit="return admSubmit(event,'${mode}')" autocomplete="off">
-    <img src="${LOGO_URI}" alt="Anitha Pemmasani" style="height:84px;width:auto;display:block;margin:0 auto 6px"><p class="adm-sub" style="text-align:center">Owner admin</p>
+    <img src="${LOGO_URI}" alt="Anitha Pemmasani" style="height:84px;width:auto;display:block;margin:0 auto 6px"><p class="adm-sub" style="text-align:center">${ADM_AS === 'owner' ? 'Owner sign-in' : 'Admin sign-in'}</p>
     ${mode === 'expired' ? '<p class="adm-note">Your session ended. Sign in again. Your changes are kept and will be saved.</p>' : ''}${mode === 'loading' ? '<p class="adm-sub">Connecting…</p>' : ''}${mode === 'error' ? `<p class="adm-err">${esc(msg || 'Cannot reach the server.')}</p><button type="button" class="adm-btn" onclick="admBoot()">Try again</button>` : ''}
-    ${mode === 'loading' || mode === 'error' ? '' : `${setup ? '<p class="adm-note">First time here. Choose your password. You need the <b>setup token</b> from the server settings (ADMIN_SETUP_TOKEN).</p><label>Setup token<input id="adm-token" type="password" autocomplete="off" required></label>' : ''}
-    ${!setup ? '<label>Your name <span class="note">(helpers only; owner leaves this empty)</span><input id="adm-user" maxlength="30" autocomplete="username"></label>' : ''}
+    ${mode === 'loading' || mode === 'error' ? '' : `${setup && ADM_AS === 'owner' ? '<p class="adm-note">This shop is not set up yet. Ask the admin to finish the first-time setup.</p>' : ''}${setup && ADM_AS !== 'owner' ? '<p class="adm-note">First time here. Choose your password. You need the <b>setup token</b> from the server settings (ADMIN_SETUP_TOKEN).</p><label>Setup token<input id="adm-token" type="password" autocomplete="off" required></label>' : ''}
+    ${!setup && ADM_AS === 'owner' ? '<label>Your name<input id="adm-user" maxlength="30" autocomplete="username" required></label>' : ''}
     <label>${setup ? 'New password (12+ characters)' : 'Password'}<input id="adm-pw" type="password" autocomplete="${setup ? 'new-password' : 'current-password'}" required minlength="${setup ? 12 : 1}" autofocus></label>
     ${setup ? '<label>Repeat password<input id="adm-pw2" type="password" autocomplete="new-password" required></label>' : ''}
-    ${!setup && twofa ? '<label>6-digit code from your authenticator app<input id="adm-code" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" autocomplete="one-time-code" required></label>' : ''}
+    ${!setup && ADM_AS === 'owner' ? '<label>6-digit code from your authenticator app <span class="note">(only if you use 2-step sign-in)</span><input id="adm-code" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" autocomplete="one-time-code"></label>' : ''}${!setup && ADM_AS !== 'owner' && twofa ? '<label>6-digit code from your authenticator app<input id="adm-code" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" autocomplete="one-time-code" required></label>' : ''}
     <p id="adm-msg" class="adm-err" role="alert">${esc(msg || '')}</p><button class="adm-btn" id="adm-go" type="submit">${setup ? 'Create my account' : 'Sign in'}</button>
     <p class="adm-foot">Not listed on Google. Every sign-in attempt is recorded.</p>`}</form>`;
   g.style.display = 'flex'; const f = g.querySelector('input'); if (f) setTimeout(() => f.focus(), 50);
@@ -40,7 +41,7 @@ async function admSubmit(e, mode) {
   e.preventDefault(); const v = id => (document.getElementById(id) || { value: '' }).value, msg = t => { document.getElementById('adm-msg').textContent = t; }, btn = document.getElementById('adm-go'); btn.disabled = true; msg('');
   try {
     if (mode === 'setup') { if (v('adm-pw') !== v('adm-pw2')) { msg('The two passwords are not the same.'); btn.disabled = false; return false; } await admApi('POST', '/admin/api/setup', { setupToken: v('adm-token'), password: v('adm-pw') }); ADM.state = await admApi('GET', '/admin/api/state'); admGate('login', 'Account created. Now sign in.'); return false; }
-    const r = await admApi('POST', '/admin/api/login', { password: v('adm-pw'), code: v('adm-code'), name: v('adm-user') }); ADM.csrf = r.csrf; ADM.signedIn = true; await admRole();
+    const r = await admApi('POST', '/admin/api/login', { password: v('adm-pw'), code: v('adm-code'), name: v('adm-user'), as: ADM_AS }); ADM.csrf = r.csrf; ADM.signedIn = true; await admRole();
     if (ADM.ready) { document.getElementById('admGate').style.display = 'none'; if (ADM.dirty) admSaveNow(); else admPoll(); return false; }   // the session had ended: keep what was typed, it is saved now
     await admEnter();
   } catch (err) { msg(err.status === 429 && err.data && err.data.retryAfter ? `Too many wrong attempts. Try again in ${Math.ceil(err.data.retryAfter / 60)} minutes.` : err.message); btn.disabled = false; const p = document.getElementById('adm-pw'); if (p) { p.value = ''; p.focus(); } }
@@ -48,20 +49,20 @@ async function admSubmit(e, mode) {
 }
 async function admBoot() {
   admGate('loading');
-  try { ADM.state = await admApi('GET', '/admin/api/state'); ADM.ig = !!ADM.state.instagram; ADM.claude = !!ADM.state.claude; if (ADM.state.signedIn) { ADM.csrf = ADM.state.csrf; ADM.signedIn = true; ADM.role = ADM.state.role || 'owner'; ADM.user = ADM.state.user || 'owner'; await admEnter(); } else admGate(ADM.state.configured ? 'login' : 'setup'); }
+  try { ADM.state = await admApi('GET', '/admin/api/state'); ADM.ig = !!ADM.state.instagram; ADM.claude = !!ADM.state.claude; if (ADM.state.signedIn && ADM.state.role === ADM_AS) { ADM.csrf = ADM.state.csrf; ADM.signedIn = true; ADM.role = ADM.state.role; ADM.user = ADM.state.user || ADM_AS; ADM.tabs = ADM.state.tabs || []; ADM.home = ADM.state.home || 'dashboard'; await admEnter(); } else admGate(ADM.state.configured ? 'login' : (ADM_AS === 'owner' ? 'setup' : 'setup'), ADM.state.signedIn ? `You are signed in as the ${ADM.state.role}. Sign in here as the ${ADM_AS}.` : ''); }
   catch (e) { admGate('error', 'Cannot reach the server: ' + e.message); }
 }
 // a link from the new owner screen (/admin2) such as /admin#orders opens that tab
 // each owner-app screen has its own address: /admin/orders/ (new look: /admin2/orders/). The server sends the same page for all of them.
-const ADM_BASE = BUILD === 'admin' && location.pathname.startsWith('/admin2') ? '/admin2/' : '/admin/';
+const ADM_BASE = BUILD === 'admin' && location.pathname.startsWith('/owner') ? '/owner/' : BUILD === 'admin' && location.pathname.startsWith('/admin2') ? '/admin2/' : '/admin/';
 let ADM_ROUTE_SKIP = false, ADM_ROUTED = false;
-function admPathTab() { const m = /^\/admin2?\/([a-z0-9-]+)\/?$/.exec(location.pathname); return m && m[1] !== 'api' ? m[1] : ''; }
+function admPathTab() { const m = /^\/(?:admin2?|owner)\/([a-z0-9-]+)\/?$/.exec(location.pathname); return m && m[1] !== 'api' ? m[1] : ''; }
 function admRoutePush(tab) {
   if (BUILD !== 'admin' || !ADM.ready || ADM_ROUTE_SKIP || !/^[a-z0-9-]+$/.test(String(tab))) return; const u = ADM_BASE + tab + '/';
   try { if (!ADM_ROUTED) { history.replaceState({ tab }, '', u + location.hash); ADM_ROUTED = true; } else if (location.pathname !== u) history.pushState({ tab }, '', u); } catch (e) { }
 }
 window.addEventListener('popstate', () => {
-  if (BUILD !== 'admin' || !ADM.ready) return; const t = admPathTab() || 'dashboard';
+  if (BUILD !== 'admin' || !ADM.ready) return; const t = admPathTab() || ADM.home || 'dashboard';
   if (document.querySelector('[data-tab="' + t + '"]')) { ADM_ROUTE_SKIP = true; try { switchAdminTab(t); } finally { ADM_ROUTE_SKIP = false; } }
 });
 function admHashTab() { const t = String(location.hash || '').slice(1) || admPathTab(); return t && document.querySelector('[data-tab="' + t.replace(/[^a-z-]/g, '') + '"]') && !(t === 'privacy' || t === 'ops') || (t && isOwnerRole() && /^(privacy|ops)$/.test(t)) ? t.replace(/[^a-z-]/g, '') : ''; }
@@ -70,7 +71,7 @@ async function admEnter() {
   const demo = !g.db; const fresh = normalizeDB(g.db || JSON.parse(JSON.stringify(defaultDB)));
   ['adminPin', 'otpEndpoint', 'aiEndpoint', 'assistantUrl'].forEach(k => { delete fresh.settings[k]; }); for (const k of Object.keys(db)) delete db[k]; Object.assign(db, fresh);
   ADM.ready = true; document.getElementById('admGate').style.display = 'none'; init(); admApplyRole(); ov2Init(); navRestore();
-  isAdminView = true; document.getElementById('storefrontView').classList.add('hidden'); document.getElementById('adminView').classList.add('active'); document.body.classList.add('admin-on', 'adm-app'); switchAdminTab(admHashTab() || currentAdminTab || 'dashboard');
+  isAdminView = true; document.getElementById('storefrontView').classList.add('hidden'); document.getElementById('adminView').classList.add('active'); document.body.classList.add('admin-on', 'adm-app'); switchAdminTab(admHashTab() || (ADM.tabs && ADM.tabs.includes(currentAdminTab) ? currentAdminTab : ADM.home) || 'dashboard');
   if (demo) { ADM.dirty = true; admSetBadge('Starting with demo data. Import your own in Settings → Security & backup, or just edit this.'); admQueueSave(); }
   clearInterval(ADM.poll); ADM.poll = setInterval(admPoll, 20_000); admSetBadge();
 }
@@ -98,21 +99,22 @@ async function admPoll() {
 // ---- Settings → Security & backup ----
 function admSecurityHTML() {
   if (BUILD !== 'admin') return '';
-  if (!isOwnerRole()) return admStaffSecurityHTML();
-  const tf = ADM.state && ADM.state.twoFactor;
-  return `<div class="admin-card" id="adm-security"><h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:12px;">Security &amp; backup</h4>
-    <div class="ai-row"><label>Current password<input id="sec-cur" type="password" autocomplete="current-password"></label><label>New password (12+ characters)<input id="sec-new" type="password" autocomplete="new-password"></label></div>
+  const tf = ADM.state && ADM.state.twoFactor, owner = isOwnerRole(), H = t => `<h4 class="dash-h4">${t}</h4>`;
+  const me = `<div class="ai-row"><label>Current password<input id="sec-cur" type="password" autocomplete="current-password"></label><label>New password (12+ characters)<input id="sec-new" type="password" autocomplete="new-password"></label></div>
     <button class="btn-sm btn-primary-sm" onclick="admChangePw()">Change password (signs out other devices)</button><div id="sec-pw-msg" class="note"></div>
-    <h4 class="dash-h4">2-step sign-in ${tf ? '<span class="status-pill status-active">ON</span>' : '<span class="status-pill status-inactive">OFF</span>'}</h4>
+    ${H(`2-step sign-in ${tf ? '<span class="status-pill status-active">ON</span>' : '<span class="status-pill status-inactive">OFF</span>'}`)}
     <p class="note">${tf ? 'A 6-digit code from your authenticator app is needed at every sign-in.' : 'Strongly recommended: sign-in also needs a 6-digit code from an authenticator app (Google Authenticator, Microsoft Authenticator…).'}</p>
     ${tf ? '<div class="ai-row"><label>Password to switch it off<input id="sec-2off" type="password" autocomplete="current-password"></label></div><button class="btn-sm btn-danger-sm" onclick="admTwoFactorOff()">Switch off 2-step sign-in</button>' : '<div class="ai-row"><label>Your password<input id="sec-2pw" type="password" autocomplete="current-password"></label></div><button class="btn-sm btn-primary-sm" onclick="admTwoFactorStart()">Set up 2-step sign-in</button>'}
-    <div id="sec-2fa" class="note"></div>
-    <h4 class="dash-h4">Claude AI key <span id="sec-ai-pill"></span></h4>
+    <div id="sec-2fa" class="note"></div>`;
+  const ai = `${H('Claude AI key <span id="sec-ai-pill"></span>')}
     <p class="note">Switches on the ✨ AI helpers. Get a key at console.anthropic.com → API keys. It is stored <b>encrypted on your server</b>, is never shown again (only the last 4 characters), and is only used to talk to Anthropic. Pasting a new key replaces the old one.</p>
     <div class="ai-row"><label style="flex:1;">Anthropic API key<input id="sec-aikey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-…"></label></div>
-    <div class="pf-actions"><button class="btn-sm btn-primary-sm" id="sec-ai-save" onclick="admSaveAiKey()">Save &amp; check key</button><button class="btn-sm btn-danger-sm" id="sec-ai-rm" onclick="admRemoveAiKey()" style="display:none;">Remove key</button></div><div id="sec-ai-msg" class="note"></div>
-    <h4 class="dash-h4">Team logins (helpers)</h4><p class="note">A helper signs in with their own name and password and can work on products and orders. They cannot open Privacy, backups, email, keys or this list.</p><div id="sec-team" class="note">Loading…</div><h4 class="dash-h4">Backup</h4><div class="pf-actions"><button class="btn-sm btn-info-sm" onclick="admDownloadBackup()">⬇ Download an encrypted backup of the whole shop</button><label class="btn-sm btn-info-sm" style="cursor:pointer;">⬆ Import a data file<input type="file" accept="application/json,.json" hidden onchange="admImport(this)"></label></div><div id="sec-bk" class="note"></div>
-    <h4 class="dash-h4">Recent sign-in activity</h4><div id="sec-audit" class="note">Loading…</div>
+    <div class="pf-actions"><button class="btn-sm btn-primary-sm" id="sec-ai-save" onclick="admSaveAiKey()">Save &amp; check key</button><button class="btn-sm btn-danger-sm" id="sec-ai-rm" onclick="admRemoveAiKey()" style="display:none;">Remove key</button></div><div id="sec-ai-msg" class="note"></div>`;
+  const team = `${H('Owner login')}<p class="note">The owner signs in at <b>/owner</b> with her own name and password. She runs the business: sarees, categories, prices, orders, customers, discounts and backups. She cannot open the home page look, Pages, Ops, audit logs, keys or this list. You (the admin) cannot see her customers or orders.</p><div id="sec-team" class="note">Loading…</div>`;
+  const backup = `${H('Backup')}<div class="pf-actions"><button class="btn-sm btn-info-sm" onclick="admDownloadBackup()">⬇ Download an encrypted backup of the whole shop</button><label class="btn-sm btn-info-sm" style="cursor:pointer;">⬆ Import a data file<input type="file" accept="application/json,.json" hidden onchange="admImport(this)"></label></div><div id="sec-bk" class="note"></div>`;
+  const audit = `${H('Recent sign-in activity')}<div id="sec-audit" class="note">Loading…</div>`;
+  return `<div class="admin-card" id="adm-security"><h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:12px;">${owner ? 'My sign-in &amp; backup' : 'Security &amp; logins'}</h4>
+    <p class="note">You are signed in as the <b>${owner ? 'owner (' + esc(ADM.user || '') + ')' : 'admin'}</b>.</p>${me}${owner ? backup : ai + team + audit}
     <div class="pf-actions" style="margin-top:14px;"><button class="btn-sm btn-danger-sm" onclick="admSignOut()">Sign out</button></div></div>`;
 }
 function admAiKeyShow(r) {

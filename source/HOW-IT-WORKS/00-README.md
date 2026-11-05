@@ -37,3 +37,4 @@ Plain-language pages for the owner and for anyone who takes over the project. Ke
 | `15-ai-helper.md` | the ten AI helpers for the owner: product copy, photo reading, reply suggestions, writer, review replies, ask your shop, summary, pricing ideas, data clean-up, translation |
 | `14-storefront-extras.md` | occasions, recently viewed, wishlist sharing, similar-saree alerts, bundles, bulk CSV upload, status images, FAQ |
 | `13-delivery-gifts-tracking.md` | PIN/delivery check, address correction, gifts, saved addresses, no-cancel rule, tracking, invoice PDF, review request |
+| `37-two-logins-owner-and-admin.md` | the Owner and the Admin sign-ins: who can open and change what, set-up steps, how the server enforces it |

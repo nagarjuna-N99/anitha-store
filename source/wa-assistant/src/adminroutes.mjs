@@ -12,6 +12,7 @@ import { OPS_HTML } from './opspage.mjs';
 import { previewsOf } from './ops.mjs';
 import crypto from 'node:crypto';
 import { clientIp } from './clientip.mjs';
+import { adminApiAllowed, dbForRead, TABS, HOME_TAB } from './roles.mjs';
 
 export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, notes, ops, opsReport, wa, watchRun, watchRead, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
   const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY', 'Cross-Origin-Resource-Policy': 'same-origin', 'Cache-Control': 'no-store', ...(auth.secure ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' } : {}) };
@@ -24,8 +25,8 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
 
   return async function handle(req, res, url, route) {
     const ip = ipOf(req);
-    const tabM = req.method === 'GET' ? /^\/(admin2?)\/([a-z0-9-]{1,32})\/?$/.exec(url.pathname) : null, tabRoute = !!tabM && tabM[2] !== 'api';   // /admin/orders, /admin2/orders: each owner-app screen has its own address (same page, same login)
-    if (cfg.adminAllowedIps && cfg.adminAllowedIps.length && (route === 'GET /admin' || route === 'GET /admin/' || route === 'GET /admin2' || tabRoute || url.pathname.startsWith('/admin/api/')) && !cfg.adminAllowedIps.includes(ip)) { json(res, 404, { error: 'not found' }, SEC); return true; }   // optional: only these addresses can even see the owner app
+    const tabM = req.method === 'GET' ? /^\/(admin2?|owner)\/([a-z0-9-]{1,32})\/?$/.exec(url.pathname) : null, tabRoute = !!tabM && tabM[2] !== 'api';   // /admin/orders, /admin2/orders: each owner-app screen has its own address (same page, same login)
+    if (cfg.adminAllowedIps && cfg.adminAllowedIps.length && (route === 'GET /admin' || route === 'GET /admin/' || route === 'GET /admin2' || route === 'GET /owner' || route === 'GET /owner/' || tabRoute || url.pathname.startsWith('/admin/api/')) && !cfg.adminAllowedIps.includes(ip)) { json(res, 404, { error: 'not found' }, SEC); return true; }   // optional: only these addresses can even see the owner app
     // ---------- the stand-alone Ops page: its own key, no owner login, works even if the owner app is broken ----------
     if (route === 'GET /ops' || route === 'GET /ops/' || route === 'GET /ops/api/report') {
       const on = String(cfg.opsToken || '').length >= 24; if (!on) return json(res, 404, { error: 'not found' }, SEC), true;
@@ -37,16 +38,11 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       auth.audit('ops-report', ip, true);
       json(res, 200, { ...(await opsReport({ cfg, auth, shop, privacy, weborders, store, smtpMeta, ig, analytics, ops, reportState, social, wa })), watch: watchRead() }, SEC); return true;
     }
-    // ---------- the new owner look, next to the classic one: the very same app and the same sign-in, only the look differs (class "ui2") ----------
-    if (route === 'GET /admin2' || route === 'GET /admin2/' || (tabRoute && tabM[1] === 'admin2')) {
+    // ---------- the two sign-in pages: /admin (the admin) and /owner (the owner). Same app; the page asks the server which screens it may show. ----------
+    if (route === 'GET /admin' || route === 'GET /admin/' || route === 'GET /admin2' || route === 'GET /admin2/' || route === 'GET /owner' || route === 'GET /owner/' || (tabRoute && tabM[1] !== 'api')) {
       const f = path.join(ROOT, 'public', 'admin.html'); if (!fs.existsSync(f)) return json(res, 404, { error: 'admin.html is not built yet (run tools/build-split.py)' }, SEC), true;
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Content-Security-Policy': CSP, ...SEC }); res.end(fs.readFileSync(f, 'utf8').replace('<html lang="en">', '<html lang="en" class="ui2">')); return true;
-    }
-    // ---------- the admin page: the new look is now THE owner app at /admin (decided 5 Nov 2026); the old look stays at /admin?look=classic ----------
-    if (route === 'GET /admin' || route === 'GET /admin/' || (tabRoute && tabM[1] === 'admin')) {
-      const f = path.join(ROOT, 'public', 'admin.html'); if (!fs.existsSync(f)) return json(res, 404, { error: 'admin.html is not built yet (run tools/build-split.py)' }, SEC), true;
-      const html = fs.readFileSync(f, 'utf8'), classic = url.searchParams.get('look') === 'classic';
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Content-Security-Policy': CSP, ...SEC }); res.end(classic ? html : html.replace('<html lang="en">', '<html lang="en" class="ui2">')); return true;
+      const as = url.pathname.startsWith('/owner') ? 'owner' : 'admin', classic = url.searchParams.get('look') === 'classic', html = fs.readFileSync(f, 'utf8');
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Content-Security-Policy': CSP, ...SEC }); res.end(html.replace('<html lang="en">', `<html lang="en"${classic ? '' : ' class="ui2"'} data-as="${as}">`)); return true;
     }
     // ---------- public, read-only ----------
     if (route === 'GET /public/shop') {
@@ -111,7 +107,7 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
     // ---------- admin API ----------
     const p = url.pathname.slice('/admin/api'.length), read = req.method === 'GET';
     try {
-      if (route === 'GET /admin/api/state') { const s = auth.sessionFrom(req); send(res, { code: 200, configured: auth.configured, twoFactor: auth.twoFactorOn, siteUrl: cfg.siteUrl || '', signedIn: !!s, role: s ? s.role || 'owner' : null, user: s ? s.user || 'owner' : null, csrf: s ? s.csrf : null, instagram: !!ig.configured, claude: !!(cfg.anthropicKey && cfg.anthropicKey !== 'missing') }); return true; }
+      if (route === 'GET /admin/api/state') { const s = auth.sessionFrom(req); send(res, { code: 200, configured: auth.configured, twoFactor: s ? auth.twoFactorFor(s) : auth.twoFactorOn, siteUrl: cfg.siteUrl || '', signedIn: !!s, role: s ? s.role || 'admin' : null, user: s ? s.user || 'admin' : null, tabs: s ? TABS[s.role] || [] : [], home: s ? HOME_TAB[s.role] : null, csrf: s ? s.csrf : null, instagram: !!ig.configured, claude: !!(cfg.anthropicKey && cfg.anthropicKey !== 'missing') }); return true; }
       if (route === 'POST /admin/api/setup') { const b = await body(req, 5_000); const r = auth.setup(b, ip); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
       if (route === 'POST /admin/api/login') {
         if (!/^application\/json/i.test(req.headers['content-type'] || '')) return send(res, { code: 415, error: 'JSON only.' }), true;
@@ -119,18 +115,18 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
         if (r.code !== 200) return send(res, r), true; send(res, { code: 200, ok: true, csrf: r.csrf }, { 'Set-Cookie': auth.cookie(r.sessionId) }); return true;
       }
       const a = auth.authorize(req, { write: !read, upload: route === 'POST /admin/api/video/upload' }, ip); if (a.code !== 200) return send(res, a), true;
-      const who = a.session.user || 'owner', role = a.session.role || 'owner', wrote = (ev, extra = '') => auth.audit(ev, ip, true, (who !== 'owner' ? `[${who}] ` : '') + extra);
-      if (role === 'staff' && /^\/admin\/api\/(privacy|email|report|ai-key|import|team|2fa|audit|ops|previews|agents|growth\/(done|plan))/.test(url.pathname)) return send(res, { code: 403, error: 'Only the owner can do this.' }), true;
+      const who = a.session.user || 'admin', role = a.session.role || 'admin', wrote = (ev, extra = '') => auth.audit(ev, ip, true, `[${role === 'owner' ? 'owner:' : ''}${who}] ` + extra);
+      if (!adminApiAllowed(role, url.pathname)) { auth.audit('forbidden', ip, false, `${role} ${route}`); return send(res, { code: 403, error: role === 'owner' ? 'This is for the admin.' : 'This is for the owner.' }), true; }
       if (route === 'POST /admin/api/logout') { auth.logout(req, ip); send(res, { code: 200, ok: true }, { 'Set-Cookie': auth.clearCookie() }); return true; }
 
-      if (route === 'GET /admin/api/db') { const g = shop.get(); send(res, { code: 200, version: g.version, db: g.db }); return true; }
-      if (route === 'PUT /admin/api/db') { const b = await body(req, 30_000_000); const r = shop.put(b.db, Number(b.baseVersion)); if (r.code === 200) wrote('save', `v${r.version}${r.merged ? ' merged' : ''}`); send(res, r); return true; }
+      if (route === 'GET /admin/api/db') { const g = shop.get(); send(res, { code: 200, version: g.version, db: dbForRead(role, g.db) }); return true; }
+      if (route === 'PUT /admin/api/db') { const b = await body(req, 30_000_000); const r = shop.put(b.db, Number(b.baseVersion), role); if (r.code === 200) { wrote('save', `v${r.version}${r.merged ? ' merged' : ''}`); r.db = dbForRead(role, r.db); } send(res, r); return true; }
       if (route === 'GET /admin/api/version') { send(res, { code: 200, version: shop.get().version }); return true; }
       if (route === 'POST /admin/api/import') { const b = await body(req, 30_000_000); const again = b.db && typeof b.db === 'object' ? privacy.applyErasures(b.db) : 0, r = shop.importAll(b.db); if (r.code === 200) { wrote('import', again ? `${again} erased customer(s) removed again` : ''); r.erasedAgain = again; } send(res, r); return true; }
       if (route === 'POST /admin/api/password') { const r = auth.changePassword(await body(req, 5_000), req, ip); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
-      if (route === 'POST /admin/api/2fa/start') { send(res, auth.twoFactorStart(await body(req, 5_000), ip)); return true; }
-      if (route === 'POST /admin/api/2fa/confirm') { const r = auth.twoFactorConfirm(await body(req, 5_000), ip); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
-      if (route === 'POST /admin/api/2fa/off') { const r = auth.twoFactorOff(await body(req, 5_000), ip); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
+      if (route === 'POST /admin/api/2fa/start') { send(res, auth.twoFactorStart(await body(req, 5_000), ip, a.session)); return true; }
+      if (route === 'POST /admin/api/2fa/confirm') { const r = auth.twoFactorConfirm(await body(req, 5_000), ip, a.session); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
+      if (route === 'POST /admin/api/2fa/off') { const r = auth.twoFactorOff(await body(req, 5_000), ip, a.session); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
       if (route === 'GET /admin/api/ops') { send(res, { code: 200, ...(await opsReport({ cfg, auth, shop, privacy, weborders, store, smtpMeta, ig, analytics, ops, reportState, social, wa })), watch: watchRead() }); return true; }
       if (route === 'GET /admin/api/agents/ops-watch') { send(res, { code: 200, last: watchRead() }); return true; }
       if (route === 'POST /admin/api/agents/ops-watch/run') { const t = Date.now(); if (watchTries.length && t - watchTries[watchTries.length - 1] < 20_000) return send(res, { code: 429, error: 'Please wait a few seconds.' }), true; watchTries.push(t); watchTries = watchTries.slice(-5); wrote('ops-watch'); send(res, { code: 200, last: await watchRun(true) }); return true; }

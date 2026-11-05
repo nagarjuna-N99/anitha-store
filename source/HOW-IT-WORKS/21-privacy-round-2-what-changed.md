@@ -33,8 +33,8 @@ On an "Erase my data" request there is now a tick-list: WhatsApp (Meta), Razorpa
 - If email is not set up, the Dashboard shows a red box, because without it you are not told when a customer sends a request.
 - The Dashboard also warns about requests that are late or due within 5 days. The daily email digest carries the same warning.
 
-## 8. Helpers (team logins)
-- **Settings → Team logins**: add a helper with a name and a password (12+ characters). They sign in on the same page, typing their name.
+## 8. Team logins (replaced on 5 Nov 2026: see guide 37, the Owner and the Admin logins)
+- (Old, before 5 Nov 2026) **Settings → Team logins**: add a helper with a name and a password (12+ characters). They sign in on the same page, typing their name.
 - Helpers can work on products and orders. They cannot open Privacy, backups, email, the AI key or the team list. The server enforces this, not just the screen.
 - Honest limit: a helper's app still loads the shop's data (customers and orders), because the app works on one shared copy. So only give logins to people you trust.
 - Remove a helper or change their password any time; they are signed out at once.

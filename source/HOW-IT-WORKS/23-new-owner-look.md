@@ -5,7 +5,7 @@ A second way to open your owner app, with a new look: soft glass cards, light or
 - **Classic:** `https://<your server>/admin` (nothing changed there).
 - **New look:** `https://<your server>/admin2`.
 
-Both are **the very same app**. Same password, same 2-step code, same helper logins, same data, same buttons. A change you make in one shows in the other. There is no second copy of anything, so nothing can be missing or behave differently. (The server sends the same page to both; `/admin2` only switches the new look on.)
+Both are **the very same app**. Same password, same 2-step code, same logins (owner and admin, guide 37), same data, same buttons. A change you make in one shows in the other. There is no second copy of anything, so nothing can be missing or behave differently. (The server sends the same page to both; `/admin2` only switches the new look on.)
 
 ## What is new on the Dashboard (new look only)
 At the top, **Shop Overview**, drawn from your real orders:

@@ -1,7 +1,7 @@
 // DPDP round 2 in a real browser against the real server: website orders reach the owner, checking who is asking before data is shown,
-// logging a request that came by phone, the do-not-bring-back list, and helper logins that cannot open Privacy.
+// logging a request that came by phone, the do-not-bring-back list, and an admin login that cannot open Privacy.
 const { chromium } = require(process.env.PW); const { spawn } = require('child_process'); const http = require('http'); const fs = require('fs'); const os = require('os'); const path = require('path');
-const ROOT = process.cwd(), SETUP = 'setup-token-0123456789', PW = 'Correct-Horse-9!', HPW = 'Helper-Pass-Strong-7!', OPSK = 'ops-key-for-browser-test-0123456789';
+const ROOT = process.cwd(), SETUP = 'setup-token-0123456789', PW = 'Correct-Horse-9!', OPW = 'Owner-Strong-Pass-7!', OPSK = 'ops-key-for-browser-test-0123456789';
 (async () => {
   let fails = 0; const ok = (n, c) => { if (!c) fails++; console.log(c ? 'PASS' : 'FAIL', n); };
   const free = () => new Promise(r => { const s = http.createServer(); s.listen(0, '127.0.0.1', () => { const p = s.address().port; s.close(() => r(p)); }); });
@@ -13,9 +13,10 @@ const ROOT = process.cwd(), SETUP = 'setup-token-0123456789', PW = 'Correct-Hors
   const errs = []; const mk = async () => { const c = await b.newContext({ viewport: { width: 1280, height: 900 } }); await c.route(/^https?:\/\/(?!127\.0\.0\.1)/, r => r.abort()); const p = await c.newPage(); p.on('pageerror', e => errs.push(e.message)); p.on('dialog', d => d.accept('Out of stock this week')); return { c, p }; };
   try {
     await fetch(base + '/admin/api/setup', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ setupToken: SETUP, password: PW }) });
+    { const lg = await fetch(base + '/admin/api/login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ as: 'admin', password: PW }) }); await fetch(base + '/admin/api/team/add', { method: 'POST', headers: { cookie: lg.headers.get('set-cookie').split(';')[0], 'x-csrf-token': (await lg.json()).csrf, 'content-type': 'application/json' }, body: JSON.stringify({ name: 'anitha', password: OPW }) }); }   // the admin creates the owner's login
     const A = await mk(), p = A.p, ev = (f, a) => p.evaluate(f, a);
-    const signIn = async (pg, name, pw) => { await pg.goto(base + '/admin'); await pg.waitForSelector('#adm-pw'); if (name) await pg.fill('#adm-user', name); await pg.fill('#adm-pw', pw); await pg.click('#adm-go'); await pg.waitForFunction(() => document.body.classList.contains('adm-app'), null, { timeout: 15000 }); };
-    await signIn(p, '', PW); await sleep(1500);
+    const signIn = async (pg, name, pw) => { await pg.goto(base + (name ? '/owner' : '/admin')); await pg.waitForSelector('#adm-pw'); if (name) await pg.fill('#adm-user', name); await pg.fill('#adm-pw', pw); await pg.click('#adm-go'); await pg.waitForFunction(() => document.body.classList.contains('adm-app'), null, { timeout: 15000 }); };
+    await signIn(p, 'anitha', OPW); await sleep(1500);
     ok('the owner is signed in with the owner role', await ev(() => ADM.role === 'owner'));
     // ---- a customer orders on the public website ----
     const S = await mk(), sp = S.p; await sp.goto(`http://127.0.0.1:${sitePort}/`); await sp.waitForTimeout(800);
@@ -57,11 +58,12 @@ const ROOT = process.cwd(), SETUP = 'setup-token-0123456789', PW = 'Correct-Hors
     await ev(() => switchAdminTab('dashboard')); await sleep(1000);
     ok('dashboard: warns that email is not set up (so new requests would go unseen)', await ev(() => /Set up email/.test(document.getElementById('dash-priv').innerText)));
     // ---- the developer's Ops page ----
-    await ev(() => switchAdminTab('ops')); await p.waitForSelector('#adminContent .va-row', { timeout: 20000 });
-    ok('ops: the page shows a verdict and every area (server, data, security, website, orders, WhatsApp, AI, Instagram, email, privacy, errors)', await ev(() => { const t = document.getElementById('adminContent').innerText; return /fail ·/i.test(t) && ['Server', 'Shop data', 'Security', 'Public website', 'Orders & payments', 'WhatsApp', 'AI helpers', 'Instagram', 'Email', 'Privacy', 'Recent errors'].every(n => t.toLowerCase().includes(n.toLowerCase())); }));
-    ok('ops: problems are open with a "→ fix" hint, and the report can be copied as text', await ev(() => /→/.test(document.getElementById('adminContent').innerText) && !!document.querySelector('#adminContent button[onclick="opsCopy()"]')));
-    ok('ops: it sees the unanswered state of this test server (no email, WhatsApp not live) as warnings, not as ok', await ev(() => OPS.r.groups.find(g => g.name === 'Email').checks.some(c => c.id === 'smtp' && c.status === 'warn') && OPS.r.groups.find(g => g.name === 'WhatsApp').checks.some(c => c.id === 'wa-live' && c.status === 'warn')));
-    ok('ops: the owner tab also previews Instagram (status, counts, posts) and WhatsApp (mode, chats, 24-hour window)', await ev(() => { const t = document.getElementById('adminContent').innerText; return /Instagram/i.test(t) && /not connected/i.test(t) && /WhatsApp/i.test(t) && /dry-run/i.test(t) && /Message text is never shown/i.test(t); }));
+    const H = await mk(), hp = H.p, hev = (f, x) => hp.evaluate(f, x); await signIn(hp, '', PW); await sleep(800);   // Ops belongs to the admin login
+    await hev(() => switchAdminTab('ops')); await hp.waitForSelector('#adminContent .va-row', { timeout: 20000 });
+    ok('ops: the page shows a verdict and every area (server, data, security, website, orders, WhatsApp, AI, Instagram, email, privacy, errors)', await hev(() => { const t = document.getElementById('adminContent').innerText; return /fail ·/i.test(t) && ['Server', 'Shop data', 'Security', 'Public website', 'Orders & payments', 'WhatsApp', 'AI helpers', 'Instagram', 'Email', 'Privacy', 'Recent errors'].every(n => t.toLowerCase().includes(n.toLowerCase())); }));
+    ok('ops: problems are open with a "→ fix" hint, and the report can be copied as text', await hev(() => /→/.test(document.getElementById('adminContent').innerText) && !!document.querySelector('#adminContent button[onclick="opsCopy()"]')));
+    ok('ops: it sees the unanswered state of this test server (no email, WhatsApp not live) as warnings, not as ok', await hev(() => OPS.r.groups.find(g => g.name === 'Email').checks.some(c => c.id === 'smtp' && c.status === 'warn') && OPS.r.groups.find(g => g.name === 'WhatsApp').checks.some(c => c.id === 'wa-live' && c.status === 'warn')));
+    ok('ops: the owner tab also previews Instagram (status, counts, posts) and WhatsApp (mode, chats, 24-hour window)', await hev(() => { const t = document.getElementById('adminContent').innerText; return /Instagram/i.test(t) && /not connected/i.test(t) && /WhatsApp/i.test(t) && /dry-run/i.test(t) && /Message text is never shown/i.test(t); }));
     // ---- the stand-alone Ops page (own key, no owner login) ----
     const O = await mk(), op = O.p; await op.goto(base + '/ops'); await op.waitForSelector('#k');
     await op.fill('#k', 'the-wrong-key'); await op.click('button[type=submit]'); await op.waitForFunction(() => /not right/.test(document.getElementById('e').textContent));
@@ -69,13 +71,10 @@ const ROOT = process.cwd(), SETUP = 'setup-token-0123456789', PW = 'Correct-Hors
     await op.fill('#k', OPSK); await op.click('button[type=submit]'); await op.waitForSelector('#out .row', { timeout: 20000 });
     ok('standalone ops: with the key it shows the verdict, every area and both previews, with no owner sign-in', await op.evaluate(() => { const t = document.getElementById('out').innerText; return /fail ·/i.test(t) && ['Server', 'Shop data', 'Security', 'Public website', 'Orders & payments', 'WhatsApp', 'AI helpers', 'Instagram', 'Email', 'Privacy', 'Recent errors'].every(n => t.includes(n)) && /Instagram/.test(t) && /not connected/.test(t) && /dry-run/.test(t) && /Message text is never shown/.test(t); }));
     ok('standalone ops: the key is not kept after the tab closes (session only) and no cookie is set', await op.evaluate(() => document.cookie === '' && !localStorage.getItem('opsk')));
-    // ---- helper logins ----
-    await ev(() => switchAdminTab('settings')); await p.waitForSelector('#tm-name'); await p.fill('#tm-name', 'meena'); await p.fill('#tm-pass', HPW); await p.click('button:has-text("Add a helper")'); await sleep(800);
-    ok('team: the owner can add a helper', await ev(() => /meena/.test(document.getElementById('sec-team').innerText)));
-    const H = await mk(), hp = H.p; await signIn(hp, 'meena', HPW); await sleep(800);
-    ok('helper: signs in as a helper and the Privacy and Ops tabs are hidden', await hp.evaluate(() => ADM.role === 'staff' || ADM.role === 'helper' || ADM.role !== 'owner') && await hp.evaluate(() => [...document.querySelectorAll('[data-tab="privacy"],[data-tab="ops"]')].every(e => getComputedStyle(e).display === 'none')));
-    ok('helper: the server refuses Privacy, team and backup data to a helper', await hp.evaluate(async () => { const r = []; for (const u of ['/admin/api/privacy', '/admin/api/team', '/admin/api/email']) r.push(await admApi('GET', u).then(() => 200, e => e.status)); return r.every(x => x === 403); }));
-    ok('helper: can still work on orders', await hp.evaluate(() => admApi('GET', '/admin/api/web-orders').then(() => true, () => false)));
+    // ---- the admin login: no customers, orders or privacy ----
+    ok('admin: signs in as the admin and the Privacy, Orders, Customers and Products tabs are hidden', await hp.evaluate(() => ADM.role === 'admin') && await hp.evaluate(() => [...document.querySelectorAll('[data-tab="privacy"],[data-tab="orders"],[data-tab="customers"],[data-tab="products"]')].every(e => getComputedStyle(e).display === 'none')));
+    ok('admin: the server refuses Privacy, web orders and the Growth report to the admin', await hp.evaluate(async () => { const r = []; for (const u of ['/admin/api/privacy', '/admin/api/web-orders', '/admin/api/growth']) r.push(await admApi('GET', u).then(() => 200, e => e.status)); return r.every(x => x === 403); }));
+    ok('admin: can open Ops and the audit log (the owner cannot)', await hp.evaluate(() => admApi('GET', '/admin/api/ops').then(() => true, () => false)) && await ev(() => admApi('GET', '/admin/api/ops').then(() => false, e => e.status === 403)));
     ok('no JavaScript errors anywhere', errs.length === 0 || (console.log(errs), false));
   } catch (e) { fails++; console.log('FAIL (crash)', e.message.split('\n').slice(0, 4).join(' | ')); }
   console.log(fails ? 'FAILED ' + fails : 'ALL PASSED'); await b.close(); srv.kill(); site.close(); process.exit(fails ? 1 : 0);

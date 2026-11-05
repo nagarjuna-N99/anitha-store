@@ -7273,6 +7273,7 @@ async function shopSync() {
   } catch (e) { /* offline or server down: keep showing the last copy */ }
 }
 
+const ADM_AS = document.documentElement.dataset.as === 'owner' ? 'owner' : 'admin';   // which address this page was opened from (/owner or /admin)
 const ADM = { ready: false, signedIn: false, csrf: '', version: 0, state: null, dirty: false, inflight: false, timer: 0, poll: 0, ig: false, claude: false, igJobs: [] };
 async function admApi(method, path, body) {
   const r = await fetch(path, { method, credentials: 'same-origin', headers: { 'Content-Type': 'application/json', ...(ADM.csrf ? { 'X-CSRF-Token': ADM.csrf } : {}) }, body: body === undefined ? undefined : JSON.stringify(body) });
@@ -7285,13 +7286,13 @@ function admGate(mode, msg) {
   if (!g) { g = document.createElement('div'); g.id = 'admGate'; g.setAttribute('role', 'dialog'); g.setAttribute('aria-modal', 'true'); document.body.appendChild(g); }
   const st = ADM.state || {}, setup = mode === 'setup', twofa = st.twoFactor;
   g.innerHTML = `<form class="adm-box" onsubmit="return admSubmit(event,'${mode}')" autocomplete="off">
-    <img src="${LOGO_URI}" alt="Anitha Pemmasani" style="height:84px;width:auto;display:block;margin:0 auto 6px"><p class="adm-sub" style="text-align:center">Owner admin</p>
+    <img src="${LOGO_URI}" alt="Anitha Pemmasani" style="height:84px;width:auto;display:block;margin:0 auto 6px"><p class="adm-sub" style="text-align:center">${ADM_AS === 'owner' ? 'Owner sign-in' : 'Admin sign-in'}</p>
     ${mode === 'expired' ? '<p class="adm-note">Your session ended. Sign in again. Your changes are kept and will be saved.</p>' : ''}${mode === 'loading' ? '<p class="adm-sub">Connecting…</p>' : ''}${mode === 'error' ? `<p class="adm-err">${esc(msg || 'Cannot reach the server.')}</p><button type="button" class="adm-btn" onclick="admBoot()">Try again</button>` : ''}
-    ${mode === 'loading' || mode === 'error' ? '' : `${setup ? '<p class="adm-note">First time here. Choose your password. You need the <b>setup token</b> from the server settings (ADMIN_SETUP_TOKEN).</p><label>Setup token<input id="adm-token" type="password" autocomplete="off" required></label>' : ''}
-    ${!setup ? '<label>Your name <span class="note">(helpers only; owner leaves this empty)</span><input id="adm-user" maxlength="30" autocomplete="username"></label>' : ''}
+    ${mode === 'loading' || mode === 'error' ? '' : `${setup && ADM_AS === 'owner' ? '<p class="adm-note">This shop is not set up yet. Ask the admin to finish the first-time setup.</p>' : ''}${setup && ADM_AS !== 'owner' ? '<p class="adm-note">First time here. Choose your password. You need the <b>setup token</b> from the server settings (ADMIN_SETUP_TOKEN).</p><label>Setup token<input id="adm-token" type="password" autocomplete="off" required></label>' : ''}
+    ${!setup && ADM_AS === 'owner' ? '<label>Your name<input id="adm-user" maxlength="30" autocomplete="username" required></label>' : ''}
     <label>${setup ? 'New password (12+ characters)' : 'Password'}<input id="adm-pw" type="password" autocomplete="${setup ? 'new-password' : 'current-password'}" required minlength="${setup ? 12 : 1}" autofocus></label>
     ${setup ? '<label>Repeat password<input id="adm-pw2" type="password" autocomplete="new-password" required></label>' : ''}
-    ${!setup && twofa ? '<label>6-digit code from your authenticator app<input id="adm-code" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" autocomplete="one-time-code" required></label>' : ''}
+    ${!setup && ADM_AS === 'owner' ? '<label>6-digit code from your authenticator app <span class="note">(only if you use 2-step sign-in)</span><input id="adm-code" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" autocomplete="one-time-code"></label>' : ''}${!setup && ADM_AS !== 'owner' && twofa ? '<label>6-digit code from your authenticator app<input id="adm-code" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" autocomplete="one-time-code" required></label>' : ''}
     <p id="adm-msg" class="adm-err" role="alert">${esc(msg || '')}</p><button class="adm-btn" id="adm-go" type="submit">${setup ? 'Create my account' : 'Sign in'}</button>
     <p class="adm-foot">Not listed on Google. Every sign-in attempt is recorded.</p>`}</form>`;
   g.style.display = 'flex'; const f = g.querySelector('input'); if (f) setTimeout(() => f.focus(), 50);
@@ -7300,7 +7301,7 @@ async function admSubmit(e, mode) {
   e.preventDefault(); const v = id => (document.getElementById(id) || { value: '' }).value, msg = t => { document.getElementById('adm-msg').textContent = t; }, btn = document.getElementById('adm-go'); btn.disabled = true; msg('');
   try {
     if (mode === 'setup') { if (v('adm-pw') !== v('adm-pw2')) { msg('The two passwords are not the same.'); btn.disabled = false; return false; } await admApi('POST', '/admin/api/setup', { setupToken: v('adm-token'), password: v('adm-pw') }); ADM.state = await admApi('GET', '/admin/api/state'); admGate('login', 'Account created. Now sign in.'); return false; }
-    const r = await admApi('POST', '/admin/api/login', { password: v('adm-pw'), code: v('adm-code'), name: v('adm-user') }); ADM.csrf = r.csrf; ADM.signedIn = true; await admRole();
+    const r = await admApi('POST', '/admin/api/login', { password: v('adm-pw'), code: v('adm-code'), name: v('adm-user'), as: ADM_AS }); ADM.csrf = r.csrf; ADM.signedIn = true; await admRole();
     if (ADM.ready) { document.getElementById('admGate').style.display = 'none'; if (ADM.dirty) admSaveNow(); else admPoll(); return false; }   // the session had ended: keep what was typed, it is saved now
     await admEnter();
   } catch (err) { msg(err.status === 429 && err.data && err.data.retryAfter ? `Too many wrong attempts. Try again in ${Math.ceil(err.data.retryAfter / 60)} minutes.` : err.message); btn.disabled = false; const p = document.getElementById('adm-pw'); if (p) { p.value = ''; p.focus(); } }
@@ -7308,20 +7309,20 @@ async function admSubmit(e, mode) {
 }
 async function admBoot() {
   admGate('loading');
-  try { ADM.state = await admApi('GET', '/admin/api/state'); ADM.ig = !!ADM.state.instagram; ADM.claude = !!ADM.state.claude; if (ADM.state.signedIn) { ADM.csrf = ADM.state.csrf; ADM.signedIn = true; ADM.role = ADM.state.role || 'owner'; ADM.user = ADM.state.user || 'owner'; await admEnter(); } else admGate(ADM.state.configured ? 'login' : 'setup'); }
+  try { ADM.state = await admApi('GET', '/admin/api/state'); ADM.ig = !!ADM.state.instagram; ADM.claude = !!ADM.state.claude; if (ADM.state.signedIn && ADM.state.role === ADM_AS) { ADM.csrf = ADM.state.csrf; ADM.signedIn = true; ADM.role = ADM.state.role; ADM.user = ADM.state.user || ADM_AS; ADM.tabs = ADM.state.tabs || []; ADM.home = ADM.state.home || 'dashboard'; await admEnter(); } else admGate(ADM.state.configured ? 'login' : (ADM_AS === 'owner' ? 'setup' : 'setup'), ADM.state.signedIn ? `You are signed in as the ${ADM.state.role}. Sign in here as the ${ADM_AS}.` : ''); }
   catch (e) { admGate('error', 'Cannot reach the server: ' + e.message); }
 }
 // a link from the new owner screen (/admin2) such as /admin#orders opens that tab
 // each owner-app screen has its own address: /admin/orders/ (new look: /admin2/orders/). The server sends the same page for all of them.
-const ADM_BASE = BUILD === 'admin' && location.pathname.startsWith('/admin2') ? '/admin2/' : '/admin/';
+const ADM_BASE = BUILD === 'admin' && location.pathname.startsWith('/owner') ? '/owner/' : BUILD === 'admin' && location.pathname.startsWith('/admin2') ? '/admin2/' : '/admin/';
 let ADM_ROUTE_SKIP = false, ADM_ROUTED = false;
-function admPathTab() { const m = /^\/admin2?\/([a-z0-9-]+)\/?$/.exec(location.pathname); return m && m[1] !== 'api' ? m[1] : ''; }
+function admPathTab() { const m = /^\/(?:admin2?|owner)\/([a-z0-9-]+)\/?$/.exec(location.pathname); return m && m[1] !== 'api' ? m[1] : ''; }
 function admRoutePush(tab) {
   if (BUILD !== 'admin' || !ADM.ready || ADM_ROUTE_SKIP || !/^[a-z0-9-]+$/.test(String(tab))) return; const u = ADM_BASE + tab + '/';
   try { if (!ADM_ROUTED) { history.replaceState({ tab }, '', u + location.hash); ADM_ROUTED = true; } else if (location.pathname !== u) history.pushState({ tab }, '', u); } catch (e) { }
 }
 window.addEventListener('popstate', () => {
-  if (BUILD !== 'admin' || !ADM.ready) return; const t = admPathTab() || 'dashboard';
+  if (BUILD !== 'admin' || !ADM.ready) return; const t = admPathTab() || ADM.home || 'dashboard';
   if (document.querySelector('[data-tab="' + t + '"]')) { ADM_ROUTE_SKIP = true; try { switchAdminTab(t); } finally { ADM_ROUTE_SKIP = false; } }
 });
 function admHashTab() { const t = String(location.hash || '').slice(1) || admPathTab(); return t && document.querySelector('[data-tab="' + t.replace(/[^a-z-]/g, '') + '"]') && !(t === 'privacy' || t === 'ops') || (t && isOwnerRole() && /^(privacy|ops)$/.test(t)) ? t.replace(/[^a-z-]/g, '') : ''; }
@@ -7330,7 +7331,7 @@ async function admEnter() {
   const demo = !g.db; const fresh = normalizeDB(g.db || JSON.parse(JSON.stringify(defaultDB)));
   ['adminPin', 'otpEndpoint', 'aiEndpoint', 'assistantUrl'].forEach(k => { delete fresh.settings[k]; }); for (const k of Object.keys(db)) delete db[k]; Object.assign(db, fresh);
   ADM.ready = true; document.getElementById('admGate').style.display = 'none'; init(); admApplyRole(); ov2Init(); navRestore();
-  isAdminView = true; document.getElementById('storefrontView').classList.add('hidden'); document.getElementById('adminView').classList.add('active'); document.body.classList.add('admin-on', 'adm-app'); switchAdminTab(admHashTab() || currentAdminTab || 'dashboard');
+  isAdminView = true; document.getElementById('storefrontView').classList.add('hidden'); document.getElementById('adminView').classList.add('active'); document.body.classList.add('admin-on', 'adm-app'); switchAdminTab(admHashTab() || (ADM.tabs && ADM.tabs.includes(currentAdminTab) ? currentAdminTab : ADM.home) || 'dashboard');
   if (demo) { ADM.dirty = true; admSetBadge('Starting with demo data. Import your own in Settings → Security & backup, or just edit this.'); admQueueSave(); }
   clearInterval(ADM.poll); ADM.poll = setInterval(admPoll, 20_000); admSetBadge();
 }
@@ -7358,21 +7359,22 @@ async function admPoll() {
 // ---- Settings → Security & backup ----
 function admSecurityHTML() {
   if (BUILD !== 'admin') return '';
-  if (!isOwnerRole()) return admStaffSecurityHTML();
-  const tf = ADM.state && ADM.state.twoFactor;
-  return `<div class="admin-card" id="adm-security"><h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:12px;">Security &amp; backup</h4>
-    <div class="ai-row"><label>Current password<input id="sec-cur" type="password" autocomplete="current-password"></label><label>New password (12+ characters)<input id="sec-new" type="password" autocomplete="new-password"></label></div>
+  const tf = ADM.state && ADM.state.twoFactor, owner = isOwnerRole(), H = t => `<h4 class="dash-h4">${t}</h4>`;
+  const me = `<div class="ai-row"><label>Current password<input id="sec-cur" type="password" autocomplete="current-password"></label><label>New password (12+ characters)<input id="sec-new" type="password" autocomplete="new-password"></label></div>
     <button class="btn-sm btn-primary-sm" onclick="admChangePw()">Change password (signs out other devices)</button><div id="sec-pw-msg" class="note"></div>
-    <h4 class="dash-h4">2-step sign-in ${tf ? '<span class="status-pill status-active">ON</span>' : '<span class="status-pill status-inactive">OFF</span>'}</h4>
+    ${H(`2-step sign-in ${tf ? '<span class="status-pill status-active">ON</span>' : '<span class="status-pill status-inactive">OFF</span>'}`)}
     <p class="note">${tf ? 'A 6-digit code from your authenticator app is needed at every sign-in.' : 'Strongly recommended: sign-in also needs a 6-digit code from an authenticator app (Google Authenticator, Microsoft Authenticator…).'}</p>
     ${tf ? '<div class="ai-row"><label>Password to switch it off<input id="sec-2off" type="password" autocomplete="current-password"></label></div><button class="btn-sm btn-danger-sm" onclick="admTwoFactorOff()">Switch off 2-step sign-in</button>' : '<div class="ai-row"><label>Your password<input id="sec-2pw" type="password" autocomplete="current-password"></label></div><button class="btn-sm btn-primary-sm" onclick="admTwoFactorStart()">Set up 2-step sign-in</button>'}
-    <div id="sec-2fa" class="note"></div>
-    <h4 class="dash-h4">Claude AI key <span id="sec-ai-pill"></span></h4>
+    <div id="sec-2fa" class="note"></div>`;
+  const ai = `${H('Claude AI key <span id="sec-ai-pill"></span>')}
     <p class="note">Switches on the ✨ AI helpers. Get a key at console.anthropic.com → API keys. It is stored <b>encrypted on your server</b>, is never shown again (only the last 4 characters), and is only used to talk to Anthropic. Pasting a new key replaces the old one.</p>
     <div class="ai-row"><label style="flex:1;">Anthropic API key<input id="sec-aikey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-…"></label></div>
-    <div class="pf-actions"><button class="btn-sm btn-primary-sm" id="sec-ai-save" onclick="admSaveAiKey()">Save &amp; check key</button><button class="btn-sm btn-danger-sm" id="sec-ai-rm" onclick="admRemoveAiKey()" style="display:none;">Remove key</button></div><div id="sec-ai-msg" class="note"></div>
-    <h4 class="dash-h4">Team logins (helpers)</h4><p class="note">A helper signs in with their own name and password and can work on products and orders. They cannot open Privacy, backups, email, keys or this list.</p><div id="sec-team" class="note">Loading…</div><h4 class="dash-h4">Backup</h4><div class="pf-actions"><button class="btn-sm btn-info-sm" onclick="admDownloadBackup()">⬇ Download an encrypted backup of the whole shop</button><label class="btn-sm btn-info-sm" style="cursor:pointer;">⬆ Import a data file<input type="file" accept="application/json,.json" hidden onchange="admImport(this)"></label></div><div id="sec-bk" class="note"></div>
-    <h4 class="dash-h4">Recent sign-in activity</h4><div id="sec-audit" class="note">Loading…</div>
+    <div class="pf-actions"><button class="btn-sm btn-primary-sm" id="sec-ai-save" onclick="admSaveAiKey()">Save &amp; check key</button><button class="btn-sm btn-danger-sm" id="sec-ai-rm" onclick="admRemoveAiKey()" style="display:none;">Remove key</button></div><div id="sec-ai-msg" class="note"></div>`;
+  const team = `${H('Owner login')}<p class="note">The owner signs in at <b>/owner</b> with her own name and password. She runs the business: sarees, categories, prices, orders, customers, discounts and backups. She cannot open the home page look, Pages, Ops, audit logs, keys or this list. You (the admin) cannot see her customers or orders.</p><div id="sec-team" class="note">Loading…</div>`;
+  const backup = `${H('Backup')}<div class="pf-actions"><button class="btn-sm btn-info-sm" onclick="admDownloadBackup()">⬇ Download an encrypted backup of the whole shop</button><label class="btn-sm btn-info-sm" style="cursor:pointer;">⬆ Import a data file<input type="file" accept="application/json,.json" hidden onchange="admImport(this)"></label></div><div id="sec-bk" class="note"></div>`;
+  const audit = `${H('Recent sign-in activity')}<div id="sec-audit" class="note">Loading…</div>`;
+  return `<div class="admin-card" id="adm-security"><h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:12px;">${owner ? 'My sign-in &amp; backup' : 'Security &amp; logins'}</h4>
+    <p class="note">You are signed in as the <b>${owner ? 'owner (' + esc(ADM.user || '') + ')' : 'admin'}</b>.</p>${me}${owner ? backup : ai + team + audit}
     <div class="pf-actions" style="margin-top:14px;"><button class="btn-sm btn-danger-sm" onclick="admSignOut()">Sign out</button></div></div>`;
 }
 function admAiKeyShow(r) {
@@ -7723,7 +7725,8 @@ function renderOverview2(box) {
 async function ov2Load(first) {
   try {
     OV2.web = (await admApi('GET', '/admin/api/web-orders').catch(() => ({ orders: [] }))).orders; WEB.list = OV2.web;
-    if (isOwnerRole()) { OV2.watch = (await admApi('GET', '/admin/api/agents/ops-watch').catch(() => ({}))).last || null; OV2.priv = await admApi('GET', '/admin/api/privacy/summary').catch(() => null); if (first || OV2.n % 4 === 0) OV2.prev = (await admApi('GET', '/admin/api/previews').catch(() => ({}))).previews || null; }
+    if (isAdminRole()) OV2.watch = (await admApi('GET', '/admin/api/agents/ops-watch').catch(() => ({}))).last || null; else OV2.priv = await admApi('GET', '/admin/api/privacy/summary').catch(() => null);
+    if (first || OV2.n % 4 === 0) OV2.prev = (await admApi('GET', '/admin/api/previews').catch(() => ({}))).previews || null;
     OV2.n++; const t = el_('ov-livet'); if (t) { t.textContent = 'live · ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }); document.querySelector('#ov-live .odot').className = 'odot'; } ov2Draw();
   } catch (e) { const t = el_('ov-livet'); if (t) { t.textContent = 'offline'; document.querySelector('#ov-live .odot').className = 'odot w'; } }
 }
@@ -7773,7 +7776,7 @@ function opsDraw(c) {
   const r = OPS.r, s = r.summary, auto = el_('ops-auto') && el_('ops-auto').checked, verdict = s.fail ? ['bad', `${s.fail} thing(s) need fixing now`] : s.warn ? ['warn', `${s.warn} thing(s) to look at`] : ['ok', 'Everything looks healthy'];
   c.innerHTML = `<div class="admin-card"><h3 style="margin:0 0 4px;">🩺 Ops <span class="pf-sub">checked ${esc(r.at.slice(0, 19).replace('T', ' '))} UTC</span></h3><div class="va-do ${verdict[0] === 'ok' ? 'ok' : ''}" style="margin:8px 0;"><h4 style="margin:0">${verdict[0] === 'ok' ? '✓' : verdict[0] === 'bad' ? '✕' : '!'} ${esc(verdict[1])}</h4><p class="note" style="margin:2px 0 0;">${s.fail} fail · ${s.warn} warn · ${s.ok} ok · ${s.info} info. Read-only: nothing here changes any data. No secret is ever shown (only "set" or "missing").</p></div>
     <div class="pf-actions"><button type="button" class="btn-sm btn-primary-sm" onclick="renderOpsAdmin(el_('adminContent'))">↻ Check again</button><button type="button" class="btn-sm btn-info-sm" onclick="opsCopy()">Copy report as text</button><label class="chk" style="display:inline-flex;margin:0 8px;"><input type="checkbox" id="ops-auto" ${auto ? 'checked' : ''}><span>Re-check every minute</span></label></div></div>
-    ${isOwnerRole() ? opsWatchHTML(r.watch) : ''}
+    ${isAdminRole() ? opsWatchHTML(r.watch) : ''}
     ${opsPreviewsHTML(r.previews)}
     ${r.groups.map(g => { const bad = g.checks.filter(x => x.status === 'fail').length, wr = g.checks.filter(x => x.status === 'warn').length, open = OPS.open[g.name] != null ? OPS.open[g.name] : (bad + wr) > 0; return `<div class="admin-card"><details ${open ? 'open' : ''} ontoggle="OPS.open['${esc(g.name)}']=this.open"><summary><b>${esc(g.name)}</b> ${bad ? `<span class="g-p g-p1">${bad} fail</span>` : ''} ${wr ? `<span class="g-p g-p2">${wr} warn</span>` : ''} ${!bad && !wr ? '<span class="g-p g-p3">ok</span>' : ''}</summary>${g.checks.map(x => `<div class="va-row"><span class="va-i ${x.status === 'ok' ? 'ok' : x.status === 'info' ? '' : x.status === 'warn' ? 'warn' : 'bad'}">${OPS_ICON[x.status]}</span><div style="flex:1"><b>${esc(x.title)}</b>${x.detail ? `<div class="note" style="margin:0;white-space:pre-wrap">${esc(x.detail)}</div>` : ''}${x.fix && (x.status === 'fail' || x.status === 'warn') ? `<div class="note" style="margin:0;color:#8a5a00">→ ${esc(x.fix)}</div>` : ''}</div></div>`).join('')}</details></div>`; }).join('')}`;
 }
@@ -7810,14 +7813,13 @@ async function privCollect(u) {
 }
 async function privExport(id) { const u = db.users.find(x => x.id === id); if (!u) return; const data = await privCollect(u), a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })); a.download = 'customer-data-' + (last10(u.phone) || 'export') + '.json'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); admApi('POST', '/admin/api/privacy/log', { event: 'customer-exported' }).catch(() => {}); showToast('Downloaded. Send it to the customer through a private channel.', 'success'); }
 async function privChatOnly(d) { try { const r = await admApi('POST', '/admin/api/privacy/access', { phone: d }), a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(r.data, null, 2)], { type: 'application/json' })); a.download = 'server-data-' + d + '.json'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); } catch (e) { showToast(aiMsg(e), 'error'); } }
-// ---- team logins, role handling (owner or helper) ----
-async function admRole() { try { const st = await admApi('GET', '/admin/api/state'); ADM.state = Object.assign(ADM.state || {}, st); ADM.role = st.role || 'owner'; ADM.user = st.user || 'owner'; } catch (e) { ADM.role = ADM.role || 'owner'; } }
-const isOwnerRole = () => (ADM.role || 'owner') === 'owner';
-function admApplyRole() { if (BUILD !== 'admin' || isOwnerRole()) return; document.querySelectorAll('[data-tab="privacy"],[data-tab="ops"]').forEach(el => { el.style.display = 'none'; }); }
-function admStaffSecurityHTML() { return `<div class="admin-card" id="adm-security"><h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:12px;">My sign-in</h4><p class="note">You are signed in as <b>${esc(ADM.user || '')}</b> (helper). You can work on products and orders. Privacy requests, backups, email, keys and the team list are only for the owner.</p>
-    <div class="ai-row"><label>Current password<input id="sec-cur" type="password" autocomplete="current-password"></label><label>New password (12+ characters)<input id="sec-new" type="password" autocomplete="new-password"></label></div><button class="btn-sm btn-primary-sm" onclick="admChangePw()">Change my password</button><div id="sec-pw-msg" class="note"></div><div class="pf-actions" style="margin-top:14px;"><button class="btn-sm btn-danger-sm" onclick="admSignOut()">Sign out</button></div></div>`; }
-async function admLoadTeam() { const e = document.getElementById('sec-team'); if (!e || !isOwnerRole()) return; try { const r = await admApi('GET', '/admin/api/team'); e.innerHTML = (r.team.length ? r.team.map(x => `<div class="va-row"><div style="flex:1"><b>${esc(x.name)}</b> <span class="note">helper · added ${esc(String(x.createdAt || '').slice(0, 10))}</span></div><button type="button" class="btn-sm btn-info-sm" onclick="admTeamPw('${esc(x.name)}')">New password</button><button type="button" class="btn-sm btn-danger-sm" onclick="admTeamRemove('${esc(x.name)}')">Remove</button></div>`).join('') : '<p class="note">No helpers yet.</p>') + `<div class="ai-row"><label>Name<input id="tm-name" maxlength="30" placeholder="e.g. meena" autocomplete="off"></label><label>Password (12+ characters)<input id="tm-pass" type="password" autocomplete="new-password"></label></div><button type="button" class="btn-sm btn-primary-sm" onclick="admTeamAdd()">Add a helper</button><div id="tm-msg" class="note"></div>`; } catch (err) { e.textContent = err.message; } }
-async function admTeamAdd() { const m = document.getElementById('tm-msg'); try { await admApi('POST', '/admin/api/team/add', { name: document.getElementById('tm-name').value, password: document.getElementById('tm-pass').value }); await admLoadTeam(); document.getElementById('tm-msg').textContent = 'Added. Give them the name and password; they sign in with both.'; } catch (e) { m.textContent = e.message; } }
+// ---- the two logins: OWNER (the business) and ADMIN (the look of the website and the technical side) ----
+async function admRole() { try { const st = await admApi('GET', '/admin/api/state'); ADM.state = Object.assign(ADM.state || {}, st); ADM.role = st.role || ADM_AS; ADM.user = st.user || ADM_AS; ADM.tabs = st.tabs || []; ADM.home = st.home || 'dashboard'; } catch (e) { ADM.role = ADM.role || ADM_AS; } }
+const isOwnerRole = () => (ADM.role || ADM_AS) === 'owner';
+const isAdminRole = () => (ADM.role || ADM_AS) === 'admin';
+function admApplyRole() { if (BUILD !== 'admin') return; const ok = new Set(ADM.tabs || []); document.querySelectorAll('[data-tab]').forEach(el => { if (!ok.has(el.dataset.tab)) el.style.display = 'none'; }); document.body.classList.add('as-' + (ADM.role || ADM_AS)); }
+async function admLoadTeam() { const e = document.getElementById('sec-team'); if (!e || !isAdminRole()) return; try { const r = await admApi('GET', '/admin/api/team'); e.innerHTML = (r.team.length ? r.team.map(x => `<div class="va-row"><div style="flex:1"><b>${esc(x.name)}</b> <span class="note">owner login · added ${esc(String(x.createdAt || '').slice(0, 10))}</span></div><button type="button" class="btn-sm btn-info-sm" onclick="admTeamPw('${esc(x.name)}')">New password</button><button type="button" class="btn-sm btn-danger-sm" onclick="admTeamRemove('${esc(x.name)}')">Remove</button></div>`).join('') : '<p class="note">No owner login yet. Create one below, then give her the name, the password and the address /owner.</p>') + `<div class="ai-row"><label>Name<input id="tm-name" maxlength="30" placeholder="e.g. anitha" autocomplete="off"></label><label>Password (12+ characters)<input id="tm-pass" type="password" autocomplete="new-password"></label></div><button type="button" class="btn-sm btn-primary-sm" onclick="admTeamAdd()">Create the owner login</button><div id="tm-msg" class="note"></div>`; } catch (err) { e.textContent = err.message; } }
+async function admTeamAdd() { const m = document.getElementById('tm-msg'); try { await admApi('POST', '/admin/api/team/add', { name: document.getElementById('tm-name').value, password: document.getElementById('tm-pass').value }); await admLoadTeam(); document.getElementById('tm-msg').textContent = 'Created. Give her the name, the password and the address /owner. She signs in with both.'; } catch (e) { m.textContent = e.message; } }
 async function admTeamRemove(n) { if (!confirm(`Remove ${n}? They will be signed out at once.`)) return; try { await admApi('POST', '/admin/api/team/remove', { name: n }); admLoadTeam(); } catch (e) { showToast(e.message, 'error'); } }
 async function admTeamPw(n) { const p = prompt(`New password for ${n} (12+ characters):`); if (!p) return; try { await admApi('POST', '/admin/api/team/password', { name: n, password: p }); showToast('Password changed. They are signed out.', 'success'); } catch (e) { showToast(e.message, 'error'); } }
 // ---- notice archive: every version customers have seen is kept, so you can show what each customer agreed to ----

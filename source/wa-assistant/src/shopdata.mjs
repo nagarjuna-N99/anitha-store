@@ -2,6 +2,7 @@
 // website only ever sees `publicView()`. Saves are merged field by field against the version the admin started from, so a
 // change made elsewhere in the meantime (for example a new order or a stock change) is never overwritten by a stale save.
 import fs from 'node:fs';
+import { dbForWrite } from './roles.mjs';
 import path from 'node:path';
 import zlib from 'node:zlib';
 
@@ -70,7 +71,8 @@ export class ShopData {
     if (!isObj(db.settings)) return 'settings is missing.'; if (j(db).length > 25_000_000) return 'The data is too large (over 25 MB).'; return '';
   }
   // Save the admin's copy. `baseVersion` is the version the admin last received.
-  put(mine, baseVersion) {
+  put(mine, baseVersion, role) {
+    if (role && this.db && isObj(mine) && !Array.isArray(mine)) mine = dbForWrite(role, mine, this.db);   // a login may only change its own parts of the shop data
     const bad = ShopData.check(mine); if (bad) return { code: 400, error: bad };
     if (!this.db) { this.db = mine; this.version = 1; this.persist(); this.remember(); return { code: 200, version: this.version, db: this.db, merged: false }; }
     if (baseVersion === this.version) { this.db = mine; this.version++; this.persist(); this.remember(); return { code: 200, version: this.version, db: this.db, merged: false }; }

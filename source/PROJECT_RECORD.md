@@ -3,7 +3,7 @@
 > **STANDING RULE (owner's instruction, 23 Oct 2026):** this record and the `HOW-IT-WORKS/` folder are updated **after every change or update**, in the same step as the change, never later. A change is not finished until (1) the code is tested, (2) a dated entry is added to the Change Log below, (3) any affected `HOW-IT-WORKS/` page is corrected, (4) `./check-record.sh` has been run (it fails if the record or how-it-works is behind the code).
 > Also standing: the owner wants chats remembered for later use; this record is that memory for the project.
 
-**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 561 automated checks) · **Browser test suites:** 34 (see §6)
+**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 573 automated checks) · **Browser test suites:** 34 (see §6)
 
 ---
 
@@ -144,6 +144,11 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**12 Nov 2026 (Two logins: the Owner and the Admin)**
+- Owner asked for the back end to be split into two sign-ins. **Owner** (`/owner`, name + password): the business: sarees, categories, items, prices, shipping and GST, coupons and discounts, delivery rules, orders, invoices, statements, customers and their data (export, erase), privacy, growth reports, her own password and 2-step, backups. **Admin** (`/admin`, password): the look and the technical side: Home Page (banner, quote, story chapters, Notes wording, colours), Pages, Image Studio, Instagram and WhatsApp, Claude key, creating the owner login, Ops, audit log, Notes list; the admin sees no customers, orders, invoices, coupons, reviews, bank or tax details. Enforced on the server (`wa-assistant/src/roles.mjs`): per-login screens and routes (`/admin/api` and `/api`), what each login is shown (`dbForRead`) and what each save may change (`dbForWrite`); wrong-address sign-ins get the plain wrong-password answer; 2-step and password changes are per person; the audit log names who did what. The old main account becomes the Admin; old helper logins become owner logins. Guide: HOW-IT-WORKS/37-two-logins-owner-and-admin.md.
+- Deliberate exceptions: the weekly-report email setup and the Instagram/WhatsApp previews stay with the owner (her own business report and status).
+- Tests: server 573 (+12: logins, roles · data, roles · 2-step); `admin-app-test`, `ui2-test`, `dpdp2-test` now sign in as the owner at `/owner` and as the admin at `/admin`. Not tested: the migration on the live server, a real phone. To do after updating the server: sign in at `/admin`, create the owner login in Settings, give her `/owner`.
 
 **12 Nov 2026 (Story chapters on the home page; tidier New Arrivals cards on phones)**
 - Owner sent phone printouts of the reference shop and of our live site and asked for both: tidy our phone pages and add the story-style home page. **Tidy-up:** New Arrivals cards no longer stack four big buttons; the heart and share sit on the photo, View and Add share one row, and phones show about two cards at a time. **Story chapters:** a new home-page section (after New Arrivals) of occasion chapters (photo panel, "Chapter I", title with an italic word, line of weaves, quote, three category tiles, "Enter this chapter"), three sample chapters in our own words, fully editable in Home Page → Story chapters (add, hide, reorder, delete, photo upload). Guide: HOW-IT-WORKS/36-story-chapters-and-card-tidy.md.

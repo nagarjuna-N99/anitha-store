@@ -4,6 +4,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { loadConfig, ROOT } from './src/config.mjs';
 import { clientIp } from './src/clientip.mjs';
+import { apiAllowed } from './src/roles.mjs';
 import { createSiteHost } from './src/sitehost.mjs';
 import { Store } from './src/store.mjs';
 import { WhatsApp, verifySignature, parseWebhook } from './src/whatsapp.mjs';
@@ -170,7 +171,7 @@ export function createApp(overrides = {}, deps = {}) {
       return localPlan(r, kind);
     },
     async compose(kind) {
-      const r = await growth.build(kind, true, kind), plan = await growth.plan(r, kind), base = (cfg.payments.publicUrl || '').replace(/\/$/, ''), e = renderEmail(r, plan, base ? base + '/admin' : '', kind), name = { weekly: 'weekly growth report', monthly: 'monthly business review', daily: 'daily brief' }[kind];
+      const r = await growth.build(kind, true, kind), plan = await growth.plan(r, kind), base = (cfg.payments.publicUrl || '').replace(/\/$/, ''), e = renderEmail(r, plan, base ? base + '/owner' : '', kind), name = { weekly: 'weekly growth report', monthly: 'monthly business review', daily: 'daily brief' }[kind];
       return { r, plan, subject: `${r.brand} ${name} · ${kind === 'monthly' ? r.period.label : kind === 'daily' ? r.period.from : r.period.from + ' to ' + r.period.to}`, html: e.html, text: e.text };
     },
     async preview(kind = 'weekly') { const c = await growth.compose(kind); return { subject: c.subject, html: c.html, text: c.text, via: c.plan.via }; },
@@ -292,6 +293,7 @@ export function createApp(overrides = {}, deps = {}) {
       if (url.pathname.startsWith('/api/')) {
         const c = cors(req);
         if (!isAdmin(req)) return json(res, 401, { error: 'unauthorized' }, c);
+        if (!isAdminToken(req)) { const ss = auth.sessionFrom(req), rl = ss && ss.role; if (!apiAllowed(rl, url.pathname)) return json(res, 403, { error: rl === 'owner' ? 'This is for the admin.' : 'This is for the owner.' }, c); }   // a signed-in login only reaches its own routes (the old master token keeps working for the server's own tools)
 
         if (route === 'POST /api/catalogue') {
           const cat = cleanCatalogue(JSON.parse((await readBody(req, 8_000_000)).toString('utf8')));

@@ -27,6 +27,7 @@ export class AdminAuth {
     this.file = path.join(dir, 'admin.json'); this.auditFile = path.join(dir, 'admin-audit.log'); this.setupToken = String(setupToken || ''); this.secure = secureCookie; this.now = now; this.idleMs = idleMs; this.absMs = absoluteMs;
     fs.mkdirSync(dir, { recursive: true }); this.sessions = new Map(); this.fails = new Map();   // key (ip:… or acct) -> {n, first, lockedUntil}
     this.s = { user: null, staff: [] }; try { this.s = { staff: [], ...JSON.parse(fs.readFileSync(this.file, 'utf8')) }; } catch { /* first run */ }
+    for (const x of this.s.staff) x.role = 'owner';   // team logins from before the split are owner logins now; the main account is the admin
   }
   save() { const t = this.file + '.tmp'; fs.writeFileSync(t, JSON.stringify(this.s), { mode: 0o600 }); fs.renameSync(t, this.file); }
   audit(ev, ip, ok = true, extra = '') { try { fs.appendFileSync(this.auditFile, JSON.stringify({ t: new Date(this.now()).toISOString(), ev, ip, ok, extra: String(extra).slice(0, 120) }) + '\n', { mode: 0o600 }); } catch { /* disk full: never break login */ } }
@@ -55,21 +56,29 @@ export class AdminAuth {
     this.s.user = { name: 'owner', ...this.hash(password), createdAt: new Date(this.now()).toISOString(), totp: null }; this.save(); this.audit('setup', ip, true); return { code: 200 };
   }
   // ---- login ----
-  login({ name, password, code }, ip, ua = '') {
-    const nm = String(name || '').trim().toLowerCase(), staff = nm && nm !== 'owner' ? this.s.staff.find(x => x.name === nm) : null, ik = 'ip:' + ip, ak = nm && nm !== 'owner' ? 'acct:' + nm : 'acct';
+  // Two sign-in addresses: /admin signs in the ADMIN (the main account, password only), /owner signs in an OWNER account (name and password).
+  // Using the wrong address gives the same plain "Wrong password or code." as any other mistake.
+  login({ name, password, code, as }, ip, ua = '') {
+    const nm = String(name || '').trim().toLowerCase(), asOwner = as === 'owner', ik = 'ip:' + ip, ak = asOwner ? 'acct:' + nm : 'acct';
     if (this.locked(ik) || this.locked(ak)) { this.audit('login', ip, false, 'locked'); return { code: 429, error: 'Too many wrong attempts. Try again in 15 minutes.', retryAfter: Math.ceil(this.retryAfter(ik, ak) / 1000) }; }
     const bad = why => { this.fail(ik, 5); this.fail(ak, 12); this.audit('login', ip, false, why); return { code: 401, error: 'Wrong password or code.' }; };
     if (!this.configured) { this.audit('login', ip, false, 'not set up'); return { code: 401, error: 'Wrong password or code.' }; }
-    if (nm && nm !== 'owner') { if (!staff || !this.checkPw(password, staff)) return bad('team password'); this.clear(ik); this.clear(ak); const s = this.newSession(ip, ua, staff.name, 'staff'); this.audit('login', ip, true, 'team: ' + staff.name); return { code: 200, ...s }; }
+    if (asOwner) {
+      const acct = nm ? this.s.staff.find(x => x.name === nm) : null;
+      if (!acct || !this.checkPw(password, acct)) return bad('owner password');
+      if (acct.totp && acct.totp.enabled && !this.useTotp(code, acct)) return bad('owner 2fa');
+      this.clear(ik); this.clear(ak); const s = this.newSession(ip, ua, acct.name, 'owner'); this.audit('login', ip, true, 'owner: ' + acct.name); return { code: 200, ...s };
+    }
+    if (nm && nm !== 'owner' && nm !== 'admin') return bad('name on the admin address');
     if (!this.checkPw(password)) return bad('password');
     if (this.twoFactorOn) { if (!this.useTotp(code)) return bad('2fa'); }
-    this.clear(ik); this.clear(ak); const s = this.newSession(ip, ua, 'owner', 'owner'); this.audit('login', ip, true); return { code: 200, ...s };
+    this.clear(ik); this.clear(ak); const s = this.newSession(ip, ua, 'admin', 'admin'); this.audit('login', ip, true, 'admin'); return { code: 200, ...s };
   }
-  useTotp(code) {
-    const t = this.s.user.totp; code = String(code || '').replace(/\s/g, ''); if (!/^\d{6}$/.test(code)) return false; const step = Math.floor(this.now() / 30_000);
+  useTotp(code, acct = this.s.user) {
+    const t = acct && acct.totp; if (!t) return false; code = String(code || '').replace(/\s/g, ''); if (!/^\d{6}$/.test(code)) return false; const step = Math.floor(this.now() / 30_000);
     for (const d of [0, -1, 1]) { const st = step + d; if (eq(totp(t.secret, st), code)) { if (st <= (t.lastStep || 0)) return false; t.lastStep = st; this.save(); return true; } } return false;
   }
-  newSession(ip, ua, user = 'owner', role = 'owner') {
+  newSession(ip, ua, user = 'admin', role = 'admin') {
     const id = b64u(crypto.randomBytes(32)), csrf = b64u(crypto.randomBytes(24)), t = this.now();
     this.sessions.set(sha(id).toString('hex'), { csrf, created: t, last: t, ip, ua: String(ua).slice(0, 120), user, role });
     if (this.sessions.size > 20) { const oldest = [...this.sessions.entries()].sort((a, b) => a[1].last - b[1].last)[0]; this.sessions.delete(oldest[0]); }
@@ -95,27 +104,30 @@ export class AdminAuth {
     }
     return { code: 200, session: s };
   }
-  // ---- team logins: the owner can give a helper their own name and password. A helper cannot open the Privacy tab, backups, keys, email or the team list. ----
-  teamList() { return this.s.staff.map(x => ({ name: x.name, role: x.role || 'staff', createdAt: x.createdAt })); }
+  // ---- owner logins: the admin creates the owner's sign-in (a name and a password). It opens the owner screens only, at /owner. ----
+  teamList() { return this.s.staff.map(x => ({ name: x.name, role: 'owner', twoFactor: !!(x.totp && x.totp.enabled), createdAt: x.createdAt })); }
   teamAdd({ name, password }, ip) {
-    const nm = String(name || '').trim().toLowerCase(); if (!/^[a-z0-9._-]{3,30}$/.test(nm) || nm === 'owner') return { code: 422, error: 'Use 3 to 30 letters, digits, dots or dashes for the name (not "owner").' };
-    if (this.s.staff.some(x => x.name === nm)) return { code: 409, error: 'That name is already used.' }; if (this.s.staff.length >= 10) return { code: 422, error: 'You can add up to 10 people.' };
-    const p = AdminAuth.passwordProblem(password); if (p) return { code: 400, error: p }; this.s.staff.push({ name: nm, role: 'staff', ...this.hash(password), createdAt: new Date(this.now()).toISOString() }); this.save(); this.audit('team-add', ip, true, nm); return { code: 200 };
+    const nm = String(name || '').trim().toLowerCase(); if (!/^[a-z0-9._-]{3,30}$/.test(nm) || nm === 'owner' || nm === 'admin') return { code: 422, error: 'Use 3 to 30 letters, digits, dots or dashes for the name (not "owner" or "admin").' };
+    if (this.s.staff.some(x => x.name === nm)) return { code: 409, error: 'That name is already used.' }; if (this.s.staff.length >= 5) return { code: 422, error: 'You can add up to 5 owner logins.' };
+    const p = AdminAuth.passwordProblem(password); if (p) return { code: 400, error: p }; this.s.staff.push({ name: nm, role: 'owner', ...this.hash(password), createdAt: new Date(this.now()).toISOString() }); this.save(); this.audit('team-add', ip, true, nm); return { code: 200 };
   }
   teamRemove({ name }, ip) { const nm = String(name || '').toLowerCase(), i = this.s.staff.findIndex(x => x.name === nm); if (i < 0) return { code: 404, error: 'Not found.' }; this.s.staff.splice(i, 1); this.save(); for (const [k, v] of [...this.sessions.entries()]) if (v.user === nm) this.sessions.delete(k); this.audit('team-remove', ip, true, nm); return { code: 200 }; }
   teamPassword({ name, password }, ip) { const nm = String(name || '').toLowerCase(), u = this.s.staff.find(x => x.name === nm); if (!u) return { code: 404, error: 'Not found.' }; const p = AdminAuth.passwordProblem(password); if (p) return { code: 400, error: p }; Object.assign(u, this.hash(password)); this.save(); for (const [k, v] of [...this.sessions.entries()]) if (v.user === nm) this.sessions.delete(k); this.audit('team-password', ip, true, nm); return { code: 200 }; }
   // ---- password and two-factor management (all need the current password) ----
+  acctOf(sess) { return sess && sess.role === 'owner' ? this.s.staff.find(x => x.name === sess.user) : this.s.user; }
+  twoFactorFor(sess) { const a = this.acctOf(sess); return !!(a && a.totp && a.totp.enabled); }
   changePassword({ current, next }, req, ip) {
-    const sess = this.sessionFrom(req), me = sess && sess.role === 'staff' ? this.s.staff.find(x => x.name === sess.user) : this.s.user;
+    const sess = this.sessionFrom(req), me = this.acctOf(sess);
     if (!this.checkPw(current, me)) { this.fail('ip:' + ip, 5); this.audit('password', ip, false, 'wrong current'); return { code: 401, error: 'The current password is not right.' }; }
     const p = AdminAuth.passwordProblem(next); if (p) return { code: 400, error: p }; Object.assign(me, this.hash(next)); this.save();
-    const keep = this.sessionFrom(req); for (const k of [...this.sessions.keys()]) if (!keep || k !== keep.key) this.sessions.delete(k); this.audit('password', ip, true); return { code: 200 };
+    const keep = this.sessionFrom(req); for (const [k, v] of [...this.sessions.entries()]) if (keep && k !== keep.key && v.user === keep.user && v.role === keep.role) this.sessions.delete(k); this.audit('password', ip, true); return { code: 200 };   // only this person's other devices are signed out
   }
-  twoFactorStart({ password }, ip) {
-    if (!this.checkPw(password)) { this.fail('ip:' + ip, 5); return { code: 401, error: 'Wrong password.' }; }
-    const secret = b32encode(crypto.randomBytes(20)); this.s.user.totp = { secret, enabled: false, lastStep: 0 }; this.save();
-    return { code: 200, secret, uri: `otpauth://totp/Anitha%20Store%20Admin:owner?secret=${secret}&issuer=Anitha%20Store%20Admin` };
+  twoFactorStart({ password }, ip, sess) {
+    const me = this.acctOf(sess); if (!me || !this.checkPw(password, me)) { this.fail('ip:' + ip, 5); return { code: 401, error: 'Wrong password.' }; }
+    const secret = b32encode(crypto.randomBytes(20)); me.totp = { secret, enabled: false, lastStep: 0 }; this.save();
+    const label = sess && sess.role === 'owner' ? 'Owner:' + encodeURIComponent(sess.user) : 'Admin:admin';
+    return { code: 200, secret, uri: `otpauth://totp/Anitha%20Store%20${label}?secret=${secret}&issuer=Anitha%20Store` };
   }
-  twoFactorConfirm({ code }, ip) { const t = this.s.user.totp; if (!t) return { code: 400, error: 'Start 2-step sign-in first.' }; if (!this.useTotp(code)) { this.audit('2fa-enable', ip, false); return { code: 400, error: 'That code is not right.' }; } t.enabled = true; this.save(); this.audit('2fa-enable', ip, true); return { code: 200 }; }
-  twoFactorOff({ password }, ip) { if (!this.checkPw(password)) { this.fail('ip:' + ip, 5); return { code: 401, error: 'Wrong password.' }; } this.s.user.totp = null; this.save(); this.audit('2fa-disable', ip, true); return { code: 200 }; }
+  twoFactorConfirm({ code }, ip, sess) { const me = this.acctOf(sess), t = me && me.totp; if (!t) return { code: 400, error: 'Start 2-step sign-in first.' }; if (!this.useTotp(code, me)) { this.audit('2fa-enable', ip, false); return { code: 400, error: 'That code is not right.' }; } t.enabled = true; this.save(); this.audit('2fa-enable', ip, true); return { code: 200 }; }
+  twoFactorOff({ password }, ip, sess) { const me = this.acctOf(sess); if (!me || !this.checkPw(password, me)) { this.fail('ip:' + ip, 5); return { code: 401, error: 'Wrong password.' }; } me.totp = null; this.save(); this.audit('2fa-disable', ip, true); return { code: 200 }; }
 }
