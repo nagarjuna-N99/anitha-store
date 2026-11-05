@@ -1,5 +1,16 @@
 // ================= ADMIN LOGIC =================
 const ADMIN_TITLES = { privacy: 'Privacy & DPDP', growth: 'Growth & Insights', promo: 'WhatsApp promotions', dashboard: 'Dashboard', home: 'Home Page', reviews: 'Customer Reviews', whatsapp: 'WhatsApp Assistant', delivery: 'Delivery & Gifting', alerts: 'Back-in-stock Alerts', products: 'Products Catalog', categories: 'Category Manager', studio: 'Image Studio', drafts: 'Saved Drafts', orders: 'Orders Management', invoices: 'Invoice Management', customers: 'Customer Database', statements: 'Financial Statements', coupons: 'Coupon Manager', bundles: 'Bundles', ai: 'AI Helper', social: 'Instagram', logs: 'Audit Logs', settings: 'Business Settings' };
+// Orders tab (owner): how website orders reach you and whether they are approved without asking
+function orderFlowCardHTML() {
+  if (BUILD === 'site' || (BUILD === 'admin' && typeof isAdminRole === 'function' && isAdminRole())) return '';   // the owner's page only
+  const on = db.settings.autoApproveOrders === true, ph = db.settings.ownerWhatsapp || '';
+  return `<div class="admin-card" id="orderflow-card"><h3 style="margin:0 0 6px">📲 Website orders: approval and alerts</h3>
+    <p class="note" style="margin:0 0 8px">When someone orders on the website, the full details (items with their links, address, phone, totals, gift note) are sent to <b>your WhatsApp</b> and by <b>email</b>. Reply <b>YES WO-0001</b> to approve or <b>NO WO-0001 reason</b> to decline. After you approve, the pack-and-post details come again (a printable page by email). After posting, reply <b>TRACK order-number tracking-number</b> and the order and the customer are updated by themselves.</p>
+    <div class="hs-bar"><span><b>Approve website orders automatically</b><br><small>Only when everything is in stock and the prices match. Anything odd still waits for your YES. You still get the details to pack and post.</small></span><div class="toggle ${on ? 'active' : ''}" id="of-auto" role="switch" tabindex="0" aria-checked="${on}" onclick="ofAutoToggle()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"></div></div>
+    <div class="form-group" style="margin-top:10px;max-width:360px"><label>Your WhatsApp number for these alerts (with country code)</label><input id="of-phone" inputmode="tel" maxlength="20" value="${esc(ph)}" placeholder="919876543210" onchange="ofPhoneSave(this.value)"><small class="fld-help">Only this number can approve orders and save tracking by replying. Leave empty to use the number set on the server.</small></div></div>`;
+}
+function ofAutoToggle() { const on = db.settings.autoApproveOrders !== true; db.settings.autoApproveOrders = on; if (!saveDB()) { db.settings.autoApproveOrders = !on; return; } const t = document.getElementById('of-auto'); if (t) { t.classList.toggle('active', on); t.setAttribute('aria-checked', String(on)); } showToast(on ? 'Website orders are now approved automatically when everything is in stock.' : 'Website orders now wait for your approval.', 'success'); }
+function ofPhoneSave(v) { v = String(v || '').replace(/[^\d+]/g, '').slice(0, 20); db.settings.ownerWhatsapp = v; saveDB(); showToast(v ? 'Saved. Order alerts go to this number.' : 'Cleared. The number set on the server is used.', 'success'); }
 function accShowToggle() {
   const on = db.settings.showAccessories === false;   // currently hidden -> show
   db.settings.showAccessories = on; if (!saveDB()) { db.settings.showAccessories = !on; return; }
@@ -93,7 +104,7 @@ function renderAdminContent(tab) {
 
   if (tab === 'orders') {
     setTimeout(loadWebOrders, 0);
-    content.innerHTML = `<div id="web-orders"></div>
+    content.innerHTML = `<div id="web-orders"></div>${orderFlowCardHTML()}
       <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;"><button class="btn-sm btn-primary-sm" onclick="printDispatchList()">🚚 Dispatch list (packed orders)</button><span style="font-size:12px;color:#6b6862;">One page to carry to the post office: addresses, PINs and a box for each tracking number.</span></div>
       <div class="admin-card" style="overflow-x:auto;">
         <table class="admin-table" style="min-width:1000px;">

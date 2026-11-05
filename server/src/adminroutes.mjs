@@ -14,7 +14,7 @@ import crypto from 'node:crypto';
 import { clientIp } from './clientip.mjs';
 import { adminApiAllowed, dbForRead, TABS, HOME_TAB } from './roles.mjs';
 
-export function adminRoutes({ walog, repair, cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, notes, ops, opsReport, wa, watchRun, watchRead, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
+export function adminRoutes({ orderflow, walog, repair, cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, notes, ops, opsReport, wa, watchRun, watchRead, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
   const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY', 'Cross-Origin-Resource-Policy': 'same-origin', 'Cache-Control': 'no-store', ...(auth.secure ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' } : {}) };
   const CSP = "default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'";
   const ipOf = req => clientIp(req, cfg.trustProxy);   // X-Forwarded-For is trusted only when TRUST_PROXY=1 and the connection is from this very machine
@@ -78,7 +78,7 @@ export function adminRoutes({ walog, repair, cfg, auth, shop, media, social, ig,
       try {
         let b = {}; try { b = JSON.parse((await readBody(req, 160_000)).toString('utf8') || '{}'); } catch { return json(res, 400, { error: 'Something went wrong. Please try again.' }, cors), true; }
         const xff = String(req.headers['x-forwarded-for'] || '').split(',').map(x => x.trim()).filter(Boolean), ip = xff.length ? xff[xff.length - 1] : ipOf(req), r = weborders.add(b, shop.get().db, ip);
-        notifyOwner(`New website order ${r.id}: ₹${r.order.total}`, `A customer placed an order on the website.\n\nOrder: ${r.id}\nCustomer: ${r.customer.name}, ${r.customer.phone}\nTotal: ₹${r.order.total}\nItems: ${r.order.items.map(i => `${i.name} x${i.quantity}`).join(', ')}\n${r.check.issues.length ? '\nCheck before accepting:\n- ' + r.check.issues.join('\n- ') + '\n' : ''}\nOpen the owner app → Orders to accept it, then message the customer on WhatsApp to confirm and take payment.`);
+        orderflow.onNew(r).catch(e => console.error('[orderflow]', e.message));   // asks the owner on WhatsApp and by email (or approves at once when auto-approval is on)
         return json(res, 200, { ok: true, id: r.id }, cors), true;
       } catch (e) { return json(res, [422, 429, 503].includes(e.code) ? e.code : 500, { error: e.code ? e.message : 'Something went wrong. Please try again.' }, cors), true; }
     }
@@ -192,6 +192,7 @@ export function adminRoutes({ walog, repair, cfg, auth, shop, media, social, ig,
       if (route === 'GET /admin/api/notes') { send(res, { code: 200, items: notes.list().slice(0, 2000), total: notes.list().length }); return true; }
       if (route === 'POST /admin/api/notes/remove') { const b = await body(req, 1_000), n = notes.remove(b.email); wrote('notes-remove', n ? 'one address removed' : 'not found'); send(res, { code: 200, removed: n }); return true; }
       if (route === 'GET /admin/api/web-orders') { send(res, { code: 200, orders: weborders.list().slice(0, 100) }); return true; }
+      if (route === 'POST /admin/api/web-orders/accept') { const b = await body(req, 2_000), r = await orderflow.accept(String(b.id || ''), 'owner'); if (r.error) return send(res, { code: r.already ? 409 : 422, error: r.error }), true; wrote('web-order', `${b.id} accepted`); send(res, { code: 200, ...r }); return true; }
       if (route === 'POST /admin/api/web-orders/update') { const b = await body(req, 2_000), r = weborders.update(b.id, b); wrote('web-order', `${r.id} ${r.status}`); send(res, { code: 200, order: r }); return true; }
       if (route === 'GET /admin/api/privacy') { send(res, { code: 200, tickets: privacy.tickets(), breaches: privacy.breaches().map(b => ({ ...b, notices: breachNotices(b, (shop.get().db || {}).settings || {}) })), retention: { ...cfg.privacy, ...privacy.state() }, erasedCount: privacy.erasedCount(), channels: Object.entries(CHANNELS).map(([k, v]) => ({ k, v })), twoFactor: auth.twoFactorOn, claude: !!cfg.anthropicKey && cfg.anthropicKey !== 'missing', email: smtpMeta().configured, ig: ig.configured }); return true; }
       if (route === 'POST /admin/api/privacy/ticket') { const b = await body(req, 3_000); const t = privacy.updateTicket(b.id, b); wrote('privacy-ticket', `${t.id} ${t.status}`); send(res, { code: 200, ticket: t }); return true; }

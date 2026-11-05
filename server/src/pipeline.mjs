@@ -99,6 +99,9 @@ export class Pipeline {
     conv.lastInboundAt = Date.now();
     const text = (msg.text || '').trim().slice(0, cfg.maxInboundChars);
 
+    // 0. the owner's own number can approve website orders and save tracking by replying (orderflow.mjs). Anything that is not a command goes on as usual.
+    if (this.ownerCommand && !test) { const reply = await this.ownerCommand(text, phone).catch(e => '⚠ Something went wrong: ' + e.message); if (reply) { this.log(conv, 'in', text); await this.say(sink, conv, reply); store.save(); return { ownerCommand: true }; } }
+
     // 1. opt-out/in is honoured before anything else, even in human mode
     if (OPT_OUT.test(text)) { store.setOptOut(phone, true); const cc = store.s.carts?.[phone]; if (cc) { cc.items = []; cc.name = ''; cc.consent = { granted: false }; } this.log(conv, 'in', text); await this.say(sink, conv, MSG.optedOut); store.save(); return { optOut: true }; }
     if (OPT_IN.test(text) && store.isOptedOut(phone)) { store.setOptOut(phone, false); this.log(conv, 'in', text); await this.say(sink, conv, MSG.optedIn); store.save(); return { optIn: true }; }

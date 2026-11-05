@@ -40,6 +40,7 @@ export class WebOrders {
     d.n++; const rec = { id: 'WO-' + String(d.n).padStart(4, '0'), createdAt: new Date(this.now()).toISOString(), status: 'new', ...clean, check: checkAgainstShop(clean.order, db), notes: [] }; d.items.unshift(rec); this.write(d); return rec;
   }
   list() { return this.read().items; }
+  mark(id, fields) { const d = this.read(), r = d.items.find(x => x.id === String(id)); if (!r) return null; Object.assign(r, fields); this.write(d); return r; }   // internal bookkeeping (order-flow steps already done)
   update(id, { status, note, orderId }) {
     const d = this.read(), r = d.items.find(x => x.id === String(id)); if (!r) throw Object.assign(new Error('Order not found.'), { code: 404 });
     if (status !== undefined) { if (!['new', 'accepted', 'declined'].includes(status)) throw Object.assign(new Error('Unknown status.'), { code: 422 }); r.status = status; r.decidedAt = new Date(this.now()).toISOString(); }

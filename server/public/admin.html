@@ -2552,6 +2552,17 @@ function switchCareTab(tabName, btn) {
 
 // ================= ADMIN LOGIC =================
 const ADMIN_TITLES = { privacy: 'Privacy & DPDP', growth: 'Growth & Insights', promo: 'WhatsApp promotions', dashboard: 'Dashboard', home: 'Home Page', reviews: 'Customer Reviews', whatsapp: 'WhatsApp Assistant', delivery: 'Delivery & Gifting', alerts: 'Back-in-stock Alerts', products: 'Products Catalog', categories: 'Category Manager', studio: 'Image Studio', drafts: 'Saved Drafts', orders: 'Orders Management', invoices: 'Invoice Management', customers: 'Customer Database', statements: 'Financial Statements', coupons: 'Coupon Manager', bundles: 'Bundles', ai: 'AI Helper', social: 'Instagram', logs: 'Audit Logs', settings: 'Business Settings' };
+// Orders tab (owner): how website orders reach you and whether they are approved without asking
+function orderFlowCardHTML() {
+  if (BUILD === 'site' || (BUILD === 'admin' && typeof isAdminRole === 'function' && isAdminRole())) return '';   // the owner's page only
+  const on = db.settings.autoApproveOrders === true, ph = db.settings.ownerWhatsapp || '';
+  return `<div class="admin-card" id="orderflow-card"><h3 style="margin:0 0 6px">📲 Website orders: approval and alerts</h3>
+    <p class="note" style="margin:0 0 8px">When someone orders on the website, the full details (items with their links, address, phone, totals, gift note) are sent to <b>your WhatsApp</b> and by <b>email</b>. Reply <b>YES WO-0001</b> to approve or <b>NO WO-0001 reason</b> to decline. After you approve, the pack-and-post details come again (a printable page by email). After posting, reply <b>TRACK order-number tracking-number</b> and the order and the customer are updated by themselves.</p>
+    <div class="hs-bar"><span><b>Approve website orders automatically</b><br><small>Only when everything is in stock and the prices match. Anything odd still waits for your YES. You still get the details to pack and post.</small></span><div class="toggle ${on ? 'active' : ''}" id="of-auto" role="switch" tabindex="0" aria-checked="${on}" onclick="ofAutoToggle()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"></div></div>
+    <div class="form-group" style="margin-top:10px;max-width:360px"><label>Your WhatsApp number for these alerts (with country code)</label><input id="of-phone" inputmode="tel" maxlength="20" value="${esc(ph)}" placeholder="919876543210" onchange="ofPhoneSave(this.value)"><small class="fld-help">Only this number can approve orders and save tracking by replying. Leave empty to use the number set on the server.</small></div></div>`;
+}
+function ofAutoToggle() { const on = db.settings.autoApproveOrders !== true; db.settings.autoApproveOrders = on; if (!saveDB()) { db.settings.autoApproveOrders = !on; return; } const t = document.getElementById('of-auto'); if (t) { t.classList.toggle('active', on); t.setAttribute('aria-checked', String(on)); } showToast(on ? 'Website orders are now approved automatically when everything is in stock.' : 'Website orders now wait for your approval.', 'success'); }
+function ofPhoneSave(v) { v = String(v || '').replace(/[^\d+]/g, '').slice(0, 20); db.settings.ownerWhatsapp = v; saveDB(); showToast(v ? 'Saved. Order alerts go to this number.' : 'Cleared. The number set on the server is used.', 'success'); }
 function accShowToggle() {
   const on = db.settings.showAccessories === false;   // currently hidden -> show
   db.settings.showAccessories = on; if (!saveDB()) { db.settings.showAccessories = !on; return; }
@@ -2645,7 +2656,7 @@ function renderAdminContent(tab) {
 
   if (tab === 'orders') {
     setTimeout(loadWebOrders, 0);
-    content.innerHTML = `<div id="web-orders"></div>
+    content.innerHTML = `<div id="web-orders"></div>${orderFlowCardHTML()}
       <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;"><button class="btn-sm btn-primary-sm" onclick="printDispatchList()">🚚 Dispatch list (packed orders)</button><span style="font-size:12px;color:#6b6862;">One page to carry to the post office: addresses, PINs and a box for each tracking number.</span></div>
       <div class="admin-card" style="overflow-x:auto;">
         <table class="admin-table" style="min-width:1000px;">
@@ -7783,7 +7794,7 @@ const ADM_DESC = {
   categories: { d: 'The groups sarees and accessories are sorted into on the website. Add or delete a category, and switch Accessories on or off on the website.' },
   bundles: { d: 'Sets of products sold together at one price (for example a saree with a blouse). Customers see them on the website.' },
   coupons: { d: 'Discount codes customers type at checkout. You choose the amount, the dates and how many times a code can be used.' },
-  studio: { owner: 'Make a clean product photo: remove the background, add the shop mark, crop for Instagram. The result is saved to a product or to Saved Drafts.', admin: 'Photo tools: background, shop mark and crops. Used for the website look and for posts.', d: 'Make clean product photos: background, shop mark and crops.' },
+  studio: { d: 'Photo tools (admin only): remove a background, add the shop mark and crop for the website and for posts. The result is saved to a product or to Saved Drafts.' },
   drafts: { d: 'Products you started but have not published. Finish them when the photos and details are ready, then publish.' },
   orders: { d: 'Every order: confirm, pack, ship and add the tracking number. Customers get their updates by WhatsApp. Customers cannot cancel an order.' },
   invoices: { d: 'Tax invoices and packing slips for orders. Print them or send them. The numbering and GST rate come from Settings.' },
@@ -8073,19 +8084,10 @@ async function loadWebOrders() {
   box.innerHTML = `<div class="admin-card" style="border:2px solid #C96A11;"><h3 style="margin:0 0 6px;">🌐 New from the website (${fresh.length})</h3><p class="note">Nobody has been charged. Check each one, press <b>Accept</b>, then message the customer on WhatsApp to confirm and agree the payment.</p>${fresh.map(w => `<div class="g-act ${w.check.issues.length ? 'priv-late' : ''}"><div class="g-act-h"><b>${esc(w.id)}</b> · ₹${gN(w.order.total)} · ${esc(w.customer.name)} · ${esc(w.customer.phone)}</div><div class="note">${w.order.items.map(i => `${esc(i.name)} × ${i.quantity} (₹${gN(i.price)})`).join(', ')}</div><div class="note">Deliver to: ${esc([w.order.shippingAddress.name, w.order.shippingAddress.street, w.order.shippingAddress.city, w.order.shippingAddress.state, w.order.shippingAddress.pincode].filter(Boolean).join(', '))}${w.order.gift ? ' · 🎁 gift' : ''}</div>${w.order.instructions ? `<div class="note" style="background:#fff4e0;padding:4px 8px;border-radius:4px;">📝 ${esc(w.order.instructions)}</div>` : ''}${w.check.issues.length ? `<div class="note" style="color:#9a2f2f"><b>Check first:</b><br>${w.check.issues.map(x => '• ' + esc(x)).join('<br>')}</div>` : ''}<div class="pf-actions"><button type="button" class="btn-sm btn-info-sm" onclick="orderDraftOpen('web','${esc(w.id)}')">✉ Draft message</button><button type="button" class="btn-sm btn-primary-sm" onclick="acceptWebOrder('${esc(w.id)}')">Accept: add to Orders</button><button type="button" class="btn-sm btn-info-sm" onclick="declineWebOrder('${esc(w.id)}')">Not possible (say why)</button></div></div>`).join('')}</div>`;
 }
 async function acceptWebOrder(id) {
-  const w = WEB.list.find(x => x.id === id); if (!w) return; const c = w.customer, o = w.order, today = todayY();
-  let u = db.users.find(x => last10(x.phone) === last10(c.phone));
-  if (!u) { u = newUser(c.phone.startsWith('+') ? c.phone : '+91' + last10(c.phone)); db.users.push(u); }
-  Object.assign(u, { name: u.name || c.name, email: u.email || c.email, addr: u.addr && u.addr.street ? u.addr : c.addr, termsVersion: u.termsVersion || c.termsVersion, noticeVersion: u.noticeVersion || c.noticeVersion, ageConfirmedAt: u.ageConfirmedAt || c.ageConfirmedAt, nominee: u.nominee || c.nominee || undefined, phoneVerified: u.phoneVerified });
-  u.consents = u.consents || { orderUpdates: false, marketing: false, updatedAt: null }; for (const k of ['orderUpdates', 'marketing', 'cartReminder']) if (c.consents[k] && !u.consents[k]) u.consents[k] = true;
-  for (const x of w.consentLog) if (!db.consentLog.some(y => y.userId === u.id && y.type === x.type && y.at === x.at)) db.consentLog.push({ id: Date.now() + Math.random(), userId: u.id, phone: u.phone, type: x.type, granted: x.granted, version: x.version, source: x.source || 'website', at: x.at });
-  const oid = o.localId && !db.orders.some(x => x.id === o.localId) ? o.localId : 'AP-' + today.replace(/-/g, '') + '-' + generateId().slice(0, 5).toUpperCase(), short = [];
-  const order = { id: oid, userId: u.id, customer: c.name, phone: u.phone, email: c.email, total: o.total, status: 'placed', date: o.date || today, items: o.items.map(i => ({ productId: i.productId, name: i.name, sku: i.sku, quantity: i.quantity, price: i.price, category: i.category, image: (db.products.find(p => p.id === i.productId) || {}).image || '' })), shippingAddress: o.shippingAddress, billTo: o.billTo, gift: o.gift, delivery: o.delivery, addressCheck: o.addressCheck, instructions: o.instructions, coupon: o.coupon || '', pricing: o.pricing, payment: { method: 'To be agreed on WhatsApp', provider: '', status: 'pending' }, consent: { terms: c.termsVersion, whatsappOrderUpdates: !!u.consents.orderUpdates, whatsappOffers: !!u.consents.marketing }, timeline: [{ status: 'placed', time: getTimestamp(), note: `Order received from the website (${id})` }], invoiceGenerated: false, source: 'website', webOrderId: id };
-  db.orders.unshift(order);
-  for (const i of order.items) { const p = db.products.find(x => x.id === i.productId); if (!p) continue; if (p.stock >= i.quantity) { const prev = p.stock; p.stock -= i.quantity; addLog('stock_out', p.name, p.sku, -i.quantity, prev, p.stock, `Order ${oid}`); } else short.push(p.name); }
-  saveDB();
-  try { await admApi('POST', '/admin/api/web-orders/update', { id, status: 'accepted', orderId: oid }); } catch (e) { showToast('Saved here, but could not mark it on the server: ' + e.message, 'error'); }
-  showToast(short.length ? `Added as ${oid}. Not enough stock for ${short.join(', ')}: check it.` : `Added as ${oid}. Now message the customer on WhatsApp.`, short.length ? 'error' : 'success'); renderAdminContent(currentAdminTab);
+  // the server does it all (adds the order, takes the stock, sends you the pack-and-post details on WhatsApp and by email), so approving here, by WhatsApp reply or automatically always works the same way
+  try { if (typeof homeFlush === 'function') homeFlush(); const r = await admApi('POST', '/admin/api/web-orders/accept', { id }); ADM.dirty = false; await admPoll(); showToast((r.short && r.short.length) ? `Approved as ${r.orderId}. Not enough stock for ${r.short.join(', ')}: check it. The pack-and-post details were sent to you.` : `Approved as ${r.orderId}. The pack-and-post details were sent to you on WhatsApp and by email.`, (r.short && r.short.length) ? 'error' : 'success'); }
+  catch (e) { showToast(e.message, 'error'); }
+  try { loadWebOrders(); renderAdminContent(currentAdminTab); } catch (e) { /* the page may have changed */ }
 }
 async function declineWebOrder(id) { const why = prompt('Why is it not possible? (kept on record). Then tell the customer on WhatsApp.'); if (why === null) return; if (!why.trim()) { showToast('Please say why', 'error'); return; } try { await admApi('POST', '/admin/api/web-orders/update', { id, status: 'declined', note: why }); loadWebOrders(); if (typeof ov2Load === 'function' && el_('ov-chart')) ov2Load(false); } catch (e) { showToast(e.message, 'error'); } }
 // ---- the public website sends each order to the shop (nothing is charged on the site) ----

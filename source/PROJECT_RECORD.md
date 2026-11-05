@@ -119,7 +119,7 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 ## 6. Test suites (all passing on 12 Nov 2026; known slow spots: sign-in timeouts under load and the phone-speed test near its limit pass when rerun alone)
 | Suite | Checks | Covers |
 |---|---|---|
-| `wa-assistant` (`npm test`) | 627 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
+| `wa-assistant` (`npm test`) | 653 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
 | `smoke2.cjs` | 10 | orders, invoices, reports |
 | `studio-test2.cjs` / `studio-test3.cjs` | 50 / 61 | Image Studio, drafts, product form, AI copy |
 | `shop-test.cjs` | 56 | favourites, share links, OTP login, consents, Terms/Privacy |
@@ -136,6 +136,7 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 | `care-test.cjs` | 9 | Saree Care tabs, wash-care guide, photo link repair |
 | `parts-test.cjs` | 8 | the website source parts and the joined file |
 | `addresses-test.cjs` | 25 | each page and saree has its own address, Back/Forward, old links |
+| `orderflow-test.cjs` | 8 | Orders tab card: auto-approval switch, owner WhatsApp number |
 | `menu-groups-test.cjs` | 14 | menu sorted into groups, page descriptions, Settings split by login |
 | `accessories-switch-test.cjs` | 14 | Accessories on/off on the website, full-width heading photos tool |
 | `promo-test.cjs` | 20 | WhatsApp promotions tab: reports, prices and costs, templates with AI wording, promotions (stand-in server) |
@@ -168,6 +169,10 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**12 Nov 2026 (Website orders: WhatsApp approval, auto-approval, pack-and-post email, tracking by reply; Image Studio admin-only)**
+- Owner: when someone orders, send the full details (item links, address, everything) to the owner on WhatsApp and ask for approval; an auto-approval option for in-stock orders in the owner's Orders page; once approved send the details again on WhatsApp and by email so she can print and post it; a reply option to save the tracking; all order details and tracking updated by themselves. Built as guide 41 (`orderflow.mjs`): YES/NO/TRACK replies from the owner's own number, automatic approval only when stock and prices match, a printable email, tracking saved to the order with Shipped status and the customer told on WhatsApp (if they agreed). The Accept button now uses the same server step. Two utility templates must be created in Meta (guide 41). Image Studio is now in the Admin menu only.
+- Tests: server 653 (+27); new `tests/orderflow-test.cjs` (8 checks); `dpdp2-test.cjs` covers the Accept button. Not tested: real Meta delivery and approval of the templates, a real mailbox, printing on a phone.
 
 **12 Nov 2026 (Back end sorted by type; what every page and setting does)**
 - Owner: "sort everything in the backend according to the type for both admin and owner, clearly mention what each change or setting does". The left menu (computer and phone, both logins) is now in 8 headed groups: Overview, Sarees & prices, Orders & customers, Money & reports, Marketing & messages, Website look, Privacy & legal, AI/health/settings. Every page shows a one-line "what this page does" note (shared pages word it differently for owner and admin). **Settings** is split by login: the owner sees business, bank, invoice and customer-policy cards; the admin sees customer sign-in, search and AI-service cards (plus security); each field has an explanation, and saving only changes the fields on the page. New guide 40 lists every page and setting.
