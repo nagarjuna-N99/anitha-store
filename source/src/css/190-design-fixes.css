@@ -129,3 +129,20 @@ nav.dark .brand-mark { background: #fff; padding: 3px; box-sizing: border-box; }
 .th-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin: 12px 0; } .th-pick { display: flex; gap: 10px; align-items: center; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; } .th-pick input[type=color] { width: 44px; height: 44px; padding: 0; border: 0; background: none; cursor: pointer; flex: none; } .th-pick span { display: flex; flex-direction: column; font-size: 13px; } .th-pick small { color: #6b6862; font-size: 12px; }
 .th-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; } .th-ai label { display: block; font-size: 13px; margin-bottom: 6px; } .th-ai-row { display: flex; gap: 8px; flex-wrap: wrap; } .th-ai-row input { flex: 1 1 220px; min-height: 40px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; font: inherit; font-size: 16px; }
 .hn-list { display: flex; flex-direction: column; gap: 4px; margin: 0 0 10px; max-height: 220px; overflow: auto; } .hn-list > div { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 8px; background: #fff; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; } .hn-list small { margin-left: 8px; color: #6b6862; }
+
+/* Collection page on computers: the same calmer sizes as the home page (banner, title block, cards) */
+@media (min-width: 901px) {
+  .hero-slider.shop-banner { height: 22vh; min-height: 140px; max-height: 210px; }
+  .shop-banner .hero-title { font-size: calc(34px * var(--t-scale, 1)); margin-bottom: 8px; }
+  .shop-banner .hero-subtitle { font-size: calc(14px * var(--st-scale, 1)); margin-bottom: 0; line-height: 1.5; }
+  .shop-banner .hero-est { font-size: calc(11px * var(--e-scale, 1)); letter-spacing: 3px; margin-bottom: 8px; }
+  .shop-head { padding-top: 22px; } .shop-head .section-title { font-size: 28px; }
+  .price-note { margin: 4px 0 6px; font-size: 12px; }
+  .product-body { padding: 10px 12px 14px; }
+  .product-tag { font-size: 10px; letter-spacing: 1.5px; margin-bottom: 3px; }
+  .product-name { font-size: 15px; line-height: 1.25; margin-bottom: 3px; } .product-price { font-size: 13px; margin-bottom: 8px; }
+  .card-rating { margin-bottom: 8px; font-size: 12px; }
+  .product-actions { gap: 6px; } .btn-card { min-height: 34px; padding: 5px 6px; font-size: 10px; letter-spacing: .08em; }
+  .product-fav-btn, .product-share-btn { width: 34px; height: 34px; font-size: 15px; }
+  .stock-badge { font-size: 10px !important; padding: 4px 8px; }
+}

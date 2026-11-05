@@ -116,7 +116,7 @@ Owner's guidance: *"we will setup everything after we host it"* — real hosting
 | `care-test.cjs` | 9 | Saree Care tabs, wash-care guide, photo link repair |
 | `parts-test.cjs` | 8 | the website source parts and the joined file |
 | `addresses-test.cjs` | 25 | each page and saree has its own address, Back/Forward, old links |
-| `colours-notes-test.cjs` | 30 | calmer sizes on computers, "Notes from the loom" sign-up, website colours (presets, own colours, photo match, Claude ideas, readability guard) |
+| `colours-notes-test.cjs` | 31 | calmer sizes on computers, "Notes from the loom" sign-up, website colours (presets, own colours, photo match, Claude ideas, readability guard) |
 | `onebox-test.cjs` | 9 | one-server hosting: the server serves the real website, page addresses, 404 page, sitemap and the owner app from one address |
 | `redirect-test.cjs` | 7 | the old GitHub Pages address becomes a signpost to anithapemmasani.com (same page, search and #part kept; old site map removed) |
 | `product-page-test.cjs` | 22 | saree page: delivery line, details table, trust block, questions, related, sticky bar |
@@ -143,6 +143,10 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**12 Nov 2026 (Collection page gets the calmer sizes too)**
+- Owner: "I want the size change to appear in the Collection also". The Collection page on computers now matches the home page: a short banner (140 to 210px high, 34px title, 14px line under it), a 28px page heading, compact cards (10px/12px padding, 15px name, 13px price, 34px View/Add buttons, 34px heart and share, smaller badges). Four across as before. Phones unchanged. CSS only (last block of `src/css/190-design-fixes.css`).
+- Tests: `colours-notes-test.cjs` +1 (banner, heading and card sizes measured in a real browser at a computer width). Not tested: the real Collection page with your real photos.
 
 **11 Nov 2026 (The Atelier page is removed)**
 - Owner: "we are removing atelier, set the page accordingly". The built-in **The Atelier** page is gone: its menu link (header and phone menu), the page, the address `/the-atelier/` (the old address opens the home page; the old folder is removed from the build and from the GitHub copy), its sitemap entry, its editor card in Pages, its place in the Home Page link list, and its public data (the server no longer publishes it; any old saved Atelier text is dropped). Care guide, Journal and the "Add a new page" kinds (including "Story page") stay. The home page sign-up block was renamed to **Notes from the loom** so the word does not remain. The page code file is now `src/js/150-pages-care-journal.js`.
