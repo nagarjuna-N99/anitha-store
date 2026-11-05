@@ -1,5 +1,13 @@
 // ================= ADMIN LOGIC =================
 const ADMIN_TITLES = { privacy: 'Privacy & DPDP', growth: 'Growth & Insights', promo: 'WhatsApp promotions', dashboard: 'Dashboard', home: 'Home Page', reviews: 'Customer Reviews', whatsapp: 'WhatsApp Assistant', delivery: 'Delivery & Gifting', alerts: 'Back-in-stock Alerts', products: 'Products Catalog', categories: 'Category Manager', studio: 'Image Studio', drafts: 'Saved Drafts', orders: 'Orders Management', invoices: 'Invoice Management', customers: 'Customer Database', statements: 'Financial Statements', coupons: 'Coupon Manager', bundles: 'Bundles', ai: 'AI Helper', social: 'Instagram', logs: 'Audit Logs', settings: 'Business Settings' };
+function accShowToggle() {
+  const on = db.settings.showAccessories === false;   // currently hidden -> show
+  db.settings.showAccessories = on; if (!saveDB()) { db.settings.showAccessories = !on; return; }
+  const t = document.getElementById('acc-show-toggle'); if (t) { t.classList.toggle('active', on); t.setAttribute('aria-checked', String(on)); }
+  try { renderKindTabsAndOccasions(); } catch (e) { /* the website part may not be drawn in the owner app */ }
+  showToast(on ? 'Accessories are shown on the website.' : 'Accessories are hidden on the website. Your products and categories are kept.', 'success');
+}
+function renderKindTabsAndOccasions() { if (typeof renderOccasions === 'function') renderOccasions(); if (typeof renderFilterButtons === 'function') renderFilterButtons(); }
 function switchAdminTab(tab) {
   homeFlush();
   currentAdminTab = tab;
@@ -65,6 +73,7 @@ function renderAdminContent(tab) {
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin:34px 0 14px;flex-wrap:wrap;gap:10px;">
         <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;margin:0;">Accessory categories</h3>
+        <label class="acc-switch" style="display:flex;align-items:center;gap:8px;font-size:13px;"><span>Show Accessories on the website</span><span class="toggle ${db.settings.showAccessories === false ? '' : 'active'}" id="acc-show-toggle" role="switch" tabindex="0" aria-checked="${db.settings.showAccessories !== false}" onclick="accShowToggle()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"></span></label>
         <button class="btn-sm btn-primary-sm" onclick="openCategoryForm('accessory')">+ Create accessory category</button>
       </div>
       <div id="acc-cat-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;">

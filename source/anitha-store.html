@@ -1335,6 +1335,11 @@ nav.dark .brand-mark { background: #fff; padding: 3px; box-sizing: border-box; }
 .pr-badge { font-size: .7rem; padding: 2px 7px; border-radius: 10px; background: #eee; color: #444; } .pr-approved, .pr-done { background: #dff3e4; color: #1d6b34; } .pr-rejected, .pr-stopped { background: #fde8e6; color: #9b2c22; } .pr-submitted, .pr-sending { background: #fff1cf; color: #8a5a00; }
 html.ui2.dk .pr-tpl { background: #23211d; border-color: #3a362f; } html.ui2.dk .pr-grid input, html.ui2.dk .pr-grid select, html.ui2.dk .pr-wide input, html.ui2.dk .pr-wide textarea { background: #1b1a17; border-color: #3a362f; color: inherit; }
 @media (max-width: 640px) { .pr-tbl { font-size: .78rem; } .pr-tbl th, .pr-tbl td { padding: 5px 4px; } }
+
+/* chapter heading photos tool + full-screen panel */
+.ch-photo-row { display: flex; gap: 12px; align-items: center; padding: 8px 0; border-top: 1px solid #ece7da; } .ch-thumb { flex: 0 0 120px; height: 68px; border-radius: 4px; background: #141210 center / cover no-repeat; display: flex; align-items: center; justify-content: center; color: #bbb; } .ch-photo-main { flex: 1; min-width: 0; }
+.chap-hero.full { aspect-ratio: auto; height: min(90vh, 860px); border-radius: 0; width: 100vw; margin-left: calc(50% - 50vw); }
+@media (max-width: 640px) { .chap-hero.full { aspect-ratio: auto; height: 85vh; } .ch-thumb { flex-basis: 84px; height: 56px; } }
 </style>
 <style>.nav-toggle{position:fixed;top:14px;left:268px;z-index:60;width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--ivory);color:var(--charcoal);cursor:pointer;display:none;align-items:center;justify-content:center;font-size:18px;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.08)}body.admin-on .nav-toggle{display:flex}body.nav-closed .nav-toggle{left:14px}body.nav-closed .admin-sidebar{display:none}body.nav-closed .admin-main{margin-left:0;padding-left:64px}body.studio-focus .nav-toggle{display:none!important}@media (max-width:900px){body.admin-on .nav-toggle{display:none}}html.ui2 .nav-toggle{background:var(--o-glass-2);color:var(--o-ink);border-color:var(--o-line)}.pg-item{border:1px solid var(--border);border-radius:14px;padding:14px;margin:12px 0}.pg-item.pg-off{opacity:.7}.pg-head{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.pg-head b{flex:1;min-width:140px}.pg-tools{display:inline-flex;gap:6px}.pg-tip{border-top:1px dashed var(--border);padding:10px 0}.pg-sec>summary{cursor:pointer;min-height:40px;display:flex;align-items:center}.pg-item textarea,.pg-tip textarea{width:100%}</style>
 </head>
@@ -1921,7 +1926,8 @@ function buildScrollTrack() {
 function renderFilterButtons() {
   const wrap = document.getElementById('filterContainer');
   const cats = ['all', ...shopCats()];
-  const kt = document.getElementById('kindTabs'); if (kt) kt.innerHTML = [['saree', 'Sarees'], ['accessory', 'Accessories']].map(([k, l]) => `<button type="button" role="tab" id="kind-${k}" aria-selected="${SHOP.kind === k}" class="kind-tab ${SHOP.kind === k ? 'active' : ''}" onclick="shopKind('${k}')">${l}</button>`).join('');
+  if (!accOn() && SHOP.kind === 'accessory') SHOP.kind = 'saree';
+  const kt = document.getElementById('kindTabs'); if (kt) kt.style.display = accOn() ? '' : 'none'; if (kt) kt.innerHTML = [['saree', 'Sarees'], ['accessory', 'Accessories']].filter(x => x[0] === 'saree' || accOn()).map(([k, l]) => `<button type="button" role="tab" id="kind-${k}" aria-selected="${SHOP.kind === k}" class="kind-tab ${SHOP.kind === k ? 'active' : ''}" onclick="shopKind('${k}')">${l}</button>`).join('');
   wrap.innerHTML = cats.map(c => `<button class="filter-btn ${c === currentCategory ? 'active' : ''}" data-cat="${esc(c)}" onclick="filterProducts(this.dataset.cat)">${c === 'all' ? 'All' : esc(c)}</button>`).join('');
 }
 
@@ -2540,6 +2546,14 @@ function switchCareTab(tabName, btn) {
 
 // ================= ADMIN LOGIC =================
 const ADMIN_TITLES = { privacy: 'Privacy & DPDP', growth: 'Growth & Insights', promo: 'WhatsApp promotions', dashboard: 'Dashboard', home: 'Home Page', reviews: 'Customer Reviews', whatsapp: 'WhatsApp Assistant', delivery: 'Delivery & Gifting', alerts: 'Back-in-stock Alerts', products: 'Products Catalog', categories: 'Category Manager', studio: 'Image Studio', drafts: 'Saved Drafts', orders: 'Orders Management', invoices: 'Invoice Management', customers: 'Customer Database', statements: 'Financial Statements', coupons: 'Coupon Manager', bundles: 'Bundles', ai: 'AI Helper', social: 'Instagram', logs: 'Audit Logs', settings: 'Business Settings' };
+function accShowToggle() {
+  const on = db.settings.showAccessories === false;   // currently hidden -> show
+  db.settings.showAccessories = on; if (!saveDB()) { db.settings.showAccessories = !on; return; }
+  const t = document.getElementById('acc-show-toggle'); if (t) { t.classList.toggle('active', on); t.setAttribute('aria-checked', String(on)); }
+  try { renderKindTabsAndOccasions(); } catch (e) { /* the website part may not be drawn in the owner app */ }
+  showToast(on ? 'Accessories are shown on the website.' : 'Accessories are hidden on the website. Your products and categories are kept.', 'success');
+}
+function renderKindTabsAndOccasions() { if (typeof renderOccasions === 'function') renderOccasions(); if (typeof renderFilterButtons === 'function') renderFilterButtons(); }
 function switchAdminTab(tab) {
   homeFlush();
   currentAdminTab = tab;
@@ -2605,6 +2619,7 @@ function renderAdminContent(tab) {
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin:34px 0 14px;flex-wrap:wrap;gap:10px;">
         <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;margin:0;">Accessory categories</h3>
+        <label class="acc-switch" style="display:flex;align-items:center;gap:8px;font-size:13px;"><span>Show Accessories on the website</span><span class="toggle ${db.settings.showAccessories === false ? '' : 'active'}" id="acc-show-toggle" role="switch" tabindex="0" aria-checked="${db.settings.showAccessories !== false}" onclick="accShowToggle()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"></span></label>
         <button class="btn-sm btn-primary-sm" onclick="openCategoryForm('accessory')">+ Create accessory category</button>
       </div>
       <div id="acc-cat-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;">
@@ -4778,7 +4793,7 @@ function homePick(kind, idx) { HOME_PICK = { kind, idx }; document.getElementByI
 async function homeFileChosen(files) {
   const f = files[0], pick = HOME_PICK; document.getElementById('home-file').value = ''; if (!f || !pick) return;
   if (!/^image\//.test(f.type)) { showToast('Please choose an image file', 'error'); return; }
-  let url; try { url = await fileToDataUrl(f, pick.kind === 'hero' ? 1920 : 1000); } catch (e) { showToast('Could not read that image', 'error'); return; }
+  let url; try { url = await fileToDataUrl(f, pick.kind === 'hero' || pick.kind === 'chap' ? 1920 : 1000); } catch (e) { showToast('Could not read that image', 'error'); return; }
   const target = pick.kind === 'chap' ? chData().items[pick.idx] : pick.kind === 'ctile' ? (() => { const [a, b] = String(pick.idx).split(',').map(Number), c = chData().items[a]; if (!c) return null; c.tiles = c.tiles || []; while (c.tiles.length <= b) c.tiles.push({ category: '', image: '' }); return c.tiles[b]; })() : pick.kind === 'hero' ? HSL(pick.idx) : pick.kind === 'cat' ? db.home.categories.items[pick.idx] : db.home.signature.tiles[pick.idx];
   if (!target) return;
   const prev = target.image; target.image = url;
@@ -4941,7 +4956,8 @@ function renderHomeAdmin(container) {
 // ================= SHOP SEARCH, FILTERS & SORT =================
 const isAccessory = p => !!p && (db.accessoryCategories || []).includes(p.category);
 const sareeList = () => db.products.filter(p => !isAccessory(p));
-const accessoryList = () => db.products.filter(isAccessory);
+const accOn = () => !(db.settings && db.settings.showAccessories === false);   // the owner can hide accessories from the website (Categories tab)
+const accessoryList = () => accOn() ? db.products.filter(isAccessory) : [];
 const SHOP_PAGE = 24;
 const SHOP = { shown: SHOP_PAGE, sig: '', kind: 'saree', occasion: '', q: '', sort: 'featured', fabrics: [], colours: [], min: '', max: '', inStock: false, open: false };
 const FABRIC_BY_CAT = { 'Tussar': 'Tussar Silk', 'Maheswari': 'Silk Cotton', 'Banarasi': 'Banarasi Silk', 'Kanjeevaram': 'Kanjeevaram Silk', 'Paithani': 'Paithani Silk', 'Mysore Silk': 'Crepe Silk', 'Ponduru Khadi': 'Khadi Cotton', 'Organza': 'Organza', 'Chanderi': 'Chanderi Silk Cotton', 'Bhagalpuri': 'Bhagalpuri Silk' };
@@ -4978,7 +4994,7 @@ const kindProducts = () => SHOP.kind === 'accessory' ? accessoryList() : sareeLi
 function categoryProducts() { return currentCategory === 'all' ? kindProducts() : kindProducts().filter(p => p.category === currentCategory); }
 const kindWord = n => SHOP.kind === 'accessory' ? (n === 1 ? 'accessory' : 'accessories') : (n === 1 ? 'saree' : 'sarees');
 function shopMore() { SHOP.shown += SHOP_PAGE; const y = window.scrollY; renderProducts(); window.scrollTo(0, y); }
-function shopKind(k) { if (SHOP.kind === k) return; SHOP.kind = k; SHOP.occasion = ''; currentCategory = 'all'; SHOP.fabrics = []; SHOP.colours = []; SHOP.min = ''; SHOP.max = ''; shopSearch('', true); renderProducts(); if (SHOP.open) renderShopPanel(); const q = document.getElementById('shop-q'); if (q) { q.placeholder = k === 'accessory' ? 'Search accessories - try "jhumka", "bangles", "blouse"' : 'Search sarees - try "kanchipuram", "red silk", "wedding"'; q.setAttribute('aria-label', 'Search ' + kindWord(2)); } }
+function shopKind(k) { if (k === 'accessory' && !accOn()) k = 'saree'; if (SHOP.kind === k) return; SHOP.kind = k; SHOP.occasion = ''; currentCategory = 'all'; SHOP.fabrics = []; SHOP.colours = []; SHOP.min = ''; SHOP.max = ''; shopSearch('', true); renderProducts(); if (SHOP.open) renderShopPanel(); const q = document.getElementById('shop-q'); if (q) { q.placeholder = k === 'accessory' ? 'Search accessories - try "jhumka", "bangles", "blouse"' : 'Search sarees - try "kanchipuram", "red silk", "wedding"'; q.setAttribute('aria-label', 'Search ' + kindWord(2)); } }
 function visibleProducts() {
   let list = categoryProducts().slice(); const terms = tokenise(SHOP.q), scores = new Map();
   if (terms.length) list = list.filter(p => { const s = searchScore(p, terms); scores.set(p.id, s); return s > 0; });
@@ -6060,8 +6076,8 @@ function renderOccasions() {
   const sarees = sareeList(), n = o => sarees.filter(p => p.stock > 0 && occasionsOf(p).includes(o)).length;
   const tiles = OCCASIONS.map(([k, ic, label]) => `<button type="button" class="occ-tile" data-occ="${k}" onclick="occasionGo('${k}')"><span class="occ-ic" aria-hidden="true">${ic}</span><span class="occ-t">${esc(label)}</span><small>${n(k)} available</small></button>`)
     .concat(sarees.some(p => p.stock > 0 && p.price <= GIFT_BUDGET) ? [`<button type="button" class="occ-tile" data-occ="gift" onclick="occasionGo('gift')"><span class="occ-ic" aria-hidden="true">🎁</span><span class="occ-t">Gifts under ₹${money(GIFT_BUDGET)}</span><small>${sarees.filter(p => p.stock > 0 && p.price <= GIFT_BUDGET).length} available</small></button>`] : [],
-     [
-      `<button type="button" class="occ-tile" data-occ="accessory" onclick="occasionGo('accessory')"><span class="occ-ic" aria-hidden="true">💎</span><span class="occ-t">Accessories</span><small>${accessoryList().filter(p => p.stock > 0).length} available</small></button>`]);
+     (!accOn() ? [] : [
+      `<button type="button" class="occ-tile" data-occ="accessory" onclick="occasionGo('accessory')"><span class="occ-ic" aria-hidden="true">💎</span><span class="occ-t">Accessories</span><small>${accessoryList().filter(p => p.stock > 0).length} available</small></button>`]));
   el.innerHTML = `<div class="section-header"><div class="section-label">Find it faster</div><h2 class="section-title">Shop by occasion</h2></div><div class="occ-grid">${tiles.join('')}</div>`;
 }
 function occasionGo(k) {
@@ -6352,7 +6368,7 @@ function faqItems() {
     ['Can I send a saree as a gift?', `Yes. At checkout choose gift wrapping (₹${money(giftFee())}), add a note card, ship it directly to the recipient and hide your name on the parcel and slip.`],
     ['How do I pay?', 'Online at checkout, or through the secure payment link we send on WhatsApp. We never ask for card numbers, OTPs or UPI PINs in a chat.'],
     ['How do I care for my saree?', 'Every fabric is different. Our Saree Care Guide explains washing, drying, ironing and storing.', 'care'],
-    ['Do you sell accessories?', 'Yes: jewellery, blouses and blouse fabric, and bags and potlis. Open the Accessories tab in the shop. They are ordered and delivered like sarees.'],
+    ...(accOn() ? [['Do you sell accessories?', 'Yes: jewellery, blouses and blouse fabric, and bags and potlis. Open the Accessories tab in the shop. They are ordered and delivered like sarees.']] : []),
     ['What are your shipping, return and privacy policies?', 'They are written in full in our Terms and Privacy pages.', 'terms'],
     ['How can I reach you?', `Message or call ${ph}, or write to ${db.settings.email || 'us'}. We reply on WhatsApp.`]
   ];
@@ -6672,7 +6688,7 @@ function renderHomeChapters() {
   sec.style.display = '';
   sec.innerHTML = items.map((c, n) => {
     const img = safeImg(c.image), tiles = (c.tiles || []).filter(t => t && db.categories.includes(t.category)).slice(0, 3), first = tiles[0] ? tiles[0].category : '';
-    return `<article class="chap" aria-label="${esc(String(c.title || '').replace(/\*/g, ''))}"><div class="chap-hero"${img ? ` style="background-image:url('${esc(img).replace(/'/g, '%27')}')"` : ''}><div class="chap-in"><span class="chap-no">Chapter ${CH_ROMAN[n] || n + 1}</span><h2 class="chap-title">${chEsc(c.title)}</h2>${c.words ? `<p class="chap-words">${esc(c.words)}</p>` : ''}</div></div>
+    return `<article class="chap" aria-label="${esc(String(c.title || '').replace(/\*/g, ''))}"><div class="chap-hero${c.full ? ' full' : ''}"${img ? ` style="background-image:url('${esc(img).replace(/'/g, '%27')}')"` : ''}><div class="chap-in"><span class="chap-no">Chapter ${CH_ROMAN[n] || n + 1}</span><h2 class="chap-title">${chEsc(c.title)}</h2>${c.words ? `<p class="chap-words">${esc(c.words)}</p>` : ''}</div></div>
       ${c.quote ? `<blockquote class="chap-quote"><p>“${esc(String(c.quote).replace(/^[“"]|[”"]$/g, ''))}”</p>${c.by ? `<cite>— ${esc(c.by)}</cite>` : ''}</blockquote>` : ''}
       ${tiles.length ? `<div class="chap-tiles">${tiles.map(t => { const im = safeImg(t.image) || catTileImage({ category: t.category, image: '' }); return `<div class="chap-tile" role="link" tabindex="0" data-cat="${esc(t.category)}" onclick="filterAndShowShop(this.dataset.cat)" onkeydown="if(event.key==='Enter')filterAndShowShop(this.dataset.cat)">${im ? `<img src="${esc(im)}" alt="${esc(t.category)} sarees" loading="lazy" onerror="this.style.display='none'">` : ''}<span>${esc(t.category)} →</span></div>`; }).join('')}</div>` : ''}
       ${first ? `<a class="chap-enter" role="link" tabindex="0" data-cat="${esc(first)}" onclick="filterAndShowShop(this.dataset.cat)" onkeydown="if(event.key==='Enter')filterAndShowShop(this.dataset.cat)">${esc(c.link || 'Enter this chapter')} →</a>` : ''}</article>`;
@@ -6682,6 +6698,15 @@ function renderHomeChapters() {
 function chData() { if (!db.home.chapters || !Array.isArray(db.home.chapters.items)) db.home.chapters = chaptersDefault(); return db.home.chapters; }
 function chLive(redraw) { renderHomeChapters(); homeSaveSoon(); if (redraw) { const c = el_('adminContent'); if (c) renderHomeAdmin(c); } }
 function chSet(i, k, v) { const c = chData().items[i]; if (c) { c[k] = v; chLive(false); } }
+function chRemoveImg(i) { const c = chData().items[i]; if (!c) return; c.image = ''; chLive(true); showToast('Photo removed. The panel is plain dark again.', 'success'); }
+function chFullToggle(i) { const c = chData().items[i]; if (!c) return; c.full = !c.full; chLive(true); }
+// every heading photo in one place, visible at once (no need to open each chapter): thumbnail, upload / replace, remove, "fill the whole screen"
+function chPhotosHTML() {
+  const C = chaptersGet(), tog = (on, fn) => `<div class="toggle ${on ? 'active' : ''}" role="switch" tabindex="0" aria-checked="${!!on}" onclick="${fn}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"></div>`;
+  return `<div class="ch-photos" id="ch-photos"><h4 class="dash-h4" style="margin:12px 0 4px">🖼 Full-width heading photos</h4>
+    <p class="note" style="margin:0 0 8px">The big photo behind each chapter heading on the home page. Add a landscape photo (wider than tall, at least 1600 px wide looks best). A soft dark layer keeps the words readable. Turn on “Fill the whole screen” for a tall, edge-to-edge panel.</p>
+    ${C.items.map((c, i) => { const im = safeImg(c.image); return `<div class="ch-photo-row"><div class="ch-thumb"${im ? ` style="background-image:url('${esc(im).replace(/'/g, '%27')}')"` : ''}>${im ? '' : '<small>no photo</small>'}</div><div class="ch-photo-main"><b>${esc(String(c.title || 'Chapter').replace(/\*/g, ''))}</b>${c.show === false ? ' <small>(hidden)</small>' : ''}<div class="th-actions" style="margin:6px 0 0"><button type="button" class="btn-sm btn-primary-sm" onclick="homePick('chap',${i})">⬆ ${im ? 'Replace photo' : 'Add photo'}</button>${im ? `<button type="button" class="btn-sm" onclick="chRemoveImg(${i})">Remove</button>` : ''}</div><div class="hs-bar" style="margin-top:6px"><span>Fill the whole screen</span>${tog(!!c.full, `chFullToggle(${i})`)}</div></div></div>`; }).join('')}</div>`;
+}
 function chToggle(i) { const c = chData().items[i]; if (c) { c.show = c.show === false; chLive(true); } }
 function chAllToggle() { const C = chData(); C.show = C.show === false; chLive(true); }
 function chTile(i, t, k, v) { const c = chData().items[i]; if (!c) return; c.tiles = c.tiles || []; while (c.tiles.length <= t) c.tiles.push({ category: '', image: '' }); c.tiles[t][k] = v; chLive(k === 'category'); }
@@ -6694,6 +6719,7 @@ function chaptersCardHTML() {
   return `<div class="admin-card" id="chapters-card"><h3>📖 Story chapters</h3>
     <p class="note" style="margin:0 0 8px">Short chapters by occasion on the home page: a photo panel, a title, a quote in your own words and three category tiles. Put *stars* around a word in the title to set it in italics.</p>
     <div class="hs-bar"><span>Show the chapters on the home page</span>${tog(C.show !== false, 'chAllToggle()')}</div>
+    ${chPhotosHTML()}
     ${chAiPanelHTML()}
     <div class="ch-list">${C.items.map((c, i) => `<details class="ch-item"><summary>${esc(String(c.title || 'Chapter').replace(/\*/g, ''))}${c.show === false ? ' <small>(hidden)</small>' : ''}</summary><div class="ch-body">
       <div class="hs-bar"><span>Show this chapter</span>${tog(c.show !== false, `chToggle(${i})`)}</div>

@@ -17,7 +17,7 @@ function renderHomeChapters() {
   sec.style.display = '';
   sec.innerHTML = items.map((c, n) => {
     const img = safeImg(c.image), tiles = (c.tiles || []).filter(t => t && db.categories.includes(t.category)).slice(0, 3), first = tiles[0] ? tiles[0].category : '';
-    return `<article class="chap" aria-label="${esc(String(c.title || '').replace(/\*/g, ''))}"><div class="chap-hero"${img ? ` style="background-image:url('${esc(img).replace(/'/g, '%27')}')"` : ''}><div class="chap-in"><span class="chap-no">Chapter ${CH_ROMAN[n] || n + 1}</span><h2 class="chap-title">${chEsc(c.title)}</h2>${c.words ? `<p class="chap-words">${esc(c.words)}</p>` : ''}</div></div>
+    return `<article class="chap" aria-label="${esc(String(c.title || '').replace(/\*/g, ''))}"><div class="chap-hero${c.full ? ' full' : ''}"${img ? ` style="background-image:url('${esc(img).replace(/'/g, '%27')}')"` : ''}><div class="chap-in"><span class="chap-no">Chapter ${CH_ROMAN[n] || n + 1}</span><h2 class="chap-title">${chEsc(c.title)}</h2>${c.words ? `<p class="chap-words">${esc(c.words)}</p>` : ''}</div></div>
       ${c.quote ? `<blockquote class="chap-quote"><p>“${esc(String(c.quote).replace(/^[“"]|[”"]$/g, ''))}”</p>${c.by ? `<cite>— ${esc(c.by)}</cite>` : ''}</blockquote>` : ''}
       ${tiles.length ? `<div class="chap-tiles">${tiles.map(t => { const im = safeImg(t.image) || catTileImage({ category: t.category, image: '' }); return `<div class="chap-tile" role="link" tabindex="0" data-cat="${esc(t.category)}" onclick="filterAndShowShop(this.dataset.cat)" onkeydown="if(event.key==='Enter')filterAndShowShop(this.dataset.cat)">${im ? `<img src="${esc(im)}" alt="${esc(t.category)} sarees" loading="lazy" onerror="this.style.display='none'">` : ''}<span>${esc(t.category)} →</span></div>`; }).join('')}</div>` : ''}
       ${first ? `<a class="chap-enter" role="link" tabindex="0" data-cat="${esc(first)}" onclick="filterAndShowShop(this.dataset.cat)" onkeydown="if(event.key==='Enter')filterAndShowShop(this.dataset.cat)">${esc(c.link || 'Enter this chapter')} →</a>` : ''}</article>`;
@@ -27,6 +27,15 @@ function renderHomeChapters() {
 function chData() { if (!db.home.chapters || !Array.isArray(db.home.chapters.items)) db.home.chapters = chaptersDefault(); return db.home.chapters; }
 function chLive(redraw) { renderHomeChapters(); homeSaveSoon(); if (redraw) { const c = el_('adminContent'); if (c) renderHomeAdmin(c); } }
 function chSet(i, k, v) { const c = chData().items[i]; if (c) { c[k] = v; chLive(false); } }
+function chRemoveImg(i) { const c = chData().items[i]; if (!c) return; c.image = ''; chLive(true); showToast('Photo removed. The panel is plain dark again.', 'success'); }
+function chFullToggle(i) { const c = chData().items[i]; if (!c) return; c.full = !c.full; chLive(true); }
+// every heading photo in one place, visible at once (no need to open each chapter): thumbnail, upload / replace, remove, "fill the whole screen"
+function chPhotosHTML() {
+  const C = chaptersGet(), tog = (on, fn) => `<div class="toggle ${on ? 'active' : ''}" role="switch" tabindex="0" aria-checked="${!!on}" onclick="${fn}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"></div>`;
+  return `<div class="ch-photos" id="ch-photos"><h4 class="dash-h4" style="margin:12px 0 4px">🖼 Full-width heading photos</h4>
+    <p class="note" style="margin:0 0 8px">The big photo behind each chapter heading on the home page. Add a landscape photo (wider than tall, at least 1600 px wide looks best). A soft dark layer keeps the words readable. Turn on “Fill the whole screen” for a tall, edge-to-edge panel.</p>
+    ${C.items.map((c, i) => { const im = safeImg(c.image); return `<div class="ch-photo-row"><div class="ch-thumb"${im ? ` style="background-image:url('${esc(im).replace(/'/g, '%27')}')"` : ''}>${im ? '' : '<small>no photo</small>'}</div><div class="ch-photo-main"><b>${esc(String(c.title || 'Chapter').replace(/\*/g, ''))}</b>${c.show === false ? ' <small>(hidden)</small>' : ''}<div class="th-actions" style="margin:6px 0 0"><button type="button" class="btn-sm btn-primary-sm" onclick="homePick('chap',${i})">⬆ ${im ? 'Replace photo' : 'Add photo'}</button>${im ? `<button type="button" class="btn-sm" onclick="chRemoveImg(${i})">Remove</button>` : ''}</div><div class="hs-bar" style="margin-top:6px"><span>Fill the whole screen</span>${tog(!!c.full, `chFullToggle(${i})`)}</div></div></div>`; }).join('')}</div>`;
+}
 function chToggle(i) { const c = chData().items[i]; if (c) { c.show = c.show === false; chLive(true); } }
 function chAllToggle() { const C = chData(); C.show = C.show === false; chLive(true); }
 function chTile(i, t, k, v) { const c = chData().items[i]; if (!c) return; c.tiles = c.tiles || []; while (c.tiles.length <= t) c.tiles.push({ category: '', image: '' }); c.tiles[t][k] = v; chLive(k === 'category'); }
@@ -39,6 +48,7 @@ function chaptersCardHTML() {
   return `<div class="admin-card" id="chapters-card"><h3>📖 Story chapters</h3>
     <p class="note" style="margin:0 0 8px">Short chapters by occasion on the home page: a photo panel, a title, a quote in your own words and three category tiles. Put *stars* around a word in the title to set it in italics.</p>
     <div class="hs-bar"><span>Show the chapters on the home page</span>${tog(C.show !== false, 'chAllToggle()')}</div>
+    ${chPhotosHTML()}
     ${chAiPanelHTML()}
     <div class="ch-list">${C.items.map((c, i) => `<details class="ch-item"><summary>${esc(String(c.title || 'Chapter').replace(/\*/g, ''))}${c.show === false ? ' <small>(hidden)</small>' : ''}</summary><div class="ch-body">
       <div class="hs-bar"><span>Show this chapter</span>${tog(c.show !== false, `chToggle(${i})`)}</div>

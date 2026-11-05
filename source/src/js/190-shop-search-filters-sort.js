@@ -1,7 +1,8 @@
 // ================= SHOP SEARCH, FILTERS & SORT =================
 const isAccessory = p => !!p && (db.accessoryCategories || []).includes(p.category);
 const sareeList = () => db.products.filter(p => !isAccessory(p));
-const accessoryList = () => db.products.filter(isAccessory);
+const accOn = () => !(db.settings && db.settings.showAccessories === false);   // the owner can hide accessories from the website (Categories tab)
+const accessoryList = () => accOn() ? db.products.filter(isAccessory) : [];
 const SHOP_PAGE = 24;
 const SHOP = { shown: SHOP_PAGE, sig: '', kind: 'saree', occasion: '', q: '', sort: 'featured', fabrics: [], colours: [], min: '', max: '', inStock: false, open: false };
 const FABRIC_BY_CAT = { 'Tussar': 'Tussar Silk', 'Maheswari': 'Silk Cotton', 'Banarasi': 'Banarasi Silk', 'Kanjeevaram': 'Kanjeevaram Silk', 'Paithani': 'Paithani Silk', 'Mysore Silk': 'Crepe Silk', 'Ponduru Khadi': 'Khadi Cotton', 'Organza': 'Organza', 'Chanderi': 'Chanderi Silk Cotton', 'Bhagalpuri': 'Bhagalpuri Silk' };
@@ -38,7 +39,7 @@ const kindProducts = () => SHOP.kind === 'accessory' ? accessoryList() : sareeLi
 function categoryProducts() { return currentCategory === 'all' ? kindProducts() : kindProducts().filter(p => p.category === currentCategory); }
 const kindWord = n => SHOP.kind === 'accessory' ? (n === 1 ? 'accessory' : 'accessories') : (n === 1 ? 'saree' : 'sarees');
 function shopMore() { SHOP.shown += SHOP_PAGE; const y = window.scrollY; renderProducts(); window.scrollTo(0, y); }
-function shopKind(k) { if (SHOP.kind === k) return; SHOP.kind = k; SHOP.occasion = ''; currentCategory = 'all'; SHOP.fabrics = []; SHOP.colours = []; SHOP.min = ''; SHOP.max = ''; shopSearch('', true); renderProducts(); if (SHOP.open) renderShopPanel(); const q = document.getElementById('shop-q'); if (q) { q.placeholder = k === 'accessory' ? 'Search accessories - try "jhumka", "bangles", "blouse"' : 'Search sarees - try "kanchipuram", "red silk", "wedding"'; q.setAttribute('aria-label', 'Search ' + kindWord(2)); } }
+function shopKind(k) { if (k === 'accessory' && !accOn()) k = 'saree'; if (SHOP.kind === k) return; SHOP.kind = k; SHOP.occasion = ''; currentCategory = 'all'; SHOP.fabrics = []; SHOP.colours = []; SHOP.min = ''; SHOP.max = ''; shopSearch('', true); renderProducts(); if (SHOP.open) renderShopPanel(); const q = document.getElementById('shop-q'); if (q) { q.placeholder = k === 'accessory' ? 'Search accessories - try "jhumka", "bangles", "blouse"' : 'Search sarees - try "kanchipuram", "red silk", "wedding"'; q.setAttribute('aria-label', 'Search ' + kindWord(2)); } }
 function visibleProducts() {
   let list = categoryProducts().slice(); const terms = tokenise(SHOP.q), scores = new Map();
   if (terms.length) list = list.filter(p => { const s = searchScore(p, terms); scores.set(p.id, s); return s > 0; });

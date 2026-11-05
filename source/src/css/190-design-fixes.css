@@ -204,3 +204,8 @@ nav.dark .brand-mark { background: #fff; padding: 3px; box-sizing: border-box; }
 .pr-badge { font-size: .7rem; padding: 2px 7px; border-radius: 10px; background: #eee; color: #444; } .pr-approved, .pr-done { background: #dff3e4; color: #1d6b34; } .pr-rejected, .pr-stopped { background: #fde8e6; color: #9b2c22; } .pr-submitted, .pr-sending { background: #fff1cf; color: #8a5a00; }
 html.ui2.dk .pr-tpl { background: #23211d; border-color: #3a362f; } html.ui2.dk .pr-grid input, html.ui2.dk .pr-grid select, html.ui2.dk .pr-wide input, html.ui2.dk .pr-wide textarea { background: #1b1a17; border-color: #3a362f; color: inherit; }
 @media (max-width: 640px) { .pr-tbl { font-size: .78rem; } .pr-tbl th, .pr-tbl td { padding: 5px 4px; } }
+
+/* chapter heading photos tool + full-screen panel */
+.ch-photo-row { display: flex; gap: 12px; align-items: center; padding: 8px 0; border-top: 1px solid #ece7da; } .ch-thumb { flex: 0 0 120px; height: 68px; border-radius: 4px; background: #141210 center / cover no-repeat; display: flex; align-items: center; justify-content: center; color: #bbb; } .ch-photo-main { flex: 1; min-width: 0; }
+.chap-hero.full { aspect-ratio: auto; height: min(90vh, 860px); border-radius: 0; width: 100vw; margin-left: calc(50% - 50vw); }
+@media (max-width: 640px) { .chap-hero.full { aspect-ratio: auto; height: 85vh; } .ch-thumb { flex-basis: 84px; height: 56px; } }

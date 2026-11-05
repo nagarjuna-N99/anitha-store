@@ -19,8 +19,8 @@ function renderOccasions() {
   const sarees = sareeList(), n = o => sarees.filter(p => p.stock > 0 && occasionsOf(p).includes(o)).length;
   const tiles = OCCASIONS.map(([k, ic, label]) => `<button type="button" class="occ-tile" data-occ="${k}" onclick="occasionGo('${k}')"><span class="occ-ic" aria-hidden="true">${ic}</span><span class="occ-t">${esc(label)}</span><small>${n(k)} available</small></button>`)
     .concat(sarees.some(p => p.stock > 0 && p.price <= GIFT_BUDGET) ? [`<button type="button" class="occ-tile" data-occ="gift" onclick="occasionGo('gift')"><span class="occ-ic" aria-hidden="true">🎁</span><span class="occ-t">Gifts under ₹${money(GIFT_BUDGET)}</span><small>${sarees.filter(p => p.stock > 0 && p.price <= GIFT_BUDGET).length} available</small></button>`] : [],
-     [
-      `<button type="button" class="occ-tile" data-occ="accessory" onclick="occasionGo('accessory')"><span class="occ-ic" aria-hidden="true">💎</span><span class="occ-t">Accessories</span><small>${accessoryList().filter(p => p.stock > 0).length} available</small></button>`]);
+     (!accOn() ? [] : [
+      `<button type="button" class="occ-tile" data-occ="accessory" onclick="occasionGo('accessory')"><span class="occ-ic" aria-hidden="true">💎</span><span class="occ-t">Accessories</span><small>${accessoryList().filter(p => p.stock > 0).length} available</small></button>`]));
   el.innerHTML = `<div class="section-header"><div class="section-label">Find it faster</div><h2 class="section-title">Shop by occasion</h2></div><div class="occ-grid">${tiles.join('')}</div>`;
 }
 function occasionGo(k) {
@@ -311,7 +311,7 @@ function faqItems() {
     ['Can I send a saree as a gift?', `Yes. At checkout choose gift wrapping (₹${money(giftFee())}), add a note card, ship it directly to the recipient and hide your name on the parcel and slip.`],
     ['How do I pay?', 'Online at checkout, or through the secure payment link we send on WhatsApp. We never ask for card numbers, OTPs or UPI PINs in a chat.'],
     ['How do I care for my saree?', 'Every fabric is different. Our Saree Care Guide explains washing, drying, ironing and storing.', 'care'],
-    ['Do you sell accessories?', 'Yes: jewellery, blouses and blouse fabric, and bags and potlis. Open the Accessories tab in the shop. They are ordered and delivered like sarees.'],
+    ...(accOn() ? [['Do you sell accessories?', 'Yes: jewellery, blouses and blouse fabric, and bags and potlis. Open the Accessories tab in the shop. They are ordered and delivered like sarees.']] : []),
     ['What are your shipping, return and privacy policies?', 'They are written in full in our Terms and Privacy pages.', 'terms'],
     ['How can I reach you?', `Message or call ${ph}, or write to ${db.settings.email || 'us'}. We reply on WhatsApp.`]
   ];

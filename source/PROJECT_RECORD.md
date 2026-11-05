@@ -119,7 +119,7 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 ## 6. Test suites (all passing on 12 Nov 2026; known slow spots: sign-in timeouts under load and the phone-speed test near its limit pass when rerun alone)
 | Suite | Checks | Covers |
 |---|---|---|
-| `wa-assistant` (`npm test`) | 626 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
+| `wa-assistant` (`npm test`) | 627 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
 | `smoke2.cjs` | 10 | orders, invoices, reports |
 | `studio-test2.cjs` / `studio-test3.cjs` | 50 / 61 | Image Studio, drafts, product form, AI copy |
 | `shop-test.cjs` | 56 | favourites, share links, OTP login, consents, Terms/Privacy |
@@ -136,6 +136,7 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 | `care-test.cjs` | 9 | Saree Care tabs, wash-care guide, photo link repair |
 | `parts-test.cjs` | 8 | the website source parts and the joined file |
 | `addresses-test.cjs` | 25 | each page and saree has its own address, Back/Forward, old links |
+| `accessories-switch-test.cjs` | 14 | Accessories on/off on the website, full-width heading photos tool |
 | `promo-test.cjs` | 20 | WhatsApp promotions tab: reports, prices and costs, templates with AI wording, promotions (stand-in server) |
 | `chapters-test.cjs` | 25 | story chapters on the home page (website, owner editing, phone layout) and the tidier New Arrivals cards |
 | `colours-notes-test.cjs` | 29 | calmer sizes on computers, "Notes from the loom" sign-up, website colours (presets, own colours, photo match, Claude ideas, readability guard) |
@@ -166,6 +167,10 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**12 Nov 2026 (Accessories on/off, full-width heading photos tool)**
+- Owner: "add on off option for Accessory categories view on website for owner, add full page images adding tool for headings in admin". Categories tab (owner): a **Show Accessories on the website** switch hides the Accessories tab, occasion tile, FAQ line and "Complete the look" rows (products and categories are kept; saved as `settings.showAccessories`, sent in the public website data). Home Page (admin): a **Full-width heading photos** list for the story-chapter headings with Add/Replace/Remove and a **Fill the whole screen** switch; heading photo uploads now keep 1920 px.
+- Tests: server 627 (+1); new `tests/accessories-switch-test.cjs` (14 checks). Not tested: a real phone, real large photos.
 
 **12 Nov 2026 (WhatsApp promotions, AI template wording, message reports and costs)**
 - Owner: "prepare tool for whatsapp promotion and template setting using AI and reports regarding regular messages and marketing messages and costing and total expenses also". New **admin-only** tab **WhatsApp promotions** (guide 39; first built owner-only, moved to the admin login on the owner's request the same day): every outgoing WhatsApp message is counted (`walog.mjs`, hooked in `whatsapp.mjs`) by kind (regular / order update / promotion / sign-in code), source, status and price, with only the last 4 digits kept; reports by period, kind, source, month and promotion with a CSV; editable prices (rough defaults, to be checked against Meta's India list) and hand-entered running costs, giving **total expenses**; a template list with checks (stop line, numbering, length) and **AI wording help** (new task `watemplate`, 3 drafts from only the facts given, built-in versions without Claude); **promotions** to customers who said yes to offers and have not sent STOP: test send first, owner confirms the head-count and rough cost, only 9 am to 9 pm IST, daily limit, one message per person per promotion (atomic claim), nothing sent while WhatsApp is not live (simulated).

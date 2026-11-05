@@ -51,7 +51,8 @@ function buildScrollTrack() {
 function renderFilterButtons() {
   const wrap = document.getElementById('filterContainer');
   const cats = ['all', ...shopCats()];
-  const kt = document.getElementById('kindTabs'); if (kt) kt.innerHTML = [['saree', 'Sarees'], ['accessory', 'Accessories']].map(([k, l]) => `<button type="button" role="tab" id="kind-${k}" aria-selected="${SHOP.kind === k}" class="kind-tab ${SHOP.kind === k ? 'active' : ''}" onclick="shopKind('${k}')">${l}</button>`).join('');
+  if (!accOn() && SHOP.kind === 'accessory') SHOP.kind = 'saree';
+  const kt = document.getElementById('kindTabs'); if (kt) kt.style.display = accOn() ? '' : 'none'; if (kt) kt.innerHTML = [['saree', 'Sarees'], ['accessory', 'Accessories']].filter(x => x[0] === 'saree' || accOn()).map(([k, l]) => `<button type="button" role="tab" id="kind-${k}" aria-selected="${SHOP.kind === k}" class="kind-tab ${SHOP.kind === k ? 'active' : ''}" onclick="shopKind('${k}')">${l}</button>`).join('');
   wrap.innerHTML = cats.map(c => `<button class="filter-btn ${c === currentCategory ? 'active' : ''}" data-cat="${esc(c)}" onclick="filterProducts(this.dataset.cat)">${c === 'all' ? 'All' : esc(c)}</button>`).join('');
 }
 

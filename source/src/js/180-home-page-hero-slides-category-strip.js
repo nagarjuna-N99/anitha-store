@@ -317,7 +317,7 @@ function homePick(kind, idx) { HOME_PICK = { kind, idx }; document.getElementByI
 async function homeFileChosen(files) {
   const f = files[0], pick = HOME_PICK; document.getElementById('home-file').value = ''; if (!f || !pick) return;
   if (!/^image\//.test(f.type)) { showToast('Please choose an image file', 'error'); return; }
-  let url; try { url = await fileToDataUrl(f, pick.kind === 'hero' ? 1920 : 1000); } catch (e) { showToast('Could not read that image', 'error'); return; }
+  let url; try { url = await fileToDataUrl(f, pick.kind === 'hero' || pick.kind === 'chap' ? 1920 : 1000); } catch (e) { showToast('Could not read that image', 'error'); return; }
   const target = pick.kind === 'chap' ? chData().items[pick.idx] : pick.kind === 'ctile' ? (() => { const [a, b] = String(pick.idx).split(',').map(Number), c = chData().items[a]; if (!c) return null; c.tiles = c.tiles || []; while (c.tiles.length <= b) c.tiles.push({ category: '', image: '' }); return c.tiles[b]; })() : pick.kind === 'hero' ? HSL(pick.idx) : pick.kind === 'cat' ? db.home.categories.items[pick.idx] : db.home.signature.tiles[pick.idx];
   if (!target) return;
   const prev = target.image; target.image = url;
