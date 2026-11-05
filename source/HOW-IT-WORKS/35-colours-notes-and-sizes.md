@@ -16,3 +16,5 @@
 - The AI task is `palette` in `wa-assistant/src/aihelper.mjs` (switch: AI Helper → "Website colour ideas").
 
 Tests: `tests/colours-notes-test.cjs` (31 checks: sizes, sign-up form, owner card, colours, AI ideas), `tests/onebox-test.cjs` (a real sign-up saved on the real server), and 10 server checks in `wa-assistant/tests/run.mjs`. Not tested: Claude's real colour ideas, a real phone, real photos from the owner.
+
+**✨ AI help (updated 5 Nov 2026).** All three home-page helpers now work the same way and each has an on/off switch in the AI Helper tab (**Website colour ideas**, **Story chapter wording**, **Notes from the loom wording**): ask for 3 drafts, read them, press **Use these**. Notes: "Suggest 3 wordings" (task `notes`: heading, title, two short sentences, button; no discounts and no promise about how often). Colours: "Suggest 3 ideas" (task `palette`); without Claude it now offers the three ready-made colour sets that fit the words best. Without a Claude key, or with the switch off, Notes and Chapters show built-in wording instead. Tests: `tests/colours-notes-test.cjs` (29 checks), `tests/chapters-test.cjs`, and 2 server checks.

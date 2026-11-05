@@ -3,7 +3,7 @@
 > **STANDING RULE (owner's instruction, 23 Oct 2026):** this record and the `HOW-IT-WORKS/` folder are updated **after every change or update**, in the same step as the change, never later. A change is not finished until (1) the code is tested, (2) a dated entry is added to the Change Log below, (3) any affected `HOW-IT-WORKS/` page is corrected, (4) `./check-record.sh` has been run (it fails if the record or how-it-works is behind the code).
 > Also standing: the owner wants chats remembered for later use; this record is that memory for the project.
 
-**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 573 automated checks) · **Browser test suites:** 34 (see §6)
+**Last updated:** 11 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 575 automated checks) · **Browser test suites:** 34 (see §6)
 
 ---
 
@@ -116,8 +116,8 @@ Owner's guidance: *"we will setup everything after we host it"* — real hosting
 | `care-test.cjs` | 9 | Saree Care tabs, wash-care guide, photo link repair |
 | `parts-test.cjs` | 8 | the website source parts and the joined file |
 | `addresses-test.cjs` | 25 | each page and saree has its own address, Back/Forward, old links |
-| `chapters-test.cjs` | 19 | story chapters on the home page (website, owner editing, phone layout) and the tidier New Arrivals cards |
-| `colours-notes-test.cjs` | 31 | calmer sizes on computers, "Notes from the loom" sign-up, website colours (presets, own colours, photo match, Claude ideas, readability guard) |
+| `chapters-test.cjs` | 24 | story chapters on the home page (website, owner editing, phone layout) and the tidier New Arrivals cards |
+| `colours-notes-test.cjs` | 29 | calmer sizes on computers, "Notes from the loom" sign-up, website colours (presets, own colours, photo match, Claude ideas, readability guard) |
 | `onebox-test.cjs` | 9 | one-server hosting: the server serves the real website, page addresses, 404 page, sitemap and the owner app from one address |
 | `redirect-test.cjs` | 7 | the old GitHub Pages address becomes a signpost to anithapemmasani.com (same page, search and #part kept; old site map removed) |
 | `product-page-test.cjs` | 22 | saree page: delivery line, details table, trust block, questions, related, sticky bar |
@@ -144,6 +144,10 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**12 Nov 2026 (AI help for Story chapters, Notes from the loom and Website colours)**
+- Owner: "add AI help for Story chapters, Website colours, Notes from the loom in admin settings". New AI tasks `chapters` and `notes` (and the existing `palette`) each give 3 drafts the admin reads and applies with "Use this / Use these"; Chapters also has "Rewrite this chapter with Claude" (keeps uploaded tile photos); tiles are only categories the shop has; drafts are trimmed and empty ones dropped. Each helper has a switch in the AI Helper tab (settings): Website colour ideas, Story chapter wording, Notes from the loom wording. Without a Claude key, or with the switch off, Chapters and Notes show built-in wording and Colours offers ready-made sets that fit the words, with a plain message. Guides 35 and 36.
+- Tests: server 575 (+2: chapters, notes tasks); `colours-notes-test.cjs` 29 checks (+4); `chapters-test.cjs` +5. Not tested: Claude's real wording.
 
 **12 Nov 2026 (Two logins: the Owner and the Admin)**
 - Owner asked for the back end to be split into two sign-ins. **Owner** (`/owner`, name + password): the business: sarees, categories, items, prices, shipping and GST, coupons and discounts, delivery rules, orders, invoices, statements, customers and their data (export, erase), privacy, growth reports, her own password and 2-step, backups. **Admin** (`/admin`, password): the look and the technical side: Home Page (banner, quote, story chapters, Notes wording, colours), Pages, Image Studio, Instagram and WhatsApp, Claude key, creating the owner login, Ops, audit log, Notes list; the admin sees no customers, orders, invoices, coupons, reviews, bank or tax details. Enforced on the server (`wa-assistant/src/roles.mjs`): per-login screens and routes (`/admin/api` and `/api`), what each login is shown (`dbForRead`) and what each save may change (`dbForWrite`); wrong-address sign-ins get the plain wrong-password answer; 2-step and password changes are per person; the audit log names who did what. The old main account becomes the Admin; old helper logins become owner logins. Guide: HOW-IT-WORKS/37-two-logins-owner-and-admin.md.

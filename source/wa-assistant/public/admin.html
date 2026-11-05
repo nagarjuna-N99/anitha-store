@@ -6518,14 +6518,17 @@ async function themeFromPhoto() {
   try { const r = await heroAnalyze(s), h = r.hue, sat = Math.max(28, Math.min(62, r.sat * 100 + 18)); themeSet({ accent: hslHex(h, sat, 30), ink: hslHex(h, 30, 12), bg: hslHex(h, 35, 97), cream: hslHex(h, 30, 93), sage: hslHex((h + 40) % 360, 18, 40) }, 'Colours matched to your banner photo.'); }
   catch (e) { THEME_MSG = (e && e.message) || 'Could not read the photo.'; renderHomeAdmin(el_('adminContent')); }
 }
+const THEME_MOODS = { Peacock: 'peacock teal blue green sea water calm cool feather', Rose: 'rose pink lotus blush soft romantic bride wedding', Indigo: 'indigo blue night evening royal deep denim', Forest: 'forest green leaf nature fresh garden calm earth', Saffron: 'saffron orange gold festive diwali warm marigold turmeric haldi', 'Heritage (original)': 'heritage brown classic traditional warm original' };
+function themeBuiltin(mood) { const w = String(mood || '').toLowerCase().split(/[^a-z]+/).filter(Boolean), cur = themeGet().accent; return THEME_PRESETS.filter(p => p.accent.toLowerCase() !== cur).map(p => ({ p, sc: w.filter(x => (THEME_MOODS[p.name] || '').includes(x)).length })).sort((a, b) => b.sc - a.sc).slice(0, 3).map(({ p }) => ({ name: p.name, why: 'A ready-made colour set', accent: p.accent, ink: p.ink, bg: p.bg, cream: p.cream, sage: p.sage })); }
 async function themeAi() {
   const mood = (el_('theme-mood') || {}).value || ''; THEME_MSG = 'Asking Claude for ideas…'; THEME_DRAFTS = []; renderHomeAdmin(el_('adminContent'));
   try {
+    if (!(typeof aiReady === 'function' && aiReady('palette'))) { THEME_DRAFTS = themeBuiltin(mood); THEME_MSG = 'Claude is not connected, so these are ready-made colour sets that fit your words best (add the key in Settings for fresh ideas). Nothing changes until you press "Use these".'; return renderHomeAdmin(el_('adminContent')); }
     const s = (db.home.hero.slides || []).find(x => x.enabled !== false && safeImg(x.image)); let photo = {}; if (s) { try { const r = await heroAnalyze(s); photo = { colour: hueName(r.hue), tone: r.tone, photoHex: r.accent }; } catch (e) { /* the photo is optional */ } }
     const t = themeGet(), j = await aiCall('palette', { mood, ...photo, categories: db.categories.slice(0, 8), current: { accent: t.accent, ink: t.ink, bg: t.bg } });
     THEME_DRAFTS = ((j.data && j.data.palettes) || []).filter(p => ['accent', 'ink', 'bg', 'cream', 'sage'].every(k => isHex(p[k]))).slice(0, 3).map(p => ({ name: String(p.name || 'Idea').slice(0, 30), why: String(p.why || '').slice(0, 120), accent: p.accent, ink: p.ink, bg: p.bg, cream: p.cream, sage: p.sage }));
     THEME_MSG = THEME_DRAFTS.length ? 'Here are 3 ideas. Nothing changes until you press "Use these".' : 'Claude gave nothing usable. Try again with a few words about the mood.';
-  } catch (e) { THEME_MSG = aiMsg(e); }
+  } catch (e) { THEME_MSG = aiMsg(e); THEME_DRAFTS = themeBuiltin(mood); THEME_MSG += ' Showing ready-made colour sets instead.'; }
   renderHomeAdmin(el_('adminContent'));
 }
 function themeUseDraft(i) { const p = THEME_DRAFTS[i]; if (p) { THEME_DRAFTS = []; themeSet({ accent: p.accent, ink: p.ink, bg: p.bg, cream: p.cream, sage: p.sage }, p.name + ' colours applied.'); } }
@@ -6592,8 +6595,28 @@ function notesCardHTML() {
     <div class="hs-grid2"><div class="form-group"><label>Small heading</label><input type="text" maxlength="40" value="${esc(n.label)}" oninput="notesSet('label',this.value)"></div><div class="form-group"><label>Title</label><input type="text" maxlength="60" value="${esc(n.title)}" oninput="notesSet('title',this.value)"></div></div>
     <div class="form-group"><label>Words</label><textarea rows="3" maxlength="260" oninput="notesSet('text',this.value)">${esc(n.text)}</textarea></div>
     <div class="hs-grid2"><div class="form-group"><label>Button</label><input type="text" maxlength="30" value="${esc(n.button)}" oninput="notesSet('button',this.value)"></div><div class="form-group"><label>&nbsp;</label><button type="button" class="btn-sm btn-info-sm" onclick="notesIdea()">✨ Suggest other words</button></div></div>
+    ${notesAiHTML()}
     <p class="note">Visitors must tick a box saying they agree. The exact words they agreed to are saved with their email. The list is below.</p>
     <div id="notes-list">${notesListHTML()}</div></div>`;
+}
+
+// ---- ✨ AI help for the Notes block: three drafts; nothing changes until "Use these" ----
+let NOTES_AI = { drafts: [], msg: '', n: 0 };
+function notesAiClean(v) { const s = (x, n) => String(x == null ? '' : x).replace(/\s+/g, ' ').trim().slice(0, n), o = { label: s(v && v.label, 40), title: s(v && v.title, 60), text: s(v && v.text, 260), button: s(v && v.button, 30) }; return o.title && o.text ? { ...o, button: o.button || 'Send me the notes' } : null; }
+async function notesAi() {
+  const mood = ((el_('notes-ai-mood') || {}).value || '').trim(); NOTES_AI = { drafts: [], msg: 'Asking Claude…', n: NOTES_AI.n }; const c = el_('adminContent'); if (c) renderHomeAdmin(c);
+  let list = [], note = '';
+  try { if (typeof aiReady === 'function' && aiReady('notes')) { const n = notesGet(), j = await aiCall('notes', { mood, categories: (db.categories || []).slice(0, 8), current: { title: n.title, text: n.text } }); list = ((j.data && j.data.variants) || []).map(notesAiClean).filter(Boolean).slice(0, 3); note = list.length ? 'Here are 3 drafts from Claude. Nothing changes until you press "Use these".' : 'Claude gave nothing usable. Try again.'; } }
+  catch (e) { note = aiMsg(e) + ' Showing built-in wording instead.'; }
+  if (!list.length && !/nothing usable/.test(note)) { list = NOTES_IDEAS.map(x => notesAiClean({ label: 'Written with care', title: x.title, text: x.text, button: 'Send me the notes' })); note = note || 'Claude is not connected, so this is built-in wording (add the key in Settings for fresh ideas).'; }
+  NOTES_AI.drafts = list; NOTES_AI.msg = note; if (c) renderHomeAdmin(c);
+}
+function notesAiUse(i) { const d = NOTES_AI.drafts[i]; if (!d) return; db.home.notes = Object.assign(notesDefault(), db.home.notes || {}, { label: d.label, title: d.title, text: d.text, button: d.button }); NOTES_AI = { drafts: [], msg: 'Applied. You can still change any word.', n: NOTES_AI.n }; renderHomeNotes(); homeSaveSoon(); renderHomeAdmin(el_('adminContent')); }
+function notesAiHTML() {
+  const on = typeof aiReady === 'function' && aiReady('notes');
+  return `<div class="th-ai"><label for="notes-ai-mood"><b>✨ Write it with Claude</b> (a few words about the feeling, optional)</label><div class="th-ai-row"><input id="notes-ai-mood" type="text" maxlength="100" placeholder="e.g. warm and simple, like a letter to a friend"><button type="button" class="btn-sm btn-info-sm" onclick="notesAi()"${on ? '' : ' title="Add your Claude key in Settings for fresh ideas; built-in wording shows without it"'}>Suggest 3 wordings</button></div>
+    ${NOTES_AI.drafts.length ? `<div class="th-presets">${NOTES_AI.drafts.map((d, i) => `<div class="th-draft" style="max-width:300px"><small>${esc(d.label)}</small><b>${esc(d.title)}</b><small>${esc(d.text)}</small><small>Button: ${esc(d.button)}</small><button type="button" class="btn-sm btn-info-sm" onclick="notesAiUse(${i})">Use these</button></div>`).join('')}</div>` : ''}
+    ${NOTES_AI.msg ? `<p class="note" role="status" style="margin:8px 0 0">${esc(NOTES_AI.msg)}</p>` : ''}</div>`;
 }
 // ================= STORY CHAPTERS ON THE HOME PAGE =================
 // Short "chapters" by occasion: a big photo panel with a title, a line of weaves, a quote in the shop's own words and three category tiles.
@@ -6636,8 +6659,10 @@ function chaptersCardHTML() {
   return `<div class="admin-card" id="chapters-card"><h3>📖 Story chapters</h3>
     <p class="note" style="margin:0 0 8px">Short chapters by occasion on the home page: a photo panel, a title, a quote in your own words and three category tiles. Put *stars* around a word in the title to set it in italics.</p>
     <div class="hs-bar"><span>Show the chapters on the home page</span>${tog(C.show !== false, 'chAllToggle()')}</div>
+    ${chAiPanelHTML()}
     <div class="ch-list">${C.items.map((c, i) => `<details class="ch-item"><summary>${esc(String(c.title || 'Chapter').replace(/\*/g, ''))}${c.show === false ? ' <small>(hidden)</small>' : ''}</summary><div class="ch-body">
       <div class="hs-bar"><span>Show this chapter</span>${tog(c.show !== false, `chToggle(${i})`)}</div>
+      <div class="th-actions"><button type="button" class="btn-sm btn-info-sm" onclick="chAi(${i})">✨ Rewrite this chapter with Claude</button></div>
       <div class="hs-grid2"><div class="form-group"><label>Title</label><input type="text" maxlength="60" value="${esc(c.title)}" oninput="chSet(${i},'title',this.value)"></div><div class="form-group"><label>Line of weaves under the title</label><input type="text" maxlength="90" value="${esc(c.words)}" oninput="chSet(${i},'words',this.value)"></div></div>
       <div class="form-group"><label>Quote (your own words)</label><textarea rows="2" maxlength="180" oninput="chSet(${i},'quote',this.value)">${esc(c.quote)}</textarea></div>
       <div class="hs-grid2"><div class="form-group"><label>Signed by</label><input type="text" maxlength="60" value="${esc(c.by)}" oninput="chSet(${i},'by',this.value)"></div><div class="form-group"><label>Link text</label><input type="text" maxlength="30" value="${esc(c.link)}" oninput="chSet(${i},'link',this.value)"></div></div>
@@ -6645,6 +6670,43 @@ function chaptersCardHTML() {
       <div class="ch-tiles">${[0, 1, 2].map(t => { const tl = (c.tiles || [])[t] || { category: '', image: '' }; return `<div class="form-group"><label>Tile ${t + 1}</label><select onchange="chTile(${i},${t},'category',this.value)"><option value="">(none)</option>${cats.map(k => `<option${k === tl.category ? ' selected' : ''}>${esc(k)}</option>`).join('')}</select><button class="btn-sm" style="margin-top:6px" onclick="homePick('ctile','${i},${t}')">⬆ Own photo</button></div>`; }).join('')}</div>
       <div class="th-actions"><button type="button" class="btn-sm" onclick="chMove(${i},-1)">↑ Up</button><button type="button" class="btn-sm" onclick="chMove(${i},1)">↓ Down</button><button type="button" class="btn-sm" onclick="chDel(${i})">🗑 Delete</button></div></div></details>`).join('')}</div>
     <div class="th-actions"><button type="button" class="btn-sm btn-info-sm" onclick="chAdd()">＋ Add a chapter</button><button type="button" class="btn-sm" onclick="chRestore()">↺ Use the 3 sample chapters</button></div></div>`;
+}
+
+// ---- ✨ AI help for the chapters: Claude drafts three chapters (or three rewrites of one); nothing changes until the owner presses "Use this" ----
+const CH_IDEAS = [
+  { title: 'A rainy *afternoon.*', words: 'Everyday · Mysore Silk · Ponduru Khadi', quote: 'Tea on the verandah, the radio low, and a saree that feels like a soft old friend.', tiles: ['Mysore Silk', 'Ponduru Khadi', 'Tussar'] },
+  { title: 'A visit to the *temple.*', words: 'Festive · Kanjeevaram · Maheswari', quote: 'Silk that rustles gently on the steps, and colours that look their best in morning light.', tiles: ['Kanjeevaram', 'Maheswari', 'Paithani'] },
+  { title: 'A family *reunion.*', words: 'Occasion · Banarasi · Paithani · Tussar', quote: 'Three generations in one room, and a saree you can be photographed in a hundred times.', tiles: ['Banarasi', 'Paithani', 'Tussar'] },
+  { title: 'A quiet *celebration.*', words: 'Evening · Maheswari · Banarasi', quote: 'No grand hall, just a few people who matter, and a drape that suits the evening.', tiles: ['Maheswari', 'Banarasi', 'Kanjeevaram'] }
+];
+let CH_AI = { drafts: [], target: null, msg: '', n: 0 };
+const chaiCats = () => db.categories || [];
+function chaiClean(v) {
+  const s = (x, n) => String(x == null ? '' : x).replace(/\s+/g, ' ').trim().slice(0, n), cats = chaiCats();
+  const tiles = (Array.isArray(v && v.tiles) ? v.tiles : []).map(t => cats.find(c => c.toLowerCase() === s(t, 40).toLowerCase())).filter(Boolean).filter((c, i, a) => a.indexOf(c) === i).slice(0, 3);
+  const o = { title: s(v && v.title, 60), words: s(v && v.words, 90), quote: s(v && v.quote, 180), tiles }; return o.title && o.quote ? o : null;
+}
+async function chAi(target) {
+  const occ = ((el_('ch-ai-occ') || {}).value || '').trim() || (target !== 'new' && chData().items[target] ? String(chData().items[target].title || '').replace(/\*/g, '') : '');
+  CH_AI = { drafts: [], target, msg: 'Asking Claude…', n: CH_AI.n }; const c = el_('adminContent'); if (c) renderHomeAdmin(c);
+  let list = [], note = '';
+  try {
+    if (typeof aiReady === 'function' && aiReady('chapters')) { const cur = target !== 'new' ? chData().items[target] : null, j = await aiCall('chapters', { occasion: occ, categories: chaiCats().slice(0, 12), existing: chData().items.map(x => String(x.title || '').replace(/\*/g, '')), current: cur ? { title: cur.title, quote: cur.quote } : undefined }); list = ((j.data && j.data.variants) || []).map(chaiClean).filter(Boolean).slice(0, 3); note = list.length ? 'Here are 3 drafts from Claude. Nothing changes until you press "Use this".' : 'Claude gave nothing usable. Try again with a few words about the occasion.'; }
+  } catch (e) { note = aiMsg(e) + ' Showing built-in ideas instead.'; }
+  if (!list.length && !/nothing usable/.test(note)) { const k = CH_AI.n++ % CH_IDEAS.length; list = [0, 1, 2].map(i => chaiClean(CH_IDEAS[(k + i) % CH_IDEAS.length])).filter(Boolean); note = note || 'Claude is not connected, so these are built-in ideas (add the key in Settings for fresh ones).'; }
+  CH_AI.drafts = list; CH_AI.msg = note; if (c) renderHomeAdmin(c);
+}
+function chAiUse(i) {
+  const d = CH_AI.drafts[i]; if (!d) return; const C = chData(), tiles = d.tiles.map(cat => ({ category: cat, image: '' }));
+  if (CH_AI.target === 'new') { if (C.items.length >= 8) return showToast('Up to 8 chapters', 'error'); C.items.push({ id: 'ch' + Date.now().toString(36), show: true, title: d.title, words: d.words, quote: d.quote, by: 'Anitha Pemmasani', image: '', tiles, link: 'Enter this chapter' }); }
+  else { const c = C.items[CH_AI.target]; if (!c) return; c.title = d.title; c.words = d.words; c.quote = d.quote; c.tiles = tiles.map(t => { const old = (c.tiles || []).find(x => x.category === t.category); return old || t; }); }
+  CH_AI = { drafts: [], target: null, msg: 'Applied. You can still change any word.', n: CH_AI.n }; chLive(true);
+}
+function chAiPanelHTML() {
+  const on = typeof aiReady === 'function' && aiReady('chapters'), tgt = CH_AI.target === 'new' ? 'a new chapter' : CH_AI.target != null ? 'chapter ' + (CH_AI.target + 1) : '';
+  return `<div class="th-ai" id="ch-ai"><label for="ch-ai-occ"><b>✨ Write chapters with Claude</b> (a few words about the moment or occasion, optional)</label><div class="th-ai-row"><input id="ch-ai-occ" type="text" maxlength="100" placeholder="e.g. a morning at the temple, a daughter's engagement"><button type="button" class="btn-sm btn-info-sm" onclick="chAi('new')"${on ? '' : ' title="Add your Claude key in Settings for fresh ideas; built-in ideas show without it"'}>Suggest 3 chapters</button></div>
+    ${CH_AI.drafts.length ? `<p class="note" style="margin:8px 0 0">Drafts for ${esc(tgt)}:</p><div class="th-presets">${CH_AI.drafts.map((d, i) => `<div class="th-draft" style="max-width:300px"><b>${esc(d.title.replace(/\*/g, ''))}</b><small>${esc(d.words)}</small><small>“${esc(d.quote)}”</small>${d.tiles.length ? `<small>Tiles: ${esc(d.tiles.join(', '))}</small>` : ''}<button type="button" class="btn-sm btn-info-sm" onclick="chAiUse(${i})">Use this</button></div>`).join('')}</div>` : ''}
+    ${CH_AI.msg ? `<p class="note" role="status" style="margin:8px 0 0">${esc(CH_AI.msg)}</p>` : ''}</div>`;
 }
 // ================= OWNER DASHBOARD (interactive) + DRAFTS BY CATEGORY + ADD-TO-CART ANIMATION (29 Oct 2026) =================
 const DASH = { range: '30', metric: 'revenue', sel: null };
@@ -6932,7 +6994,7 @@ function cartAnim(btn) {
 // ================= AI HELPERS for the owner (30 Oct 2026) =================
 // Every helper only DRAFTS: nothing is sent to customers or saved without the owner pressing the button.
 // Connected = the assistant server address + admin token are set (WhatsApp Assistant tab); otherwise built-in drafts are used where they exist.
-const AI_FEATURES = [['describe', 'Product descriptions, tags & SEO'], ['photo', 'Read colours & fabric from a photo'], ['reply', 'WhatsApp reply suggestions (Inbox)'], ['write', 'Festival, offer & caption writer'], ['palette', 'Website colour ideas (Home Page → Website colours)'], ['hero', 'Home page words (small heading, title, button)'], ['review', 'Review replies'], ['ask', 'Ask your shop'], ['summary', 'Weekly summary'], ['pricing', 'Pricing & stock ideas'], ['cleanup', 'Data clean-up'], ['translate', 'Translation (Telugu / Hindi / English)'], ['captionpack', 'Caption & hashtag pack (English + Telugu)'], ['followup', 'Follow-up message drafts'], ['orderdraft', 'Order message drafts'], ['privacydraft', 'Privacy request reply drafts'], ['contentweek', 'Weekly content writer']];
+const AI_FEATURES = [['describe', 'Product descriptions, tags & SEO'], ['photo', 'Read colours & fabric from a photo'], ['reply', 'WhatsApp reply suggestions (Inbox)'], ['write', 'Festival, offer & caption writer'], ['palette', 'Website colour ideas (Home Page → Website colours)'], ['chapters', 'Story chapter wording (Home Page → Story chapters)'], ['notes', 'Notes from the loom wording (Home Page)'], ['hero', 'Home page words (small heading, title, button)'], ['review', 'Review replies'], ['ask', 'Ask your shop'], ['summary', 'Weekly summary'], ['pricing', 'Pricing & stock ideas'], ['cleanup', 'Data clean-up'], ['translate', 'Translation (Telugu / Hindi / English)'], ['captionpack', 'Caption & hashtag pack (English + Telugu)'], ['followup', 'Follow-up message drafts'], ['orderdraft', 'Order message drafts'], ['privacydraft', 'Privacy request reply drafts'], ['contentweek', 'Weekly content writer']];
 const AI_LANGS = [['en', 'English'], ['te', 'తెలుగు Telugu'], ['hi', 'हिन्दी Hindi']];
 const aiCfg = () => { const c = { master: true, ...(db.settings.ai || {}) }; AI_FEATURES.forEach(([k]) => { if (c[k] === undefined) c[k] = true; }); return c; };
 const aiOn = k => { const c = aiCfg(); return !!c.master && !!c[k]; };
