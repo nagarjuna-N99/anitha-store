@@ -3,7 +3,7 @@
 > **STANDING RULE (owner's instruction, 23 Oct 2026):** this record and the `HOW-IT-WORKS/` folder are updated **after every change or update**, in the same step as the change, never later. A change is not finished until (1) the code is tested, (2) a dated entry is added to the Change Log below, (3) any affected `HOW-IT-WORKS/` page is corrected, (4) `./check-record.sh` has been run (it fails if the record or how-it-works is behind the code).
 > Also standing: the owner wants chats remembered for later use; this record is that memory for the project.
 
-**Last updated:** 12 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 575 automated checks) · **Browser test suites:** 43 (see §6)
+**Last updated:** 12 Nov 2026 · **Store file:** `anitha-store.html` (≈4,600 lines, single file) · **Terms/Privacy version in the shop:** 2.0 (10 Nov 2026) · **Assistant server:** `wa-assistant/` (Node 20+, 591 automated checks) · **Browser test suites:** 44 (see §6)
 
 ---
 
@@ -119,7 +119,7 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 ## 6. Test suites (all passing on 12 Nov 2026; known slow spots: sign-in timeouts under load and the phone-speed test near its limit pass when rerun alone)
 | Suite | Checks | Covers |
 |---|---|---|
-| `wa-assistant` (`npm test`) | 575 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
+| `wa-assistant` (`npm test`) | 591 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
 | `smoke2.cjs` | 10 | orders, invoices, reports |
 | `studio-test2.cjs` / `studio-test3.cjs` | 50 / 61 | Image Studio, drafts, product form, AI copy |
 | `shop-test.cjs` | 56 | favourites, share links, OTP login, consents, Terms/Privacy |
@@ -138,6 +138,7 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 | `addresses-test.cjs` | 25 | each page and saree has its own address, Back/Forward, old links |
 | `chapters-test.cjs` | 25 | story chapters on the home page (website, owner editing, phone layout) and the tidier New Arrivals cards |
 | `colours-notes-test.cjs` | 29 | calmer sizes on computers, "Notes from the loom" sign-up, website colours (presets, own colours, photo match, Claude ideas, readability guard) |
+| `selfheal-test.cjs` | 9 | the server self-heal script run with stand-in commands: restart after two missed answers, start Caddy, free disk, log limit, never touches data |
 | `onebox-test.cjs` | 9 | one-server hosting: the server serves the real website, page addresses, 404 page, sitemap and the owner app from one address |
 | `redirect-test.cjs` | 7 | the old GitHub Pages address becomes a signpost to anithapemmasani.com (same page, search and #part kept; old site map removed) |
 | `product-page-test.cjs` | 22 | saree page: delivery line, details table, trust block, questions, related, sticky bar |
@@ -164,6 +165,11 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**12 Nov 2026 (Repair assistant, auto-repair, server self-heal; Ops bugs fixed)**
+- Owner: "create an AI helper chatbot for repairs and also turn on auto repair". On the Ops page (admin only): a **chat** that explains the red and yellow checks in plain words and can only suggest repairs (buttons the admin presses; no secrets or customer data sent; plain built-in answer without Claude; switch in AI Helper); **auto-repair, ON by default**, which every 10 minutes runs three safe fixed repairs only when needed (missed privacy clean-up, loosened file permissions, a daily known-good copy of the shop data, restored automatically if the main file is ever damaged) and logs each one; and a **server self-heal** script on a 5-minute timer (restart the shop server after two missed answers, start Caddy, free disk). The AI never changes anything by itself. Guide: HOW-IT-WORKS/38-repair-assistant-and-self-heal.md.
+- From the first real Ops report on the live server, three red lines were bugs in Ops itself and are fixed: PUBLIC_URL was read from the wrong place ("not set", and the two lines that depend on it), the "secrets in the public page" check matched the word `adminPin`, and the "data survives redeploys" warning did not know the server's own folder. Render/GitHub wording replaced; "Helper logins" is now "Owner logins". Real items from that report remain: no encrypted backup yet, 2-step off, email not set up, no grievance officer, one order waiting over 3 days.
+- Tests: server 591 (+16); `selfheal-test.cjs` 9 checks; `dpdp2-test.cjs` +5 (the card in a real browser). Not tested: Claude's real answers, the real timer on the live server. To use it: run `sudo anitha-update` on the server (it installs the self-heal timer).
 
 **12 Nov 2026 (All records brought up to date)**
 - Owner: "update all the records". The record's front sections (what the project is, the state at a glance, the files, key decisions, the known limits, the test table) still described the demo days; they now describe the live shop: one AWS server at anithapemmasani.com, the two logins, the website source in `src/`, the story chapters, Notes from the loom, website colours and AI help, the removed Atelier, the redirect of the old GitHub address, and what is still not done (real WhatsApp/Instagram/Razorpay/email connections, real products and photos, upgrading the AWS plan before 4 May 2027, one Privacy Policy line for the Notes). `AGENTS.md`, `CLAUDE.md` and guides 19, 21, 22, 23 were corrected the same way. Test counts: server 575, 43 browser suites.

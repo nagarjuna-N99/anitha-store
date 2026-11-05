@@ -29,3 +29,5 @@ Goal: website, owner app, WhatsApp assistant, orders and data all on **one machi
 Tests: `tests/onebox-test.cjs` (8 checks, a real browser against the server serving the real build), plus 16 server checks for serving the site safely and for the visitor address. **Not tested here:** a real Ubuntu install of `setup.sh`, the real certificate, real DNS, WhatsApp/Meta callbacks on the new address.
 
 **The old GitHub address (5 Nov 2026):** `tools/publish-repo.sh` now publishes the GitHub Pages copy as a signpost to `https://anithapemmasani.com` (`tools/redirect-pages.py`). Each old page sends visitors to the same page on the new address. To publish the whole site to Pages again, run `REDIRECT_TO= tools/publish-repo.sh <repo> <server>`. Test: `tests/redirect-test.cjs`. Customers' cart, wish list and sign-in are stored per address in their browser, so they start fresh on the new address.
+
+**Self-heal (added 5 Nov 2026):** `sudo anitha-update` also installs a 5-minute timer that restarts a stopped shop server or web server and frees disk when it is over 90% full (guide 38).

@@ -14,13 +14,13 @@ import crypto from 'node:crypto';
 import { clientIp } from './clientip.mjs';
 import { adminApiAllowed, dbForRead, TABS, HOME_TAB } from './roles.mjs';
 
-export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, notes, ops, opsReport, wa, watchRun, watchRead, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
+export function adminRoutes({ repair, cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, notes, ops, opsReport, wa, watchRun, watchRead, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
   const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY', 'Cross-Origin-Resource-Policy': 'same-origin', 'Cache-Control': 'no-store', ...(auth.secure ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' } : {}) };
   const CSP = "default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'";
   const ipOf = req => clientIp(req, cfg.trustProxy);   // X-Forwarded-For is trusted only when TRUST_PROXY=1 and the connection is from this very machine
   const send = (res, r, extra = {}) => json(res, r.code || 200, r.code && r.code >= 400 ? { error: r.error, retryAfter: r.retryAfter } : r, { ...SEC, ...extra });
   const body = async (req, limit = 200_000) => { try { return JSON.parse((await readBody(req, limit)).toString('utf8') || '{}'); } catch (e) { throw Object.assign(new Error(e.code === 413 ? 'Too large.' : 'Bad request.'), { code: e.code === 413 ? 413 : 400 }); } };
-  let keyTries = [], reviewTries = [], emailTries = [], opsTries = [], watchTries = [];
+  let keyTries = [], reviewTries = [], emailTries = [], opsTries = [], watchTries = [], repairTries = [];
   const mask = s => s ? s.slice(0, 3) + '…' + s.slice(-3) : '';
 
   return async function handle(req, res, url, route) {
@@ -154,6 +154,14 @@ export function adminRoutes({ cfg, auth, shop, media, social, ig, client, notify
       if (route === 'POST /admin/api/report/prefs') { const b = await body(req, 500); savePrefs(b); wrote('report-prefs'); send(res, { code: 200, prefs: prefs() }); return true; }
       if (route === 'POST /admin/api/report/send') { const b = await body(req, 500), kind = ['weekly', 'monthly', 'daily'].includes(b.kind) ? b.kind : 'weekly', r = await growth.mail(kind, true); wrote('report-sent', kind); send(res, { code: 200, ok: true, ...r }); return true; }
       if (route === 'GET /admin/api/report/preview') { const k = url.searchParams.get('kind'); send(res, { code: 200, ...(await growth.preview(['weekly', 'monthly', 'daily'].includes(k) ? k : 'weekly')) }); return true; }
+      if (route === 'GET /admin/api/repair') { send(res, { code: 200, ...repair.status() }); return true; }
+      if (route === 'POST /admin/api/repair/enabled') { const b = await body(req, 500); repair.store.setEnabled(!!b.enabled); wrote('repair-switch', b.enabled ? 'on' : 'off'); send(res, { code: 200, ...repair.status() }); return true; }
+      if (route === 'POST /admin/api/repair/run') { const b = await body(req, 1_000), r = await repair.runNow(b.ids); wrote('repair-run', r.map(x => x.id + (x.ok ? '' : '!')).join(',')); send(res, { code: 200, results: r, ...repair.status() }); return true; }
+      if (route === 'POST /admin/api/repair/chat') {
+        const t = Date.now(); repairTries = repairTries.filter(x => t - x < 600_000); if (repairTries.length >= 20) return send(res, { code: 429, error: 'That is a lot of questions in a short time. Wait a few minutes.' }), true; repairTries.push(t);
+        const b = await body(req, 8_000); if (!String(b.message || '').trim()) return send(res, { code: 422, error: 'Type a question first.' }), true;
+        send(res, { code: 200, ...(await repair.chat({ message: b.message, history: b.history, useAi: b.ai !== false })) }); return true;
+      }
       if (route === 'GET /admin/api/team') { send(res, { code: 200, team: auth.teamList() }); return true; }
       if (route === 'POST /admin/api/team/add') { const r = auth.teamAdd(await body(req, 1_000), ip); send(res, r.code === 200 ? { code: 200, team: auth.teamList() } : r); return true; }
       if (route === 'POST /admin/api/team/remove') { const r = auth.teamRemove(await body(req, 500), ip); send(res, r.code === 200 ? { code: 200, team: auth.teamList() } : r); return true; }

@@ -18,7 +18,7 @@ export function previewsOf(x) {
   const { cfg, ig, social, analytics, store, wa } = x;
   const previews = { instagram: null, whatsapp: null }, notes = [], now = Date.now();
   try {
-    const base = cfg.wa.publicUrl || '', thumb = j => { const id = j.kind === 'reel' ? j.coverId : (j.mediaIds || [])[0]; return id ? `/media/${id}.jpg` : ''; };
+    const base = publicUrlOf(cfg) || '', thumb = j => { const id = j.kind === 'reel' ? j.coverId : (j.mediaIds || [])[0]; return id ? `/media/${id}.jpg` : ''; };
     const jobs = social && social.list ? social.list() : [], by = k => jobs.filter(j => j.status === k).length;
     const snap = Object.keys((analytics.s && analytics.s.ig) || {}).sort(), lastSnap = snap.length ? analytics.s.ig[snap[snap.length - 1]] : null;
     previews.instagram = { connected: !!ig.configured, postedToday: social && social.postedToday ? social.postedToday() : 0, dailyCap: cfg.ig.dailyCap || 20, counts: { queued: by('queued'), posted: by('posted'), failed: by('failed'), publishing: by('publishing'), check: by('check') },
@@ -39,6 +39,7 @@ export function previewsOf(x) {
   return { previews, notes };
 }
 
+const publicUrlOf = cfg => String((cfg.payments && cfg.payments.publicUrl) || (cfg.wa && cfg.wa.publicUrl) || '');   // PUBLIC_URL lives under payments in the settings
 export async function opsReport(x) {
   const { cfg, auth, shop, privacy, weborders, store, smtpMeta, ig, analytics, ops, reportState, social, wa, fetchImpl = fetch } = x;
   const G = {}; const add = (g, c) => { (G[g] = G[g] || []).push(c); };
@@ -49,16 +50,16 @@ export async function opsReport(x) {
   safe('Server', 'server', () => {
     const up = Math.round((now - ops.started) / 1000), mem = process.memoryUsage();
     add('Server', C('uptime', up < 300 ? 'warn' : 'ok', 'Server running', `up ${up < 3600 ? Math.round(up / 60) + ' min' : Math.round(up / 3600) + ' h'}, Node ${process.version}`, up < 300 ? 'It restarted a few minutes ago (a deploy, or a crash). Check the Errors section.' : ''));
-    add('Server', C('memory', mem.rss > 450e6 ? 'warn' : 'ok', 'Memory', `${size(mem.rss)} in use`, 'Render starter has 512 MB. Over 450 MB for long means a leak or a very large shop file.'));
+    add('Server', C('memory', mem.rss > 1.0e9 ? 'warn' : 'ok', 'Memory', `${size(mem.rss)} in use`, 'The server has 2 GB. Over 1 GB for long means a leak or a very large shop file.'));
     add('Server', C('lag', ops.lag > 500 ? 'warn' : 'ok', 'Responsiveness', `event-loop delay ${ops.lag} ms`, 'A long delay means something is blocking the server (a huge save or video job).'));
-    add('Server', C('https', /^https:\/\//.test(cfg.wa.publicUrl || '') ? 'ok' : 'fail', 'PUBLIC_URL is https', cfg.wa.publicUrl ? 'set' : 'not set', 'Set PUBLIC_URL to the server\'s https address. Instagram, WhatsApp and photo links need it.'));
+    add('Server', C('https', /^https:\/\//.test(publicUrlOf(cfg) || '') ? 'ok' : 'fail', 'PUBLIC_URL is https', publicUrlOf(cfg) ? 'set' : 'not set', 'Set PUBLIC_URL to the server\'s https address. Instagram, WhatsApp and photo links need it.'));
     add('Server', C('cookie', cfg.cookieSecure ? 'ok' : 'warn', 'Secure cookies', cfg.cookieSecure ? 'on' : 'OFF', 'Turn COOKIE_SECURE back on whenever the server is reached over https.'));
   });
   safe('Server', 'disk', () => {
     const d = cfg.dataDir; let w = true; try { const f = path.join(d, '.ops-write-test'); fs.writeFileSync(f, 'x'); fs.unlinkSync(f); } catch { w = false; }
-    add('Server', C('disk-write', w ? 'ok' : 'fail', 'Data folder is writable', d, 'Orders and settings cannot be saved. Check the Render disk is attached at DATA_DIR.'));
-    try { const s = fs.statfsSync(d), free = s.bavail * s.bsize, tot = s.blocks * s.bsize, pct = Math.round(100 * free / tot); add('Server', C('disk-free', pct < 10 ? 'fail' : pct < 25 ? 'warn' : 'ok', 'Disk space', `${size(free)} free of ${size(tot)} (${pct}%)`, 'Photos and videos fill the disk. Enlarge the Render disk or delete old media.')); } catch { add('Server', C('disk-free', 'info', 'Disk space', 'not available on this host')); }
-    const persistent = /^\/var\/data|^\/data|^\/mnt/.test(d); add('Server', C('disk-persist', persistent ? 'ok' : 'warn', 'Data survives redeploys', persistent ? 'on a mounted disk' : 'folder is ' + d, 'If DATA_DIR is not on the attached disk, every deploy erases the shop.'));
+    add('Server', C('disk-write', w ? 'ok' : 'fail', 'Data folder is writable', d, 'Orders and settings cannot be saved. Check DATA_DIR and that the shop user owns that folder.'));
+    try { const s = fs.statfsSync(d), free = s.bavail * s.bsize, tot = s.blocks * s.bsize, pct = Math.round(100 * free / tot); add('Server', C('disk-free', pct < 10 ? 'fail' : pct < 25 ? 'warn' : 'ok', 'Disk space', `${size(free)} free of ${size(tot)} (${pct}%)`, 'Photos and videos fill the disk. Delete old media, or make the disk of the server bigger in Lightsail.')); } catch { add('Server', C('disk-free', 'info', 'Disk space', 'not available on this host')); }
+    const persistent = /^\/var\/data|^\/data|^\/mnt|^\/var\/lib\//.test(d); add('Server', C('disk-persist', persistent ? 'ok' : 'warn', 'Data survives redeploys', persistent ? 'on a mounted disk' : 'folder is ' + d, 'If this folder is not on the own disk of the server, an update could erase the shop. It should be under /var/lib.'));
   });
 
   // ---- 2. shop data ----
@@ -91,7 +92,7 @@ export async function opsReport(x) {
     const ev = auth.auditTail(300), day = now - DAY, recent = ev.filter(e => Date.parse(e.t) > day), bad = recent.filter(e => !e.ok && /login/.test(e.ev)), lock = recent.filter(e => /lock/.test(e.ev + e.extra));
     add('Security', C('logins', bad.length > 20 ? 'fail' : bad.length > 5 ? 'warn' : 'ok', 'Failed sign-ins, last 24 h', String(bad.length) + (lock.length ? `, ${lock.length} lock-out(s)` : ''), 'Many failures from one address means someone is guessing. Consider ADMIN_ALLOWED_IPS.'));
     const last = ev.find(e => e.ok && /login/.test(e.ev)); add('Security', C('last-login', 'info', 'Last successful sign-in', last ? `${ago(Date.parse(last.t))} from ${last.ip}${last.extra ? ' (' + last.extra + ')' : ''}` : 'none recorded'));
-    add('Security', C('team', 'info', 'Helper logins', String(auth.teamList().length)));
+    add('Security', C('team', 'info', 'Owner logins', String(auth.teamList().length)));
     add('Security', C('secrets', 'info', 'Encryption key', cfg.adminSetupToken ? 'ADMIN_SETUP_TOKEN set (do not change it: it unlocks saved keys)' : 'ADMIN_SETUP_TOKEN missing'));
   });
 
@@ -103,10 +104,10 @@ export async function opsReport(x) {
     add('Public website', C('cors', origin && cfg.allowedOrigins.includes(origin) ? 'ok' : 'fail', 'Website allowed to send orders to this server', origin && cfg.allowedOrigins.includes(origin) ? origin : `ALLOWED_ORIGINS does not contain ${origin || site}`, 'Customers\' orders and privacy requests are refused until ALLOWED_ORIGINS includes the website origin.'));
     try {
       const t0 = Date.now(), r = await fetchImpl(site + '/', { signal: AbortSignal.timeout(8000), redirect: 'follow' }), html = await r.text(), ms = Date.now() - t0;
-      add('Public website', C('site-up', r.ok ? (ms > 3000 ? 'warn' : 'ok') : 'fail', 'Website reachable', `${r.status} in ${ms} ms, ${size(html.length)}`, 'GitHub Pages may be down or the repository setting is off.'));
+      add('Public website', C('site-up', r.ok ? (ms > 3000 ? 'warn' : 'ok') : 'fail', 'Website reachable', `${r.status} in ${ms} ms, ${size(html.length)}`, 'The web front door (Caddy) or the shop server may be down: open the site on a phone.'));
       const m = /window\.__SHOP_API\s*=\s*"([^"]*)"/.exec(html), api = m ? m[1].replace(/\/+$/, '') : '';
-      add('Public website', C('site-api', api && api === cfg.wa.publicUrl ? 'ok' : api ? 'fail' : 'warn', 'Website points to this server', api ? (api === cfg.wa.publicUrl ? api : `points to ${api}, this server is ${cfg.wa.publicUrl}`) : 'no server address inside the page (orders stay on the phone)', 'Rebuild with: python3 tools/build-split.py --shop-api <this server> --index, then publish.'));
-      add('Public website', C('site-nocheat', /adminPin|1234|HDFC/i.test(html) ? 'fail' : 'ok', 'No admin secrets in the public page', /adminPin|1234|HDFC/i.test(html) ? 'the page contains admin data (PIN or bank text)' : 'clean', 'The public page must be built with build-split.py, not copied from the source.'));
+      add('Public website', C('site-api', api && api === publicUrlOf(cfg) ? 'ok' : api ? 'fail' : 'warn', 'Website points to this server', api ? (api === publicUrlOf(cfg) ? api : `points to ${api}, this server is ${publicUrlOf(cfg)}`) : 'no server address inside the page (orders stay on the phone)', 'Rebuild with: python3 tools/build-split.py --shop-api <this server> --index, then publish.'));
+      add('Public website', C('site-nocheat', /adminPin:\s*'1234'|HDFC0001234|50100123456789/.test(html) ? 'fail' : 'ok', 'No admin secrets in the public page', /adminPin:\s*'1234'|HDFC0001234|50100123456789/.test(html) ? 'the page contains admin data (PIN or bank text)' : 'clean', 'The public page must be built with build-split.py, not copied from the source.'));
     } catch (e) { add('Public website', C('site-up', 'fail', 'Website reachable', String(e.message).slice(0, 120), 'Open ' + site + ' on a phone. If it loads, this server cannot reach the internet.')); }
   }
   safe('Public website', 'pub', () => {
@@ -169,7 +170,7 @@ export async function opsReport(x) {
   });
 
   // ---- 11. errors ----
-  add('Recent errors', C('err-count', ops.errors.length ? (ops.errors.some(e => now - Date.parse(e.at) < 3600_000) ? 'fail' : 'warn') : 'ok', 'Server errors since it started', ops.errors.length ? String(ops.errors.length) : 'none', 'Details below. Also see the Render logs for the full stack.'));
+  add('Recent errors', C('err-count', ops.errors.length ? (ops.errors.some(e => now - Date.parse(e.at) < 3600_000) ? 'fail' : 'warn') : 'ok', 'Server errors since it started', ops.errors.length ? String(ops.errors.length) : 'none', 'Details below. For the full detail run in the server terminal: sudo journalctl -u anitha-store -n 80'));
   for (const e of ops.errors.slice(0, 10)) add('Recent errors', C('err', 'info', e.level + ' · ' + e.at.slice(0, 19).replace('T', ' ') + ' UTC', e.msg));
 
   const { previews, notes } = previewsOf({ cfg, ig, social, analytics, store, wa }); for (const [g, c] of notes) add(g, c);

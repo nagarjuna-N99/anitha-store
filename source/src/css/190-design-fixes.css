@@ -189,3 +189,8 @@ nav.dark .brand-mark { background: #fff; padding: 3px; box-sizing: border-box; }
 }
 @media (max-width: 900px) { .curated-item { height: 280px; } .chap-hero { aspect-ratio: 4 / 3; } }
 @media (max-width: 640px) { .chap-hero { aspect-ratio: 4 / 3; } .curated-item { height: 240px; } }
+
+/* Repair assistant chat (Ops page) */
+.rp-chat { display: flex; flex-direction: column; gap: 8px; max-height: 360px; overflow: auto; padding: 10px; margin: 10px 0; background: #fff; border: 1px solid var(--border); border-radius: 8px; }
+.rp-me { align-self: flex-end; max-width: 85%; background: var(--charcoal); color: #fff; padding: 8px 12px; border-radius: 12px 12px 2px 12px; font-size: 14px; }
+.rp-bot { align-self: flex-start; max-width: 92%; background: var(--cream); padding: 8px 12px; border-radius: 12px 12px 12px 2px; font-size: 14px; line-height: 1.5; } .rp-bot ol { margin: 6px 0 6px 18px; padding: 0; } .rp-bot li { margin: 3px 0; }

@@ -1,0 +1,6 @@
+[Unit]
+Description=Anitha shop self-heal (restart a stopped server, free disk)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/anitha-selfheal

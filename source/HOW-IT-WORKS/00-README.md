@@ -38,3 +38,4 @@ Plain-language pages for the owner and for anyone who takes over the project. Ke
 | `14-storefront-extras.md` | occasions, recently viewed, wishlist sharing, similar-saree alerts, bundles, bulk CSV upload, status images, FAQ |
 | `13-delivery-gifts-tracking.md` | PIN/delivery check, address correction, gifts, saved addresses, no-cancel rule, tracking, invoice PDF, review request |
 | `37-two-logins-owner-and-admin.md` | the Owner and the Admin sign-ins: who can open and change what, set-up steps, how the server enforces it |
+| `38-repair-assistant-and-self-heal.md` | the Ops repair chat, auto-repair, the server self-heal script and the Ops fixes |

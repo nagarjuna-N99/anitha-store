@@ -60,7 +60,13 @@ export function publicView(db) {
 export class ShopData {
   constructor(dir, keep = 30) {
     this.file = path.join(dir, 'shop-db.json'); this.keep = keep; this.hist = new Map(); fs.mkdirSync(dir, { recursive: true });
-    this.version = 0; this.db = null; try { const x = JSON.parse(fs.readFileSync(this.file, 'utf8')); this.db = x.db; this.version = x.version || 0; } catch { /* nothing saved yet */ }
+    this.version = 0; this.db = null; this.recovered = '';
+    try { const x = JSON.parse(fs.readFileSync(this.file, 'utf8')); this.db = x.db; this.version = x.version || 0; }
+    catch (e) {
+      if (e && e.code !== 'ENOENT') {   // the file is there but cannot be read: use the last known-good copy (kept by the repair helper) instead of starting empty
+        try { const g = JSON.parse(fs.readFileSync(path.join(dir, 'shop-db.good.json'), 'utf8')); if (g && g.db && !ShopData.check(g.db)) { this.db = g.db; this.version = g.version || 0; this.recovered = 'good-copy'; fs.copyFileSync(this.file, this.file + '.damaged-' + Date.now()); this.persist(); } } catch { /* no good copy: start empty */ }
+      }
+    }
     if (this.db) this.remember();
   }
   remember() { this.hist.set(this.version, zlib.gzipSync(j(this.db))); for (const k of [...this.hist.keys()]) if (k <= this.version - this.keep) this.hist.delete(k); }

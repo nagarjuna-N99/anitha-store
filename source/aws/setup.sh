@@ -63,7 +63,10 @@ echo "== 6/7 HTTPS front door for $DOMAIN"
 sed "s/__DOMAIN__/$DOMAIN/g" "$APP/repo/source/aws/Caddyfile" > /etc/caddy/Caddyfile
 systemctl enable caddy >/dev/null; systemctl restart caddy
 
-echo "== 7/7 daily backup (03:30), keeps 14 days"
+install -m 755 "$APP/repo/source/aws/selfheal.sh" /usr/local/bin/anitha-selfheal
+cp "$APP/repo/source/aws/anitha-selfheal.service" "$APP/repo/source/aws/anitha-selfheal.timer" /etc/systemd/system/
+systemctl daemon-reload; systemctl enable --now anitha-selfheal.timer >/dev/null
+echo "== 7/7 daily backup (03:30), keeps 14 days; self-heal every 5 minutes"
 cat > /etc/cron.d/anitha-backup <<'CRON'
 30 3 * * * root /usr/local/bin/anitha-backup >> /var/log/anitha-backup.log 2>&1
 CRON
