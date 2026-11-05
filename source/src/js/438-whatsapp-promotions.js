@@ -1,4 +1,4 @@
-// ================= WhatsApp promotions (owner only) =================
+// ================= WhatsApp promotions (admin only) =================
 // Reports on regular vs promotional messages, what they cost, other running costs (total expenses), the template list with AI wording help,
 // and promotions to customers who said yes to offers. The server does the counting and the sending; this page only shows and asks.
 const PR = { d: null, rep: null, range: '30', msg: '', ai: null, aiBusy: false, edit: null };

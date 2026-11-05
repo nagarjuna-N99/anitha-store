@@ -9,8 +9,8 @@ export const ROLES = [OWNER, ADMIN];
 
 // owner-app screens each role may open (the page hides the rest; the server refuses the data behind them)
 export const TABS = {
-  owner: ['dashboard', 'products', 'categories', 'studio', 'drafts', 'bundles', 'orders', 'invoices', 'reviews', 'alerts', 'customers', 'coupons', 'delivery', 'statements', 'growth', 'promo', 'privacy', 'social', 'whatsapp', 'ai', 'settings'],
-  admin: ['home', 'pages', 'studio', 'social', 'whatsapp', 'ai', 'ops', 'logs', 'settings'],
+  owner: ['dashboard', 'products', 'categories', 'studio', 'drafts', 'bundles', 'orders', 'invoices', 'reviews', 'alerts', 'customers', 'coupons', 'delivery', 'statements', 'growth', 'privacy', 'social', 'whatsapp', 'ai', 'settings'],
+  admin: ['home', 'pages', 'studio', 'social', 'whatsapp', 'promo', 'ai', 'ops', 'logs', 'settings'],
 };
 export const HOME_TAB = { owner: 'dashboard', admin: 'home' };
 
@@ -44,8 +44,8 @@ export function dbForWrite(role, mine, current) {
 }
 
 // owner-app API routes (/admin/api/...) by role. Anything not listed is open to both (the weekly-report email setup stays open: it is the owner's business report).
-const ADMIN_ONLY = /^\/admin\/api\/(ops|audit|ai-key|team|notes|agents|repair)(\/|$)/;
-const OWNER_ONLY = /^\/admin\/api\/(privacy|import|web-orders|notify-tracking|growth|report|promo)(\/|$)/;
+const ADMIN_ONLY = /^\/admin\/api\/(ops|audit|ai-key|team|notes|agents|repair|promo)(\/|$)/;
+const OWNER_ONLY = /^\/admin\/api\/(privacy|import|web-orders|notify-tracking|growth|report)(\/|$)/;
 export function adminApiAllowed(role, pathname) {
   if (role === ADMIN) return !OWNER_ONLY.test(pathname);
   if (role === OWNER) return !ADMIN_ONLY.test(pathname);
