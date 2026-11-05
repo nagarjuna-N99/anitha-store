@@ -209,3 +209,10 @@ html.ui2.dk .pr-tpl { background: #23211d; border-color: #3a362f; } html.ui2.dk 
 .ch-photo-row { display: flex; gap: 12px; align-items: center; padding: 8px 0; border-top: 1px solid #ece7da; } .ch-thumb { flex: 0 0 120px; height: 68px; border-radius: 4px; background: #141210 center / cover no-repeat; display: flex; align-items: center; justify-content: center; color: #bbb; } .ch-photo-main { flex: 1; min-width: 0; }
 .chap-hero.full { aspect-ratio: auto; height: min(90vh, 860px); border-radius: 0; width: 100vw; margin-left: calc(50% - 50vw); }
 @media (max-width: 640px) { .chap-hero.full { aspect-ratio: auto; height: 85vh; } .ch-thumb { flex-basis: 84px; height: 56px; } }
+
+/* menu groups, page description line, settings field help */
+.admin-nav .nav-group, .admin-mobile-nav .nav-group { list-style: none; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: #8a8478; padding: 14px 16px 4px; margin: 0; cursor: default; pointer-events: none; font-weight: 600; }
+.admin-nav .nav-group:first-child { padding-top: 0; }
+.adm-desc { margin: -6px 0 14px; padding: 8px 12px; font-size: .86rem; color: #5b564b; background: #f4efe3; border-left: 3px solid var(--gold, #b8923a); border-radius: 0 6px 6px 0; max-width: 860px; }
+.fld-help { display: block; margin-top: 3px; font-size: .74rem; line-height: 1.35; color: #7a7467; font-weight: 400; }
+html.ui2.dk .adm-desc { background: #23211d; color: #cfc9ba; }

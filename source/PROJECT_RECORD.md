@@ -136,6 +136,7 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 | `care-test.cjs` | 9 | Saree Care tabs, wash-care guide, photo link repair |
 | `parts-test.cjs` | 8 | the website source parts and the joined file |
 | `addresses-test.cjs` | 25 | each page and saree has its own address, Back/Forward, old links |
+| `menu-groups-test.cjs` | 14 | menu sorted into groups, page descriptions, Settings split by login |
 | `accessories-switch-test.cjs` | 14 | Accessories on/off on the website, full-width heading photos tool |
 | `promo-test.cjs` | 20 | WhatsApp promotions tab: reports, prices and costs, templates with AI wording, promotions (stand-in server) |
 | `chapters-test.cjs` | 25 | story chapters on the home page (website, owner editing, phone layout) and the tidier New Arrivals cards |
@@ -167,6 +168,10 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**12 Nov 2026 (Back end sorted by type; what every page and setting does)**
+- Owner: "sort everything in the backend according to the type for both admin and owner, clearly mention what each change or setting does". The left menu (computer and phone, both logins) is now in 8 headed groups: Overview, Sarees & prices, Orders & customers, Money & reports, Marketing & messages, Website look, Privacy & legal, AI/health/settings. Every page shows a one-line "what this page does" note (shared pages word it differently for owner and admin). **Settings** is split by login: the owner sees business, bank, invoice and customer-policy cards; the admin sees customer sign-in, search and AI-service cards (plus security); each field has an explanation, and saving only changes the fields on the page. New guide 40 lists every page and setting.
+- Tests: new `tests/menu-groups-test.cjs` (14 checks). Not tested: the real owner and admin logins on the live server (the role cut-off is checked on a copy), a real phone.
 
 **12 Nov 2026 (Accessories on/off, full-width heading photos tool)**
 - Owner: "add on off option for Accessory categories view on website for owner, add full page images adding tool for headings in admin". Categories tab (owner): a **Show Accessories on the website** switch hides the Accessories tab, occasion tile, FAQ line and "Complete the look" rows (products and categories are kept; saved as `settings.showAccessories`, sent in the public website data). Home Page (admin): a **Full-width heading photos** list for the story-chapter headings with Add/Replace/Remove and a **Fill the whole screen** switch; heading photo uploads now keep 1920 px.

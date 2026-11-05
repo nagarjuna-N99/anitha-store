@@ -1340,6 +1340,13 @@ html.ui2.dk .pr-tpl { background: #23211d; border-color: #3a362f; } html.ui2.dk 
 .ch-photo-row { display: flex; gap: 12px; align-items: center; padding: 8px 0; border-top: 1px solid #ece7da; } .ch-thumb { flex: 0 0 120px; height: 68px; border-radius: 4px; background: #141210 center / cover no-repeat; display: flex; align-items: center; justify-content: center; color: #bbb; } .ch-photo-main { flex: 1; min-width: 0; }
 .chap-hero.full { aspect-ratio: auto; height: min(90vh, 860px); border-radius: 0; width: 100vw; margin-left: calc(50% - 50vw); }
 @media (max-width: 640px) { .chap-hero.full { aspect-ratio: auto; height: 85vh; } .ch-thumb { flex-basis: 84px; height: 56px; } }
+
+/* menu groups, page description line, settings field help */
+.admin-nav .nav-group, .admin-mobile-nav .nav-group { list-style: none; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: #8a8478; padding: 14px 16px 4px; margin: 0; cursor: default; pointer-events: none; font-weight: 600; }
+.admin-nav .nav-group:first-child { padding-top: 0; }
+.adm-desc { margin: -6px 0 14px; padding: 8px 12px; font-size: .86rem; color: #5b564b; background: #f4efe3; border-left: 3px solid var(--gold, #b8923a); border-radius: 0 6px 6px 0; max-width: 860px; }
+.fld-help { display: block; margin-top: 3px; font-size: .74rem; line-height: 1.35; color: #7a7467; font-weight: 400; }
+html.ui2.dk .adm-desc { background: #23211d; color: #cfc9ba; }
 </style>
 <style>.nav-toggle{position:fixed;top:14px;left:268px;z-index:60;width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--ivory);color:var(--charcoal);cursor:pointer;display:none;align-items:center;justify-content:center;font-size:18px;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.08)}body.admin-on .nav-toggle{display:flex}body.nav-closed .nav-toggle{left:14px}body.nav-closed .admin-sidebar{display:none}body.nav-closed .admin-main{margin-left:0;padding-left:64px}body.studio-focus .nav-toggle{display:none!important}@media (max-width:900px){body.admin-on .nav-toggle{display:none}}html.ui2 .nav-toggle{background:var(--o-glass-2);color:var(--o-ink);border-color:var(--o-line)}.pg-item{border:1px solid var(--border);border-radius:14px;padding:14px;margin:12px 0}.pg-item.pg-off{opacity:.7}.pg-head{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.pg-head b{flex:1;min-width:140px}.pg-tools{display:inline-flex;gap:6px}.pg-tip{border-top:1px dashed var(--border);padding:10px 0}.pg-sec>summary{cursor:pointer;min-height:40px;display:flex;align-items:center}.pg-item textarea,.pg-tip textarea{width:100%}</style>
 </head>
@@ -1539,6 +1546,7 @@ html.ui2.dk .pr-tpl { background: #23211d; border-color: #3a362f; } html.ui2.dk 
         <button class="btn-sm btn-danger-sm" onclick="resetData()">Reset Data</button>
       </div>
     </div>
+    <p class="adm-desc" id="adminPageDesc" aria-live="polite"></p>
     <div id="adminContent"></div>
   </main>
 </div>
@@ -2560,6 +2568,7 @@ function switchAdminTab(tab) {
   if (tab !== 'studio') document.body.classList.remove('studio-focus');
   document.querySelectorAll('[data-tab]').forEach(el => el.classList.toggle('active', el.dataset.tab === tab));
   document.getElementById('adminPageTitle').textContent = ADMIN_TITLES[tab] || tab;
+  if (typeof admShowDesc === 'function') admShowDesc(tab);
   renderAdminContent(tab);
   updateNavCounts();
   if (typeof admRoutePush === 'function') admRoutePush(tab);
@@ -2761,7 +2770,7 @@ function renderAdminContent(tab) {
     content.innerHTML = `
       <div style="max-width:800px;">
         <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;margin-bottom:20px;">Business Settings</h3>
-        <div class="admin-card">
+        <div class="admin-card" data-for="owner">
           <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:15px;">Business Information</h4>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;">
             <div class="form-group"><label>Business Name</label><input type="text" id="s-name" value="${esc(s.businessName)}"></div>
@@ -2771,7 +2780,7 @@ function renderAdminContent(tab) {
             <div class="form-group"><label>Email</label><input type="email" id="s-email" value="${esc(s.email)}"></div>
           </div>
         </div>
-        <div class="admin-card">
+        <div class="admin-card" data-for="owner">
           <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:15px;">Bank Details</h4>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;">
             <div class="form-group"><label>Bank Name</label><input type="text" id="s-bank" value="${esc(s.bankName)}"></div>
@@ -2779,7 +2788,7 @@ function renderAdminContent(tab) {
             <div class="form-group"><label>IFSC Code</label><input type="text" id="s-ifsc" value="${esc(s.ifscCode)}"></div>
           </div>
         </div>
-        <div class="admin-card">
+        <div class="admin-card" data-for="owner">
           <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:15px;">Invoice Settings</h4>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;">
             <div class="form-group"><label>Invoice Prefix</label><input type="text" id="s-prefix" value="${esc(s.invoicePrefix)}"></div>
@@ -2791,10 +2800,13 @@ function renderAdminContent(tab) {
           <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:15px;">Admin Access</h4>
           <div class="form-group"><label>Admin PIN (client-side only - not real security)</label><input type="text" id="s-pin" value="${esc(s.adminPin)}" autocomplete="off"></div>
         </div>`}
-        <div class="admin-card">
-          <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:15px;">Customer login &amp; policies</h4>
+        <div class="admin-card" data-for="admin">
+          <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:15px;">Customer sign-in</h4>
           <div class="form-group"><label>WhatsApp login service URL</label><input type="text" id="s-otp" value="${esc(s.otpEndpoint)}" placeholder="https://your-server.com/api"></div>
           <div class="note" style="margin-bottom:14px;">Leave empty for <strong>demo mode</strong>: the login code is shown on screen and no WhatsApp message is sent (for trying the flow only — not secure, do not launch like this). When set, the page calls <code>POST {url}/otp/send</code> {phone} and <code>POST {url}/otp/verify</code> {phone, code} on your server, which sends the code through the WhatsApp Business API.</div>
+                  </div>
+        <div class="admin-card" data-for="owner">
+          <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:15px;">Policies shown to customers</h4>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;">
             <div class="form-group"><label>Dispatch time (shown in Terms)</label><input type="text" id="s-dispatch" value="${esc(s.dispatchTime)}"></div>
             <div class="form-group"><label>Usual saree length (shown on every saree page; a saree can have its own)</label><input type="text" id="s-length" value="${esc(s.sareeLength === undefined ? DEFAULT_SAREE_LENGTH : s.sareeLength)}" placeholder="e.g. 5.5 metres with a blouse piece"></div>
@@ -2802,14 +2814,14 @@ function renderAdminContent(tab) {
             <div class="form-group"><label>Grievance officer (Privacy Policy)</label><input type="text" id="s-grievance" value="${esc(s.grievanceOfficer)}" placeholder="Name, designation"></div>
           </div>
         </div>
-        <div class="admin-card">
+        <div class="admin-card" data-for="admin">
           <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:15px;">SEO &amp; Search</h4>
           <div class="form-group"><label>Website address (for canonical links &amp; sitemap)</label><input type="text" id="s-site" value="${esc(s.siteUrl)}" placeholder="https://www.yourstore.com"></div>
           <div class="form-group"><label>Default page description (home page)</label><textarea id="s-metadesc" rows="2">${esc(s.metaDescription)}</textarea></div>
           <div class="action-buttons" style="margin-bottom:6px;"><button class="btn-sm btn-primary-sm" onclick="downloadSeoPack()">📦 Download SEO pack (ZIP)</button><button class="btn-sm btn-info-sm" onclick="downloadSitemap()">sitemap.xml</button><button class="btn-sm btn-info-sm" onclick="downloadRobots()">robots.txt</button></div>
           <div class="note">The ZIP holds one crawlable HTML page per product (title, meta description, canonical, Open Graph, structured data), plus sitemap.xml, robots.txt and the product images. Upload it to your website and submit sitemap.xml in Google Search Console. Save settings first so it uses your address.</div>
         </div>
-        <div class="admin-card">
+        <div class="admin-card" data-for="admin">
           <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:15px;">AI descriptions (optional)</h4>
           <div class="form-group"><label>Your AI service URL</label><input type="text" id="s-ai" value="${esc(s.aiEndpoint)}" placeholder="https://your-server.com/describe-product"></div>
           <div class="note">Leave empty to use the built-in writer (category knowledge + colours detected in your photos). If set, the form POSTs {name, category, sku, price, colours, brand} and expects {description, tags[], seoTitle, metaDescription, altText}; if it fails, the built-in writer is used. Never put an API key in this page.</div>
@@ -2818,6 +2830,7 @@ function renderAdminContent(tab) {
         ${admSecurityHTML()}
       </div>${(setTimeout(admLoadTeam, 0), '')}
     `;
+    admSettingsHelp(content);
     if (BUILD === 'admin') { admLoadAudit(); admLoadAiKey(); }
     return;
   }
@@ -4358,13 +4371,18 @@ function deleteCoupon(idx) { if (confirm('Delete?')) { db.coupons.splice(idx, 1)
 function clearLogs() { if (!confirm('Clear all audit logs?')) return; db.logs = []; saveDB(); renderAdminContent('logs'); }
 
 function saveSettings() {
-  const v = id => document.getElementById(id).value;
-  const rate = parseFloat(v('s-gstrate'));
+  const v = id => { const e = document.getElementById(id); return e ? e.value : ''; };
+  const rate = document.getElementById('s-gstrate') ? parseFloat(v('s-gstrate')) : 0;
   if (isNaN(rate) || rate < 0) { alert('GST rate must be a non-negative number'); return; }
   if (document.getElementById('s-pin') && !v('s-pin').trim()) { alert('Admin PIN cannot be empty'); return; }
   if (v('s-otp').trim() && !/^https:\/\//i.test(v('s-otp').trim())) { alert('The WhatsApp login service URL must start with https://'); return; }
   if (v('s-site').trim() && !/^https?:\/\/[^\s/]+/i.test(v('s-site').trim())) { alert('Website address must start with https://'); return; }
-  Object.assign(db.settings, { businessName: v('s-name'), gstNumber: v('s-gst'), address: v('s-addr'), phone: v('s-phone'), email: v('s-email'), bankName: v('s-bank'), accountNumber: v('s-acc'), ifscCode: v('s-ifsc'), invoicePrefix: v('s-prefix'), gstRate: rate, selectedTemplate: v('s-template'), ...(document.getElementById('s-pin') ? { adminPin: v('s-pin').trim() } : {}), siteUrl: v('s-site').trim().replace(/\/$/, ''), metaDescription: v('s-metadesc').trim(), aiEndpoint: v('s-ai').trim(), otpEndpoint: v('s-otp').trim().replace(/\/$/, ''), dispatchTime: v('s-dispatch').trim() || '3–7 business days', sareeLength: v('s-length').trim(), returnDays: Math.max(0, parseInt(v('s-returndays'), 10) || 0), grievanceOfficer: v('s-grievance').trim() });
+  const has = id => !!document.getElementById(id), up = {};   // the owner and the admin see different fields: only what is on the page is saved
+  [['businessName', 's-name'], ['gstNumber', 's-gst'], ['address', 's-addr'], ['phone', 's-phone'], ['email', 's-email'], ['bankName', 's-bank'], ['accountNumber', 's-acc'], ['ifscCode', 's-ifsc'], ['invoicePrefix', 's-prefix'], ['selectedTemplate', 's-template']].forEach(([k, id]) => { if (has(id)) up[k] = v(id); });
+  if (has('s-gstrate')) up.gstRate = rate; if (has('s-pin')) up.adminPin = v('s-pin').trim();
+  if (has('s-site')) up.siteUrl = v('s-site').trim().replace(/\/$/, ''); if (has('s-metadesc')) up.metaDescription = v('s-metadesc').trim(); if (has('s-ai')) up.aiEndpoint = v('s-ai').trim(); if (has('s-otp')) up.otpEndpoint = v('s-otp').trim().replace(/\/$/, '');
+  if (has('s-dispatch')) up.dispatchTime = v('s-dispatch').trim() || '3–7 business days'; if (has('s-length')) up.sareeLength = v('s-length').trim(); if (has('s-returndays')) up.returnDays = Math.max(0, parseInt(v('s-returndays'), 10) || 0); if (has('s-grievance')) up.grievanceOfficer = v('s-grievance').trim();
+  Object.assign(db.settings, up);
   addLog('settings_updated', 'Business Settings', '-', 0, 0, 0, 'Settings updated'); SEO_DEFAULT.desc = db.settings.metaDescription || SEO_DEFAULT.desc; seoReset(); seoRefreshHome(); if (saveDB()) showToast('Settings saved!', 'success');
 }
 
@@ -7747,6 +7765,77 @@ async function growEmailAct(what) {
   catch (e) { m.textContent = e.message; }
 }
 async function growPreview() { const b = el_('em-prev'); busy('em-prev', 'preparing the report…'); try { const p = await admApi('GET', '/admin/api/report/preview?kind=' + encodeURIComponent((el_('em-kind') || {}).value || 'weekly')); b.innerHTML = `<p class="note"><b>Subject:</b> ${esc(p.subject)}</p><iframe class="g-prev" sandbox srcdoc="${esc(p.html)}" title="Preview"></iframe>`; } catch (e) { outBox('em-prev', `<div class="ai-err">${esc(e.message)}</div>`); } }
+// ================= Owner app / Admin app: menu sorted by type, and a plain "what this page does" line for every page and setting =================
+// One list below drives both the left menu (computer) and the slide-out menu (phone). Who may open a page is still decided by the server (roles.mjs);
+// a page the signed-in person may not open is simply left out, and a heading with nothing left under it disappears.
+const ADM_NAV = [
+  { id: 'overview', label: 'Overview', hint: 'The state of the shop at a glance.', tabs: ['dashboard'] },
+  { id: 'catalogue', label: 'Sarees & prices', hint: 'What you sell and for how much.', tabs: ['products', 'categories', 'bundles', 'coupons', 'studio', 'drafts'] },
+  { id: 'orders', label: 'Orders & customers', hint: 'Everything that happens after someone buys.', tabs: ['orders', 'invoices', 'delivery', 'customers', 'reviews', 'alerts'] },
+  { id: 'money', label: 'Money & reports', hint: 'How the shop is doing.', tabs: ['statements', 'growth'] },
+  { id: 'marketing', label: 'Marketing & messages', hint: 'Talking to customers and getting new ones.', tabs: ['whatsapp', 'promo', 'social'] },
+  { id: 'look', label: 'Website look', hint: 'How the website looks and what its pages say.', tabs: ['home', 'pages'] },
+  { id: 'privacy', label: 'Privacy & legal', hint: 'Customers’ rights and your legal duties.', tabs: ['privacy'] },
+  { id: 'tech', label: 'AI, health & settings', hint: 'The helpers, the health of the server, and the settings.', tabs: ['ai', 'ops', 'logs', 'settings'] },
+];
+// what each page does, in plain words. `owner` / `admin` give a different line to that login when the page is shared.
+const ADM_DESC = {
+  dashboard: { d: 'Today’s numbers: sales, orders waiting, stock running low and recent activity. Nothing to set here.' },
+  products: { d: 'Add, edit, hide or delete sarees and accessories: photos, price, stock, fabric, colours and description. A change shows on the website at once.' },
+  categories: { d: 'The groups sarees and accessories are sorted into on the website. Add or delete a category, and switch Accessories on or off on the website.' },
+  bundles: { d: 'Sets of products sold together at one price (for example a saree with a blouse). Customers see them on the website.' },
+  coupons: { d: 'Discount codes customers type at checkout. You choose the amount, the dates and how many times a code can be used.' },
+  studio: { owner: 'Make a clean product photo: remove the background, add the shop mark, crop for Instagram. The result is saved to a product or to Saved Drafts.', admin: 'Photo tools: background, shop mark and crops. Used for the website look and for posts.', d: 'Make clean product photos: background, shop mark and crops.' },
+  drafts: { d: 'Products you started but have not published. Finish them when the photos and details are ready, then publish.' },
+  orders: { d: 'Every order: confirm, pack, ship and add the tracking number. Customers get their updates by WhatsApp. Customers cannot cancel an order.' },
+  invoices: { d: 'Tax invoices and packing slips for orders. Print them or send them. The numbering and GST rate come from Settings.' },
+  delivery: { d: 'Delivery areas and charges, free-delivery rules, gift wrapping and the tracking messages customers receive.' },
+  customers: { d: 'The people who have bought or signed up, and what they agreed to. Opening this list is written to the activity log.' },
+  reviews: { d: 'Reviews customers wrote. Approve or hide them and reply. Only approved reviews show on the website.' },
+  alerts: { d: 'People who asked to be told when a sold-out or similar saree is back. They are told once it is back in stock.' },
+  statements: { d: 'Sales, GST and profit summaries for a period, ready to give your accountant.' },
+  growth: { d: 'Website visits, Instagram numbers and simple suggestions for the week. Also the weekly report email.' },
+  whatsapp: { owner: 'Your WhatsApp assistant’s conversations: read them, take over a chat and answer yourself.', admin: 'Connect and test the WhatsApp assistant: the number, the greeting, the chat button and the test chat.', d: 'The WhatsApp assistant.' },
+  promo: { d: 'WhatsApp promotions: counts of regular and promotion messages, what they cost, other running costs and total expenses, the message templates (with AI wording help) and the promotions sent to customers who said yes to offers.' },
+  social: { d: 'Plan and post pictures and short videos to Instagram. You see a preview and approve each post. Nothing is posted without you.' },
+  home: { d: 'The look of the home page: the big banner, category tiles, the story chapters and their photos, quote, notes and the website colours.' },
+  pages: { d: 'The words on the other pages: Saree Care, the Journal, FAQs and extra pages you add.' },
+  privacy: { d: 'Customers’ privacy requests (see my data, correct it, erase it), the clean-up of old data and what you must tell customers. The law gives deadlines, so this page counts them.' },
+  ai: { d: 'Switch each AI helper on or off. Helpers only write drafts; nothing reaches a customer until you approve it.' },
+  ops: { d: 'Is the server healthy? Red and yellow lines say what needs attention, the repair assistant explains them in plain words, and safe repairs run by themselves.' },
+  logs: { d: 'A record of who changed what and when. Use it to check that nothing happened that should not have.' },
+  settings: { owner: 'Your business details: name, GST, bank, invoice numbering and the policies shown to customers. Plus your own password and the backup.', admin: 'The technical settings: website address, search description, customer sign-in service and AI service. Plus passwords, 2-step sign-in, the Claude key and the owner login.', d: 'Settings.' },
+};
+const admDescOf = t => { const x = ADM_DESC[t]; if (!x) return ''; const role = (typeof ADM !== 'undefined' && ADM.role) || (typeof ADM_AS !== 'undefined' ? ADM_AS : ''); return x[role] || x.d || ''; };
+function admShowDesc(tab) { const e = document.getElementById('adminPageDesc'); if (!e) return; const t = admDescOf(tab); e.textContent = t; e.style.display = t ? '' : 'none'; }
+// puts the existing menu entries into the groups (keeps every click handler, count badge and icon) and adds a heading above each group
+function admGroupNav() {
+  const build = (list, mobile) => {
+    if (!list) return; const items = {}; [...list.children].forEach(li => { if (li.dataset && li.dataset.tab) items[li.dataset.tab] = li; });
+    list.querySelectorAll('.nav-group').forEach(n => n.remove()); const shown = li => li.style.display !== 'none';
+    ADM_NAV.forEach(g => {
+      const lis = g.tabs.map(t => items[t]).filter(Boolean), vis = lis.filter(shown);
+      if (vis.length) { const h = document.createElement('li'); h.className = 'nav-group'; h.setAttribute('role', 'presentation'); h.title = g.hint; h.textContent = g.label; list.appendChild(h); }
+      lis.forEach(li => list.appendChild(li));
+    });
+    Object.keys(items).forEach(k => { if (!ADM_NAV.some(g => g.tabs.includes(k))) list.appendChild(items[k]); });   // a page that is in no group stays reachable, at the end
+  };
+  build(document.querySelector('#adminSidebarDesktop .admin-nav')); build(document.querySelector('.admin-mobile-nav ul'), true);
+}
+// ---- Settings page: one short sentence under every field ----
+const ADM_FIELD_HELP = {
+  's-name': 'The shop name on invoices, emails and the website.', 's-gst': 'Printed on every invoice. Leave empty if you are not GST registered.', 's-addr': 'Printed on invoices and packing slips as the “from” address.', 's-phone': 'Shown to customers on the website and invoices.', 's-email': 'Shown to customers and used for the “contact us” link.',
+  's-bank': 'Printed on invoices so a customer can pay you by bank transfer.', 's-acc': 'Printed on invoices. Only the owner login can see and change it.', 's-ifsc': 'Printed on invoices beside the account number.',
+  's-prefix': 'The letters at the start of every invoice number (for example AP-). Changing it affects new invoices only.', 's-gstrate': 'The GST percentage already included in your prices. Invoices show how much of the price is GST.', 's-template': 'The look of printed invoices.',
+  's-dispatch': 'Shown in the Terms and on product pages (for example “3–7 business days”). A promise to customers, so keep it true.', 's-length': 'The usual saree length shown on every saree page. A saree can have its own length.', 's-returndays': 'How many days a customer has to return a saree. Shown in the Terms. 0 means no returns.', 's-grievance': 'The name and role of your grievance officer, shown in the Privacy Policy. The law asks for one.',
+  's-site': 'Your website address (starting with https://). Used for the search-engine sitemap and for links in emails.', 's-metadesc': 'The one-sentence description search engines show under your home page.', 's-otp': 'The address of the server that sends customers their WhatsApp sign-in code. Empty = demo mode (the code is shown on screen; not safe for real customers).', 's-ai': 'Optional: your own AI writing service. Empty = the built-in writer or Claude is used.', 's-pin': 'Local test copy only. Not real security.',
+};
+function admSettingsHelp(root) {
+  if (!root) return; Object.keys(ADM_FIELD_HELP).forEach(id => { const el = document.getElementById(id); if (el && !el.dataset.helped) { el.dataset.helped = '1'; el.insertAdjacentHTML('afterend', `<small class="fld-help">${esc(ADM_FIELD_HELP[id])}</small>`); } });
+  // each card: a heading line that says who may change it, then hide the cards that belong to the other login
+  const role = BUILD === 'admin' ? (ADM.role || ADM_AS) : '';
+  root.querySelectorAll('[data-for]').forEach(c => { const f = c.dataset.for; if (role && f !== 'both' && f !== role) c.style.display = 'none'; });
+}
 // ================= Privacy & DPDP (owner app) =================
 // What the law asks of the shop, in one place: requests from customers, finding / exporting / erasing a customer, the clean-up of
 // old data, the breach register, who handles the data, and a checklist of what is still missing.
@@ -7941,7 +8030,7 @@ async function privChatOnly(d) { try { const r = await admApi('POST', '/admin/ap
 async function admRole() { try { const st = await admApi('GET', '/admin/api/state'); ADM.state = Object.assign(ADM.state || {}, st); ADM.role = st.role || ADM_AS; ADM.user = st.user || ADM_AS; ADM.tabs = st.tabs || []; ADM.home = st.home || 'dashboard'; } catch (e) { ADM.role = ADM.role || ADM_AS; } }
 const isOwnerRole = () => (ADM.role || ADM_AS) === 'owner';
 const isAdminRole = () => (ADM.role || ADM_AS) === 'admin';
-function admApplyRole() { if (BUILD !== 'admin') return; const ok = new Set(ADM.tabs || []); document.querySelectorAll('[data-tab]').forEach(el => { if (!ok.has(el.dataset.tab)) el.style.display = 'none'; }); document.body.classList.add('as-' + (ADM.role || ADM_AS)); }
+function admApplyRole() { if (BUILD !== 'admin') return; const ok = new Set(ADM.tabs || []); document.querySelectorAll('[data-tab]').forEach(el => { if (!ok.has(el.dataset.tab)) el.style.display = 'none'; }); document.body.classList.add('as-' + (ADM.role || ADM_AS)); if (typeof admGroupNav === 'function') admGroupNav(); }
 async function admLoadTeam() { const e = document.getElementById('sec-team'); if (!e || !isAdminRole()) return; try { const r = await admApi('GET', '/admin/api/team'); e.innerHTML = (r.team.length ? r.team.map(x => `<div class="va-row"><div style="flex:1"><b>${esc(x.name)}</b> <span class="note">owner login · added ${esc(String(x.createdAt || '').slice(0, 10))}</span></div><button type="button" class="btn-sm btn-info-sm" onclick="admTeamPw('${esc(x.name)}')">New password</button><button type="button" class="btn-sm btn-danger-sm" onclick="admTeamRemove('${esc(x.name)}')">Remove</button></div>`).join('') : '<p class="note">No owner login yet. Create one below, then give her the name, the password and the address /owner.</p>') + `<div class="ai-row"><label>Name<input id="tm-name" maxlength="30" placeholder="e.g. anitha" autocomplete="off"></label><label>Password (12+ characters)<input id="tm-pass" type="password" autocomplete="new-password"></label></div><button type="button" class="btn-sm btn-primary-sm" onclick="admTeamAdd()">Create the owner login</button><div id="tm-msg" class="note"></div>`; } catch (err) { e.textContent = err.message; } }
 async function admTeamAdd() { const m = document.getElementById('tm-msg'); try { await admApi('POST', '/admin/api/team/add', { name: document.getElementById('tm-name').value, password: document.getElementById('tm-pass').value }); await admLoadTeam(); document.getElementById('tm-msg').textContent = 'Created. Give her the name, the password and the address /owner. She signs in with both.'; } catch (e) { m.textContent = e.message; } }
 async function admTeamRemove(n) { if (!confirm(`Remove ${n}? They will be signed out at once.`)) return; try { await admApi('POST', '/admin/api/team/remove', { name: n }); admLoadTeam(); } catch (e) { showToast(e.message, 'error'); } }
@@ -8132,7 +8221,7 @@ function navIcons() {
   document.querySelectorAll('.store-mobile-nav .mobile-nav-list li').forEach(li => { li.childNodes.forEach(n => { if (n.nodeType === 3) n.textContent = strip(n.textContent); }); });
 }
 function init() {
-  navRestore(); navIcons();
+  navRestore(); navIcons(); if (typeof admGroupNav === 'function') admGroupNav();
   if (BUILD === 'admin' && !ADM.ready) { admBoot(); return; }
   if (ensureProductFields() | syncHomeCats() | recalcRatings()) saveDB();
   initShopToolbar();
@@ -8212,6 +8301,7 @@ function prRangeDates(r) {
   return [prDay(t - 29 * 86400_000), today];
 }
 async function renderPromo(c, keep) {
+  if (location.protocol === 'file:' && !window.__promoMock) { c.innerHTML = '<div class="admin-card"><h3>💬 WhatsApp promotions</h3><p class="note">This page needs the shop server. Open the owner app on your website to use it.</p></div>'; return; }   // a local copy of the file has no server to ask
   if (!keep) c.innerHTML = '<div class="admin-card"><h3>💬 WhatsApp promotions</h3><p class="note">Loading…</p></div>';
   try { const [f, t] = prRangeDates(PR.range); [PR.d, PR.rep] = await Promise.all([admApi('GET', '/admin/api/promo'), admApi('GET', `/admin/api/promo/report?from=${f}&to=${t}`)]); }
   catch (e) { c.innerHTML = `<div class="admin-card"><h3>💬 WhatsApp promotions</h3><p class="note">${esc(aiMsg(e))}</p></div>`; return; }

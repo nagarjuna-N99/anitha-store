@@ -192,7 +192,7 @@ async function privChatOnly(d) { try { const r = await admApi('POST', '/admin/ap
 async function admRole() { try { const st = await admApi('GET', '/admin/api/state'); ADM.state = Object.assign(ADM.state || {}, st); ADM.role = st.role || ADM_AS; ADM.user = st.user || ADM_AS; ADM.tabs = st.tabs || []; ADM.home = st.home || 'dashboard'; } catch (e) { ADM.role = ADM.role || ADM_AS; } }
 const isOwnerRole = () => (ADM.role || ADM_AS) === 'owner';
 const isAdminRole = () => (ADM.role || ADM_AS) === 'admin';
-function admApplyRole() { if (BUILD !== 'admin') return; const ok = new Set(ADM.tabs || []); document.querySelectorAll('[data-tab]').forEach(el => { if (!ok.has(el.dataset.tab)) el.style.display = 'none'; }); document.body.classList.add('as-' + (ADM.role || ADM_AS)); }
+function admApplyRole() { if (BUILD !== 'admin') return; const ok = new Set(ADM.tabs || []); document.querySelectorAll('[data-tab]').forEach(el => { if (!ok.has(el.dataset.tab)) el.style.display = 'none'; }); document.body.classList.add('as-' + (ADM.role || ADM_AS)); if (typeof admGroupNav === 'function') admGroupNav(); }
 async function admLoadTeam() { const e = document.getElementById('sec-team'); if (!e || !isAdminRole()) return; try { const r = await admApi('GET', '/admin/api/team'); e.innerHTML = (r.team.length ? r.team.map(x => `<div class="va-row"><div style="flex:1"><b>${esc(x.name)}</b> <span class="note">owner login · added ${esc(String(x.createdAt || '').slice(0, 10))}</span></div><button type="button" class="btn-sm btn-info-sm" onclick="admTeamPw('${esc(x.name)}')">New password</button><button type="button" class="btn-sm btn-danger-sm" onclick="admTeamRemove('${esc(x.name)}')">Remove</button></div>`).join('') : '<p class="note">No owner login yet. Create one below, then give her the name, the password and the address /owner.</p>') + `<div class="ai-row"><label>Name<input id="tm-name" maxlength="30" placeholder="e.g. anitha" autocomplete="off"></label><label>Password (12+ characters)<input id="tm-pass" type="password" autocomplete="new-password"></label></div><button type="button" class="btn-sm btn-primary-sm" onclick="admTeamAdd()">Create the owner login</button><div id="tm-msg" class="note"></div>`; } catch (err) { e.textContent = err.message; } }
 async function admTeamAdd() { const m = document.getElementById('tm-msg'); try { await admApi('POST', '/admin/api/team/add', { name: document.getElementById('tm-name').value, password: document.getElementById('tm-pass').value }); await admLoadTeam(); document.getElementById('tm-msg').textContent = 'Created. Give her the name, the password and the address /owner. She signs in with both.'; } catch (e) { m.textContent = e.message; } }
 async function admTeamRemove(n) { if (!confirm(`Remove ${n}? They will be signed out at once.`)) return; try { await admApi('POST', '/admin/api/team/remove', { name: n }); admLoadTeam(); } catch (e) { showToast(e.message, 'error'); } }
@@ -383,7 +383,7 @@ function navIcons() {
   document.querySelectorAll('.store-mobile-nav .mobile-nav-list li').forEach(li => { li.childNodes.forEach(n => { if (n.nodeType === 3) n.textContent = strip(n.textContent); }); });
 }
 function init() {
-  navRestore(); navIcons();
+  navRestore(); navIcons(); if (typeof admGroupNav === 'function') admGroupNav();
   if (BUILD === 'admin' && !ADM.ready) { admBoot(); return; }
   if (ensureProductFields() | syncHomeCats() | recalcRatings()) saveDB();
   initShopToolbar();

@@ -297,13 +297,18 @@ function deleteCoupon(idx) { if (confirm('Delete?')) { db.coupons.splice(idx, 1)
 function clearLogs() { if (!confirm('Clear all audit logs?')) return; db.logs = []; saveDB(); renderAdminContent('logs'); }
 
 function saveSettings() {
-  const v = id => document.getElementById(id).value;
-  const rate = parseFloat(v('s-gstrate'));
+  const v = id => { const e = document.getElementById(id); return e ? e.value : ''; };
+  const rate = document.getElementById('s-gstrate') ? parseFloat(v('s-gstrate')) : 0;
   if (isNaN(rate) || rate < 0) { alert('GST rate must be a non-negative number'); return; }
   if (document.getElementById('s-pin') && !v('s-pin').trim()) { alert('Admin PIN cannot be empty'); return; }
   if (v('s-otp').trim() && !/^https:\/\//i.test(v('s-otp').trim())) { alert('The WhatsApp login service URL must start with https://'); return; }
   if (v('s-site').trim() && !/^https?:\/\/[^\s/]+/i.test(v('s-site').trim())) { alert('Website address must start with https://'); return; }
-  Object.assign(db.settings, { businessName: v('s-name'), gstNumber: v('s-gst'), address: v('s-addr'), phone: v('s-phone'), email: v('s-email'), bankName: v('s-bank'), accountNumber: v('s-acc'), ifscCode: v('s-ifsc'), invoicePrefix: v('s-prefix'), gstRate: rate, selectedTemplate: v('s-template'), ...(document.getElementById('s-pin') ? { adminPin: v('s-pin').trim() } : {}), siteUrl: v('s-site').trim().replace(/\/$/, ''), metaDescription: v('s-metadesc').trim(), aiEndpoint: v('s-ai').trim(), otpEndpoint: v('s-otp').trim().replace(/\/$/, ''), dispatchTime: v('s-dispatch').trim() || '3–7 business days', sareeLength: v('s-length').trim(), returnDays: Math.max(0, parseInt(v('s-returndays'), 10) || 0), grievanceOfficer: v('s-grievance').trim() });
+  const has = id => !!document.getElementById(id), up = {};   // the owner and the admin see different fields: only what is on the page is saved
+  [['businessName', 's-name'], ['gstNumber', 's-gst'], ['address', 's-addr'], ['phone', 's-phone'], ['email', 's-email'], ['bankName', 's-bank'], ['accountNumber', 's-acc'], ['ifscCode', 's-ifsc'], ['invoicePrefix', 's-prefix'], ['selectedTemplate', 's-template']].forEach(([k, id]) => { if (has(id)) up[k] = v(id); });
+  if (has('s-gstrate')) up.gstRate = rate; if (has('s-pin')) up.adminPin = v('s-pin').trim();
+  if (has('s-site')) up.siteUrl = v('s-site').trim().replace(/\/$/, ''); if (has('s-metadesc')) up.metaDescription = v('s-metadesc').trim(); if (has('s-ai')) up.aiEndpoint = v('s-ai').trim(); if (has('s-otp')) up.otpEndpoint = v('s-otp').trim().replace(/\/$/, '');
+  if (has('s-dispatch')) up.dispatchTime = v('s-dispatch').trim() || '3–7 business days'; if (has('s-length')) up.sareeLength = v('s-length').trim(); if (has('s-returndays')) up.returnDays = Math.max(0, parseInt(v('s-returndays'), 10) || 0); if (has('s-grievance')) up.grievanceOfficer = v('s-grievance').trim();
+  Object.assign(db.settings, up);
   addLog('settings_updated', 'Business Settings', '-', 0, 0, 0, 'Settings updated'); SEO_DEFAULT.desc = db.settings.metaDescription || SEO_DEFAULT.desc; seoReset(); seoRefreshHome(); if (saveDB()) showToast('Settings saved!', 'success');
 }
 

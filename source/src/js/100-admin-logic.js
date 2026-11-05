@@ -14,6 +14,7 @@ function switchAdminTab(tab) {
   if (tab !== 'studio') document.body.classList.remove('studio-focus');
   document.querySelectorAll('[data-tab]').forEach(el => el.classList.toggle('active', el.dataset.tab === tab));
   document.getElementById('adminPageTitle').textContent = ADMIN_TITLES[tab] || tab;
+  if (typeof admShowDesc === 'function') admShowDesc(tab);
   renderAdminContent(tab);
   updateNavCounts();
   if (typeof admRoutePush === 'function') admRoutePush(tab);
@@ -215,7 +216,7 @@ function renderAdminContent(tab) {
     content.innerHTML = `
       <div style="max-width:800px;">
         <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;margin-bottom:20px;">Business Settings</h3>
-        <div class="admin-card">
+        <div class="admin-card" data-for="owner">
           <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:15px;">Business Information</h4>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;">
             <div class="form-group"><label>Business Name</label><input type="text" id="s-name" value="${esc(s.businessName)}"></div>
@@ -225,7 +226,7 @@ function renderAdminContent(tab) {
             <div class="form-group"><label>Email</label><input type="email" id="s-email" value="${esc(s.email)}"></div>
           </div>
         </div>
-        <div class="admin-card">
+        <div class="admin-card" data-for="owner">
           <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:15px;">Bank Details</h4>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;">
             <div class="form-group"><label>Bank Name</label><input type="text" id="s-bank" value="${esc(s.bankName)}"></div>
@@ -233,7 +234,7 @@ function renderAdminContent(tab) {
             <div class="form-group"><label>IFSC Code</label><input type="text" id="s-ifsc" value="${esc(s.ifscCode)}"></div>
           </div>
         </div>
-        <div class="admin-card">
+        <div class="admin-card" data-for="owner">
           <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:15px;">Invoice Settings</h4>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;">
             <div class="form-group"><label>Invoice Prefix</label><input type="text" id="s-prefix" value="${esc(s.invoicePrefix)}"></div>
@@ -245,10 +246,13 @@ function renderAdminContent(tab) {
           <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:15px;">Admin Access</h4>
           <div class="form-group"><label>Admin PIN (client-side only - not real security)</label><input type="text" id="s-pin" value="${esc(s.adminPin)}" autocomplete="off"></div>
         </div>`}
-        <div class="admin-card">
-          <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:15px;">Customer login &amp; policies</h4>
+        <div class="admin-card" data-for="admin">
+          <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:15px;">Customer sign-in</h4>
           <div class="form-group"><label>WhatsApp login service URL</label><input type="text" id="s-otp" value="${esc(s.otpEndpoint)}" placeholder="https://your-server.com/api"></div>
           <div class="note" style="margin-bottom:14px;">Leave empty for <strong>demo mode</strong>: the login code is shown on screen and no WhatsApp message is sent (for trying the flow only — not secure, do not launch like this). When set, the page calls <code>POST {url}/otp/send</code> {phone} and <code>POST {url}/otp/verify</code> {phone, code} on your server, which sends the code through the WhatsApp Business API.</div>
+                  </div>
+        <div class="admin-card" data-for="owner">
+          <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:15px;">Policies shown to customers</h4>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;">
             <div class="form-group"><label>Dispatch time (shown in Terms)</label><input type="text" id="s-dispatch" value="${esc(s.dispatchTime)}"></div>
             <div class="form-group"><label>Usual saree length (shown on every saree page; a saree can have its own)</label><input type="text" id="s-length" value="${esc(s.sareeLength === undefined ? DEFAULT_SAREE_LENGTH : s.sareeLength)}" placeholder="e.g. 5.5 metres with a blouse piece"></div>
@@ -256,14 +260,14 @@ function renderAdminContent(tab) {
             <div class="form-group"><label>Grievance officer (Privacy Policy)</label><input type="text" id="s-grievance" value="${esc(s.grievanceOfficer)}" placeholder="Name, designation"></div>
           </div>
         </div>
-        <div class="admin-card">
+        <div class="admin-card" data-for="admin">
           <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:15px;">SEO &amp; Search</h4>
           <div class="form-group"><label>Website address (for canonical links &amp; sitemap)</label><input type="text" id="s-site" value="${esc(s.siteUrl)}" placeholder="https://www.yourstore.com"></div>
           <div class="form-group"><label>Default page description (home page)</label><textarea id="s-metadesc" rows="2">${esc(s.metaDescription)}</textarea></div>
           <div class="action-buttons" style="margin-bottom:6px;"><button class="btn-sm btn-primary-sm" onclick="downloadSeoPack()">📦 Download SEO pack (ZIP)</button><button class="btn-sm btn-info-sm" onclick="downloadSitemap()">sitemap.xml</button><button class="btn-sm btn-info-sm" onclick="downloadRobots()">robots.txt</button></div>
           <div class="note">The ZIP holds one crawlable HTML page per product (title, meta description, canonical, Open Graph, structured data), plus sitemap.xml, robots.txt and the product images. Upload it to your website and submit sitemap.xml in Google Search Console. Save settings first so it uses your address.</div>
         </div>
-        <div class="admin-card">
+        <div class="admin-card" data-for="admin">
           <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b6862;margin-bottom:15px;">AI descriptions (optional)</h4>
           <div class="form-group"><label>Your AI service URL</label><input type="text" id="s-ai" value="${esc(s.aiEndpoint)}" placeholder="https://your-server.com/describe-product"></div>
           <div class="note">Leave empty to use the built-in writer (category knowledge + colours detected in your photos). If set, the form POSTs {name, category, sku, price, colours, brand} and expects {description, tags[], seoTitle, metaDescription, altText}; if it fails, the built-in writer is used. Never put an API key in this page.</div>
@@ -272,6 +276,7 @@ function renderAdminContent(tab) {
         ${admSecurityHTML()}
       </div>${(setTimeout(admLoadTeam, 0), '')}
     `;
+    admSettingsHelp(content);
     if (BUILD === 'admin') { admLoadAudit(); admLoadAiKey(); }
     return;
   }

@@ -11,6 +11,7 @@ function prRangeDates(r) {
   return [prDay(t - 29 * 86400_000), today];
 }
 async function renderPromo(c, keep) {
+  if (location.protocol === 'file:' && !window.__promoMock) { c.innerHTML = '<div class="admin-card"><h3>💬 WhatsApp promotions</h3><p class="note">This page needs the shop server. Open the owner app on your website to use it.</p></div>'; return; }   // a local copy of the file has no server to ask
   if (!keep) c.innerHTML = '<div class="admin-card"><h3>💬 WhatsApp promotions</h3><p class="note">Loading…</p></div>';
   try { const [f, t] = prRangeDates(PR.range); [PR.d, PR.rep] = await Promise.all([admApi('GET', '/admin/api/promo'), admApi('GET', `/admin/api/promo/report?from=${f}&to=${t}`)]); }
   catch (e) { c.innerHTML = `<div class="admin-card"><h3>💬 WhatsApp promotions</h3><p class="note">${esc(aiMsg(e))}</p></div>`; return; }
