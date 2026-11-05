@@ -48,6 +48,10 @@ const { chromium } = require(process.env.PW);
   await ev(() => { db.settings.ai.chapters = true; chRestore(); });
   await ev(() => { isAdminView = false; document.getElementById('adminView').classList.remove('active'); document.getElementById('storefrontView').classList.remove('hidden'); navigateTo('home'); renderHome(); }); await sleep(300);
 
+  // ---- the chapter and Signature tiles are small on a computer ----
+  await p.setViewportSize({ width: 1216, height: 760 }); await sleep(300);
+  const tl = await ev(() => { const t = document.querySelector('#homeChapters .chap-tile').getBoundingClientRect(), h = document.querySelector('#homeChapters .chap-hero').getBoundingClientRect(), g = document.querySelector('.curated-item'); return { tw: t.width, th: t.height, hh: h.height, cur: g ? g.getBoundingClientRect().height : 0 }; });
+  ok('computer: chapter tiles are about 280px squares, the chapter photo 260px high and the Signature Collection tiles 260px high (they were over 500px)', tl.tw > 200 && tl.tw < 300 && Math.abs(tl.tw - tl.th) < 3 && Math.abs(tl.hh - 260) < 3 && Math.abs(tl.cur - 260) < 3, JSON.stringify(tl));
   // ---- tidier New Arrivals cards (computer) ----
   await ev(() => document.getElementById('new-arrivals').scrollIntoView()); await sleep(300);
   const geo = await ev(() => { const c = document.querySelector('.scroll-card:not(.dup)'), r = x => c.querySelector(x).getBoundingClientRect(), cr = c.getBoundingClientRect(); const img = r('.scroll-card-img'), fav = r('.btn-fav-sm'), v = r('.btn-view-sm'), a = r('.btn-cart-sm'); return { favOnPhoto: fav.top >= img.top && fav.bottom <= img.bottom && fav.right <= img.right, oneRow: Math.abs(v.top - a.top) < 2, favPos: getComputedStyle(c.querySelector('.btn-fav-sm')).position }; });
@@ -57,8 +61,8 @@ const { chromium } = require(process.env.PW);
   await p.setViewportSize({ width: 390, height: 844 }); await sleep(400); await ev(() => document.getElementById('new-arrivals').scrollIntoView()); await sleep(300);
   const ph = await ev(() => { const t = document.getElementById('scrollTrack'), cs = [...t.querySelectorAll('.scroll-card:not(.dup)')], c = cs[0], cr = c.getBoundingClientRect(), vw = innerWidth, visible = cs.filter(x => { const r = x.getBoundingClientRect(); return r.left >= -2 && r.right <= vw + 2; }).length; const v = c.querySelector('.btn-view-sm').getBoundingClientRect(), a = c.querySelector('.btn-cart-sm').getBoundingClientRect(); return { w: cr.width, visible, oneRow: Math.abs(v.top - a.top) < 2, h: v.height, tapFav: c.querySelector('.btn-fav-sm').getBoundingClientRect().width }; });
   ok('phone: New Arrivals shows about two cards at a time, with View and Add side by side (40px high) and a 40px heart', ph.visible >= 2 && ph.w <= 190 && ph.oneRow && ph.h >= 40 && ph.tapFav >= 40, JSON.stringify(ph));
-  const pc = await ev(() => { document.getElementById('homeChapters').scrollIntoView(); const h = document.querySelector('.chap-hero').getBoundingClientRect(), tiles = [...document.querySelectorAll('.chap')[0].querySelectorAll('.chap-tile')].map(t => t.getBoundingClientRect()); return { sq: Math.abs(h.width - h.height) < 4, two: Math.abs(tiles[0].top - tiles[1].top) < 2, wide: tiles[2] && tiles[2].width > tiles[0].width * 1.8 }; });
-  ok('phone: a chapter shows a square photo panel, two tiles side by side and the third tile full width', pc.sq && pc.two && pc.wide, JSON.stringify(pc));
+  const pc = await ev(() => { document.getElementById('homeChapters').scrollIntoView(); const h = document.querySelector('.chap-hero').getBoundingClientRect(), tiles = [...document.querySelectorAll('.chap')[0].querySelectorAll('.chap-tile')].map(t => t.getBoundingClientRect()); return { sq: Math.abs(h.width / h.height - 4 / 3) < 0.03, two: Math.abs(tiles[0].top - tiles[1].top) < 2, wide: tiles[2] && tiles[2].width > tiles[0].width * 1.8 }; });
+  ok('phone: a chapter shows a 4:3 photo panel, two tiles side by side and the third tile full width', pc.sq && pc.two && pc.wide, JSON.stringify(pc));
   ok('no script errors', errs.length === 0, errs.join(' | '));
   await b.close(); console.log(fails ? fails + ' FAILED' : 'ALL PASSED'); process.exit(fails ? 1 : 0);
 })();

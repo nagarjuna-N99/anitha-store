@@ -116,7 +116,7 @@ Owner's guidance: *"we will setup everything after we host it"* — real hosting
 | `care-test.cjs` | 9 | Saree Care tabs, wash-care guide, photo link repair |
 | `parts-test.cjs` | 8 | the website source parts and the joined file |
 | `addresses-test.cjs` | 25 | each page and saree has its own address, Back/Forward, old links |
-| `chapters-test.cjs` | 24 | story chapters on the home page (website, owner editing, phone layout) and the tidier New Arrivals cards |
+| `chapters-test.cjs` | 25 | story chapters on the home page (website, owner editing, phone layout) and the tidier New Arrivals cards |
 | `colours-notes-test.cjs` | 29 | calmer sizes on computers, "Notes from the loom" sign-up, website colours (presets, own colours, photo match, Claude ideas, readability guard) |
 | `onebox-test.cjs` | 9 | one-server hosting: the server serves the real website, page addresses, 404 page, sitemap and the owner app from one address |
 | `redirect-test.cjs` | 7 | the old GitHub Pages address becomes a signpost to anithapemmasani.com (same page, search and #part kept; old site map removed) |
@@ -144,6 +144,10 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**12 Nov 2026 (Smaller story-chapter and Signature Collection tiles on computers)**
+- Owner: the tiles looked huge and ugly. On computers the story chapters are now in a narrower column (880px): photo panel 260px high, tiles about 280px squares (were about 550px, 4:5), smaller title and quote; the Signature Collection tiles are 260px high in a 920px column with gaps and rounded corners (were 550px full-width halves). Phones: chapter photo 4:3 (was square), Signature tiles 240px (was 360px). CSS only, last block of `src/css/190-design-fixes.css`.
+- Tests: `chapters-test.cjs` +1 (tile and panel sizes measured at a computer width); phone audit and home/mobile suites still pass. Not tested: your real photos.
 
 **12 Nov 2026 (AI help for Story chapters, Notes from the loom and Website colours)**
 - Owner: "add AI help for Story chapters, Website colours, Notes from the loom in admin settings". New AI tasks `chapters` and `notes` (and the existing `palette`) each give 3 drafts the admin reads and applies with "Use this / Use these"; Chapters also has "Rewrite this chapter with Claude" (keeps uploaded tile photos); tiles are only categories the shop has; drafts are trimmed and empty ones dropped. Each helper has a switch in the AI Helper tab (settings): Website colour ideas, Story chapter wording, Notes from the loom wording. Without a Claude key, or with the switch off, Chapters and Notes show built-in wording and Colours offers ready-made sets that fit the words, with a plain message. Guides 35 and 36.

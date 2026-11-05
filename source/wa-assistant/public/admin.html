@@ -1305,6 +1305,21 @@ nav.dark .brand-mark { background: #fff; padding: 3px; box-sizing: border-box; }
 .chap-enter { display: block; width: max-content; margin: 22px auto 6px; padding: 12px 4px; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--charcoal); border-bottom: 1px solid var(--charcoal); cursor: pointer; text-decoration: none; }
 @media (max-width: 640px) { .chap { padding: 26px 14px 10px; } .chap-hero { aspect-ratio: 1 / 1; } .chap-tiles { grid-template-columns: 1fr 1fr; gap: 12px; } .chap-tiles .chap-tile:nth-child(3):last-child { grid-column: 1 / -1; aspect-ratio: 16 / 9; } .chap-tile span { font-size: 17px; bottom: 10px; } .chap-words { font-size: 11px; letter-spacing: .12em; } }
 .ch-list { display: flex; flex-direction: column; gap: 10px; margin: 10px 0; } .ch-item { background: #fff; border: 1px solid var(--border); border-radius: 8px; } .ch-item > summary { padding: 10px 12px; cursor: pointer; font-weight: 600; display: flex; gap: 8px; align-items: center; } .ch-body { padding: 4px 12px 12px; } .ch-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; }
+
+/* Smaller, tidier tiles: the story chapters and the Signature Collection (they were huge on computers) */
+@media (min-width: 901px) {
+  .chap { max-width: 880px; padding: 24px 24px 8px; }
+  .chap-hero { aspect-ratio: auto; height: 260px; }
+  .chap-title { font-size: clamp(28px, 3.4vw, 40px); margin-bottom: 8px; } .chap-no { margin-bottom: 8px; }
+  .chap-quote { margin: 18px auto 16px; } .chap-quote p { font-size: 21px; }
+  .chap-tiles { gap: 14px; } .chap-tile { aspect-ratio: 1 / 1; } .chap-tile span { font-size: 17px; bottom: 10px; }
+  .chap-enter { margin: 16px auto 4px; padding: 10px 4px; }
+  .curated-grid { max-width: 920px; margin: 0 auto; padding: 0 24px 10px; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .curated-item { height: 260px; border-radius: 4px; }
+  .curated-overlay { padding: 22px 24px; } .curated-overlay h3 { font-size: 26px; margin-bottom: 4px; } .curated-overlay p { font-size: 11px; margin-bottom: 10px; } .curated-link { font-size: 13px; }
+}
+@media (max-width: 900px) { .curated-item { height: 280px; } .chap-hero { aspect-ratio: 4 / 3; } }
+@media (max-width: 640px) { .chap-hero { aspect-ratio: 4 / 3; } .curated-item { height: 240px; } }
 </style>
 <style>.nav-toggle{position:fixed;top:14px;left:268px;z-index:60;width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--ivory);color:var(--charcoal);cursor:pointer;display:none;align-items:center;justify-content:center;font-size:18px;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.08)}body.admin-on .nav-toggle{display:flex}body.nav-closed .nav-toggle{left:14px}body.nav-closed .admin-sidebar{display:none}body.nav-closed .admin-main{margin-left:0;padding-left:64px}body.studio-focus .nav-toggle{display:none!important}@media (max-width:900px){body.admin-on .nav-toggle{display:none}}html.ui2 .nav-toggle{background:var(--o-glass-2);color:var(--o-ink);border-color:var(--o-line)}.pg-item{border:1px solid var(--border);border-radius:14px;padding:14px;margin:12px 0}.pg-item.pg-off{opacity:.7}.pg-head{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.pg-head b{flex:1;min-width:140px}.pg-tools{display:inline-flex;gap:6px}.pg-tip{border-top:1px dashed var(--border);padding:10px 0}.pg-sec>summary{cursor:pointer;min-height:40px;display:flex;align-items:center}.pg-item textarea,.pg-tip textarea{width:100%}</style>
 </head>
