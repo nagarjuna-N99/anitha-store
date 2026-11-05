@@ -30,13 +30,17 @@ export function parseWebhook(body) {
 
 // ---- outbound ----
 export class WhatsApp {
-  constructor(cfg, fetchImpl = fetch) { this.cfg = cfg; this.fetch = fetchImpl; this.dry = !cfg.waLive; this.sentLog = []; }
+  constructor(cfg, fetchImpl = fetch) { this.cfg = cfg; this.fetch = fetchImpl; this.dry = !cfg.waLive; this.sentLog = []; this.ledger = null; }   // ledger: counts every message (walog.mjs)
 
-  async _post(payload) {
-    if (this.dry) { this.sentLog.push(payload); return { dry: true }; }
+  async _post(payload, meta) {
+    const note = (o) => { try { if (this.ledger) this.ledger.record(payload, o, meta); } catch { /* counting must never stop a message */ } };
+    if (this.dry) { this.sentLog.push(payload); note({ dry: true }); return { dry: true }; }
     const { graphUrl, phoneNumberId, token } = this.cfg.wa;
-    const res = await this.fetch(`${graphUrl}/${phoneNumberId}/messages`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ messaging_product: 'whatsapp', ...payload }) });
-    if (!res.ok) { const t = await res.text().catch(() => ''); const e = new Error(`WhatsApp send failed ${res.status}: ${t.slice(0, 300)}`); e.status = res.status; throw e; }
+    let res;
+    try { res = await this.fetch(`${graphUrl}/${phoneNumberId}/messages`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ messaging_product: 'whatsapp', ...payload }) }); }
+    catch (e) { note({ error: e.message }); throw e; }
+    if (!res.ok) { const t = await res.text().catch(() => ''); const e = new Error(`WhatsApp send failed ${res.status}: ${t.slice(0, 300)}`); e.status = res.status; note({ error: e.message }); throw e; }
+    note({});
     return res.json().catch(() => ({}));
   }
   sendText(to, body) { return this._post({ to, type: 'text', text: { body, preview_url: true } }); }
@@ -46,8 +50,8 @@ export class WhatsApp {
   sendButtons(to, body, buttons) {
     return this._post({ to, type: 'interactive', interactive: { type: 'button', body: { text: String(body).slice(0, 1024) }, action: { buttons: buttons.slice(0, 3).map(b => ({ type: 'reply', reply: { id: String(b.id).slice(0, 256), title: String(b.title).slice(0, 20) } })) } } });
   }
-  sendTemplate(to, name, params = [], lang = 'en') {
-    return this._post({ to, type: 'template', template: { name, language: { code: lang }, components: params.length ? [{ type: 'body', parameters: params.map(p => ({ type: 'text', text: String(p).slice(0, 200) })) }] : [] } });
+  sendTemplate(to, name, params = [], lang = 'en', meta) {
+    return this._post({ to, type: 'template', template: { name, language: { code: lang }, components: params.length ? [{ type: 'body', parameters: params.map(p => ({ type: 'text', text: String(p).slice(0, 200) })) }] : [] } }, meta);
   }
   // shows the double blue tick and a typing dots while Claude thinks
   markRead(messageId) {

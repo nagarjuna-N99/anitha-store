@@ -103,7 +103,8 @@
     "js/410-social-studio-posting-rules-previews-video.js",
     "js/420-growth-insights.js",
     "js/430-privacy-dpdp.js",
-      "js/435-repair-assistant.js"
+      "js/435-repair-assistant.js",
+      "js/438-whatsapp-promotions.js"
    ],
    "close": "</script>\n"
   },

@@ -194,3 +194,13 @@ nav.dark .brand-mark { background: #fff; padding: 3px; box-sizing: border-box; }
 .rp-chat { display: flex; flex-direction: column; gap: 8px; max-height: 360px; overflow: auto; padding: 10px; margin: 10px 0; background: #fff; border: 1px solid var(--border); border-radius: 8px; }
 .rp-me { align-self: flex-end; max-width: 85%; background: var(--charcoal); color: #fff; padding: 8px 12px; border-radius: 12px 12px 2px 12px; font-size: 14px; }
 .rp-bot { align-self: flex-start; max-width: 92%; background: var(--cream); padding: 8px 12px; border-radius: 12px 12px 12px 2px; font-size: 14px; line-height: 1.5; } .rp-bot ol { margin: 6px 0 6px 18px; padding: 0; } .rp-bot li { margin: 3px 0; }
+
+/* WhatsApp promotions (owner tab) */
+.pr-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin: 8px 0; }
+.pr-grid label, .pr-wide { display: flex; flex-direction: column; gap: 3px; font-size: .82rem; color: var(--ink-soft, #555); }
+.pr-wide { margin: 8px 0; } .pr-grid input, .pr-grid select, .pr-wide input, .pr-wide textarea { font: inherit; padding: 7px 9px; border: 1px solid #d8d2c4; border-radius: 6px; background: #fff; }
+.pr-tbl { width: 100%; border-collapse: collapse; font-size: .84rem; margin: 4px 0 10px; } .pr-tbl th, .pr-tbl td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #ece7da; } .pr-tbl th { font-weight: 600; color: #6b6558; }
+.pr-tpl { border: 1px solid #e3ddcf; border-radius: 8px; padding: 10px 12px; margin: 8px 0; background: #fffdf8; } .pr-body { font-size: .86rem; margin: 6px 0; white-space: normal; } .pr-warn { font-size: .8rem; color: #8a5a00; margin-bottom: 4px; }
+.pr-badge { font-size: .7rem; padding: 2px 7px; border-radius: 10px; background: #eee; color: #444; } .pr-approved, .pr-done { background: #dff3e4; color: #1d6b34; } .pr-rejected, .pr-stopped { background: #fde8e6; color: #9b2c22; } .pr-submitted, .pr-sending { background: #fff1cf; color: #8a5a00; }
+html.ui2.dk .pr-tpl { background: #23211d; border-color: #3a362f; } html.ui2.dk .pr-grid input, html.ui2.dk .pr-grid select, html.ui2.dk .pr-wide input, html.ui2.dk .pr-wide textarea { background: #1b1a17; border-color: #3a362f; color: inherit; }
+@media (max-width: 640px) { .pr-tbl { font-size: .78rem; } .pr-tbl th, .pr-tbl td { padding: 5px 4px; } }

@@ -119,7 +119,7 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 ## 6. Test suites (all passing on 12 Nov 2026; known slow spots: sign-in timeouts under load and the phone-speed test near its limit pass when rerun alone)
 | Suite | Checks | Covers |
 |---|---|---|
-| `wa-assistant` (`npm test`) | 591 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
+| `wa-assistant` (`npm test`) | 626 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
 | `smoke2.cjs` | 10 | orders, invoices, reports |
 | `studio-test2.cjs` / `studio-test3.cjs` | 50 / 61 | Image Studio, drafts, product form, AI copy |
 | `shop-test.cjs` | 56 | favourites, share links, OTP login, consents, Terms/Privacy |
@@ -136,6 +136,7 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 | `care-test.cjs` | 9 | Saree Care tabs, wash-care guide, photo link repair |
 | `parts-test.cjs` | 8 | the website source parts and the joined file |
 | `addresses-test.cjs` | 25 | each page and saree has its own address, Back/Forward, old links |
+| `promo-test.cjs` | 20 | WhatsApp promotions tab: reports, prices and costs, templates with AI wording, promotions (stand-in server) |
 | `chapters-test.cjs` | 25 | story chapters on the home page (website, owner editing, phone layout) and the tidier New Arrivals cards |
 | `colours-notes-test.cjs` | 29 | calmer sizes on computers, "Notes from the loom" sign-up, website colours (presets, own colours, photo match, Claude ideas, readability guard) |
 | `selfheal-test.cjs` | 9 | the server self-heal script run with stand-in commands: restart after two missed answers, start Caddy, free disk, log limit, never touches data |
@@ -165,6 +166,10 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**12 Nov 2026 (WhatsApp promotions, AI template wording, message reports and costs)**
+- Owner: "prepare tool for whatsapp promotion and template setting using AI and reports regarding regular messages and marketing messages and costing and total expenses also". New **owner-only** tab **WhatsApp promotions** (guide 39): every outgoing WhatsApp message is counted (`walog.mjs`, hooked in `whatsapp.mjs`) by kind (regular / order update / promotion / sign-in code), source, status and price, with only the last 4 digits kept; reports by period, kind, source, month and promotion with a CSV; editable prices (rough defaults, to be checked against Meta's India list) and hand-entered running costs, giving **total expenses**; a template list with checks (stop line, numbering, length) and **AI wording help** (new task `watemplate`, 3 drafts from only the facts given, built-in versions without Claude); **promotions** to customers who said yes to offers and have not sent STOP: test send first, owner confirms the head-count and rough cost, only 9 am to 9 pm IST, daily limit, one message per person per promotion (atomic claim), nothing sent while WhatsApp is not live (simulated).
+- Tests: server 626 (+35 `promo:` checks); new `tests/promo-test.cjs` (20 checks). Not tested: real Meta sends and prices, Claude's real wording, a real phone.
 
 **12 Nov 2026 (Repair assistant, auto-repair, server self-heal; Ops bugs fixed)**
 - Owner: "create an AI helper chatbot for repairs and also turn on auto repair". On the Ops page (admin only): a **chat** that explains the red and yellow checks in plain words and can only suggest repairs (buttons the admin presses; no secrets or customer data sent; plain built-in answer without Claude; switch in AI Helper); **auto-repair, ON by default**, which every 10 minutes runs three safe fixed repairs only when needed (missed privacy clean-up, loosened file permissions, a daily known-good copy of the shop data, restored automatically if the main file is ever damaged) and logs each one; and a **server self-heal** script on a 5-minute timer (restart the shop server after two missed answers, start Caddy, free disk). The AI never changes anything by itself. Guide: HOW-IT-WORKS/38-repair-assistant-and-self-heal.md.

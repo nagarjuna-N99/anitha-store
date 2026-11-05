@@ -14,7 +14,7 @@ import crypto from 'node:crypto';
 import { clientIp } from './clientip.mjs';
 import { adminApiAllowed, dbForRead, TABS, HOME_TAB } from './roles.mjs';
 
-export function adminRoutes({ repair, cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, notes, ops, opsReport, wa, watchRun, watchRead, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
+export function adminRoutes({ walog, repair, cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, notes, ops, opsReport, wa, watchRun, watchRead, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
   const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY', 'Cross-Origin-Resource-Policy': 'same-origin', 'Cache-Control': 'no-store', ...(auth.secure ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' } : {}) };
   const CSP = "default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'";
   const ipOf = req => clientIp(req, cfg.trustProxy);   // X-Forwarded-For is trusted only when TRUST_PROXY=1 and the connection is from this very machine
@@ -154,6 +154,29 @@ export function adminRoutes({ repair, cfg, auth, shop, media, social, ig, client
       if (route === 'POST /admin/api/report/prefs') { const b = await body(req, 500); savePrefs(b); wrote('report-prefs'); send(res, { code: 200, prefs: prefs() }); return true; }
       if (route === 'POST /admin/api/report/send') { const b = await body(req, 500), kind = ['weekly', 'monthly', 'daily'].includes(b.kind) ? b.kind : 'weekly', r = await growth.mail(kind, true); wrote('report-sent', kind); send(res, { code: 200, ok: true, ...r }); return true; }
       if (route === 'GET /admin/api/report/preview') { const k = url.searchParams.get('kind'); send(res, { code: 200, ...(await growth.preview(['weekly', 'monthly', 'daily'].includes(k) ? k : 'weekly')) }); return true; }
+      if (route.startsWith('GET /admin/api/promo') || route.startsWith('POST /admin/api/promo')) {
+        const P = url.pathname.replace(/^\/admin\/api\/promo\/?/, ''), q = url.searchParams, done = (r, tag, note) => { if (r.code === 200) wrote(tag, note); send(res, r); return true; };
+        if (route === 'GET /admin/api/promo') { send(res, walog.overview()); return true; }
+        if (route === 'GET /admin/api/promo/report') { send(res, walog.report({ from: q.get('from'), to: q.get('to') })); return true; }
+        if (route === 'GET /admin/api/promo/export') { const r = walog.report({ from: q.get('from'), to: q.get('to') }); res.writeHead(200, { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': `attachment; filename="whatsapp-messages-${r.from}-to-${r.to}.csv"`, ...SEC }); res.end(walog.csv({ from: r.from, to: r.to })); return true; }
+        if (route.startsWith('POST')) {
+          const b = await body(req, 20_000);
+          if (P === 'rates') return done(walog.setRates(b), 'promo-rates');
+          if (P === 'settings') return done(walog.setSettings(b), 'promo-settings');
+          if (P === 'expense') return done(walog.addExpense(b), 'promo-expense', String(b.label || '').slice(0, 40));
+          if (P === 'expense/remove') return done(walog.removeExpense(String(b.id || '')), 'promo-expense-removed');
+          if (P === 'template') return done(walog.saveTemplate(b), 'promo-template', String(b.name || '').slice(0, 40));
+          if (P === 'template/draft') { send(res, { code: 200, variants: walog.localTemplates(b) }); return true; }
+          if (P === 'template/remove') return done(walog.removeTemplate(String(b.name || '')), 'promo-template-removed');
+          if (P === 'campaign') return done(walog.createCampaign(b), 'promo-campaign', String(b.name || '').slice(0, 40));
+          if (P === 'campaign/estimate') { send(res, { code: 200, ...walog.estimate(String(b.template || '')) }); return true; }
+          if (P === 'campaign/test') return done(await walog.testSend(String(b.id || ''), b.to, wa), 'promo-test');
+          if (P === 'campaign/approve') { const r = walog.approve(String(b.id || ''), b.confirmCount); if (r.code === 200) walog.runDue(wa).catch(() => {}); return done(r, 'promo-started', String(b.id || '')); }
+          if (P === 'campaign/stop') return done(walog.stop(String(b.id || '')), 'promo-stopped');
+          if (P === 'campaign/remove') return done(walog.removeCampaign(String(b.id || '')), 'promo-removed');
+        }
+        send(res, { code: 404, error: 'not found' }); return true;
+      }
       if (route === 'GET /admin/api/repair') { send(res, { code: 200, ...repair.status() }); return true; }
       if (route === 'POST /admin/api/repair/enabled') { const b = await body(req, 500); repair.store.setEnabled(!!b.enabled); wrote('repair-switch', b.enabled ? 'on' : 'off'); send(res, { code: 200, ...repair.status() }); return true; }
       if (route === 'POST /admin/api/repair/run') { const b = await body(req, 1_000), r = await repair.runNow(b.ids); wrote('repair-run', r.map(x => x.id + (x.ok ? '' : '!')).join(',')); send(res, { code: 200, results: r, ...repair.status() }); return true; }
