@@ -146,3 +146,31 @@ nav.dark .brand-mark { background: #fff; padding: 3px; box-sizing: border-box; }
   .product-fav-btn, .product-share-btn { width: 34px; height: 34px; font-size: 15px; }
   .stock-badge { font-size: 10px !important; padding: 4px 8px; }
 }
+
+/* New Arrivals cards, tidier on every screen: heart and share sit on the photo, View and Add share one row (phones now show about two cards at a time) */
+.scroll-card { position: relative; }
+.scroll-card .scroll-actions { grid-template-columns: 1fr 1fr; gap: 8px; }
+.scroll-card .btn-fav-sm, .scroll-card .btn-share-sm { position: absolute; right: 10px; width: 36px; height: 36px; min-width: 0; min-height: 0; padding: 0; border-radius: 50%; border: 0; background: rgba(255,255,255,.92); display: flex; align-items: center; justify-content: center; font-size: 15px; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+.scroll-card .btn-fav-sm { top: 10px; color: var(--heart); } .scroll-card .btn-fav-sm.active { background: var(--heart); color: #fff; } .scroll-card .btn-share-sm { top: 54px; }
+.scroll-card .btn-view-sm, .scroll-card .btn-cart-sm { min-height: 40px; }
+@media (max-width: 640px) {
+  .scroll-card { width: 44vw; max-width: 190px; } .scroll-card-img { height: auto; aspect-ratio: 3 / 4; } .scroll-card-body { padding: 10px 10px 12px; }
+  .scroll-card-tag { margin-bottom: 2px; } .scroll-card-name { font-size: 15px; line-height: 1.25; margin-bottom: 3px; } .scroll-card-price { font-size: 13px; margin-bottom: 8px; }
+  .scroll-card .scroll-actions { grid-template-columns: 1fr 1fr; gap: 6px; } .scroll-card .btn-sm-card.btn-view-sm { grid-column: auto; } .scroll-card .btn-sm-card { font-size: 11px !important; padding: 6px 4px; letter-spacing: .05em; }
+  .scroll-card .btn-fav-sm, .scroll-card .btn-share-sm { width: 40px; height: 40px; right: 6px; } .scroll-card .btn-fav-sm { top: 6px; } .scroll-card .btn-share-sm { top: 52px; }
+}
+@media (min-width: 901px) { .scroll-card .scroll-actions { grid-template-columns: 1fr 1fr; gap: 6px; } .scroll-card .btn-fav-sm, .scroll-card .btn-share-sm { width: 34px; height: 34px; } .scroll-card .btn-share-sm { top: 52px; } .scroll-card .btn-view-sm, .scroll-card .btn-cart-sm { min-height: 34px; } }
+
+/* Story chapters on the home page (the owner writes them in Home Page → Story chapters) */
+.chapters { padding: 10px 0 20px; } .chap { max-width: 1200px; margin: 0 auto; padding: 36px 5% 16px; }
+.chap-hero { position: relative; border-radius: 4px; overflow: hidden; background: #141210 center / cover no-repeat; aspect-ratio: 16 / 7; display: flex; align-items: center; justify-content: center; text-align: center; color: #fff; }
+.chap-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(rgba(10,8,6,.35), rgba(10,8,6,.55)); }
+.chap-in { position: relative; z-index: 1; padding: 0 24px; } .chap-no { display: block; font-size: 11px; letter-spacing: .3em; text-transform: uppercase; opacity: .85; margin-bottom: 12px; }
+.chap-title { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 4.4vw, 52px); line-height: 1.1; margin: 0 0 12px; } .chap-title em { font-style: italic; color: var(--gold-light); }
+.chap-words { margin: 0; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; opacity: .9; }
+.chap-quote { margin: 22px auto 22px; max-width: 760px; text-align: center; } .chap-quote p { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(20px, 2.4vw, 26px); line-height: 1.35; margin: 0 0 8px; } .chap-quote cite { font-style: normal; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: #6b6862; }
+.chap-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; } .chap-tile { position: relative; border-radius: 4px; overflow: hidden; aspect-ratio: 4 / 5; background: #1c1916; cursor: pointer; } .chap-tile img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s; } .chap-tile:hover img { transform: scale(1.04); }
+.chap-tile::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent 55%, rgba(10,8,6,.7)); } .chap-tile span { position: absolute; left: 0; right: 0; bottom: 14px; z-index: 1; text-align: center; color: #fff; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 20px; }
+.chap-enter { display: block; width: max-content; margin: 22px auto 6px; padding: 12px 4px; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--charcoal); border-bottom: 1px solid var(--charcoal); cursor: pointer; text-decoration: none; }
+@media (max-width: 640px) { .chap { padding: 26px 14px 10px; } .chap-hero { aspect-ratio: 1 / 1; } .chap-tiles { grid-template-columns: 1fr 1fr; gap: 12px; } .chap-tiles .chap-tile:nth-child(3):last-child { grid-column: 1 / -1; aspect-ratio: 16 / 9; } .chap-tile span { font-size: 17px; bottom: 10px; } .chap-words { font-size: 11px; letter-spacing: .12em; } }
+.ch-list { display: flex; flex-direction: column; gap: 10px; margin: 10px 0; } .ch-item { background: #fff; border: 1px solid var(--border); border-radius: 8px; } .ch-item > summary { padding: 10px 12px; cursor: pointer; font-weight: 600; display: flex; gap: 8px; align-items: center; } .ch-body { padding: 4px 12px 12px; } .ch-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; }

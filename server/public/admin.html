@@ -1277,6 +1277,34 @@ nav.dark .brand-mark { background: #fff; padding: 3px; box-sizing: border-box; }
   .product-fav-btn, .product-share-btn { width: 34px; height: 34px; font-size: 15px; }
   .stock-badge { font-size: 10px !important; padding: 4px 8px; }
 }
+
+/* New Arrivals cards, tidier on every screen: heart and share sit on the photo, View and Add share one row (phones now show about two cards at a time) */
+.scroll-card { position: relative; }
+.scroll-card .scroll-actions { grid-template-columns: 1fr 1fr; gap: 8px; }
+.scroll-card .btn-fav-sm, .scroll-card .btn-share-sm { position: absolute; right: 10px; width: 36px; height: 36px; min-width: 0; min-height: 0; padding: 0; border-radius: 50%; border: 0; background: rgba(255,255,255,.92); display: flex; align-items: center; justify-content: center; font-size: 15px; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+.scroll-card .btn-fav-sm { top: 10px; color: var(--heart); } .scroll-card .btn-fav-sm.active { background: var(--heart); color: #fff; } .scroll-card .btn-share-sm { top: 54px; }
+.scroll-card .btn-view-sm, .scroll-card .btn-cart-sm { min-height: 40px; }
+@media (max-width: 640px) {
+  .scroll-card { width: 44vw; max-width: 190px; } .scroll-card-img { height: auto; aspect-ratio: 3 / 4; } .scroll-card-body { padding: 10px 10px 12px; }
+  .scroll-card-tag { margin-bottom: 2px; } .scroll-card-name { font-size: 15px; line-height: 1.25; margin-bottom: 3px; } .scroll-card-price { font-size: 13px; margin-bottom: 8px; }
+  .scroll-card .scroll-actions { grid-template-columns: 1fr 1fr; gap: 6px; } .scroll-card .btn-sm-card.btn-view-sm { grid-column: auto; } .scroll-card .btn-sm-card { font-size: 11px !important; padding: 6px 4px; letter-spacing: .05em; }
+  .scroll-card .btn-fav-sm, .scroll-card .btn-share-sm { width: 40px; height: 40px; right: 6px; } .scroll-card .btn-fav-sm { top: 6px; } .scroll-card .btn-share-sm { top: 52px; }
+}
+@media (min-width: 901px) { .scroll-card .scroll-actions { grid-template-columns: 1fr 1fr; gap: 6px; } .scroll-card .btn-fav-sm, .scroll-card .btn-share-sm { width: 34px; height: 34px; } .scroll-card .btn-share-sm { top: 52px; } .scroll-card .btn-view-sm, .scroll-card .btn-cart-sm { min-height: 34px; } }
+
+/* Story chapters on the home page (the owner writes them in Home Page → Story chapters) */
+.chapters { padding: 10px 0 20px; } .chap { max-width: 1200px; margin: 0 auto; padding: 36px 5% 16px; }
+.chap-hero { position: relative; border-radius: 4px; overflow: hidden; background: #141210 center / cover no-repeat; aspect-ratio: 16 / 7; display: flex; align-items: center; justify-content: center; text-align: center; color: #fff; }
+.chap-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(rgba(10,8,6,.35), rgba(10,8,6,.55)); }
+.chap-in { position: relative; z-index: 1; padding: 0 24px; } .chap-no { display: block; font-size: 11px; letter-spacing: .3em; text-transform: uppercase; opacity: .85; margin-bottom: 12px; }
+.chap-title { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 4.4vw, 52px); line-height: 1.1; margin: 0 0 12px; } .chap-title em { font-style: italic; color: var(--gold-light); }
+.chap-words { margin: 0; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; opacity: .9; }
+.chap-quote { margin: 22px auto 22px; max-width: 760px; text-align: center; } .chap-quote p { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(20px, 2.4vw, 26px); line-height: 1.35; margin: 0 0 8px; } .chap-quote cite { font-style: normal; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: #6b6862; }
+.chap-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; } .chap-tile { position: relative; border-radius: 4px; overflow: hidden; aspect-ratio: 4 / 5; background: #1c1916; cursor: pointer; } .chap-tile img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s; } .chap-tile:hover img { transform: scale(1.04); }
+.chap-tile::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent 55%, rgba(10,8,6,.7)); } .chap-tile span { position: absolute; left: 0; right: 0; bottom: 14px; z-index: 1; text-align: center; color: #fff; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 20px; }
+.chap-enter { display: block; width: max-content; margin: 22px auto 6px; padding: 12px 4px; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--charcoal); border-bottom: 1px solid var(--charcoal); cursor: pointer; text-decoration: none; }
+@media (max-width: 640px) { .chap { padding: 26px 14px 10px; } .chap-hero { aspect-ratio: 1 / 1; } .chap-tiles { grid-template-columns: 1fr 1fr; gap: 12px; } .chap-tiles .chap-tile:nth-child(3):last-child { grid-column: 1 / -1; aspect-ratio: 16 / 9; } .chap-tile span { font-size: 17px; bottom: 10px; } .chap-words { font-size: 11px; letter-spacing: .12em; } }
+.ch-list { display: flex; flex-direction: column; gap: 10px; margin: 10px 0; } .ch-item { background: #fff; border: 1px solid var(--border); border-radius: 8px; } .ch-item > summary { padding: 10px 12px; cursor: pointer; font-weight: 600; display: flex; gap: 8px; align-items: center; } .ch-body { padding: 4px 12px 12px; } .ch-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; }
 </style>
 <style>.nav-toggle{position:fixed;top:14px;left:268px;z-index:60;width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--ivory);color:var(--charcoal);cursor:pointer;display:none;align-items:center;justify-content:center;font-size:18px;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.08)}body.admin-on .nav-toggle{display:flex}body.nav-closed .nav-toggle{left:14px}body.nav-closed .admin-sidebar{display:none}body.nav-closed .admin-main{margin-left:0;padding-left:64px}body.studio-focus .nav-toggle{display:none!important}@media (max-width:900px){body.admin-on .nav-toggle{display:none}}html.ui2 .nav-toggle{background:var(--o-glass-2);color:var(--o-ink);border-color:var(--o-line)}.pg-item{border:1px solid var(--border);border-radius:14px;padding:14px;margin:12px 0}.pg-item.pg-off{opacity:.7}.pg-head{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.pg-head b{flex:1;min-width:140px}.pg-tools{display:inline-flex;gap:6px}.pg-tip{border-top:1px dashed var(--border);padding:10px 0}.pg-sec>summary{cursor:pointer;min-height:40px;display:flex;align-items:center}.pg-item textarea,.pg-tip textarea{width:100%}</style>
 </head>
@@ -1367,6 +1395,7 @@ nav.dark .brand-mark { background: #fff; padding: 3px; box-sizing: border-box; }
       <div class="section-header"><div class="section-label" id="arrLabel">Handpicked</div><h2 class="section-title" id="arrTitle">New Arrivals</h2></div>
       <div class="scroll-track" id="scrollTrack"></div>
     </section>
+    <section class="chapters" id="homeChapters" aria-label="Stories by occasion"></section>
     <section id="signatureSection"></section>
     <section id="soldSection" class="sold-section" aria-label="Recently sold"></section>
     <section id="occasionSection" class="occ-section" aria-label="Shop by occasion"></section>
@@ -4404,6 +4433,7 @@ function defaultHome() {
     hero: { autoplay: true, interval: 6, slides: [{ id: 'hs1', enabled: true, image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=2574', focus: 'center', pos: 'left', overlay: 85, eyebrow: 'Est. Hyderabad', title: 'The Art of Slow Weaving', subtitle: 'Curated pure handloom sarees, honoring the legacy of Indian master artisans.', btnText: 'Explore the Collection', link: { type: 'shop', value: '' } }] },
     quote: { show: true, text: 'Every thread is a story, woven slowly and worn for years.', by: 'Anitha Pemmasani' },
     notes: { show: true, label: 'Written with care', title: 'Notes from the loom', text: 'Now and then we write a short note: a new saree off the loom, how a weave is made, a reminder before a festival. A few lines, only when there is something worth saying.', button: 'Send me the notes' },
+    chapters: chaptersDefault(),
     theme: { accent: '#8A6038', ink: '#2C2C2C', bg: '#FAF9F6', cream: '#F5F1EA', sage: '#5B6F61' },
     categories: { show: true, label: 'Shop by category', title: 'Find your weave', items: [
       { category: 'Tussar', enabled: true, image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=800' },
@@ -4425,7 +4455,7 @@ function syncHomeCats() {
   const d = defaultHome(); let changed = false;
   if (!db.home || typeof db.home !== 'object') { db.home = d; changed = true; }
   const H = db.home;
-  ['hero', 'categories', 'arrivals', 'signature', 'shopBanner', 'quote', 'notes', 'theme'].forEach(k => { if (!H[k] || typeof H[k] !== 'object') { H[k] = d[k]; changed = true; } });
+  ['hero', 'categories', 'arrivals', 'signature', 'shopBanner', 'quote', 'notes', 'theme', 'chapters'].forEach(k => { if (!H[k] || typeof H[k] !== 'object') { H[k] = d[k]; changed = true; } });
   if (!Array.isArray(H.hero.slides)) { H.hero.slides = []; changed = true; }
   if (!Array.isArray(H.categories.items)) { H.categories.items = []; changed = true; }
   if (!Array.isArray(H.signature.tiles)) { H.signature.tiles = []; changed = true; }
@@ -4682,7 +4712,7 @@ function renderSignature() {
 let BAN_SEL = -1;
 function banSelect(v) { BAN_SEL = +v; renderHomeAdmin(document.getElementById('adminContent')); }
 function banReset(i) { const c = BAN_CATS()[-i - 2]; if (db.home.categoryBanners) delete db.home.categoryBanners[c]; homeLive(false); renderHomeAdmin(document.getElementById('adminContent')); showToast('This category uses the automatic banner again', 'success'); }
-function renderHome() { applyTheme(); renderHomeNotes(); renderHomeQuote(); renderShopBanner(); renderOccasions(); renderRecentlySold(); renderRecent(); renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); ANN.sig = scheduleSignature(); renderAnnouncement(); renderPublicPages(); }
+function renderHome() { applyTheme(); renderHomeChapters(); renderHomeNotes(); renderHomeQuote(); renderShopBanner(); renderOccasions(); renderRecentlySold(); renderRecent(); renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); ANN.sig = scheduleSignature(); renderAnnouncement(); renderPublicPages(); }
 
 // ---- admin: saving (applies to the storefront instantly, written to storage a moment later) ----
 let HOME_TIMER = null;
@@ -4707,14 +4737,14 @@ function renderShopBanner() {
   const html = s.enabled === false || !safeImg(s.image) || !(s.title || s.subtitle) ? '' : `<div class="hero-slider shop-banner">${heroSlideHTML(s, -1, true, 'h2')}</div>`;
   if (box._h === html) return; box._h = html; box.innerHTML = html; box.style.display = html ? '' : 'none';
 }
-function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); renderHomeQuote(); renderHomeNotes(); homeSaveSoon(); }
+function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); renderHomeQuote(); renderHomeNotes(); renderHomeChapters(); homeSaveSoon(); }
 let HOME_PICK = null;
 function homePick(kind, idx) { HOME_PICK = { kind, idx }; document.getElementById('home-file').click(); }
 async function homeFileChosen(files) {
   const f = files[0], pick = HOME_PICK; document.getElementById('home-file').value = ''; if (!f || !pick) return;
   if (!/^image\//.test(f.type)) { showToast('Please choose an image file', 'error'); return; }
   let url; try { url = await fileToDataUrl(f, pick.kind === 'hero' ? 1920 : 1000); } catch (e) { showToast('Could not read that image', 'error'); return; }
-  const target = pick.kind === 'hero' ? HSL(pick.idx) : pick.kind === 'cat' ? db.home.categories.items[pick.idx] : db.home.signature.tiles[pick.idx];
+  const target = pick.kind === 'chap' ? chData().items[pick.idx] : pick.kind === 'ctile' ? (() => { const [a, b] = String(pick.idx).split(',').map(Number), c = chData().items[a]; if (!c) return null; c.tiles = c.tiles || []; while (c.tiles.length <= b) c.tiles.push({ category: '', image: '' }); return c.tiles[b]; })() : pick.kind === 'hero' ? HSL(pick.idx) : pick.kind === 'cat' ? db.home.categories.items[pick.idx] : db.home.signature.tiles[pick.idx];
   if (!target) return;
   const prev = target.image; target.image = url;
   if (!saveDB()) { target.image = prev; return; }
@@ -4832,6 +4862,7 @@ function renderHomeAdmin(container) {
       <div class="hs-grid2"><div class="form-group"><label>Signed by (optional)</label><input type="text" maxlength="60" value="${esc(H.quote.by)}" oninput="quoteSet('by',this.value)"></div><div class="form-group"><label>&nbsp;</label><button type="button" class="btn-sm btn-info-sm" onclick="quoteIdea()">✨ Suggest another quote</button></div></div>
     </div>
 
+    ${chaptersCardHTML()}
     ${themeCardHTML()}
     ${notesCardHTML()}
 
@@ -6563,6 +6594,57 @@ function notesCardHTML() {
     <div class="hs-grid2"><div class="form-group"><label>Button</label><input type="text" maxlength="30" value="${esc(n.button)}" oninput="notesSet('button',this.value)"></div><div class="form-group"><label>&nbsp;</label><button type="button" class="btn-sm btn-info-sm" onclick="notesIdea()">✨ Suggest other words</button></div></div>
     <p class="note">Visitors must tick a box saying they agree. The exact words they agreed to are saved with their email. The list is below.</p>
     <div id="notes-list">${notesListHTML()}</div></div>`;
+}
+// ================= STORY CHAPTERS ON THE HOME PAGE =================
+// Short "chapters" by occasion: a big photo panel with a title, a line of weaves, a quote in the shop's own words and three category tiles.
+// The owner writes them in Owner app → Home Page → Story chapters. Use *word* in a title to set that word in italics.
+const CH_ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+function chaptersDefault() {
+  return { show: true, items: [
+    { id: 'ch1', show: true, title: 'A Tuesday *morning.*', words: 'Everyday · Tussar · Ponduru Khadi · Mysore Silk', quote: 'Light enough to forget you are wearing it, and kind enough to last the whole working day.', by: 'Anitha Pemmasani', image: '', tiles: [{ category: 'Tussar', image: '' }, { category: 'Ponduru Khadi', image: '' }, { category: 'Mysore Silk', image: '' }], link: 'Enter this chapter' },
+    { id: 'ch2', show: true, title: 'A cousin’s *wedding.*', words: 'Occasion · Maheswari · Banarasi · Paithani', quote: 'Not the bride, and not in the front row, but the one whose saree people still ask about the next morning.', by: 'Anitha Pemmasani', image: '', tiles: [{ category: 'Maheswari', image: '' }, { category: 'Banarasi', image: '' }, { category: 'Paithani', image: '' }], link: 'Enter this chapter' },
+    { id: 'ch3', show: true, title: 'A festival, *at home.*', words: 'Festive · Kanjeevaram · Banarasi', quote: 'Lamps on the window sill, flowers at the door, and a silk that has waited all year for this morning.', by: 'Anitha Pemmasani', image: '', tiles: [{ category: 'Kanjeevaram', image: '' }, { category: 'Banarasi', image: '' }, { category: 'Paithani', image: '' }], link: 'Enter this chapter' }
+  ] };
+}
+function chaptersGet() { const c = db.home && db.home.chapters; return c && Array.isArray(c.items) ? c : chaptersDefault(); }
+const chEsc = t => esc(String(t || '')).replace(/\*([^*]+)\*/g, '<em>$1</em>');
+function renderHomeChapters() {
+  const sec = document.getElementById('homeChapters'); if (!sec) return; const C = chaptersGet(), items = C.items.filter(c => c.show !== false);
+  if (C.show === false || !items.length) { sec.innerHTML = ''; sec.style.display = 'none'; return; }
+  sec.style.display = '';
+  sec.innerHTML = items.map((c, n) => {
+    const img = safeImg(c.image), tiles = (c.tiles || []).filter(t => t && db.categories.includes(t.category)).slice(0, 3), first = tiles[0] ? tiles[0].category : '';
+    return `<article class="chap" aria-label="${esc(String(c.title || '').replace(/\*/g, ''))}"><div class="chap-hero"${img ? ` style="background-image:url('${esc(img).replace(/'/g, '%27')}')"` : ''}><div class="chap-in"><span class="chap-no">Chapter ${CH_ROMAN[n] || n + 1}</span><h2 class="chap-title">${chEsc(c.title)}</h2>${c.words ? `<p class="chap-words">${esc(c.words)}</p>` : ''}</div></div>
+      ${c.quote ? `<blockquote class="chap-quote"><p>“${esc(String(c.quote).replace(/^[“"]|[”"]$/g, ''))}”</p>${c.by ? `<cite>— ${esc(c.by)}</cite>` : ''}</blockquote>` : ''}
+      ${tiles.length ? `<div class="chap-tiles">${tiles.map(t => { const im = safeImg(t.image) || catTileImage({ category: t.category, image: '' }); return `<div class="chap-tile" role="link" tabindex="0" data-cat="${esc(t.category)}" onclick="filterAndShowShop(this.dataset.cat)" onkeydown="if(event.key==='Enter')filterAndShowShop(this.dataset.cat)">${im ? `<img src="${esc(im)}" alt="${esc(t.category)} sarees" loading="lazy" onerror="this.style.display='none'">` : ''}<span>${esc(t.category)} →</span></div>`; }).join('')}</div>` : ''}
+      ${first ? `<a class="chap-enter" role="link" tabindex="0" data-cat="${esc(first)}" onclick="filterAndShowShop(this.dataset.cat)" onkeydown="if(event.key==='Enter')filterAndShowShop(this.dataset.cat)">${esc(c.link || 'Enter this chapter')} →</a>` : ''}</article>`;
+  }).join('');
+}
+// ---- owner: edit the chapters ----
+function chData() { if (!db.home.chapters || !Array.isArray(db.home.chapters.items)) db.home.chapters = chaptersDefault(); return db.home.chapters; }
+function chLive(redraw) { renderHomeChapters(); homeSaveSoon(); if (redraw) { const c = el_('adminContent'); if (c) renderHomeAdmin(c); } }
+function chSet(i, k, v) { const c = chData().items[i]; if (c) { c[k] = v; chLive(false); } }
+function chToggle(i) { const c = chData().items[i]; if (c) { c.show = c.show === false; chLive(true); } }
+function chAllToggle() { const C = chData(); C.show = C.show === false; chLive(true); }
+function chTile(i, t, k, v) { const c = chData().items[i]; if (!c) return; c.tiles = c.tiles || []; while (c.tiles.length <= t) c.tiles.push({ category: '', image: '' }); c.tiles[t][k] = v; chLive(k === 'category'); }
+function chAdd() { const C = chData(); if (C.items.length >= 8) return showToast('Up to 8 chapters', 'error'); C.items.push({ id: 'ch' + Date.now().toString(36), show: true, title: 'A new *chapter.*', words: '', quote: '', by: 'Anitha Pemmasani', image: '', tiles: [], link: 'Enter this chapter' }); chLive(true); }
+function chDel(i) { if (!confirm('Delete this chapter?')) return; chData().items.splice(i, 1); chLive(true); }
+function chMove(i, d) { const a = chData().items, j = i + d; if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; chLive(true); }
+function chRestore() { if (!confirm('Replace your chapters with the 3 sample chapters?')) return; db.home.chapters = chaptersDefault(); chLive(true); }
+function chaptersCardHTML() {
+  const C = chaptersGet(), tog = (on, fn) => `<div class="toggle ${on ? 'active' : ''}" role="switch" tabindex="0" aria-checked="${!!on}" onclick="${fn}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"></div>`, cats = db.categories;
+  return `<div class="admin-card" id="chapters-card"><h3>📖 Story chapters</h3>
+    <p class="note" style="margin:0 0 8px">Short chapters by occasion on the home page: a photo panel, a title, a quote in your own words and three category tiles. Put *stars* around a word in the title to set it in italics.</p>
+    <div class="hs-bar"><span>Show the chapters on the home page</span>${tog(C.show !== false, 'chAllToggle()')}</div>
+    <div class="ch-list">${C.items.map((c, i) => `<details class="ch-item"><summary>${esc(String(c.title || 'Chapter').replace(/\*/g, ''))}${c.show === false ? ' <small>(hidden)</small>' : ''}</summary><div class="ch-body">
+      <div class="hs-bar"><span>Show this chapter</span>${tog(c.show !== false, `chToggle(${i})`)}</div>
+      <div class="hs-grid2"><div class="form-group"><label>Title</label><input type="text" maxlength="60" value="${esc(c.title)}" oninput="chSet(${i},'title',this.value)"></div><div class="form-group"><label>Line of weaves under the title</label><input type="text" maxlength="90" value="${esc(c.words)}" oninput="chSet(${i},'words',this.value)"></div></div>
+      <div class="form-group"><label>Quote (your own words)</label><textarea rows="2" maxlength="180" oninput="chSet(${i},'quote',this.value)">${esc(c.quote)}</textarea></div>
+      <div class="hs-grid2"><div class="form-group"><label>Signed by</label><input type="text" maxlength="60" value="${esc(c.by)}" oninput="chSet(${i},'by',this.value)"></div><div class="form-group"><label>Link text</label><input type="text" maxlength="30" value="${esc(c.link)}" oninput="chSet(${i},'link',this.value)"></div></div>
+      <div class="form-group"><label>Big photo (leave empty for a calm dark panel)</label><div class="hs-img-row"><input type="text" value="${esc(String(c.image || '').startsWith('data:') ? '' : c.image || '')}" placeholder="${String(c.image || '').startsWith('data:') ? 'Uploaded photo in use — paste a link to replace' : 'https://… image link'}" onchange="chSet(${i},'image',this.value)"><button class="btn-sm btn-primary-sm" onclick="homePick('chap',${i})">⬆ Upload photo</button></div></div>
+      <div class="ch-tiles">${[0, 1, 2].map(t => { const tl = (c.tiles || [])[t] || { category: '', image: '' }; return `<div class="form-group"><label>Tile ${t + 1}</label><select onchange="chTile(${i},${t},'category',this.value)"><option value="">(none)</option>${cats.map(k => `<option${k === tl.category ? ' selected' : ''}>${esc(k)}</option>`).join('')}</select><button class="btn-sm" style="margin-top:6px" onclick="homePick('ctile','${i},${t}')">⬆ Own photo</button></div>`; }).join('')}</div>
+      <div class="th-actions"><button type="button" class="btn-sm" onclick="chMove(${i},-1)">↑ Up</button><button type="button" class="btn-sm" onclick="chMove(${i},1)">↓ Down</button><button type="button" class="btn-sm" onclick="chDel(${i})">🗑 Delete</button></div></div></details>`).join('')}</div>
+    <div class="th-actions"><button type="button" class="btn-sm btn-info-sm" onclick="chAdd()">＋ Add a chapter</button><button type="button" class="btn-sm" onclick="chRestore()">↺ Use the 3 sample chapters</button></div></div>`;
 }
 // ================= OWNER DASHBOARD (interactive) + DRAFTS BY CATEGORY + ADD-TO-CART ANIMATION (29 Oct 2026) =================
 const DASH = { range: '30', metric: 'revenue', sel: null };

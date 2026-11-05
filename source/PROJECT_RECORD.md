@@ -116,6 +116,7 @@ Owner's guidance: *"we will setup everything after we host it"* — real hosting
 | `care-test.cjs` | 9 | Saree Care tabs, wash-care guide, photo link repair |
 | `parts-test.cjs` | 8 | the website source parts and the joined file |
 | `addresses-test.cjs` | 25 | each page and saree has its own address, Back/Forward, old links |
+| `chapters-test.cjs` | 19 | story chapters on the home page (website, owner editing, phone layout) and the tidier New Arrivals cards |
 | `colours-notes-test.cjs` | 31 | calmer sizes on computers, "Notes from the loom" sign-up, website colours (presets, own colours, photo match, Claude ideas, readability guard) |
 | `onebox-test.cjs` | 9 | one-server hosting: the server serves the real website, page addresses, 404 page, sitemap and the owner app from one address |
 | `redirect-test.cjs` | 7 | the old GitHub Pages address becomes a signpost to anithapemmasani.com (same page, search and #part kept; old site map removed) |
@@ -143,6 +144,11 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**12 Nov 2026 (Story chapters on the home page; tidier New Arrivals cards on phones)**
+- Owner sent phone printouts of the reference shop and of our live site and asked for both: tidy our phone pages and add the story-style home page. **Tidy-up:** New Arrivals cards no longer stack four big buttons; the heart and share sit on the photo, View and Add share one row, and phones show about two cards at a time. **Story chapters:** a new home-page section (after New Arrivals) of occasion chapters (photo panel, "Chapter I", title with an italic word, line of weaves, quote, three category tiles, "Enter this chapter"), three sample chapters in our own words, fully editable in Home Page → Story chapters (add, hide, reorder, delete, photo upload). Guide: HOW-IT-WORKS/36-story-chapters-and-card-tidy.md.
+- Seen in the owner's printout (not changed here): the live site still shows demo products and sample photos (a toy car, a phone) from the starter data, and the home banner photo did not appear in the printout. The owner should replace the demo products and banner photo with real ones.
+- Tests: new `tests/chapters-test.cjs`; phone audit and the other home/shop suites still pass. Not tested: real photos, a real phone, Safari.
 
 **12 Nov 2026 (Collection page gets the calmer sizes too)**
 - Owner: "I want the size change to appear in the Collection also". The Collection page on computers now matches the home page: a short banner (140 to 210px high, 34px title, 14px line under it), a 28px page heading, compact cards (10px/12px padding, 15px name, 13px price, 34px View/Add buttons, 34px heart and share, smaller badges). Four across as before. Phones unchanged. CSS only (last block of `src/css/190-design-fixes.css`).

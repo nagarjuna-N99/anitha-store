@@ -7,6 +7,7 @@ function defaultHome() {
     hero: { autoplay: true, interval: 6, slides: [{ id: 'hs1', enabled: true, image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=2574', focus: 'center', pos: 'left', overlay: 85, eyebrow: 'Est. Hyderabad', title: 'The Art of Slow Weaving', subtitle: 'Curated pure handloom sarees, honoring the legacy of Indian master artisans.', btnText: 'Explore the Collection', link: { type: 'shop', value: '' } }] },
     quote: { show: true, text: 'Every thread is a story, woven slowly and worn for years.', by: 'Anitha Pemmasani' },
     notes: { show: true, label: 'Written with care', title: 'Notes from the loom', text: 'Now and then we write a short note: a new saree off the loom, how a weave is made, a reminder before a festival. A few lines, only when there is something worth saying.', button: 'Send me the notes' },
+    chapters: chaptersDefault(),
     theme: { accent: '#8A6038', ink: '#2C2C2C', bg: '#FAF9F6', cream: '#F5F1EA', sage: '#5B6F61' },
     categories: { show: true, label: 'Shop by category', title: 'Find your weave', items: [
       { category: 'Tussar', enabled: true, image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=800' },
@@ -28,7 +29,7 @@ function syncHomeCats() {
   const d = defaultHome(); let changed = false;
   if (!db.home || typeof db.home !== 'object') { db.home = d; changed = true; }
   const H = db.home;
-  ['hero', 'categories', 'arrivals', 'signature', 'shopBanner', 'quote', 'notes', 'theme'].forEach(k => { if (!H[k] || typeof H[k] !== 'object') { H[k] = d[k]; changed = true; } });
+  ['hero', 'categories', 'arrivals', 'signature', 'shopBanner', 'quote', 'notes', 'theme', 'chapters'].forEach(k => { if (!H[k] || typeof H[k] !== 'object') { H[k] = d[k]; changed = true; } });
   if (!Array.isArray(H.hero.slides)) { H.hero.slides = []; changed = true; }
   if (!Array.isArray(H.categories.items)) { H.categories.items = []; changed = true; }
   if (!Array.isArray(H.signature.tiles)) { H.signature.tiles = []; changed = true; }
@@ -285,7 +286,7 @@ function renderSignature() {
 let BAN_SEL = -1;
 function banSelect(v) { BAN_SEL = +v; renderHomeAdmin(document.getElementById('adminContent')); }
 function banReset(i) { const c = BAN_CATS()[-i - 2]; if (db.home.categoryBanners) delete db.home.categoryBanners[c]; homeLive(false); renderHomeAdmin(document.getElementById('adminContent')); showToast('This category uses the automatic banner again', 'success'); }
-function renderHome() { applyTheme(); renderHomeNotes(); renderHomeQuote(); renderShopBanner(); renderOccasions(); renderRecentlySold(); renderRecent(); renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); ANN.sig = scheduleSignature(); renderAnnouncement(); renderPublicPages(); }
+function renderHome() { applyTheme(); renderHomeChapters(); renderHomeNotes(); renderHomeQuote(); renderShopBanner(); renderOccasions(); renderRecentlySold(); renderRecent(); renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); ANN.sig = scheduleSignature(); renderAnnouncement(); renderPublicPages(); }
 
 // ---- admin: saving (applies to the storefront instantly, written to storage a moment later) ----
 let HOME_TIMER = null;
@@ -310,14 +311,14 @@ function renderShopBanner() {
   const html = s.enabled === false || !safeImg(s.image) || !(s.title || s.subtitle) ? '' : `<div class="hero-slider shop-banner">${heroSlideHTML(s, -1, true, 'h2')}</div>`;
   if (box._h === html) return; box._h = html; box.innerHTML = html; box.style.display = html ? '' : 'none';
 }
-function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); renderHomeQuote(); renderHomeNotes(); homeSaveSoon(); }
+function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); renderHomeQuote(); renderHomeNotes(); renderHomeChapters(); homeSaveSoon(); }
 let HOME_PICK = null;
 function homePick(kind, idx) { HOME_PICK = { kind, idx }; document.getElementById('home-file').click(); }
 async function homeFileChosen(files) {
   const f = files[0], pick = HOME_PICK; document.getElementById('home-file').value = ''; if (!f || !pick) return;
   if (!/^image\//.test(f.type)) { showToast('Please choose an image file', 'error'); return; }
   let url; try { url = await fileToDataUrl(f, pick.kind === 'hero' ? 1920 : 1000); } catch (e) { showToast('Could not read that image', 'error'); return; }
-  const target = pick.kind === 'hero' ? HSL(pick.idx) : pick.kind === 'cat' ? db.home.categories.items[pick.idx] : db.home.signature.tiles[pick.idx];
+  const target = pick.kind === 'chap' ? chData().items[pick.idx] : pick.kind === 'ctile' ? (() => { const [a, b] = String(pick.idx).split(',').map(Number), c = chData().items[a]; if (!c) return null; c.tiles = c.tiles || []; while (c.tiles.length <= b) c.tiles.push({ category: '', image: '' }); return c.tiles[b]; })() : pick.kind === 'hero' ? HSL(pick.idx) : pick.kind === 'cat' ? db.home.categories.items[pick.idx] : db.home.signature.tiles[pick.idx];
   if (!target) return;
   const prev = target.image; target.image = url;
   if (!saveDB()) { target.image = prev; return; }
@@ -435,6 +436,7 @@ function renderHomeAdmin(container) {
       <div class="hs-grid2"><div class="form-group"><label>Signed by (optional)</label><input type="text" maxlength="60" value="${esc(H.quote.by)}" oninput="quoteSet('by',this.value)"></div><div class="form-group"><label>&nbsp;</label><button type="button" class="btn-sm btn-info-sm" onclick="quoteIdea()">✨ Suggest another quote</button></div></div>
     </div>
 
+    ${chaptersCardHTML()}
     ${themeCardHTML()}
     ${notesCardHTML()}
 

@@ -1038,6 +1038,83 @@
       "text": "Now and then we write a short note: a new saree off the loom, how a weave is made, a reminder before a festival. A few lines, only when there is something worth saying.",
       "button": "Send me the notes"
     },
+    "chapters": {
+      "show": true,
+      "items": [
+        {
+          "id": "ch1",
+          "show": true,
+          "title": "A Tuesday *morning.*",
+          "words": "Everyday · Tussar · Ponduru Khadi · Mysore Silk",
+          "quote": "Light enough to forget you are wearing it, and kind enough to last the whole working day.",
+          "by": "Anitha Pemmasani",
+          "image": "",
+          "tiles": [
+            {
+              "category": "Tussar",
+              "image": ""
+            },
+            {
+              "category": "Ponduru Khadi",
+              "image": ""
+            },
+            {
+              "category": "Mysore Silk",
+              "image": ""
+            }
+          ],
+          "link": "Enter this chapter"
+        },
+        {
+          "id": "ch2",
+          "show": true,
+          "title": "A cousin’s *wedding.*",
+          "words": "Occasion · Maheswari · Banarasi · Paithani",
+          "quote": "Not the bride, and not in the front row, but the one whose saree people still ask about the next morning.",
+          "by": "Anitha Pemmasani",
+          "image": "",
+          "tiles": [
+            {
+              "category": "Maheswari",
+              "image": ""
+            },
+            {
+              "category": "Banarasi",
+              "image": ""
+            },
+            {
+              "category": "Paithani",
+              "image": ""
+            }
+          ],
+          "link": "Enter this chapter"
+        },
+        {
+          "id": "ch3",
+          "show": true,
+          "title": "A festival, *at home.*",
+          "words": "Festive · Kanjeevaram · Banarasi",
+          "quote": "Lamps on the window sill, flowers at the door, and a silk that has waited all year for this morning.",
+          "by": "Anitha Pemmasani",
+          "image": "",
+          "tiles": [
+            {
+              "category": "Kanjeevaram",
+              "image": ""
+            },
+            {
+              "category": "Banarasi",
+              "image": ""
+            },
+            {
+              "category": "Paithani",
+              "image": ""
+            }
+          ],
+          "link": "Enter this chapter"
+        }
+      ]
+    },
     "theme": {
       "accent": "#8A6038",
       "ink": "#2C2C2C",
