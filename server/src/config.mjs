@@ -34,7 +34,9 @@ export function loadConfig(overrides = {}) {
       ownerPhone: env('OWNER_PHONE').replace(/\D/g, ''),
       ownerAlertTemplate: env('OWNER_ALERT_TEMPLATE'),
       ownerOrderTemplate: env('OWNER_ORDER_TEMPLATE', 'owner_new_order'),      // used when the owner's 24-hour chat window is closed: asks for approval of a website order
-      ownerReadyTemplate: env('OWNER_READY_TEMPLATE', 'owner_order_approved'), // ...and sends the pack-and-post details
+      ownerReadyTemplate: env('OWNER_READY_TEMPLATE', 'owner_order_approved'),
+      ownerSummaryTemplate: env('OWNER_SUMMARY_TEMPLATE', 'owner_daily_summary'),   // the morning summary outside the 24-hour window
+      ownerStockTemplate: env('OWNER_STOCK_TEMPLATE', 'owner_stock_alert')           // low-stock / sold-out alerts outside the 24-hour window, // ...and sends the pack-and-post details
     },
     // Cart reminders: first one after CART_REMINDER_DELAYS_MIN[0] minutes of inactivity, second that many minutes (gap) after the first.
     cart: {

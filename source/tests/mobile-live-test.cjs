@@ -49,12 +49,22 @@ const ROOT = process.cwd(), SETUP = 'setup-token-0123456789', PW = 'Correct-Hors
     ok('admin phone: the Help page lists admin sections, searchable, readable', await ev(() => document.querySelectorAll('#how-list .how-sec').length >= 9 && !!document.getElementById('how-q') && document.getElementById('how-q').getBoundingClientRect().width > 150));
     await ev(() => switchAdminTab('settings')); await sleep(500);
     ok('admin phone: Settings shows only the admin cards and each field has its explanation', await ev(() => { const vis = [...document.querySelectorAll('#adminContent [data-for]')].filter(c => c.offsetParent !== null).map(c => c.dataset.for); return vis.length >= 2 && vis.every(x => x === 'admin') && document.querySelectorAll('#adminContent .fld-help').length >= 3; }));
+    await ev(() => switchAdminTab('settings')); await sleep(900);
+    ok('admin phone: Settings has the Automatic backup block (OFF until a password is set), within the screen', await ev(() => !!document.getElementById('abk-pw') && /OFF/.test(document.getElementById('abk-pill').innerText) && /Not on yet/.test(document.getElementById('abk-list').innerText)) && await noSideScroll(A));
+    await ev(() => { document.getElementById('abk-pw').value = 'short'; admAutoBkSave(); }); await sleep(600);
+    ok('admin phone: a short backup password is refused (the backup stays OFF and no file is made)', await ev(() => /OFF/.test(document.getElementById('abk-pill').innerText)) && !fs.existsSync(path.join(data, 'backups')));
+    await ev(() => { document.getElementById('abk-pw').value = 'Phone-test-password-12'; admAutoBkSave(); }); await sleep(2500);
+    ok('admin phone: with a good password the first backup is made and listed with a Download button; the pill turns ON', await ev(() => /ON/.test(document.getElementById('abk-pill').innerText) && /backup-\d{4}-\d{2}-\d{2}\.json/.test(document.getElementById('abk-list').innerText) && !!document.querySelector('#abk-list button')) && await noSideScroll(A));
+    ok('admin phone: the backup file on the server is locked (the shop name is not readable in it)', (() => { const f = path.join(data, 'backups'); const n = fs.readdirSync(f).filter(x => /^backup-/.test(x)); return n.length === 1 && !/Anitha/.test(fs.readFileSync(path.join(f, n[0]), 'utf8')) && /aes-gcm-pbkdf2/.test(fs.readFileSync(path.join(f, n[0]), 'utf8')); })());
     // ================= OWNER on a phone =================
     const O = await phone(), eo = (f, a) => O.evaluate(f, a); await signIn(O, true);
     await O.click('#adminHamburger'); await sleep(400);
     ok('owner phone: the slide-out menu shows owner pages (Image Studio, Orders, Products) and not admin-only ones', await eo(() => { const vis = [...document.querySelectorAll('.admin-mobile-nav li')].filter(l => l.offsetParent !== null), tabs = vis.filter(l => l.dataset.tab).map(l => l.dataset.tab); return tabs.includes('studio') && tabs.includes('orders') && tabs.includes('products') && tabs.includes('guide') && !tabs.includes('home') && !tabs.includes('promo') && !tabs.includes('ops'); }));
     await eo(() => { closeAdminNav && closeAdminNav(); switchAdminTab('orders'); }); await sleep(1200);
     ok('owner phone: Orders shows the website-order alerts card with the auto-approval switch and the number box', await eo(() => { const c = document.getElementById('orderflow-card'); return !!c && !!document.getElementById('of-auto') && !!document.getElementById('of-phone') && document.getElementById('of-phone').getBoundingClientRect().width > 150; }) && await noSideScroll(O));
+    ok('owner phone: the Orders card also has the Morning summary and Low-stock alert switches, within the screen', await eo(() => !!document.getElementById('of-sum') && !!document.getElementById('of-stk') && /Send me today/.test(document.getElementById('orderflow-card').innerText)) && await noSideScroll(O));
+    await eo(() => document.getElementById('of-sum').click()); await sleep(2200);
+    ok('owner phone: switching the morning summary off is saved on the server', await eo(async () => (await admApi('GET', '/admin/api/db')).db.settings.dailySummary === false));
     await eo(() => document.getElementById('of-auto').click()); await sleep(2200);
     ok('owner phone: switching auto-approval on is saved on the server', await eo(async () => (await admApi('GET', '/admin/api/db')).db.settings.autoApproveOrders === true));
     await eo(() => switchAdminTab('categories')); await sleep(600);

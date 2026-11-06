@@ -1438,6 +1438,68 @@ const adminGet = (base, p) => fetch(base + p, { headers: { Authorization: 'Beare
     ok('categories: one press (owner) sets the eleven categories and the moments, and the public website data shows them at once', p1.status === 200 && p1.j.ok && g1.j.matches === true && g1.j.applied === true && (await (await fetch(base + '/public/shop')).json()).categories.slice(0, 11).join() === REAL_CATEGORIES.join() && (await (await fetch(base + '/public/shop')).json()).home.chapters.items.length === 4);
     app.shop.mutate(db => { for (const k of Object.keys(db)) delete db[k]; Object.assign(db, snap); });
   }
+  { // ---- automations: morning summary, stock alerts, automatic encrypted backup ----
+    const { makeAutomation, encryptBackup, decryptBackup, SUMMARY_FROM } = await import('../src/automation.mjs'), { ShopData: SDa } = await import('../src/shopdata.mjs'), { WebOrders: WOa } = await import('../src/weborders.mjs'), { SecretStore } = await import('../src/secrets.mjs');
+    const D0 = Date.UTC(2026, 10, 7, 0, 0);   // 5:30 IST
+    const mkA = (settings = {}, extra = {}) => {
+      const d = fs.mkdtempSync(path.join(os.tmpdir(), 'au-')), sd = new SDa(d), wo = new WOa(d, () => D0); let T = D0;
+      sd.importAll({ settings: { siteUrl: 'https://shop.test', ...settings }, categories: ['Tussar'], accessoryCategories: ['Jewellery'], products: [{ id: 'p1', name: 'Maroon Tussar', category: 'Tussar', price: 5000, stock: 5, threshold: 2 }, { id: 'p2', name: 'Blue Silk', category: 'Tussar', price: 9000, stock: 3, threshold: 2 }, { id: 'j1', name: 'Jhumka', category: 'Jewellery', price: 900, stock: 0 }], users: [], orders: [{ id: 'AP-1', status: 'placed', customer: 'A' }, { id: 'AP-2', status: 'shipped', trackingNo: 'X' }, { id: 'AP-3', status: 'confirmed' }], invoices: [], logs: [], coupons: [], drafts: [], consentLog: [], reviews: [], stockAlerts: [], home: {} });
+      const sent = [], mails = [], store = { s: { handoffs: [{ id: 'HO1', status: 'open', phone: '9198' }, { id: 'HO2', status: 'open', phone: 'test-x' }, { id: 'HO3', status: 'closed', phone: '9199' }] } };
+      const au = makeAutomation({ cfg: { wa: {} }, shop: sd, store, weborders: wo, pipeline: { sendSmart: async (to, text, o) => { sent.push({ to, text, o }); } }, mail: async (subject, text, html) => { mails.push({ subject, text, html }); return true; }, orderflow: { ownerPhone: () => extra.owner === undefined ? '919000000000' : extra.owner }, secrets: new SecretStore(d, 'tok'), dir: d, now: () => T, ...extra.over });
+      return { d, sd, wo, au, sent, mails, store, setT: t => { T = t; } };
+    };
+    const at = (h, m = 0, day = 7) => Date.UTC(2026, 10, day, h, m) - 330 * 60_000;
+    let h = mkA(); h.wo.add({ order: { id: 'L1', date: '2026-11-07', items: [{ productId: 'p1', name: 'Maroon Tussar', quantity: 1, price: 5000 }], shippingAddress: {}, pricing: { total: 5000 }, total: 5000 }, customer: { name: 'Priya', phone: '+919800011111', consents: {}, addr: {} }, consentLog: [] }, h.sd.get().db, 'ip');
+    h.sd.mutate(db => { db.products[0].stock = 1; db.products[1].stock = 0; });
+    h.setT(at(8, 0)); ok('summary: nothing goes before 8:30 in the morning', (await h.au.runSummary()).skipped === true && h.sent.length === 0);
+    h.setT(at(9, 0)); const r1 = await h.au.runSummary(), tx = h.sent[0] && h.sent[0].text;
+    ok('summary: at 9:00 one message to the owner says what needs attention (website orders to approve, orders to post, low stock, sold out, chats waiting) with real numbers and ids', r1.sent && h.sent.length === 1 && h.sent[0].to === '919000000000' && /1 website order waiting for your YES: WO-0001/.test(tx) && /2 orders to post: AP-1, AP-3/.test(tx) && /Running low: Maroon Tussar/.test(tx) && /Sold out: Blue Silk/.test(tx) && /1 chat waiting/.test(tx) && !/Jhumka/.test(tx));
+    ok('summary: test chats and closed chats are not counted; an accessory that is out of stock is not listed as a sold-out saree', !/2 chats/.test(tx) && !/Jhumka/.test(tx));
+    ok('summary: the 24-hour rule is respected (the approved template gets the whole thing on one line), and the same text goes by email', h.sent[0].o.template === 'owner_daily_summary' && !/\n/.test(h.sent[0].o.params[0]) && /WO-0001/.test(h.sent[0].o.params[0]) && h.mails.length === 1 && /Good morning/.test(h.mails[0].text));
+    h.setT(at(10, 0)); await h.au.runSummary(); h.setT(at(23, 0)); await h.au.runSummary(); ok('summary: never twice in the same day', h.sent.length === 1);
+    h.setT(at(9, 0, 8)); await h.au.runSummary(); ok('summary: the next day it comes again while things still need attention', h.sent.length === 2);
+    h.sd.mutate(db => { db.products.forEach(p => { p.stock = 9; }); db.orders.forEach(o => { o.trackingNo = 'T'; }); }); h.wo.update('WO-0001', { status: 'accepted' }); h.store.s.handoffs.forEach(x => { x.status = 'closed'; });
+    h.setT(at(9, 0, 9)); const r3 = await h.au.runSummary(); ok('summary: with nothing to report, nothing is sent (no noise) and the day is still marked', r3.skipped === 'nothing-to-report' && h.sent.length === 2 && (await h.au.runSummary()).skipped === true);
+    h = mkA({ dailySummary: false }); h.setT(at(9, 0)); ok('summary: the owner can switch it off', (await h.au.runSummary()).skipped === true && h.sent.length === 0);
+    h = mkA(); h.setT(at(5, 0)); ok('summary: "send me today\'s summary now" works at any hour', (await h.au.runSummary({ force: true })).sent === true && h.sent.length === 1);
+    h = mkA({}, { owner: '' }); h.setT(at(9, 0)); { const r = await h.au.runSummary(); ok('summary: with no owner number only the email goes, and nothing crashes', r.sent && h.sent.length === 0 && h.mails.length === 1); }
+    // stock
+    h = mkA(); const b0 = await h.au.checkStock(); ok('stock: the first look only remembers the levels (switching it on never floods the owner)', b0.sent === false && h.sent.length === 0);
+    h.sd.mutate(db => { db.products[0].stock = 1; }); const s1 = await h.au.checkStock();
+    ok('stock: a saree down to its last piece sends one alert', s1.sent && s1.count === 1 && /Maroon Tussar has only 1 left/.test(h.sent[0].text) && h.sent[0].o.template === 'owner_stock_alert' && h.mails.length === 1);
+    await h.au.checkStock(); ok('stock: the same change is never announced twice', h.sent.length === 1);
+    h.sd.mutate(db => { db.products[0].stock = 0; db.products[1].stock = 1; }); const s2 = await h.au.checkStock();
+    ok('stock: selling out (and another going low) are grouped into ONE message', s2.count === 2 && h.sent.length === 2 && /Maroon Tussar is sold out/.test(h.sent[1].text) && /Blue Silk has only 1 left/.test(h.sent[1].text));
+    h.sd.mutate(db => { db.products[0].stock = 6; }); await h.au.checkStock(); h.sd.mutate(db => { db.products[0].stock = 1; }); await h.au.checkStock();
+    ok('stock: after a restock the alert comes again the next time it runs low', h.sent.length === 3 && /Maroon Tussar has only 1 left/.test(h.sent[2].text));
+    h.sd.mutate(db => { db.products.push({ id: 'p9', name: 'New One', category: 'Tussar', price: 1, stock: 4 }); }); await h.au.checkStock(); ok('stock: a newly added saree with stock does not alert', h.sent.length === 3);
+    h = mkA({ stockAlerts: false }); await h.au.checkStock(); h.sd.mutate(db => { db.products[0].stock = 0; }); await h.au.checkStock(); ok('stock: the owner can switch the alerts off', h.sent.length === 0);
+    // backup
+    h = mkA(); h.setT(at(4, 0)); ok('backup: without a password nothing is made and it says so', (await h.au.runBackup()).skipped === 'no-password' && !h.au.status().passwordSet && h.au.listBackups().length === 0);
+    h.au.setPassword('a-long-backup-password-1'); h.setT(at(2, 0)); ok('backup: before 3:10 in the night the automatic run waits', (await h.au.runBackup()).skipped === true);
+    h.setT(at(4, 0)); const bk = await h.au.runBackup(), fp = path.join(h.au.bdir, bk.name || 'x');
+    ok('backup: at night a backup file is made, readable only by the server user, and listed', bk.ok && /^backup-2026-11-07\.json$/.test(bk.name) && (fs.statSync(fp).mode & 0o077) === 0 && h.au.listBackups().length === 1 && h.au.status().lastOk > 0);
+    const box = JSON.parse(fs.readFileSync(fp, 'utf8'));
+    ok('backup: it is locked (not readable without the password), and the right password gives back exactly the shop data', box.enc === 'aes-gcm-pbkdf2' && !/Maroon Tussar/.test(fs.readFileSync(fp, 'utf8')) && JSON.stringify(decryptBackup(box, 'a-long-backup-password-1')) === JSON.stringify(h.sd.get().db) && (() => { try { decryptBackup(box, 'wrong-password-xx'); return false; } catch { return true; } })());
+    { const k = await globalThis.crypto.subtle.importKey('raw', new TextEncoder().encode('a-long-backup-password-1'), 'PBKDF2', false, ['deriveKey']), key = await globalThis.crypto.subtle.deriveKey({ name: 'PBKDF2', salt: Buffer.from(box.salt, 'base64'), iterations: box.iter, hash: 'SHA-256' }, k, { name: 'AES-GCM', length: 256 }, false, ['decrypt']), plain = await globalThis.crypto.subtle.decrypt({ name: 'AES-GCM', iv: Buffer.from(box.iv, 'base64') }, key, Buffer.from(box.data, 'base64'));
+      ok('backup: the file opens with the browser\'s own method too (so the app\'s "Restore backup" accepts it)', JSON.parse(new TextDecoder().decode(plain)).products.length === 3); }
+    await h.au.runBackup(); h.setT(at(23, 0)); await h.au.runBackup(); ok('backup: once per day', h.au.listBackups().length === 1);
+    for (let day = 8; day <= 24; day++) { h.setT(at(4, 0, day)); await h.au.runBackup(); }
+    ok('backup: only the newest 14 are kept', h.au.listBackups().length === 14 && h.au.listBackups()[0].name === 'backup-2026-11-24.json');
+    ok('backup: a name that tries to leave the folder is refused', h.au.backupPath('../secrets.json') === null && h.au.backupPath('backup-2026-11-24.json') !== null && h.au.backupPath('backup-2026-11-24.json/../../x') === null);
+    // routes
+    const AA = (m, u, b) => call(m, u, b, { as: 'admin' }), AO = (m, u, b) => call(m, u, b, { as: 'owner' });
+    ok('automation routes: only the admin can open them; the owner is refused', (await AA('GET', '/admin/api/automation')).status === 200 && (await AO('GET', '/admin/api/automation')).status === 403 && (await AO('POST', '/admin/api/automation/backup-now', {})).status === 403);
+    ok('automation routes: a short backup password is refused, and "back up now" without one says so', (await AA('POST', '/admin/api/automation/backup-password', { password: 'short' })).status === 422 && (await AA('POST', '/admin/api/automation/backup-now', {})).status === 422);
+    const sp = await AA('POST', '/admin/api/automation/backup-password', { password: 'Another-long-password-77' });
+    ok('automation routes: with a good password the first backup is made at once and listed', sp.status === 200 && sp.j.firstBackup === true && sp.j.passwordSet === true && sp.j.files.length === 1 && !JSON.stringify(sp.j).includes('Another-long'));
+    const dl = await AA('GET', '/admin/api/automation/backup/' + sp.j.files[0].name), dlj = JSON.parse(dl.txt);
+    ok('automation routes: the admin can download a backup (still locked), a bad name is refused', dl.status === 200 && dlj.enc === 'aes-gcm-pbkdf2' && (await AA('GET', '/admin/api/automation/backup/..%2Fsecrets.json')).status === 404);
+    const opsr = (await AA('GET', '/admin/api/ops')).j, bkc = opsr.groups.flatMap(g => g.checks).find(c => c.id === 'backup');
+    ok('Ops shows the automatic backup (no longer "never made"), and says how many copies are kept on this server', bkc && bkc.status !== 'fail' && /automatic, 1 copies kept/.test(bkc.detail));
+    ok('the owner can ask for the summary now (nothing to report is a valid answer)', (await AO('POST', '/admin/api/summary-now', {})).status === 200);
+    { const lg = fs.readFileSync(path.join(app.cfg.dataDir, 'admin-audit.log'), 'utf8'); ok('automation: setting the password and downloading are written to the activity log without the password', /backup-password-set/.test(lg) && /backup-downloaded-auto/.test(lg) && !/Another-long-password/.test(lg)); }
+  }
   // ---- Instagram ----
   r = await call('GET', '/admin/api/social/status'); ok('Instagram: status shows connected, a masked account and the https requirement', r.j.connected === true && /…/.test(r.j.account) && !r.txt.includes('tok-ig-secret') && r.j.httpsOk === true);
   ok('Instagram: only real JPEG photos are accepted', (await call('POST', '/admin/api/social/media', { dataUrl: 'data:image/png;base64,AAAA' })).status === 400 && (await call('POST', '/admin/api/social/media', { dataUrl: 'data:image/jpeg;base64,' + Buffer.alloc(900, 1).toString('base64') })).status === 400);

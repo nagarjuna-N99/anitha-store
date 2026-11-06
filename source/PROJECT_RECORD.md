@@ -119,7 +119,7 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 ## 6. Test suites (all passing on 12 Nov 2026; known slow spots: sign-in timeouts under load and the phone-speed test near its limit pass when rerun alone)
 | Suite | Checks | Covers |
 |---|---|---|
-| `wa-assistant` (`npm test`) | 666 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
+| `wa-assistant` (`npm test`) | 698 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
 | `smoke2.cjs` | 10 | orders, invoices, reports |
 | `studio-test2.cjs` / `studio-test3.cjs` | 50 / 61 | Image Studio, drafts, product form, AI copy |
 | `shop-test.cjs` | 56 | favourites, share links, OTP login, consents, Terms/Privacy |
@@ -174,6 +174,10 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**6 Nov 2026 (Automations: morning summary, stock alerts, automatic encrypted backup)**
+- Owner approved the proposed automations (the first three). Built (guide 45): a **morning summary** to the owner's WhatsApp and email from 8:30 IST (orders to approve, orders to post, low and sold-out stock, chats waiting; nothing to report = no message; once per day); **stock alerts** when a saree reaches its last piece or sells out (grouped, never repeated, silent on first look); an **automatic encrypted backup** every night from 3:10 IST using a password the admin sets (same lock as the manual backup so Restore opens it, newest 14 kept, on the same server disk, so a download and a snapshot are still needed). Owner switches for the first two sit on the Orders card; the backup block is in the Admin's Settings. Ops now counts the automatic backup. Two utility templates to create in Meta (`owner_daily_summary`, `owner_stock_alert`).
+- Tests: server 698 (+32 `summary:`, `stock:`, `backup:` and route checks, including opening a backup with the browser's own crypto); `orderflow-test.cjs` and `mobile-live-test.cjs` extended. Not tested: real WhatsApp delivery of the summaries, the nightly run on the real clock, restoring a backup in the app.
 
 **6 Nov 2026 (Real categories, Moments by category, product pages in the reference pattern)**
 - Owner: the real categories (Mangalgiri, Maheswari, Ponduru Khadi, Fancy/Cocktail, Georgettes, Benaras, Kanjeevaram, Gadwals, Mysore Silk, Patola, Narayanpet) made live, separated by Moment on the home page, and every product shown in the pattern of a reference saree page, with similar sarees on the right so a buyer can choose from them too. Done (guide 44): the sample categories are switched to the eleven once on start (or by one press in Categories), sample sarees move to the nearest category, the four Moments hold every category exactly once; each category has its own weave facts, mood and care; the product page now has photo counter and Share, chips, SKU, breadcrumb, one story card, and a sticky similar-sarees list on the right (a row under the photos on a phone; "Close matches, still available" for a sold-out saree).

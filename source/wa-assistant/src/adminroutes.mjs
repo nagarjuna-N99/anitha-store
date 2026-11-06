@@ -14,7 +14,7 @@ import crypto from 'node:crypto';
 import { clientIp } from './clientip.mjs';
 import { adminApiAllowed, dbForRead, TABS, HOME_TAB } from './roles.mjs';
 
-export function adminRoutes({ realcats, orderflow, walog, repair, cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, notes, ops, opsReport, wa, watchRun, watchRead, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
+export function adminRoutes({ automation, realcats, orderflow, walog, repair, cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, notes, ops, opsReport, wa, watchRun, watchRead, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
   const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY', 'Cross-Origin-Resource-Policy': 'same-origin', 'Cache-Control': 'no-store', ...(auth.secure ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' } : {}) };
   const CSP = "default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'";
   const ipOf = req => clientIp(req, cfg.trustProxy);   // X-Forwarded-For is trusted only when TRUST_PROXY=1 and the connection is from this very machine
@@ -36,7 +36,7 @@ export function adminRoutes({ realcats, orderflow, walog, repair, cfg, auth, sho
       const given = String(req.headers.authorization || '').replace(/^Bearer\s+/i, ''), h = s => crypto.createHash('sha256').update(String(s)).digest();
       if (!given || !crypto.timingSafeEqual(h(given), h(cfg.opsToken))) { opsTries.push({ ip, t }); auth.audit('ops-login', ip, false); return json(res, 401, { error: 'Wrong key.' }, SEC), true; }
       auth.audit('ops-report', ip, true);
-      json(res, 200, { ...(await opsReport({ cfg, auth, shop, privacy, weborders, store, smtpMeta, ig, analytics, ops, reportState, social, wa })), watch: watchRead() }, SEC); return true;
+      json(res, 200, { ...(await opsReport({ automation, cfg, auth, shop, privacy, weborders, store, smtpMeta, ig, analytics, ops, reportState, social, wa })), watch: watchRead() }, SEC); return true;
     }
     // ---------- the two sign-in pages: /admin (the admin) and /owner (the owner). Same app; the page asks the server which screens it may show. ----------
     if (route === 'GET /admin' || route === 'GET /admin/' || route === 'GET /admin2' || route === 'GET /admin2/' || route === 'GET /owner' || route === 'GET /owner/' || (tabRoute && tabM[1] !== 'api')) {
@@ -127,7 +127,7 @@ export function adminRoutes({ realcats, orderflow, walog, repair, cfg, auth, sho
       if (route === 'POST /admin/api/2fa/start') { send(res, auth.twoFactorStart(await body(req, 5_000), ip, a.session)); return true; }
       if (route === 'POST /admin/api/2fa/confirm') { const r = auth.twoFactorConfirm(await body(req, 5_000), ip, a.session); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
       if (route === 'POST /admin/api/2fa/off') { const r = auth.twoFactorOff(await body(req, 5_000), ip, a.session); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
-      if (route === 'GET /admin/api/ops') { send(res, { code: 200, ...(await opsReport({ cfg, auth, shop, privacy, weborders, store, smtpMeta, ig, analytics, ops, reportState, social, wa })), watch: watchRead() }); return true; }
+      if (route === 'GET /admin/api/ops') { send(res, { code: 200, ...(await opsReport({ automation, cfg, auth, shop, privacy, weborders, store, smtpMeta, ig, analytics, ops, reportState, social, wa })), watch: watchRead() }); return true; }
       if (route === 'GET /admin/api/agents/ops-watch') { send(res, { code: 200, last: watchRead() }); return true; }
       if (route === 'POST /admin/api/agents/ops-watch/run') { const t = Date.now(); if (watchTries.length && t - watchTries[watchTries.length - 1] < 20_000) return send(res, { code: 429, error: 'Please wait a few seconds.' }), true; watchTries.push(t); watchTries = watchTries.slice(-5); wrote('ops-watch'); send(res, { code: 200, last: await watchRun(true) }); return true; }
       if (route === 'GET /admin/api/previews') { send(res, { code: 200, previews: previewsOf({ cfg, ig, social, analytics, store, wa }).previews }); return true; }
@@ -177,6 +177,11 @@ export function adminRoutes({ realcats, orderflow, walog, repair, cfg, auth, sho
         }
         send(res, { code: 404, error: 'not found' }); return true;
       }
+      if (route === 'GET /admin/api/automation') { send(res, { code: 200, ...automation.status() }); return true; }
+      if (route === 'POST /admin/api/automation/backup-password') { const b = await body(req, 2_000), pw = String(b.password || ''); if (pw.length < 12) return send(res, { code: 422, error: 'The backup password must be at least 12 characters.' }), true; automation.setPassword(pw); wrote('backup-password-set'); const r = await automation.runBackup({ force: true }); send(res, { code: 200, ok: true, firstBackup: !!r.ok, ...automation.status() }); return true; }
+      if (route === 'POST /admin/api/automation/backup-now') { const r = await automation.runBackup({ force: true }); wrote('backup-now', r.ok ? 'ok' : (r.skipped || r.error || '')); if (r.skipped === 'no-password') return send(res, { code: 422, error: 'Set the backup password first.' }), true; send(res, { code: 200, ...r, ...automation.status() }); return true; }
+      if (route.startsWith('GET /admin/api/automation/backup/')) { const f = automation.backupPath(decodeURIComponent(url.pathname.split('/').pop())); if (!f || !fs.existsSync(f)) return send(res, { code: 404, error: 'Not found' }), true; wrote('backup-downloaded-auto', path.basename(f)); res.writeHead(200, { 'Content-Type': 'application/json', 'Content-Disposition': `attachment; filename="${path.basename(f)}"`, ...SEC }); res.end(fs.readFileSync(f)); return true; }
+      if (route === 'POST /admin/api/summary-now') { const r = await automation.runSummary({ force: true }); wrote('summary-now', r.sent ? 'sent' : String(r.skipped || '')); send(res, { code: 200, ...r }); return true; }
       if (route === 'GET /admin/api/real-categories') { const db = shop.get().db || {}; send(res, { code: 200, categories: realcats.list, matches: realcats.isReal(db.categories), applied: !!db.realCategoriesApplied }); return true; }
       if (route === 'POST /admin/api/real-categories') { let out = null; const ok = shop.mutate(d => { out = realcats.apply(d); }); if (!ok) return send(res, { code: 409, error: 'The shop data is not ready yet.' }), true; wrote('real-categories', `moved ${out.moved.length}`); send(res, { code: 200, ok: true, categories: realcats.list, moved: out.moved.length, extra: out.extra }); return true; }
       if (route === 'GET /admin/api/repair') { send(res, { code: 200, ...repair.status() }); return true; }

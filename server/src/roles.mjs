@@ -44,7 +44,7 @@ export function dbForWrite(role, mine, current) {
 }
 
 // owner-app API routes (/admin/api/...) by role. Anything not listed is open to both (the weekly-report email setup stays open: it is the owner's business report).
-const ADMIN_ONLY = /^\/admin\/api\/(ops|audit|ai-key|team|notes|agents|repair|promo)(\/|$)/;
+const ADMIN_ONLY = /^\/admin\/api\/(ops|audit|ai-key|team|notes|agents|repair|promo|automation)(\/|$)/;
 const OWNER_ONLY = /^\/admin\/api\/(privacy|import|web-orders|notify-tracking|growth|report)(\/|$)/;
 export function adminApiAllowed(role, pathname) {
   if (role === ADMIN) return !OWNER_ONLY.test(pathname);
