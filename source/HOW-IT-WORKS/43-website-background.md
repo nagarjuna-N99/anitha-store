@@ -22,3 +22,6 @@ Type a festival or a feeling (Diwali, wedding season, calm monsoon). Claude prop
 - The layer is fixed behind the page, takes no clicks, and lives inside the website view, so the owner and admin apps never show it.
 - Colours of text and cards are not changed; keep the strength low so they stay readable.
 - Not tested: a real phone, very old browsers, Claude's real ideas.
+
+## Phones (fixed 6 Nov 2026)
+The picture is drawn in the **shape of the screen**: a tall 800 x 1400 picture on phones, a wide 1600 x 1000 one on computers and tablets in landscape. Before this, a phone showed only the middle slice of the wide picture, where the art is sparse (most motifs sit near the edges), so the background looked empty or "not updated". Turning the phone sideways redraws it in the wide shape. The preview boxes in the admin app always use the wide shape. On the home page the big banner photo is a solid panel and covers the background; the pattern shows behind everything below it.

@@ -136,6 +136,7 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 | `care-test.cjs` | 9 | Saree Care tabs, wash-care guide, photo link repair |
 | `parts-test.cjs` | 8 | the website source parts and the joined file |
 | `addresses-test.cjs` | 25 | each page and saree has its own address, Back/Forward, old links |
+| `mobile-live-test.cjs` | 34 | admin, owner and public website at phone size through the real server (background, sizes, menus, Orders card, settings) |
 | `background-test.cjs` | 30 | website background builder: art, preview, deploy, saved looks, Claude ideas |
 | `chapters-tools-test.cjs` | 33 | chapter rows: delete, order, hide, collection tick boxes |
 | `how-it-works-test.cjs` | 12 | How it works page for owner and admin, search, do / do-not lists |
@@ -172,6 +173,10 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**6 Nov 2026 (Phone check of every new screen; background fixed for phones)**
+- Owner: "check if everything is working with mobile view, background not getting updated, check all other updates working in mobile view, and make sure". Found by running the admin app, the owner app and the public website at phone size against the real server: the background did reach the website, but the wide picture was cropped to its sparse middle on a phone, so it looked empty. Now the art is drawn phone-shaped (tall) on phones and redrawn when the screen is turned (guide 43). New end-to-end suite `tests/mobile-live-test.cjs` (34 checks) checks, at phone size and through the real server: background builder preview, "only on the website after the button", phone-shaped art with enough motifs in view, removal, rotation; Moments size on the website; "Moment I" wording; accessories switch; grouped slide-out menus for admin and owner; Orders alert card and auto-approval saved on the server; Help, Settings, Promotions, AI, Ops, Pages, Studio, Products, Customers, Delivery and Coupons fitting the screen.
+- Tests: `background-test.cjs` still passes; `mobile-live-test.cjs` is new. Not tested: a real phone and its real browser (the checks use a phone-sized, touch-enabled test browser), Safari.
 
 **12 Nov 2026 (Website background: kalamkari, peacocks, festival looks, preview before deploy)**
 - Owner: "the background poster also looks too empty; add an option in admin to change the background with some kalamkari works in a random positioning and peacock art works or something related to our subject, add a box for ask Claude for background idea and also put a decent size box to view how it looks before it is deployed; with this we can replace the background according to the festivals". New Admin card **Home Page → Website background** (guide 43): original hand-drawn motifs (kalamkari paisley, flowers, vines, peacocks, feathers, lotus, festival lamps, stars) placed at random but repeatable positions (shuffle number), four colour sets, how full / how strong, a large preview box with a sample of the real page, **Put this on the website** only on request, **Ask Claude for 3 ideas** (checked, preview only), and up to 12 saved looks for festivals.

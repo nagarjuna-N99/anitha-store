@@ -6926,25 +6926,28 @@ const BG_ART = {
 };
 // the whole picture as one SVG (W x H), motifs scattered at random positions: most near the left and right edges so the middle stays calm to read
 function bgSvg(spec, W = 1600, H = 1000) {
+  const portrait = H > W;   // phones: a tall picture, so the art is not cropped away when it is fitted to a narrow screen
   const s = bgClean(spec), style = BG_STYLES[s.style]; if (s.style === 'plain') return '';
   const motifs = s.style === 'custom' ? (s.motifs.length ? s.motifs : ['paisley', 'flower']) : style.motifs, c = bgColors(s), rnd = bgRng(s.seed), n = BG_DENSITY[s.density], placed = []; let g = '';
   for (let i = 0; i < n; i++) {
-    const id = motifs[Math.floor(rnd() * motifs.length)], size = (id === 'peacock' ? 190 : 125) * (0.65 + rnd() * 0.7); let x = 0, y = 0;
-    for (let t = 0; t < 25; t++) { const edge = rnd() < 0.72; x = edge ? (rnd() < 0.5 ? rnd() * 0.24 : 0.76 + rnd() * 0.24) * W : rnd() * W; y = rnd() * H; if (placed.every(p => Math.hypot(p[0] - x, p[1] - y) > (p[2] + size) * 0.5)) break; }
+    const id = motifs[Math.floor(rnd() * motifs.length)], size = (id === 'peacock' ? 190 : 125) * (portrait ? 0.9 : 1) * (0.65 + rnd() * 0.7); let x = 0, y = 0;
+    for (let t = 0; t < 25; t++) { const edge = rnd() < (portrait ? 0.45 : 0.72); x = edge ? (rnd() < 0.5 ? rnd() * (portrait ? 0.3 : 0.24) : 1 - rnd() * (portrait ? 0.3 : 0.24)) * W : rnd() * W; y = rnd() * H; if (placed.every(p => Math.hypot(p[0] - x, p[1] - y) > (p[2] + size) * 0.5)) break; }
     placed.push([x, y, size]); const rot = Math.round((rnd() - 0.5) * (id === 'peacock' ? 24 : 80)), k = size / 100, flip = rnd() < 0.5 ? -1 : 1;
     g += `<g transform="translate(${x.toFixed(0)} ${y.toFixed(0)}) rotate(${rot}) scale(${(k * flip).toFixed(3)} ${k.toFixed(3)}) translate(-50 -50)">${BG_ART[id](c, rnd)}</g>`;
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"><g opacity="${s.strength}">${g}</g></svg>`;
 }
-const bgUrl = spec => { const svg = bgSvg(spec); return svg ? `url("data:image/svg+xml,${encodeURIComponent(svg)}")` : 'none'; };
+const bgDims = () => (typeof window !== 'undefined' && window.innerWidth < window.innerHeight * 0.95) ? [800, 1400] : [1600, 1000];
+const bgUrl = (spec, dims) => { const d = dims || bgDims(), svg = bgSvg(spec, d[0], d[1]); return svg ? `url("data:image/svg+xml,${encodeURIComponent(svg)}")` : 'none'; };
 // ---- the website: one fixed layer behind everything ----
+let BG_SHAPE = ''; window.addEventListener && window.addEventListener('resize', () => { clearTimeout(window.__bgT); window.__bgT = setTimeout(() => { const sh = bgDims().join('x'); if (sh !== BG_SHAPE && document.getElementById('siteBg')) applyBackground(); }, 250); });
 function applyBackground() {
   if (typeof BUILD !== 'undefined' && BUILD === 'admin') return;
   const sf = document.getElementById('storefrontView'); if (!sf) return; let el = document.getElementById('siteBg');
   const spec = db && db.home && db.home.background ? bgClean(db.home.background) : null;
   if (!spec || spec.style === 'plain') { if (el) el.remove(); return; }
   if (!el) { el = document.createElement('div'); el.id = 'siteBg'; el.setAttribute('aria-hidden', 'true'); sf.insertBefore(el, sf.firstChild); }
-  el.style.backgroundImage = bgUrl(spec); el.style.backgroundColor = spec.tint || ''; el.dataset.style = spec.style;
+  BG_SHAPE = bgDims().join('x'); el.style.backgroundImage = bgUrl(spec); el.style.backgroundColor = spec.tint || ''; el.dataset.style = spec.style;
 }
 // ---- the admin card: build a look, see it big, then deploy ----
 const BG = { draft: null, ideas: [], msg: '', busy: false, saveName: '' };
@@ -6971,7 +6974,7 @@ async function bgAsk() {
   BG.ideas = ideas; BG.msg = note; BG.busy = false; bgRedraw();
 }
 function bgPreviewHTML(spec) {
-  const u = bgUrl(spec), tint = bgClean(spec).tint;
+  const u = bgUrl(spec, [1600, 1000]), tint = bgClean(spec).tint;
   return `<div class="bg-preview" id="bg-preview" style="background-image:${u.replace(/"/g, '&quot;')};${tint ? 'background-color:' + tint : ''}"><div class="bg-mock"><div class="bg-mock-nav"><b>Anitha Pemmasani</b><span>HOME · COLLECTION · SAREE CARE · JOURNAL</span></div><div class="bg-mock-hero"><small>MOMENT I</small><b>A Tuesday <i>morning.</i></b></div><p>“Light enough to forget you are wearing it, and kind enough to last the whole working day.”</p></div></div>`;
 }
 function backgroundCardHTML() {
@@ -6987,7 +6990,7 @@ function backgroundCardHTML() {
     <div><b>Positions</b> <small>(shuffle number <span id="bg-seed">${d.seed}</span>)</small><div class="bg-chips"><button type="button" class="bg-chip" onclick="bgShuffle()">🔀 Shuffle positions</button></div></div></div>
     <div class="th-actions"><button type="button" class="btn-sm btn-primary-sm" id="bg-apply" onclick="bgApply()">🌐 Put this on the website</button><button type="button" class="btn-sm" onclick="bgRemove()">Remove the background</button><button type="button" class="btn-sm" onclick="bgReset()">↺ Back to what the website has now</button></div>
     <div class="th-ai" id="bg-ai"><label for="bg-occ"><b>✨ Ask Claude for a background idea</b> (a festival or a feeling, optional)</label><div class="th-ai-row"><input id="bg-occ" type="text" maxlength="100" placeholder="e.g. Diwali, a wedding season, calm monsoon"><button type="button" class="btn-sm btn-info-sm" onclick="bgAsk()" ${BG.busy ? 'disabled' : ''}>Give me 3 ideas</button></div>
-      ${BG.ideas.length ? `<div class="bg-ideas">${BG.ideas.map((x, i) => `<div class="bg-idea"><div class="bg-idea-pic" style="background-image:${bgUrl(x).replace(/"/g, '&quot;')};${x.tint ? 'background-color:' + x.tint : ''}"></div><b>${esc(x.name || 'Idea')}</b><small>${esc(BG_STYLES[x.style].name)} · ${esc(x.density)}</small><button type="button" class="btn-sm btn-info-sm" onclick="bgUseIdea(${i})">Preview this</button></div>`).join('')}</div>` : ''}
+      ${BG.ideas.length ? `<div class="bg-ideas">${BG.ideas.map((x, i) => `<div class="bg-idea"><div class="bg-idea-pic" style="background-image:${bgUrl(x, [1600, 1000]).replace(/"/g, '&quot;')};${x.tint ? 'background-color:' + x.tint : ''}"></div><b>${esc(x.name || 'Idea')}</b><small>${esc(BG_STYLES[x.style].name)} · ${esc(x.density)}</small><button type="button" class="btn-sm btn-info-sm" onclick="bgUseIdea(${i})">Preview this</button></div>`).join('')}</div>` : ''}
       ${BG.msg ? `<p class="note" role="status" style="margin:8px 0 0">${esc(BG.msg)}</p>` : ''}</div>
     <div class="bg-looks"><b>Saved looks</b> <small>(for festivals and seasons)</small>${looks.length ? `<div class="hn-list">${looks.map(l => `<div><span>${esc(l.name)}<small>${esc(BG_STYLES[bgClean(l.spec).style].name)} · ${esc(bgClean(l.spec).density)}</small></span><span class="th-actions" style="margin:0"><button type="button" class="btn-sm" onclick="bgLookPreview('${l.id}')">Preview</button><button type="button" class="btn-sm btn-primary-sm" onclick="bgLookApply('${l.id}')">Put on website</button><button type="button" class="btn-sm" onclick="bgLookDel('${l.id}')">Delete</button></span></div>`).join('')}</div>` : '<p class="note">None yet. Build a look you like, give it a name (for example “Diwali 2026”) and save it.</p>'}
       <div class="th-ai-row"><input id="bg-name" type="text" maxlength="40" placeholder="Name this look, e.g. Diwali 2026" value="${esc(BG.saveName)}" oninput="BG.saveName=this.value"><button type="button" class="btn-sm" onclick="bgSaveLook()">💾 Save this look</button></div></div></div>`;
