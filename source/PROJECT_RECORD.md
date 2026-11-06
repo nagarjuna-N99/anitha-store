@@ -119,7 +119,7 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 ## 6. Test suites (all passing on 12 Nov 2026; known slow spots: sign-in timeouts under load and the phone-speed test near its limit pass when rerun alone)
 | Suite | Checks | Covers |
 |---|---|---|
-| `wa-assistant` (`npm test`) | 656 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
+| `wa-assistant` (`npm test`) | 666 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
 | `smoke2.cjs` | 10 | orders, invoices, reports |
 | `studio-test2.cjs` / `studio-test3.cjs` | 50 / 61 | Image Studio, drafts, product form, AI copy |
 | `shop-test.cjs` | 56 | favourites, share links, OTP login, consents, Terms/Privacy |
@@ -136,7 +136,8 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 | `care-test.cjs` | 9 | Saree Care tabs, wash-care guide, photo link repair |
 | `parts-test.cjs` | 8 | the website source parts and the joined file |
 | `addresses-test.cjs` | 25 | each page and saree has its own address, Back/Forward, old links |
-| `mobile-live-test.cjs` | 34 | admin, owner and public website at phone size through the real server (background, sizes, menus, Orders card, settings) |
+| `product-layout-test.cjs` | 19 | every product page in the reference pattern, similar list on the right / under the photos, eleven categories' facts |
+| `mobile-live-test.cjs` | 41 | admin, owner and public website at phone size through the real server (background, sizes, menus, Orders card, settings) |
 | `background-test.cjs` | 30 | website background builder: art, preview, deploy, saved looks, Claude ideas |
 | `chapters-tools-test.cjs` | 33 | chapter rows: delete, order, hide, collection tick boxes |
 | `how-it-works-test.cjs` | 12 | How it works page for owner and admin, search, do / do-not lists |
@@ -173,6 +174,10 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**6 Nov 2026 (Real categories, Moments by category, product pages in the reference pattern)**
+- Owner: the real categories (Mangalgiri, Maheswari, Ponduru Khadi, Fancy/Cocktail, Georgettes, Benaras, Kanjeevaram, Gadwals, Mysore Silk, Patola, Narayanpet) made live, separated by Moment on the home page, and every product shown in the pattern of a reference saree page, with similar sarees on the right so a buyer can choose from them too. Done (guide 44): the sample categories are switched to the eleven once on start (or by one press in Categories), sample sarees move to the nearest category, the four Moments hold every category exactly once; each category has its own weave facts, mood and care; the product page now has photo counter and Share, chips, SKU, breadcrumb, one story card, and a sticky similar-sarees list on the right (a row under the photos on a phone; "Close matches, still available" for a sold-out saree).
+- Tests: server 666 (+10 `categories:` / `moments:` checks); new `tests/product-layout-test.cjs` (19 checks); `mobile-live-test.cjs` extended. Not tested: the weave facts are general descriptions the owner must read; a real phone.
 
 **6 Nov 2026 (Phone check of every new screen; background fixed for phones)**
 - Owner: "check if everything is working with mobile view, background not getting updated, check all other updates working in mobile view, and make sure". Found by running the admin app, the owner app and the public website at phone size against the real server: the background did reach the website, but the wide picture was cropped to its sparse middle on a phone, so it looked empty. Now the art is drawn phone-shaped (tall) on phones and redrawn when the screen is turned (guide 43). New end-to-end suite `tests/mobile-live-test.cjs` (34 checks) checks, at phone size and through the real server: background builder preview, "only on the website after the button", phone-shaped art with enough motifs in view, removal, rotation; Moments size on the website; "Moment I" wording; accessories switch; grouped slide-out menus for admin and owner; Orders alert card and auto-approval saved on the server; Help, Settings, Promotions, AI, Ops, Pages, Studio, Products, Customers, Delivery and Coupons fitting the screen.

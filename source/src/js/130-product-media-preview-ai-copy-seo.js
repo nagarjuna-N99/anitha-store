@@ -45,7 +45,7 @@ function mediaHTML(m, alt) {
 const GALS = {};
 function galleryHTML(p, gk) {
   const media = productMedia(p), alt = p.altText || p.name; GALS[gk] = { media, alt };
-  return `<div class="gal" id="${gk}"><div id="${gk}-main">${mediaHTML(media[0], alt + ' – photo 1')}</div>${media.length > 1 ? `<div class="gal-thumbs">${media.map((m, i) => `<div class="gal-thumb ${i === 0 ? 'active' : ''}" onclick="galSelect('${gk}',${i})" title="${m.type === 'img' ? 'Photo ' + (i + 1) : 'Video'}">${m.type === 'img' ? `<img src="${esc(m.src)}" alt="${esc(alt)} – thumbnail ${i + 1}" loading="lazy">` : `<div class="gal-play">▶<small>Video</small></div>`}</div>`).join('')}</div>` : ''}</div>`;
+  return `<div class="gal" id="${gk}"><div class="gal-stage"><div id="${gk}-main">${mediaHTML(media[0], alt + ' – photo 1')}</div><span class="gal-count" id="${gk}-count" aria-live="polite">01 / ${String(media.length).padStart(2, '0')}</span><button type="button" class="gal-share" onclick="openShare('${p.id}')" aria-label="Share this saree">Share</button></div>${media.length > 1 ? `<div class="gal-thumbs">${media.map((m, i) => `<div class="gal-thumb ${i === 0 ? 'active' : ''}" onclick="galSelect('${gk}',${i})" title="${m.type === 'img' ? 'Photo ' + (i + 1) : 'Video'}">${m.type === 'img' ? `<img src="${esc(m.src)}" alt="${esc(alt)} – thumbnail ${i + 1}" loading="lazy">` : `<div class="gal-play">▶<small>Video</small></div>`}</div>`).join('')}</div>` : ''}</div>`;
 }
 let GAL_TOUCH = null;
 document.addEventListener('touchstart', e => { const g = e.target.closest && e.target.closest('.gal'); GAL_TOUCH = g && e.touches.length === 1 ? { id: g.id, x: e.touches[0].clientX, y: e.touches[0].clientY } : null; }, { passive: true });
@@ -58,19 +58,18 @@ document.addEventListener('touchend', e => {
 function galSelect(gk, i) {
   const g = GALS[gk]; if (!g) return;
   const main = document.getElementById(gk + '-main'); if (main) main.innerHTML = mediaHTML(g.media[i], `${g.alt} – photo ${i + 1}`);
+  const cnt = document.getElementById(gk + '-count'); if (cnt) cnt.textContent = String(i + 1).padStart(2, '0') + ' / ' + String(g.media.length).padStart(2, '0');
   document.querySelectorAll(`#${gk} .gal-thumb`).forEach((t, k) => t.classList.toggle('active', k === i));
 }
 function tagChips(tags) { return (tags && tags.length) ? `<div class="chips">${tags.map(t => `<span class="chip ro">${esc(t)}</span>`).join('')}</div>` : ''; }
 function productPageHTML(p, gk, opts = {}) {
   const inStock = p.stock > 0;
   return `<div class="detail-grid"><div class="detail-gallery">${galleryHTML(p, gk)}</div><div class="detail-info">
-    <div class="detail-cat">${esc(p.category)}</div>
-    <h2 class="detail-name">${esc(p.name || 'Untitled product')}</h2>
+    ${ppChips(p)}<div class="detail-cat">${esc(p.category)}</div>
+    <h2 class="detail-name">${esc(p.name || 'Untitled product')}</h2>${p.sku ? `<div class="pp-sku">SKU <b>${esc(p.sku)}</b></div>` : ''}
     <div class="detail-price">${p.price ? '₹ ' + money(p.price) : '<span style="color:#6b6862;font-size:16px;">Price not set</span>'}</div>${arrivesHTML(p, gk)}${pageExtrasHTML(p, gk, opts)}
     ${p.reviews > 0 ? `<a class="rv-link" onclick="var r=document.getElementById('rv-root');if(r)r.scrollIntoView({behavior:'smooth'})">${starsHTML(p.rating)} <span>${p.rating} · ${p.reviews} review${p.reviews > 1 ? 's' : ''}</span></a>` : ''}
-    <p class="detail-desc">${esc(p.description || 'No description yet.')}</p>
-    ${tagChips(p.tags)}
-    ${detailsTableHTML(p, inStock)}
+    ${opts.noStory ? '' : ppStoryCard(p, inStock)}
     ${deliveryWidgetHTML(p, gk, opts.preview)}${shipNoteHTML()}
     ${!inStock && !opts.preview ? `<button class="btn-full buy-btn" style="margin-bottom:10px;" onclick="openStockAlert('${p.id}')">${notifyLabel(p.id)}${myAlert(p.id) ? '' : ' when it is back'}</button>${isAccessory(p) ? '' : `<button class="btn-outline similar-btn" style="margin:0 0 10px;" onclick="openSimilarAlert('${p.id}')">${mySimilar(p.id) ? '✨ You will hear about similar sarees' : '✨ Tell me about similar sarees'}</button><button class="btn-outline request-btn" style="margin:0 0 10px;" onclick="openSimilarRequest('${p.id}')">💬 Request a similar piece</button>`}` : `<button class="btn-full buy-btn" style="margin-bottom:10px;" ${opts.preview ? 'disabled' : `onclick="addToCart('${p.id}');closeModal('productModal');"`}>Add to Cart</button>`}
     <button class="btn-outline" style="margin-top:0;" ${opts.preview ? 'disabled' : `onclick="openShare('${p.id}')"`}>🔗 Share this saree</button>${giftButtonHTML(p, opts.preview)}${waChatButtonHTML(p, opts.preview)}

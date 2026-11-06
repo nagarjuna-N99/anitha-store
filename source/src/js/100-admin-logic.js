@@ -11,6 +11,17 @@ function orderFlowCardHTML() {
 }
 function ofAutoToggle() { const on = db.settings.autoApproveOrders !== true; db.settings.autoApproveOrders = on; if (!saveDB()) { db.settings.autoApproveOrders = !on; return; } const t = document.getElementById('of-auto'); if (t) { t.classList.toggle('active', on); t.setAttribute('aria-checked', String(on)); } showToast(on ? 'Website orders are now approved automatically when everything is in stock.' : 'Website orders now wait for your approval.', 'success'); }
 function ofPhoneSave(v) { v = String(v || '').replace(/[^\d+]/g, '').slice(0, 20); db.settings.ownerWhatsapp = v; saveDB(); showToast(v ? 'Saved. Order alerts go to this number.' : 'Cleared. The number set on the server is used.', 'success'); }
+// the shop's real saree categories (Mangalgiri, Maheswari, Ponduru Khadi, Fancy/Cocktail, Georgettes, Benaras, Kanjeevaram, Gadwals, Mysore Silk, Patola, Narayanpet) and their Moments
+async function realCatsCard() {
+  const box = document.getElementById('realcats-box'); if (!box || BUILD !== 'admin') return;
+  try { const r = await admApi('GET', '/admin/api/real-categories'); if (r.matches) { box.innerHTML = `<div class="admin-card"><h3 style="margin:0 0 4px">✅ Your 11 saree categories are set</h3><p class="note" style="margin:0">${r.categories.map(esc).join(' · ')}. Each one is shown under a Moment on the home page (Admin → Home Page → Moments).</p></div>`; return; }
+    box.innerHTML = `<div class="admin-card" style="border:2px solid #C96A11"><h3 style="margin:0 0 4px">🏷 Set up your real categories</h3><p class="note" style="margin:0 0 8px">Your shop sells: <b>${r.categories.map(esc).join(' · ')}</b>. One press makes these the website's categories and arranges them under the Moments on the home page (Everyday, Wedding, Festival, Evening). Sample sarees move to the nearest category; any saree in another category keeps it (it is added at the end). Nothing is deleted.</p><button type="button" class="btn-sm btn-primary-sm" onclick="realCatsApply()">Set up my categories</button></div>`; } catch (e) { box.innerHTML = ''; }
+}
+async function realCatsApply() {
+  if (!confirm('Make these 11 your categories and arrange them under the Moments on the home page?')) return;
+  try { if (typeof homeFlush === 'function') homeFlush(); const r = await admApi('POST', '/admin/api/real-categories', {}); ADM.dirty = false; await admPoll(); showToast(`Done. ${r.moved ? r.moved + ' sample saree(s) moved to the nearest category. ' : ''}Your categories are live.`, 'success'); } catch (e) { showToast(e.message, 'error'); }
+  renderAdminContent('categories');
+}
 function accShowToggle() {
   const on = db.settings.showAccessories === false;   // currently hidden -> show
   db.settings.showAccessories = on; if (!saveDB()) { db.settings.showAccessories = !on; return; }
@@ -67,7 +78,8 @@ function renderAdminContent(tab) {
   }
 
   if (tab === 'categories') {
-    content.innerHTML = `
+    setTimeout(realCatsCard, 0);
+    content.innerHTML = `<div id="realcats-box"></div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
         <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;margin:0;">Category Manager</h3>
         <button class="btn-sm btn-primary-sm" onclick="openCategoryForm()">+ Create New Category</button>

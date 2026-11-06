@@ -265,3 +265,26 @@ html.ui2.dk .ch-size-b { background: #23211d; border-color: #3a362f; } html.ui2.
 @media (max-width: 640px) { .bg-preview { height: 300px; } .bg-mock { width: 86%; } }
 html.ui2.dk .bg-chip, html.ui2.dk .bg-idea { background: #23211d; border-color: #3a362f; } html.ui2.dk .bg-chip.on { background: #3a3123; }
 @media (max-width: 640px) { .bg-chip, .ch-chip { min-height: 40px; padding: 8px 14px; } .bg-ideas .btn-sm, .bg-looks .btn-sm { min-height: 40px; } }
+
+/* product page in the reference pattern: counter + share on the photos, chips, SKU, story card, similar sarees on the right */
+.gal { position: relative; } .gal-count { position: absolute; left: 14px; bottom: 14px; background: rgba(255,255,255,.92); border-radius: 12px; padding: 3px 10px; font-size: 12px; font-weight: 600; letter-spacing: .04em; z-index: 2; } .gal-count + .gal-share { position: absolute; right: 14px; top: 14px; z-index: 2; background: rgba(255,255,255,.95); border: 0; border-radius: 20px; padding: 7px 14px; font: inherit; font-size: 13px; cursor: pointer; box-shadow: 0 1px 6px rgba(0,0,0,.12); }
+.pp-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; } .pp-chip { border: 1px solid #e0d9c8; background: #f5f1ea; border-radius: 8px; padding: 4px 11px; font-size: 12px; } .pp-chip.out { background: #ece9e2; color: #6b6558; } .pp-sku { font-size: 13px; color: #6b6558; margin: -2px 0 6px; } .pp-sku b { color: #222; font-weight: 600; letter-spacing: .03em; }
+.pp-crumbs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12.5px; color: #6b6558; margin: 4px 0 10px; } .pp-crumbs a { cursor: pointer; color: #6b6558; text-decoration: none; } .pp-crumbs a:hover { text-decoration: underline; }
+.pp-story { background: #fff; border: 1px solid #ece7da; border-radius: 12px; padding: 14px 18px 8px; margin: 0 0 16px; } .pp-story h4 { margin: 14px 0 4px; font-size: 12px; font-weight: 600; color: #6b6558; } .pp-story p { margin: 0 0 4px; font-size: 15px; line-height: 1.55; } .pp-story .chips { margin: 4px 0 6px; }
+.pp-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; } .pp-similar { margin: 8px 20px 0; }
+.pp-similar h3 { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 500; margin: 0 0 4px; } .pp-similar h3 em { font-style: italic; }
+.pp-similar .rel-grid { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x proximity; } .pp-similar .rel-card { flex: 0 0 150px; scroll-snap-align: start; }
+.pp-rest { padding: 0 20px 10px; }
+@media (min-width: 1100px) {
+  #productModal .modal-content { max-width: min(1320px, 96vw); }
+  .pp-layout { grid-template-columns: minmax(0, 1fr) 320px; grid-template-areas: "top side" "rest side"; column-gap: 12px; align-items: start; }
+  .pp-top { grid-area: top; } .pp-rest { grid-area: rest; } .pp-similar { grid-area: side; position: sticky; top: 8px; margin: 14px 18px 0 0; max-height: calc(95vh - 24px); overflow-y: auto; border-left: 1px solid #ece7da; padding-left: 16px; }
+  .pp-similar .rel-grid { display: grid; grid-template-columns: 1fr 1fr; overflow: visible; } .pp-similar .rel-card { flex: none; }
+}
+@media (max-width: 1099px) { .pp-similar { margin: 4px 16px 0; } .pp-rest { padding: 0 16px 10px; } }
+.gal-stage { position: relative; }
+@media (max-width: 640px) { .gal-count + .gal-share { top: auto; bottom: 14px; } }
+/* tap sizes on the product page (phone audit): Share and breadcrumb links; Share sits beside the counter so the sticky close button can never cover it */
+.gal-count + .gal-share { min-height: 44px; min-width: 64px; padding: 10px 16px; } .gal-count { min-height: 28px; display: inline-flex; align-items: center; }
+.pp-crumbs a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 4px; }
+@media (max-width: 640px) { .gal-count + .gal-share { top: auto; bottom: 8px; left: 92px; right: auto; } .gal-count { bottom: 14px; } }

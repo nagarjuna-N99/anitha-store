@@ -21,7 +21,7 @@ const { chromium } = require(process.env.PW);
   await ev(() => { delete db.settings.sareeLength; renderProductModal(db.products.find(x => x.id === 'p1')); });
   ok('five questions fold open on the page', await ev(() => { const d = [...document.querySelectorAll('#productModalBody .pp-faq details')]; d[0].open = true; return d.length === 5 && d[0].querySelector('p').textContent.length > 20; }));
   const rel = await ev(() => [...document.querySelectorAll('#productModalBody .rel-card .rel-name')].map(e => e.textContent));
-  ok('"You may also like" shows up to four other sarees, never the one being viewed', rel.length >= 3 && rel.length <= 4 && !rel.includes('Maroon Kalamkari Tussar'));
+  ok('"Similar sarees" shows up to six other sarees to choose from, never the one being viewed', rel.length >= 3 && rel.length <= 6 && !rel.includes('Maroon Kalamkari Tussar'));
   await ev(() => document.querySelector('#productModalBody .rel-card').click()); await sleep(300);
   ok('tapping a related saree opens it', await ev(() => !/Maroon Kalamkari Tussar/.test(document.querySelector('#productModalBody .detail-name').textContent)));
   const bar = await ev(() => { const b = document.querySelector('#productModalBody .buy-bar'), c = getComputedStyle(b); return { pos: c.position, price: /₹/.test(b.textContent), btn: /Add to cart/i.test(b.textContent), last: b === document.getElementById('productModalBody').lastElementChild }; });

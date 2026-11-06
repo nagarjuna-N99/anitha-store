@@ -16,7 +16,7 @@ function lookRowHTML(skipIds, title) {
   return `<section class="look-row" aria-label="${esc(title)}" style="margin:18px 0;"><h4 style="font-family:'Cormorant Garamond',serif;font-size:20px;margin-bottom:10px;">${esc(title)}</h4><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;">${list.map(a => `<div class="look-card" style="border:1px solid #eee;border-radius:6px;padding:8px;background:#fff;text-align:center;"><img src="${esc(a.image)}" alt="${esc(a.name)}" loading="lazy" style="width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:4px;cursor:pointer;" onclick="openProductDetail('${a.id}')"><div style="font-size:12px;margin:6px 0 2px;">${esc(a.name)}</div><div style="font-size:12px;font-weight:600;">₹ ${money(a.price)}</div><button type="button" class="btn-sm btn-primary-sm look-add" style="margin-top:6px;width:100%;" onclick="addToCart('${a.id}')">Add</button></div>`).join('')}</div></section>`;
 }
 function renderProductModal(p) {
-  document.getElementById('productModalBody').innerHTML = productPageHTML(p, 'gal-' + p.id) + trustHTML() + productFaqHTML() + relatedHTML(p) + (isAccessory(p) ? '' : lookRowHTML([], 'Complete the look')) + `<section class="reviews" id="rv-root" aria-label="Customer reviews"></section>` + buyBarHTML(p); if (typeof buyBarWatch === 'function') buyBarWatch();
+  document.getElementById('productModalBody').innerHTML = ppLayoutHTML(p); if (typeof buyBarWatch === 'function') buyBarWatch();
   CUR_PID = p.id; renderReviews();
 }
 function renderReviews() {

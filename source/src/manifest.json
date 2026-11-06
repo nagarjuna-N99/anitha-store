@@ -92,6 +92,7 @@
     "js/330-init.js",
     "js/340-storefront-extras.js",
     "js/345-product-page-more.js",
+    "js/346-product-page-pdf-layout.js",
       "js/347-site-colours-and-notes.js",
       "js/348-story-chapters.js",
     "js/349-website-background.js",

@@ -63,6 +63,17 @@ const ROOT = process.cwd(), SETUP = 'setup-token-0123456789', PW = 'Correct-Hors
     ok('owner phone to phone website: switching Accessories off hides the Accessories tab on the website', await S2.evaluate(() => { navigateTo('shop'); renderFilterButtons(); return db.settings.showAccessories === false && !document.getElementById('kind-accessory'); }));
     await eo(() => document.getElementById('acc-show-toggle').click()); await sleep(2000);
     for (const t of ['studio', 'guide', 'settings', 'products', 'customers', 'delivery', 'coupons']) { await eo(x => switchAdminTab(x), t); await sleep(700); ok('owner phone: ' + t + ' opens and fits the screen', await noSideScroll(O)); }
+    // ---- the real categories, set up by the owner from her phone ----
+    await eo(() => switchAdminTab('categories')); await sleep(1200);
+    ok('owner phone: Categories offers one press to set up the 11 real categories, listing them', await eo(() => { const t = document.getElementById('realcats-box').innerText; return /Set up my categories/.test(t) && ['Mangalgiri', 'Maheswari', 'Ponduru Khadi', 'Fancy/Cocktail', 'Georgettes', 'Benaras', 'Kanjeevaram', 'Gadwals', 'Mysore Silk', 'Patola', 'Narayanpet'].every(c => t.includes(c)); }) && await noSideScroll(O));
+    await eo(() => document.querySelector('#realcats-box button').click()); await sleep(3000);
+    const RC = ['Mangalgiri', 'Maheswari', 'Ponduru Khadi', 'Fancy/Cocktail', 'Georgettes', 'Benaras', 'Kanjeevaram', 'Gadwals', 'Mysore Silk', 'Patola', 'Narayanpet'];
+    ok('owner phone: after the press the server and the public website data have exactly the real categories and four moments', await (async () => { const pub = await (await fetch(base + '/public/shop')).json(); return pub.categories.slice(0, 11).join() === RC.join() && pub.home.chapters.items.length === 4; })());
+    ok('owner phone: the box now confirms the categories are set', await eo(() => /categories are set/.test(document.getElementById('realcats-box').innerText) || (switchAdminTab('categories'), true)));
+    const S3 = await phone(); await S3.goto(base + '/'); await S3.waitForTimeout(2800);
+    ok('phone website: the home page shows the real categories under the moments (every category under exactly one moment)', await S3.evaluate(() => { const secs = [...document.querySelectorAll('#homeChapters .chap')].map(c => [...c.querySelectorAll('.chap-tile')].map(t => t.dataset.cat)), all = secs.flat(); return secs.length === 4 && all.length === 11 && new Set(all).size === 11 && /Mangalgiri/.test(document.getElementById('homeChapters').innerText); }));
+    ok('phone website: the Moment panels show the new wording', await S3.evaluate(() => /Moment IV/i.test(document.getElementById('homeChapters').innerText)));
+    ok('phone website: a saree page follows the reference pattern (counter, chips, SKU, story card) with the similar list under it', await S3.evaluate(() => { const x = db.products.find(q => q.stock > 0) || db.products[0]; openProductDetail(x.id); const m = document.getElementById('productModalBody'); return !!m.querySelector('.gal-count') && !!m.querySelector('.pp-sku') && !!m.querySelector('.pp-story') && !!m.querySelector('.pp-similar') && document.documentElement.scrollWidth <= window.innerWidth + 1; }));
     ok('no script errors anywhere', errs.length === 0, errs.slice(0, 4).join('|'));
   } finally { await b.close(); srv.kill(); }
   console.log(fails ? fails + ' FAILED' : 'ALL PASSED'); process.exit(fails ? 1 : 0);
