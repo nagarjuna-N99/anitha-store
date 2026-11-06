@@ -14,20 +14,33 @@ function occasionsOf(p) {
   ((kbFor(p.category) || {}).occ || []).forEach(add);
   return [...s];
 }
+// "Find it faster / Shop by occasion": the heading, the tiles and what each tile matches are the owner's (Home Page → Shop by occasion, with AI ideas). Without any edits it is the four standard tiles.
+const OCC_WORDS = { Wedding: ['wedding', 'bridal'], Festive: ['festive', 'traditional'], Office: ['office', 'casual', 'everyday'], Party: ['party', 'cocktail', 'evening', 'reception'] };
+const occDefault = () => ({ show: true, label: 'Find it faster', title: 'Shop by occasion', gift: { show: true, max: GIFT_BUDGET }, items: OCCASIONS.map(([k, ic, label]) => ({ id: k, icon: ic, label, words: OCC_WORDS[k] || [], cats: [], show: true })) });
+const occCfg = () => { const o = db.home && db.home.occasions; return o && Array.isArray(o.items) ? { ...occDefault(), ...o, gift: { ...occDefault().gift, ...(o.gift || {}) } } : occDefault(); };
+const occTokens = p => { const kb = kbFor(p.category) || {}, t = new Set(); [...(p.occasions || []), ...(p.tags || []), ...(kb.occ || [])].forEach(x => t.add(String(x).toLowerCase().trim())); String(p.name || '').toLowerCase().split(/[^a-z0-9]+/).filter(Boolean).forEach(x => t.add(x)); return t; };
+// does saree p belong under tile `id`? (its own words, its whole categories, or the standard four's old rules)
+function occHas(p, id) {
+  const it = occCfg().items.find(x => x.id === id); if (!it) return occasionsOf(p).includes(id);
+  if ((it.cats || []).includes(p.category)) return true;
+  if (OCC_WORDS[it.id] && occasionsOf(p).includes(it.id)) return true;
+  const w = (it.words || []).map(x => String(x).toLowerCase().trim()).filter(Boolean); if (!w.length) return false; const tk = occTokens(p); return w.some(x => tk.has(x));
+}
+const occLabel = id => { const it = occCfg().items.find(x => x.id === id); return it ? it.label : id; };
 function renderOccasions() {
-  const el = document.getElementById('occasionSection'); if (!el) return;
-  const sarees = sareeList(), n = o => sarees.filter(p => p.stock > 0 && occasionsOf(p).includes(o)).length;
-  const tiles = OCCASIONS.map(([k, ic, label]) => `<button type="button" class="occ-tile" data-occ="${k}" onclick="occasionGo('${k}')"><span class="occ-ic" aria-hidden="true">${ic}</span><span class="occ-t">${esc(label)}</span><small>${n(k)} available</small></button>`)
-    .concat(sarees.some(p => p.stock > 0 && p.price <= GIFT_BUDGET) ? [`<button type="button" class="occ-tile" data-occ="gift" onclick="occasionGo('gift')"><span class="occ-ic" aria-hidden="true">🎁</span><span class="occ-t">Gifts under ₹${money(GIFT_BUDGET)}</span><small>${sarees.filter(p => p.stock > 0 && p.price <= GIFT_BUDGET).length} available</small></button>`] : [],
-     (!accOn() ? [] : [
-      `<button type="button" class="occ-tile" data-occ="accessory" onclick="occasionGo('accessory')"><span class="occ-ic" aria-hidden="true">💎</span><span class="occ-t">Accessories</span><small>${accessoryList().filter(p => p.stock > 0).length} available</small></button>`]));
-  el.innerHTML = `<div class="section-header"><div class="section-label">Find it faster</div><h2 class="section-title">Shop by occasion</h2></div><div class="occ-grid">${tiles.join('')}</div>`;
+  const el = document.getElementById('occasionSection'); if (!el) return; const C = occCfg();
+  if (C.show === false) { el.style.display = 'none'; el.innerHTML = ''; return; } el.style.display = '';
+  const sarees = sareeList(), n = id => sarees.filter(p => p.stock > 0 && occHas(p, id)).length;
+  const tiles = C.items.filter(it => it.show !== false && n(it.id) > 0).map(it => `<button type="button" class="occ-tile" data-occ="${esc(it.id)}" onclick="occasionGo(this.dataset.occ)"><span class="occ-ic" aria-hidden="true">${esc(it.icon)}</span><span class="occ-t">${esc(it.label)}</span><small>${n(it.id)} available</small></button>`)
+    .concat(C.gift.show !== false && sarees.some(p => p.stock > 0 && p.price <= C.gift.max) ? [`<button type="button" class="occ-tile" data-occ="gift" onclick="occasionGo('gift')"><span class="occ-ic" aria-hidden="true">🎁</span><span class="occ-t">Gifts under ₹${money(C.gift.max)}</span><small>${sarees.filter(p => p.stock > 0 && p.price <= C.gift.max).length} available</small></button>`] : [])
+    .concat(!accOn() ? [] : [`<button type="button" class="occ-tile" data-occ="accessory" onclick="occasionGo('accessory')"><span class="occ-ic" aria-hidden="true">💎</span><span class="occ-t">Accessories</span><small>${accessoryList().filter(p => p.stock > 0).length} available</small></button>`]);
+  el.innerHTML = `<div class="section-header"><div class="section-label">${esc(C.label)}</div><h2 class="section-title">${esc(C.title)}</h2></div><div class="occ-grid">${tiles.join('')}</div>`;
 }
 function occasionGo(k) {
   navigateTo('shop');
   if (k === 'accessory') { shopResetFilters(); shopKind('accessory'); return; }
   shopKind('saree'); shopResetFilters(); currentCategory = 'all';
-  if (k === 'gift') SHOP.max = String(GIFT_BUDGET); else SHOP.occasion = k;
+  if (k === 'gift') SHOP.max = String(occCfg().gift.max); else SHOP.occasion = k;
   renderProducts(); if (SHOP.open) renderShopPanel();
 }
 

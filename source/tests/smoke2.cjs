@@ -7,7 +7,7 @@ const { chromium } = require(process.env.PW || 'playwright');
   await p.route(/^https?:\/\/(?!file)/, r => r.abort());
   await p.goto('file://' + process.cwd() + '/anitha-store.html');
   const ok = (n, c) => console.log(c ? 'PASS' : 'FAIL', n);
-  ok('price en-IN', (await p.textContent('.scroll-card-price')).includes('45,999'));
+  await p.waitForSelector('.scroll-card-price', { state: 'attached' }); ok('price en-IN', (await p.$$eval('.scroll-card-price', els => els.length > 0 && els.every(e => /^₹ \d{1,3}(,\d{2,3})+$/.test(e.textContent.trim())))));
   // favourite toggle persists
   await p.click('#productGrid .product-fav-btn >> nth=0', { force: true }).catch(()=>{});
   await p.evaluate(() => { navigateTo('shop'); filterProducts('Tussar'); toggleFavourite('p1'); });

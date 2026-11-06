@@ -47,7 +47,8 @@
       "signatureLine": true,
       "signatureName": "Anitha Pemmasani",
       "signatureTitle": "Proprietor"
-    }
+    },
+    "arrivalsTracking": 1793971526430
   },
   "categories": [
     "Tussar",
@@ -102,7 +103,8 @@
       "slug": "maroon-kalamkari-tussar",
       "seoTitle": "Maroon Kalamkari Tussar | Tussar Saree – Anitha Pemmasani",
       "metaDescription": "Shop the Maroon Kalamkari Tussar: pure Tussar silk from the weaving clusters of Bhagalpur and Jharkhand. Free shipping above ₹10,000.",
-      "altText": "Maroon Kalamkari Tussar – Tussar saree by Anitha Pemmasani"
+      "altText": "Maroon Kalamkari Tussar – Tussar saree by Anitha Pemmasani",
+      "lastStock": 5
     },
     {
       "id": "p2",
@@ -142,7 +144,8 @@
       "slug": "mustard-peacock-tussar",
       "seoTitle": "Mustard Peacock Tussar | Tussar Saree – Anitha Pemmasani",
       "metaDescription": "Shop the Mustard Peacock Tussar: pure Tussar silk from the weaving clusters of Bhagalpur and Jharkhand. Free shipping above ₹10,000.",
-      "altText": "Mustard Peacock Tussar – Tussar saree by Anitha Pemmasani"
+      "altText": "Mustard Peacock Tussar – Tussar saree by Anitha Pemmasani",
+      "lastStock": 3
     },
     {
       "id": "p3",
@@ -180,7 +183,8 @@
       "slug": "pure-maheswari-silk",
       "seoTitle": "Pure Maheswari Silk | Maheswari Saree – Anitha Pemmasani",
       "metaDescription": "Shop the Pure Maheswari Silk: Maheshwari silk from Maheshwar in Madhya Pradesh. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
-      "altText": "Pure Maheswari Silk – Maheswari saree by Anitha Pemmasani"
+      "altText": "Pure Maheswari Silk – Maheswari saree by Anitha Pemmasani",
+      "lastStock": 8
     },
     {
       "id": "p4",
@@ -219,7 +223,8 @@
       "slug": "reddish-orange-banarasi",
       "seoTitle": "Reddish Orange Banarasi | Banarasi Saree – Anitha Pemmasani",
       "metaDescription": "Shop the Reddish Orange Banarasi: Banarasi silk from the looms of Varanasi. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
-      "altText": "Reddish Orange Banarasi – Banarasi saree by Anitha Pemmasani"
+      "altText": "Reddish Orange Banarasi – Banarasi saree by Anitha Pemmasani",
+      "lastStock": 1
     },
     {
       "id": "p5",
@@ -258,7 +263,8 @@
       "slug": "royal-red-kanjeevaram",
       "seoTitle": "Royal Red Kanjeevaram | Kanjeevaram Saree – Anitha Pemmasani",
       "metaDescription": "Shop the Royal Red Kanjeevaram: Kanjeevaram silk with zari from Kanchipuram, Tamil Nadu. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
-      "altText": "Royal Red Kanjeevaram – Kanjeevaram saree by Anitha Pemmasani"
+      "altText": "Royal Red Kanjeevaram – Kanjeevaram saree by Anitha Pemmasani",
+      "lastStock": 0
     },
     {
       "id": "p6",
@@ -298,7 +304,8 @@
       "slug": "ivory-gold-paithani",
       "seoTitle": "Ivory Gold Paithani | Paithani Saree – Anitha Pemmasani",
       "metaDescription": "Shop the Ivory Gold Paithani: Paithani silk with zari from Paithan in Maharashtra. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
-      "altText": "Ivory Gold Paithani – Paithani saree by Anitha Pemmasani"
+      "altText": "Ivory Gold Paithani – Paithani saree by Anitha Pemmasani",
+      "lastStock": 2
     },
     {
       "id": "p7",
@@ -337,7 +344,8 @@
       "slug": "forest-green-mysore-silk",
       "seoTitle": "Forest Green Mysore Silk – Anitha Pemmasani",
       "metaDescription": "Shop the Forest Green Mysore Silk: Mysore crepe silk from Karnataka. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
-      "altText": "Forest Green Mysore Silk – Mysore Silk saree by Anitha Pemmasani"
+      "altText": "Forest Green Mysore Silk – Mysore Silk saree by Anitha Pemmasani",
+      "lastStock": 5
     },
     {
       "id": "p8",
@@ -376,7 +384,8 @@
       "slug": "coral-ponduru-khadi",
       "seoTitle": "Coral Ponduru Khadi | Ponduru Khadi Saree – Anitha Pemmasani",
       "metaDescription": "Shop the Coral Ponduru Khadi: hand-spun, hand-woven Khadi cotton from Ponduru in Andhra Pradesh. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
-      "altText": "Coral Ponduru Khadi – Ponduru Khadi saree by Anitha Pemmasani"
+      "altText": "Coral Ponduru Khadi – Ponduru Khadi saree by Anitha Pemmasani",
+      "lastStock": 7
     },
     {
       "id": "p9",
@@ -402,7 +411,8 @@
       "metaDescription": "Shop the Temple Jhumka Earrings: handloom fabric from India's master weaving clusters. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
       "altText": "Temple Jhumka Earrings – Jewellery saree by Anitha Pemmasani",
       "reviews": 0,
-      "rating": 0
+      "rating": 0,
+      "lastStock": 12
     },
     {
       "id": "p10",
@@ -430,7 +440,8 @@
       "metaDescription": "Shop the Antique Gold Bangles (Set of 4): handloom fabric from India's master weaving clusters. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
       "altText": "Antique Gold Bangles (Set of 4) – Jewellery saree by Anitha Pemmasani",
       "reviews": 0,
-      "rating": 0
+      "rating": 0,
+      "lastStock": 6
     },
     {
       "id": "p11",
@@ -458,7 +469,8 @@
       "metaDescription": "Shop the Readymade Silk Blouse - Maroon: handloom fabric from India's master weaving clusters. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
       "altText": "Readymade Silk Blouse - Maroon – Blouses & Fabric saree by Anitha Pemmasani",
       "reviews": 0,
-      "rating": 0
+      "rating": 0,
+      "lastStock": 9
     },
     {
       "id": "p12",
@@ -484,7 +496,8 @@
       "metaDescription": "Shop the Zari Potli Bag: handloom fabric from India's master weaving clusters. Free shipping above ₹10,000. Anitha Pemmasani, Hyderabad.",
       "altText": "Zari Potli Bag – Bags & Potlis saree by Anitha Pemmasani",
       "reviews": 0,
-      "rating": 0
+      "rating": 0,
+      "lastStock": 15
     }
   ],
   "users": [
@@ -1195,7 +1208,10 @@
       "show": true,
       "label": "Handpicked",
       "title": "New Arrivals",
-      "ids": []
+      "ids": [],
+      "mode": "auto",
+      "days": 30,
+      "max": 12
     },
     "signature": {
       "show": true,

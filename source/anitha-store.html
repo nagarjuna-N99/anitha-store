@@ -1425,6 +1425,18 @@ html.shop-wait body > #storefrontView .page, html.shop-wait .store-mobile-bar { 
 #shopLoadErr { position: fixed; inset: 0; z-index: 9999; background: rgba(250,249,246,.96); display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; } #shopLoadErr button { margin-top: 8px; padding: 12px 22px; border: 0; border-radius: 6px; background: #2c2a26; color: #fff; font: inherit; cursor: pointer; min-height: 44px; }
 
 .bg-pagecol { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 8px 0; font-size: .85rem; } .bg-pc { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(0,0,0,.2); display: inline-block; }
+
+/* New Arrivals: automatic or chosen */
+.arr-mode { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0 0 10px; } .arr-opt { display: flex; gap: 8px; align-items: flex-start; border: 1px solid #d8d2c4; border-radius: 8px; padding: 9px 11px; cursor: pointer; background: #fff; } .arr-opt.on { border-color: #b8923a; background: #f3e7d3; box-shadow: 0 0 0 1px #b8923a; } .arr-opt small { display: block; font-size: .74rem; color: #6b6558; margin-top: 2px; line-height: 1.35; } .arr-opt input { margin-top: 3px; }
+@media (max-width: 640px) { .arr-mode { grid-template-columns: 1fr; } .arr-opt { min-height: 44px; } }
+html.ui2.dk .arr-opt { background: #23211d; border-color: #3a362f; } html.ui2.dk .arr-opt.on { background: #3a3123; }
+
+/* Shop by occasion: admin card */
+.occ-prev { margin: 8px 0; } .occ-prev > div { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; } .occ-pv { border: 1px solid #d8d2c4; border-radius: 16px; padding: 4px 12px; font-size: .82rem; background: #fff; } .occ-pv small { color: #6b6558; } .occ-pv.none { opacity: .5; text-decoration: line-through; }
+.occ-list { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; } .occ-row { border: 1px solid #e3ddcf; border-radius: 8px; padding: 9px 11px; background: #fffdf8; } .occ-row.off { opacity: .6; }
+.occ-row-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; } .occ-icon { width: 58px; text-align: center; font-size: 1.2rem; } .occ-name { flex: 1; min-width: 140px; } .occ-n { font-size: .78rem; color: #6b6558; } .occ-w { display: flex; flex-direction: column; gap: 3px; font-size: .78rem; color: #6b6558; margin-top: 6px; } .occ-w input, .occ-row-top input, .occ-max { font: inherit; padding: 7px 9px; border: 1px solid #d8d2c4; border-radius: 6px; background: #fff; } .occ-max { width: 110px; } .occ-cats summary { cursor: pointer; font-size: .8rem; margin-top: 6px; }
+html.ui2.dk .occ-row { background: #23211d; border-color: #3a362f; } html.ui2.dk .occ-pv { background: #23211d; border-color: #3a362f; }
+@media (max-width: 640px) { .occ-icon { width: 52px; } .occ-n { flex-basis: 100%; } }
 </style>
 <style>.nav-toggle{position:fixed;top:14px;left:268px;z-index:60;width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--ivory);color:var(--charcoal);cursor:pointer;display:none;align-items:center;justify-content:center;font-size:18px;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.08)}body.admin-on .nav-toggle{display:flex}body.nav-closed .nav-toggle{left:14px}body.nav-closed .admin-sidebar{display:none}body.nav-closed .admin-main{margin-left:0;padding-left:64px}body.studio-focus .nav-toggle{display:none!important}@media (max-width:900px){body.admin-on .nav-toggle{display:none}}html.ui2 .nav-toggle{background:var(--o-glass-2);color:var(--o-ink);border-color:var(--o-line)}.pg-item{border:1px solid var(--border);border-radius:14px;padding:14px;margin:12px 0}.pg-item.pg-off{opacity:.7}.pg-head{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.pg-head b{flex:1;min-width:140px}.pg-tools{display:inline-flex;gap:6px}.pg-tip{border-top:1px dashed var(--border);padding:10px 0}.pg-sec>summary{cursor:pointer;min-height:40px;display:flex;align-items:center}.pg-item textarea,.pg-tip textarea{width:100%}</style>
 </head>
@@ -1798,6 +1810,7 @@ let pendingDraftId = null;
 
 
 function saveDB() {
+  if (BUILD !== 'site' && typeof stockDatesSync === 'function') { try { stockDatesSync(); } catch (e) { /* dates are a convenience: never block a save */ } }
   if (BUILD === 'admin') { admQueueSave(); if (typeof waAutoSoon === 'function') waAutoSoon(); return true; }   // the owner app saves to the server, never to this browser
   try { localStorage.setItem('ap_db_v70', JSON.stringify(db)); if (typeof waAutoSoon === 'function') waAutoSoon(); return true; }
   catch (e) { showToast('Storage is full - changes could not be saved. Delete drafts or large images.', 'error'); return false; }
@@ -1992,8 +2005,7 @@ function productCardHTML(p) {
 
 function buildScrollTrack() {
   const track = document.getElementById('scrollTrack');
-  const pickedIds = (db.home && db.home.arrivals && db.home.arrivals.ids) || [], allSarees = sareeList();
-  const shown = pickedIds.length ? pickedIds.map(id => allSarees.find(p => p.id === id)).filter(Boolean) : allSarees.filter(p => p.isNew);
+  const shown = arrivalsPick();   // automatic (newest in-stock sarees) or the owner's own choice
   const cards = shown.map(p => `
     <div class="scroll-card">
       <img src="${esc(p.image)}" class="scroll-card-img" alt="${esc(p.name)}">
@@ -4620,7 +4632,7 @@ function defaultHome() {
     ] },
     announcements: [{ id: 'an1', enabled: true, text: 'Complimentary Shipping on Orders Above ₹10,000 · Authentic Handloom Guarantee', startAt: '', endAt: '' }],
     shopBanner: { enabled: true, image: '', eyebrow: 'Our collection', title: 'Handloom sarees, handpicked', subtitle: 'Browse by weave, colour and occasion.', btnText: '', link: { type: 'none', value: '' }, pos: 'center', focus: 'center', overlay: 45, zoom: 100, focusX: 50 },
-    arrivals: { show: true, label: 'Handpicked', title: 'New Arrivals', ids: [] },
+    arrivals: { show: true, label: 'Handpicked', title: 'New Arrivals', ids: [], mode: 'auto', days: 30, max: 12 },
     signature: { show: true, label: 'Curated Edits', title: 'The Signature Collection', tiles: [
       { id: 'sg1', title: 'The Bridal Edit', subtitle: 'Pure Kanjeevaram', category: 'Kanjeevaram', image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=1200' },
       { id: 'sg2', title: 'Maheswari Silk', subtitle: 'Timeless Elegance', category: 'Maheswari', image: 'https://images.unsplash.com/photo-1583391733958-e04f9715d184?q=80&w=800' }
@@ -4914,7 +4926,7 @@ function renderShopBanner() {
   const html = s.enabled === false || !safeImg(s.image) || !(s.title || s.subtitle) ? '' : `<div class="hero-slider shop-banner">${heroSlideHTML(s, -1, true, 'h2')}</div>`;
   if (box._h === html) return; box._h = html; box.innerHTML = html; box.style.display = html ? '' : 'none';
 }
-function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); renderHomeQuote(); renderHomeNotes(); renderHomeChapters(); if (typeof applyBackground === 'function') applyBackground(); homeSaveSoon(); }
+function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); renderHomeQuote(); renderHomeNotes(); renderHomeChapters(); renderOccasions(); if (typeof applyBackground === 'function') applyBackground(); homeSaveSoon(); }
 let HOME_PICK = null;
 function homePick(kind, idx) { HOME_PICK = { kind, idx }; document.getElementById('home-file').click(); }
 async function homeFileChosen(files) {
@@ -4962,15 +4974,46 @@ function homeCatImage(i, v) { v = String(v).trim(); if (v && !safeImg(v)) { show
 function homeCatAll(on) { db.home.categories.items.forEach(i => i.enabled = on); homeLive(false); renderHomeAdmin(document.getElementById('adminContent')); }
 // ---- admin: sections & signature collection ----
 function homeSecToggle(sec, el) { const o = db.home[sec]; o.show = o.show === false; el.classList.toggle('active', o.show !== false); el.setAttribute('aria-checked', o.show !== false); homeLive(false); }
+// ---- New Arrivals: automatic (the newest sarees that are in stock) or chosen by hand ----
+// "New" means recently ADDED or recently RESTOCKED. The dates are kept on each saree by stockDatesSync (below), whenever the shop data is saved in the owner app.
+const ARR_DAY = 86400000, ARR_MIN = 4;
+const arrCfg = () => { const a = (db.home && db.home.arrivals) || {}, mode = a.mode === 'manual' || a.mode === 'auto' ? a.mode : ((a.ids || []).length ? 'manual' : 'auto'); return { mode, days: [7, 14, 30, 60, 90].includes(+a.days) ? +a.days : 30, max: [6, 8, 12].includes(+a.max) ? +a.max : 12, ids: a.ids || [] }; };
+const arrStamp = p => Math.max(+p.stockedAt || 0, +p.addedAt || 0);
+function arrivalsPick(now = Date.now()) {
+  const c = arrCfg(), list = sareeList();
+  if (c.mode === 'manual' && c.ids.length) return c.ids.map(id => list.find(p => p.id === id)).filter(Boolean);   // nothing chosen yet: the automatic list
+  const idx = new Map(db.products.map((p, i) => [p.id, i])), pool = list.filter(p => p.stock > 0).sort((a, b) => arrStamp(b) - arrStamp(a) || idx.get(b.id) - idx.get(a.id));   // newer first; without dates, the later-added saree first
+  const recent = pool.filter(p => arrStamp(p) >= now - c.days * ARR_DAY), out = recent.slice(0, c.max);
+  for (const p of pool) { if (out.length >= Math.min(ARR_MIN, c.max)) break; if (!out.includes(p)) out.push(p); }   // never an empty or tiny slider: top up with the next newest
+  return out;
+}
+// keeps "when was this saree added / restocked" true, for every way stock can change (a new saree, a draft published, an import, a stock edit)
+function stockDatesSync(now = Date.now()) {
+  if (!db || !Array.isArray(db.products)) return; db.settings = db.settings || {};
+  const first = !db.settings.arrivalsTracking; if (first) db.settings.arrivalsTracking = now;   // the first time: only remember today's stock, nothing is called new
+  for (const p of db.products) {
+    if (typeof p.lastStock !== 'number') { p.lastStock = p.stock; if (!first) { p.addedAt = p.addedAt || now; p.stockedAt = p.stockedAt || now; } continue; }   // a saree we have not seen before is new
+    if (p.stock > p.lastStock) p.stockedAt = now;   // more in stock than before: restocked
+    p.lastStock = p.stock;
+  }
+}
+function arrMode(m) { const a = db.home.arrivals; a.mode = m; buildScrollTrack(); homeLive(false); renderHomeAdmin(document.getElementById('adminContent')); }
+function arrSet(k, v) { db.home.arrivals[k] = +v; buildScrollTrack(); homeLive(false); const e = document.getElementById('arr-now'); if (e) e.innerHTML = arrNowHTML(); }
+function arrNowHTML() { const l = arrivalsPick(); return l.length ? `Right now the slider shows <b>${l.length}</b>: ${l.slice(0, 8).map(p => esc(p.name)).join(', ')}${l.length > 8 ? '…' : ''}` : 'Nothing to show yet: add a saree that is in stock.'; }
 function arrPick(id, on) { const a = db.home.arrivals; a.ids = (a.ids || []).filter(x => x !== id); if (on) a.ids.push(id); buildScrollTrack(); homeLive(false); const n = document.getElementById('arr-count'); if (n) n.textContent = arrCountText(); }
 function arrClear() { db.home.arrivals.ids = []; buildScrollTrack(); homeLive(false); renderHomeAdmin(document.getElementById('adminContent')); }
-function arrCountText() { const n = (db.home.arrivals.ids || []).length; return n ? n + ' chosen — only these show on the website' : 'None chosen — the website shows every product marked new'; }
+function arrCountText() { const n = (db.home.arrivals.ids || []).length; return n ? n + ' chosen: only these show on the website' : 'None chosen yet: until you choose, the newest in-stock sarees show'; }
 function arrPickerHTML() {
+  const c = arrCfg(), sel = (k, vals, cur, fmt) => `<select onchange="arrSet('${k}',this.value)">${vals.map(v => `<option value="${v}" ${v === cur ? 'selected' : ''}>${fmt(v)}</option>`).join('')}</select>`;
+  const modeBar = `<div class="arr-mode" role="radiogroup" aria-label="How the New Arrivals slider is filled"><label class="arr-opt ${c.mode === 'auto' ? 'on' : ''}"><input type="radio" name="arrmode" ${c.mode === 'auto' ? 'checked' : ''} onchange="arrMode('auto')"><span><b>Automatic</b><small>The newest sarees that are in stock: newly added or restocked. Sold-out and accessories never show. Nothing to do when you add stock.</small></span></label><label class="arr-opt ${c.mode === 'manual' ? 'on' : ''}"><input type="radio" name="arrmode" ${c.mode === 'manual' ? 'checked' : ''} onchange="arrMode('manual')"><span><b>I choose</b><small>Only the sarees you tick below.</small></span></label></div>`;
+  const auto = c.mode === 'auto' ? `<div class="hs-grid2"><div class="form-group"><label>“New” means added or restocked in the last</label>${sel('days', [7, 14, 30, 60, 90], c.days, v => v + ' days')}</div><div class="form-group"><label>Show at most</label>${sel('max', [6, 8, 12], c.max, v => v + ' sarees')}</div></div><p class="note" style="margin:0 0 8px">If fewer than ${ARR_MIN} sarees are that new, the next newest fill the slider so it is never empty.</p>` : '';
+  const now = `<p class="note arr-now" id="arr-now" style="margin:0 0 10px">${arrNowHTML()}</p>`;
+  if (c.mode === 'auto') return `<div class="form-group">${modeBar}${auto}${now}</div>`;
   const ids = db.home.arrivals.ids || [], list = sareeList(), cats = db.categories.filter(c => list.some(p => p.category === c));
   return `<div class="form-group"><label>Choose the sarees to show (from all your categories)</label><div id="arr-count" class="note" style="margin:0 0 6px;">${arrCountText()}</div>
     ${cats.map(c => `<details class="arr-cat" ${list.some(p => p.category === c && ids.includes(p.id)) ? 'open' : ''}><summary>${esc(c)} <span class="note" style="margin:0">(${list.filter(p => p.category === c).length})</span></summary>
       <div class="arr-list">${list.filter(p => p.category === c).map(p => `<label class="chk arr-item"><input type="checkbox" ${ids.includes(p.id) ? 'checked' : ''} onchange="arrPick('${p.id}',this.checked)"><span>${esc(p.name)} <span class="note" style="margin:0">₹ ${money(p.price)}</span></span></label>`).join('')}</div></details>`).join('')}
-    <button class="btn-sm btn-info-sm" onclick="arrClear()" ${ids.length ? '' : 'disabled'}>Clear my choice (show all new)</button></div>`;
+    <button class="btn-sm btn-info-sm" onclick="arrClear()" ${ids.length ? '' : 'disabled'}>Clear my choice</button></div>`.replace('<div class="form-group"><label>Choose', `<div class="form-group">${modeBar}${now}<label>Choose`);
 }
 function homeSecText(sec, k, v) { db.home[sec][k] = v; homeLive(false); }
 function sigSet(i, k, v) { const t = db.home.signature.tiles[i]; if (!t) return; if (k === 'image') { v = String(v).trim(); if (v && !safeImg(v)) { showToast('Image link must start with https://', 'error'); return; } } t[k] = v; homeLive(false); if (k === 'image') renderHomeAdmin(document.getElementById('adminContent')); }
@@ -5039,6 +5082,7 @@ function renderHomeAdmin(container) {
       <div class="hs-grid2"><div class="form-group"><label>Signed by (optional)</label><input type="text" maxlength="60" value="${esc(H.quote.by)}" oninput="quoteSet('by',this.value)"></div><div class="form-group"><label>&nbsp;</label><button type="button" class="btn-sm btn-info-sm" onclick="quoteIdea()">✨ Suggest another quote</button></div></div>
     </div>
 
+    ${occasionsCardHTML()}
     ${backgroundCardHTML()}
     ${chaptersCardHTML()}
     ${themeCardHTML()}
@@ -5126,7 +5170,7 @@ function shopKind(k) { if (k === 'accessory' && !accOn()) k = 'saree'; if (SHOP.
 function visibleProducts() {
   let list = categoryProducts().slice(); const terms = tokenise(SHOP.q), scores = new Map();
   if (terms.length) list = list.filter(p => { const s = searchScore(p, terms); scores.set(p.id, s); return s > 0; });
-  if (SHOP.occasion) list = list.filter(p => occasionsOf(p).includes(SHOP.occasion));
+  if (SHOP.occasion) list = list.filter(p => occHas(p, SHOP.occasion));
   if (SHOP.fabrics.length) list = list.filter(p => SHOP.fabrics.includes(p.fabric));
   if (SHOP.colours.length) list = list.filter(p => (p.colours || []).some(c => SHOP.colours.includes(c)));
   const min = parseInt(SHOP.min, 10), max = parseInt(SHOP.max, 10);
@@ -5172,7 +5216,7 @@ function shopMeta(n, total) {
   const sort = document.getElementById('shop-sort'); if (sort) { sort.options[0].text = SHOP.q.trim() ? 'Best match' : 'Featured'; if (sort.value !== SHOP.sort) sort.value = SHOP.sort; }
   const chips = [];
   if (SHOP.q.trim()) chips.push(['q', '', `“${SHOP.q.trim()}”`]);
-  if (SHOP.occasion) chips.push(['occasion', '', (OCCASIONS.find(o => o[0] === SHOP.occasion) || [0, 0, SHOP.occasion])[2]]);
+  if (SHOP.occasion) chips.push(['occasion', '', occLabel(SHOP.occasion)]);
   SHOP.fabrics.forEach(v => chips.push(['fabrics', v, v])); SHOP.colours.forEach(v => chips.push(['colours', v, v]));
   if (SHOP.min !== '' || SHOP.max !== '') chips.push(['price', '', `₹${SHOP.min !== '' ? money(SHOP.min) : '0'} – ${SHOP.max !== '' ? '₹' + money(SHOP.max) : 'any'}`]);
   if (SHOP.inStock) chips.push(['stock', '', 'In stock']);
@@ -6199,20 +6243,33 @@ function occasionsOf(p) {
   ((kbFor(p.category) || {}).occ || []).forEach(add);
   return [...s];
 }
+// "Find it faster / Shop by occasion": the heading, the tiles and what each tile matches are the owner's (Home Page → Shop by occasion, with AI ideas). Without any edits it is the four standard tiles.
+const OCC_WORDS = { Wedding: ['wedding', 'bridal'], Festive: ['festive', 'traditional'], Office: ['office', 'casual', 'everyday'], Party: ['party', 'cocktail', 'evening', 'reception'] };
+const occDefault = () => ({ show: true, label: 'Find it faster', title: 'Shop by occasion', gift: { show: true, max: GIFT_BUDGET }, items: OCCASIONS.map(([k, ic, label]) => ({ id: k, icon: ic, label, words: OCC_WORDS[k] || [], cats: [], show: true })) });
+const occCfg = () => { const o = db.home && db.home.occasions; return o && Array.isArray(o.items) ? { ...occDefault(), ...o, gift: { ...occDefault().gift, ...(o.gift || {}) } } : occDefault(); };
+const occTokens = p => { const kb = kbFor(p.category) || {}, t = new Set(); [...(p.occasions || []), ...(p.tags || []), ...(kb.occ || [])].forEach(x => t.add(String(x).toLowerCase().trim())); String(p.name || '').toLowerCase().split(/[^a-z0-9]+/).filter(Boolean).forEach(x => t.add(x)); return t; };
+// does saree p belong under tile `id`? (its own words, its whole categories, or the standard four's old rules)
+function occHas(p, id) {
+  const it = occCfg().items.find(x => x.id === id); if (!it) return occasionsOf(p).includes(id);
+  if ((it.cats || []).includes(p.category)) return true;
+  if (OCC_WORDS[it.id] && occasionsOf(p).includes(it.id)) return true;
+  const w = (it.words || []).map(x => String(x).toLowerCase().trim()).filter(Boolean); if (!w.length) return false; const tk = occTokens(p); return w.some(x => tk.has(x));
+}
+const occLabel = id => { const it = occCfg().items.find(x => x.id === id); return it ? it.label : id; };
 function renderOccasions() {
-  const el = document.getElementById('occasionSection'); if (!el) return;
-  const sarees = sareeList(), n = o => sarees.filter(p => p.stock > 0 && occasionsOf(p).includes(o)).length;
-  const tiles = OCCASIONS.map(([k, ic, label]) => `<button type="button" class="occ-tile" data-occ="${k}" onclick="occasionGo('${k}')"><span class="occ-ic" aria-hidden="true">${ic}</span><span class="occ-t">${esc(label)}</span><small>${n(k)} available</small></button>`)
-    .concat(sarees.some(p => p.stock > 0 && p.price <= GIFT_BUDGET) ? [`<button type="button" class="occ-tile" data-occ="gift" onclick="occasionGo('gift')"><span class="occ-ic" aria-hidden="true">🎁</span><span class="occ-t">Gifts under ₹${money(GIFT_BUDGET)}</span><small>${sarees.filter(p => p.stock > 0 && p.price <= GIFT_BUDGET).length} available</small></button>`] : [],
-     (!accOn() ? [] : [
-      `<button type="button" class="occ-tile" data-occ="accessory" onclick="occasionGo('accessory')"><span class="occ-ic" aria-hidden="true">💎</span><span class="occ-t">Accessories</span><small>${accessoryList().filter(p => p.stock > 0).length} available</small></button>`]));
-  el.innerHTML = `<div class="section-header"><div class="section-label">Find it faster</div><h2 class="section-title">Shop by occasion</h2></div><div class="occ-grid">${tiles.join('')}</div>`;
+  const el = document.getElementById('occasionSection'); if (!el) return; const C = occCfg();
+  if (C.show === false) { el.style.display = 'none'; el.innerHTML = ''; return; } el.style.display = '';
+  const sarees = sareeList(), n = id => sarees.filter(p => p.stock > 0 && occHas(p, id)).length;
+  const tiles = C.items.filter(it => it.show !== false && n(it.id) > 0).map(it => `<button type="button" class="occ-tile" data-occ="${esc(it.id)}" onclick="occasionGo(this.dataset.occ)"><span class="occ-ic" aria-hidden="true">${esc(it.icon)}</span><span class="occ-t">${esc(it.label)}</span><small>${n(it.id)} available</small></button>`)
+    .concat(C.gift.show !== false && sarees.some(p => p.stock > 0 && p.price <= C.gift.max) ? [`<button type="button" class="occ-tile" data-occ="gift" onclick="occasionGo('gift')"><span class="occ-ic" aria-hidden="true">🎁</span><span class="occ-t">Gifts under ₹${money(C.gift.max)}</span><small>${sarees.filter(p => p.stock > 0 && p.price <= C.gift.max).length} available</small></button>`] : [])
+    .concat(!accOn() ? [] : [`<button type="button" class="occ-tile" data-occ="accessory" onclick="occasionGo('accessory')"><span class="occ-ic" aria-hidden="true">💎</span><span class="occ-t">Accessories</span><small>${accessoryList().filter(p => p.stock > 0).length} available</small></button>`]);
+  el.innerHTML = `<div class="section-header"><div class="section-label">${esc(C.label)}</div><h2 class="section-title">${esc(C.title)}</h2></div><div class="occ-grid">${tiles.join('')}</div>`;
 }
 function occasionGo(k) {
   navigateTo('shop');
   if (k === 'accessory') { shopResetFilters(); shopKind('accessory'); return; }
   shopKind('saree'); shopResetFilters(); currentCategory = 'all';
-  if (k === 'gift') SHOP.max = String(GIFT_BUDGET); else SHOP.occasion = k;
+  if (k === 'gift') SHOP.max = String(occCfg().gift.max); else SHOP.occasion = k;
   renderProducts(); if (SHOP.open) renderShopPanel();
 }
 
@@ -7448,7 +7505,7 @@ function cartAnim(btn) {
 // ================= AI HELPERS for the owner (30 Oct 2026) =================
 // Every helper only DRAFTS: nothing is sent to customers or saved without the owner pressing the button.
 // Connected = the assistant server address + admin token are set (WhatsApp Assistant tab); otherwise built-in drafts are used where they exist.
-const AI_FEATURES = [['describe', 'Product descriptions, tags & SEO'], ['photo', 'Read colours & fabric from a photo'], ['reply', 'WhatsApp reply suggestions (Inbox)'], ['write', 'Festival, offer & caption writer'], ['palette', 'Website colour ideas (Home Page → Website colours)'], ['repair', 'Repair assistant chat (Ops page: explains the checks, suggests repairs)'], ['chapters', 'Moments wording (Home Page → Moments)'], ['background', 'Website background ideas (Home Page → Website background)'], ['watemplate', 'WhatsApp template wording (WhatsApp promotions)'], ['notes', 'Notes from the loom wording (Home Page)'], ['hero', 'Home page words (small heading, title, button)'], ['review', 'Review replies'], ['ask', 'Ask your shop'], ['summary', 'Weekly summary'], ['pricing', 'Pricing & stock ideas'], ['cleanup', 'Data clean-up'], ['translate', 'Translation (Telugu / Hindi / English)'], ['captionpack', 'Caption & hashtag pack (English + Telugu)'], ['followup', 'Follow-up message drafts'], ['orderdraft', 'Order message drafts'], ['privacydraft', 'Privacy request reply drafts'], ['contentweek', 'Weekly content writer']];
+const AI_FEATURES = [['describe', 'Product descriptions, tags & SEO'], ['photo', 'Read colours & fabric from a photo'], ['reply', 'WhatsApp reply suggestions (Inbox)'], ['write', 'Festival, offer & caption writer'], ['palette', 'Website colour ideas (Home Page → Website colours)'], ['repair', 'Repair assistant chat (Ops page: explains the checks, suggests repairs)'], ['chapters', 'Moments wording (Home Page → Moments)'], ['background', 'Website background ideas (Home Page → Website background)'], ['occasions', 'Shop by occasion ideas (Home Page → Find it faster)'], ['watemplate', 'WhatsApp template wording (WhatsApp promotions)'], ['notes', 'Notes from the loom wording (Home Page)'], ['hero', 'Home page words (small heading, title, button)'], ['review', 'Review replies'], ['ask', 'Ask your shop'], ['summary', 'Weekly summary'], ['pricing', 'Pricing & stock ideas'], ['cleanup', 'Data clean-up'], ['translate', 'Translation (Telugu / Hindi / English)'], ['captionpack', 'Caption & hashtag pack (English + Telugu)'], ['followup', 'Follow-up message drafts'], ['orderdraft', 'Order message drafts'], ['privacydraft', 'Privacy request reply drafts'], ['contentweek', 'Weekly content writer']];
 const AI_LANGS = [['en', 'English'], ['te', 'తెలుగు Telugu'], ['hi', 'हिन्दी Hindi']];
 const aiCfg = () => { const c = { master: true, ...(db.settings.ai || {}) }; AI_FEATURES.forEach(([k]) => { if (c[k] === undefined) c[k] = true; }); return c; };
 const aiOn = k => { const c = aiCfg(); return !!c.master && !!c[k]; };
@@ -8292,7 +8349,7 @@ const HOW_SECTIONS = [
     works: ['Customers write to the shop number; the assistant answers about sarees, prices, delivery and orders using only your catalogue and policies.', 'When it cannot help, or the customer asks for a person, the chat is handed to you (“human” mode). Reply from the WhatsApp tab. The assistant stays quiet in that chat until you give it back.', 'STOP stops all messages to that customer; START brings them back.', 'Outside 24 hours after the customer last wrote, only approved templates can be sent.'],
     do: ['Reply to handed-over chats the same day.', 'Keep the catalogue and policies up to date; the assistant only knows what you wrote.'], dont: ['Do not message people who sent STOP.', 'Do not use the assistant to promise delivery dates the courier controls.'], adminDo: ['Keep the WhatsApp number, access token and webhook settings correct (WhatsApp tab).', 'Test with the test chat after any change.'], adminDont: ['Never paste the WhatsApp token into a chat or email.', 'Do not switch to “live” until the Meta templates are approved.'] },
   { id: 'look', who: ['admin'], icon: '🏠', title: 'Website look: Home Page and Pages', does: 'How the website looks and what its pages say.',
-    works: ['Home Page: banner slides, category tiles, the quote, notes and the website colours (AI can suggest colour sets). Moments: one Size for all of them (Compact, Standard, Large, Full screen), and under “Your moments” each moment has its own photo, order, Hide and Delete, and tick boxes for which collections appear under it (up to 6).', 'Website background: a soft hand-drawn pattern (kalamkari, peacocks, lotus, festival lamps, mandala, kolam and more) behind the whole site, in five layouts (scattered, edge frame, big corners, flowing vine, repeating pattern). Build it in the big preview box, press Surprise me or ask Claude for 3 new ideas as often as you like, and nothing changes on the website until you press “Put this on the website”. Save looks for each festival.', 'Pages: Saree Care, Journal, FAQ and extra pages. Changes appear on the website within seconds.', 'Hidden items stay saved but are not shown.'],
+    works: ['Home Page: banner slides, category tiles, New Arrivals (automatic: the newest sarees in stock, or the ones you choose), Find it faster / Shop by occasion (your own tiles, with AI ideas), the quote, notes and the website colours (AI can suggest colour sets). Moments: one Size for all of them (Compact, Standard, Large, Full screen), and under “Your moments” each moment has its own photo, order, Hide and Delete, and tick boxes for which collections appear under it (up to 6).', 'Website background: a soft hand-drawn pattern (kalamkari, peacocks, lotus, festival lamps, mandala, kolam and more) behind the whole site, in five layouts (scattered, edge frame, big corners, flowing vine, repeating pattern). Build it in the big preview box, press Surprise me or ask Claude for 3 new ideas as often as you like, and nothing changes on the website until you press “Put this on the website”. Save looks for each festival.', 'Pages: Saree Care, Journal, FAQ and extra pages. Changes appear on the website within seconds.', 'Hidden items stay saved but are not shown.'],
     do: ['Use wide, sharp landscape photos (1600 px or more) for heading panels.', 'Try the ✨ Write ALL the words button, then read and change what you like.', 'Check the result on a phone: most visitors use one.', 'Keep the background faint (about 20 to 30 %) so every word stays easy to read.'], dont: ['Do not use pictures you do not own.', 'Do not put promises of sales, views or results in any text.', 'Do not remove the Terms, Privacy or contact details.'] },
   { id: 'promo', who: ['admin'], icon: '📣', title: 'WhatsApp promotions, templates and costs', does: 'Counts every WhatsApp message, shows what it costs, and sends promotions with consent.',
     works: ['Every message sent is counted as regular (free in the 24-hour window), order update, promotion or sign-in code, with the price you entered.', 'Templates are drafted here (AI helps with wording) and approved by Meta; you mark them Approved.', 'A promotion goes only to customers who said yes to offers and not STOP, only 9 am to 9 pm, within a daily limit, once per person, after you confirm the head-count and cost.', 'Other running costs are added by hand to give total expenses.'],
@@ -8331,6 +8388,73 @@ function howFilter() {
   const none = document.getElementById('how-none'); if (none) none.style.display = n ? 'none' : '';
 }
 function howAll(open) { document.querySelectorAll('#how-list .how-sec').forEach(d => { if (d.style.display !== 'none') d.open = open; }); }
+// ================= Home Page → "Find it faster / Shop by occasion" (admin): heading, tiles, what each tile matches, and ✨ AI ideas =================
+// A tile = an icon, a name, the WORDS it looks for in each saree's occasions, tags and name (for example "diwali", "festive") and, if wanted, whole categories.
+// The website shows a tile only while at least one saree in stock matches it. AI only drafts tiles; nothing changes until "Use this".
+const OCC_AI = { drafts: [], msg: '', busy: false };
+const occW = () => { if (!db.home.occasions || !Array.isArray(db.home.occasions.items)) db.home.occasions = occDefault(); const o = db.home.occasions; o.gift = { ...occDefault().gift, ...(o.gift || {}) }; return o; };
+const occRid = () => 'o' + Math.random().toString(36).slice(2, 8);
+function occClean(v) {
+  const s = (x, n) => String(x == null ? '' : x).replace(/<[^>]*>/g, '').replace(/[<>"&]/g, '').replace(/\s+/g, ' ').trim().slice(0, n), label = s(v && v.label, 26); if (!label) return null;
+  const ic = String((v && v.icon) || '').trim(), icon = ic && ic.length <= 8 && !/[A-Za-z0-9<>"'&]/.test(ic) ? ic : '✨';
+  const words = [...new Set((Array.isArray(v && v.words) ? v.words : []).map(w => s(w, 60).toLowerCase()).filter(w => /^[a-z0-9 ]{2,24}$/.test(w)))].slice(0, 6);
+  const cats = [...new Set((Array.isArray(v && v.cats) ? v.cats : []).map(c => db.categories.find(k => k.toLowerCase() === s(c, 40).toLowerCase())).filter(Boolean))].slice(0, 4);
+  return words.length || cats.length ? { id: occRid(), icon, label, words, cats, show: true } : null;
+}
+function occLive(redraw) { renderOccasions(); homeSaveSoon(); if (redraw) { const c = el_('adminContent'); if (c) renderHomeAdmin(c); } }
+function occSet(k, v) { const o = occW(); if (k === 'max') { o.gift.max = Math.min(1000000, Math.max(500, Math.round(+v) || GIFT_BUDGET)); } else if (k === 'giftShow') o.gift.show = !o.gift.show; else if (k === 'show') o.show = o.show === false; else o[k] = String(v).slice(0, 60); occLive(k === 'show' || k === 'giftShow' || k === 'max'); }
+function occItem(i, k, v) { const it = occW().items[i]; if (!it) return; if (k === 'show') it.show = it.show === false; else if (k === 'words') it.words = String(v).split(',').map(x => x.trim().toLowerCase()).filter(x => /^[a-z0-9 ]{2,24}$/.test(x)).slice(0, 6); else it[k] = String(v).replace(/[<>"&]/g, '').slice(0, k === 'icon' ? 8 : 26); occLive(k === 'show' || k === 'words'); }
+function occCat(i, cat) { const it = occW().items[i]; if (!it || !db.categories.includes(cat)) return; it.cats = it.cats || []; const k = it.cats.indexOf(cat); if (k >= 0) it.cats.splice(k, 1); else if (it.cats.length < 4) it.cats.push(cat); occLive(true); }
+function occMove(i, d) { const a = occW().items, j = i + d; if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; occLive(true); }
+function occDel(i) { if (!confirm('Delete this tile?')) return; occW().items.splice(i, 1); occLive(true); }
+function occAdd() { const o = occW(); if (o.items.length >= 10) return showToast('Up to 10 tiles', 'error'); o.items.push({ id: occRid(), icon: '✨', label: 'New tile', words: ['festive'], cats: [], show: true }); occLive(true); }
+function occReset() { if (!confirm('Go back to the four standard tiles (Wedding, Festive, Office, Party)?')) return; db.home.occasions = occDefault(); occLive(true); }
+const occCount = it => sareeList().filter(p => p.stock > 0 && occHas(p, it.id)).length;
+function occasionsCardHTML() {
+  const o = occW(), cats = db.categories, tog = (on, fn) => `<div class="toggle ${on ? 'active' : ''}" role="switch" tabindex="0" aria-checked="${!!on}" onclick="${fn}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"></div>`, aiOn_ = typeof aiReady === 'function' && aiReady('occasions');
+  const prev = o.items.filter(it => it.show !== false).map(it => `<span class="occ-pv ${occCount(it) ? '' : 'none'}"><span aria-hidden="true">${esc(it.icon)}</span> ${esc(it.label)} <small>${occCount(it)}</small></span>`).join('') + (o.gift.show !== false ? `<span class="occ-pv">🎁 Gifts under ₹${money(o.gift.max)}</span>` : '') + (accOn() ? '<span class="occ-pv">💎 Accessories</span>' : '');
+  return `<div class="admin-card" id="occ-card"><h3 style="margin:0 0 4px">🧭 Find it faster · Shop by occasion</h3>
+    <p class="note" style="margin:0 0 8px">The row of tiles under the home page banner. Each tile opens the shop filtered to sarees that match it. A tile appears on the website only while at least one saree in stock matches it (the number beside each name below is how many match now).</p>
+    <div class="hs-bar"><span><b>Show this section</b></span>${tog(o.show !== false, 'occSet(\'show\')')}</div>
+    <div class="hs-grid2"><div class="form-group"><label>Small heading</label><input type="text" maxlength="60" value="${esc(o.label)}" oninput="occSet('label',this.value)"></div><div class="form-group"><label>Title</label><input type="text" maxlength="60" value="${esc(o.title)}" oninput="occSet('title',this.value)"></div></div>
+    <div class="occ-prev" aria-label="Preview of the tiles"><small>What visitors see now:</small><div>${prev || '<small>No tiles</small>'}</div></div>
+    <div class="occ-list">${o.items.map((it, i) => `<div class="occ-row ${it.show === false ? 'off' : ''}"><div class="occ-row-top"><input class="occ-icon" type="text" maxlength="8" value="${esc(it.icon)}" aria-label="Icon (an emoji)" oninput="occItem(${i},'icon',this.value)"><input class="occ-name" type="text" maxlength="26" value="${esc(it.label)}" aria-label="Tile name" oninput="occItem(${i},'label',this.value)"><span class="occ-n" title="Sarees in stock that match now">${occCount(it)} match</span>${tog(it.show !== false, `occItem(${i},'show')`)}</div>
+      <label class="occ-w">Looks for these words in each saree's occasions, tags and name (separate with commas)<input type="text" value="${esc((it.words || []).join(', '))}" placeholder="diwali, festive" onchange="occItem(${i},'words',this.value)"></label>
+      <details class="occ-cats"><summary>Also include whole categories ${(it.cats || []).length ? `(${it.cats.length})` : ''}</summary><div class="ch-chips">${cats.map(c => `<label class="ch-chip ${(it.cats || []).includes(c) ? 'on' : ''}"><input type="checkbox" ${(it.cats || []).includes(c) ? 'checked' : ''} onchange="occCat(${i},this.dataset.c)" data-c="${esc(c)}"> ${esc(c)}</label>`).join('')}</div></details>
+      <div class="th-actions" style="margin:6px 0 0"><button type="button" class="btn-sm" onclick="occMove(${i},-1)" title="Move up">↑</button><button type="button" class="btn-sm" onclick="occMove(${i},1)" title="Move down">↓</button><button type="button" class="btn-sm btn-danger-sm" onclick="occDel(${i})">🗑 Delete tile</button></div></div>`).join('')}</div>
+    <div class="th-actions"><button type="button" class="btn-sm btn-info-sm" onclick="occAdd()">＋ Add a tile</button><button type="button" class="btn-sm" onclick="occReset()">↺ Back to the four standard tiles</button></div>
+    <div class="hs-bar" style="margin-top:8px"><span><b>🎁 “Gifts under…” tile</b><br><small>Shows sarees up to this price.</small></span><input class="occ-max" type="number" min="500" step="500" value="${o.gift.max}" onchange="occSet('max',this.value)" aria-label="Gift price limit in rupees">${tog(o.gift.show !== false, 'occSet(\'giftShow\')')}</div>
+    <p class="note" style="margin:6px 0 0">The 💎 Accessories tile follows the “Show Accessories on the website” switch in Categories.</p>
+    <div class="th-ai" id="occ-ai"><label for="occ-focus"><b>✨ Ask AI for occasion tiles</b> (a festival, a season or a type of customer, optional)</label><div class="th-ai-row"><input id="occ-focus" type="text" maxlength="100" placeholder="e.g. Diwali week, wedding season, summer office wear"><button type="button" class="btn-sm btn-info-sm" onclick="occAi()" ${OCC_AI.busy ? 'disabled' : ''}${aiOn_ ? '' : ' title="Add your Claude key in Settings for fresh ideas; built-in ideas show without it"'}>Suggest tiles</button></div>
+      ${OCC_AI.drafts.length ? `<p class="note" style="margin:8px 0 0">Drafts (nothing changes until you press Use) <button type="button" class="btn-sm btn-primary-sm" onclick="occUseAll()">Use all</button></p><div class="th-presets">${OCC_AI.drafts.map((d, i) => `<div class="th-draft" style="max-width:260px"><b>${esc(d.icon)} ${esc(d.label)}</b><small>Words: ${esc((d.words || []).join(', ') || '-')}</small>${(d.cats || []).length ? `<small>Categories: ${esc(d.cats.join(', '))}</small>` : ''}<small>${occDraftCount(d)} saree(s) in stock match now</small><button type="button" class="btn-sm btn-info-sm" onclick="occUse(${i})">Use this</button></div>`).join('')}</div>` : ''}
+      ${OCC_AI.msg ? `<p class="note" role="status" style="margin:8px 0 0">${esc(OCC_AI.msg)}</p>` : ''}</div></div>`;
+}
+function occDraftCount(d) { const w = (d.words || []).map(x => x.toLowerCase()); return sareeList().filter(p => p.stock > 0 && ((d.cats || []).includes(p.category) || (w.length && w.some(x => occTokens(p).has(x))))).length; }
+// built-in ideas, used when Claude is not connected (they only use categories this shop really has)
+const OCC_PACKS = [
+  [/diwali|deepavali|lamp/, [['🪔', 'Diwali silks', ['diwali', 'festive'], ['Kanjeevaram', 'Benaras', 'Gadwals']], ['✨', 'Evening glow', ['party', 'evening', 'reception'], ['Fancy/Cocktail', 'Georgettes']], ['🎁', 'Diwali gifting', ['gifting', 'festive'], []], ['🌟', 'Zari and gold', ['zari', 'festive'], ['Benaras', 'Kanjeevaram']]]],
+  [/pongal|sankranti|ugadi|harvest|new year/, [['🌾', 'Harvest day', ['festive', 'traditional'], ['Gadwals', 'Narayanpet']], ['🌼', 'Ugadi and Pongal', ['festive', 'traditional'], ['Mangalgiri', 'Ponduru Khadi']], ['🏠', 'At home with family', ['casual', 'everyday'], ['Ponduru Khadi', 'Narayanpet']]]],
+  [/dasara|navaratri|dussehra|durga|bathukamma/, [['🔱', 'Navaratri days', ['festive', 'temple wear'], ['Kanjeevaram', 'Gadwals', 'Maheswari']], ['💃', 'Garba nights', ['party', 'cocktail'], ['Patola', 'Fancy/Cocktail']], ['🌸', 'Bathukamma', ['festive', 'traditional'], ['Gadwals', 'Narayanpet']]]],
+  [/wedding|bride|marriage|reception|muhurtham/, [['💍', 'Bridal', ['bridal', 'wedding'], ['Kanjeevaram', 'Benaras', 'Patola']], ['👰', 'Wedding guest', ['wedding', 'festive'], ['Gadwals', 'Mysore Silk', 'Maheswari']], ['🥂', 'Reception', ['reception', 'party', 'cocktail'], ['Fancy/Cocktail', 'Georgettes']], ['🌹', 'Engagement', ['wedding', 'party'], ['Mysore Silk']]]],
+  [/summer|office|work|everyday|daily|cotton/, [['💼', 'Office days', ['office', 'casual'], ['Mangalgiri', 'Ponduru Khadi', 'Narayanpet']], ['☀️', 'Summer cotton', ['casual', 'everyday'], ['Mangalgiri', 'Ponduru Khadi']], ['🌿', 'Light and breezy', ['casual', 'office'], ['Georgettes', 'Maheswari']]]],
+  [/monsoon|rain/, [['🌧️', 'Rainy day ready', ['casual', 'everyday'], ['Ponduru Khadi', 'Mangalgiri']], ['☕', 'Quiet evenings', ['evening', 'party'], ['Georgettes']]]],
+];
+function occIdeasBuiltin(text) {
+  const t = String(text || '').toLowerCase(), out = []; OCC_PACKS.forEach(([re, tiles]) => { if (re.test(t)) tiles.forEach(x => out.push(x)); });
+  if (!out.length) OCC_PACKS.forEach(([, tiles]) => out.push(tiles[Math.floor(Math.random() * tiles.length)]));
+  return out.map(([icon, label, words, cats]) => occClean({ icon, label, words, cats: cats.filter(c => db.categories.includes(c)) })).filter(Boolean).filter((d, i, a) => a.findIndex(y => y.label === d.label) === i && !occW().items.some(x => x.label.toLowerCase() === d.label.toLowerCase())).slice(0, 6);
+}
+async function occAi() {
+  const focus = String((el_('occ-focus') || {}).value || '').trim(); OCC_AI.busy = true; OCC_AI.msg = 'Asking for ideas…'; occRedraw();
+  const tags = {}; sareeList().forEach(p => [...(p.occasions || []), ...(p.tags || [])].forEach(x => { const k = String(x).toLowerCase().trim(); if (k.length > 1 && k.length < 24) tags[k] = (tags[k] || 0) + 1; }));
+  let list = [], note = '';
+  try { if (typeof aiReady === 'function' && aiReady('occasions')) { const j = await aiCall('occasions', { focus, categories: db.categories.slice(0, 14), tagsSeen: Object.entries(tags).sort((a, b) => b[1] - a[1]).slice(0, 25).map(x => x[0]), existing: occW().items.map(x => x.label) }); list = ((j.data && j.data.items) || []).map(occClean).filter(Boolean).filter((d, i, a) => a.findIndex(y => y.label.toLowerCase() === d.label.toLowerCase()) === i && !occW().items.some(x => x.label.toLowerCase() === d.label.toLowerCase())).slice(0, 6); if (!list.length) note = 'Claude gave nothing usable. Showing built-in ideas instead.'; } } catch (e) { note = aiMsg(e) + ' Showing built-in ideas instead.'; }
+  if (!list.length) { list = occIdeasBuiltin(focus); note = note || 'Claude is not connected, so these are built-in ideas using only the categories you really have (add the key in Settings for fresh ones).'; }
+  OCC_AI.drafts = list; OCC_AI.msg = list.length ? note : 'No new ideas right now. Try other words.'; OCC_AI.busy = false; occRedraw();
+}
+function occRedraw() { const c = el_('occ-card'); if (c) c.outerHTML = occasionsCardHTML(); }
+function occUse(i) { const d = OCC_AI.drafts[i], o = occW(); if (!d) return; if (o.items.length >= 10) return showToast('Up to 10 tiles. Delete one first.', 'error'); o.items.push(d); OCC_AI.drafts.splice(i, 1); OCC_AI.msg = 'Added. You can still change any word.'; occLive(true); }
+function occUseAll() { const o = occW(); while (OCC_AI.drafts.length && o.items.length < 10) o.items.push(OCC_AI.drafts.shift()); OCC_AI.msg = 'Added. You can still change any word.'; occLive(true); }
 // ================= Privacy & DPDP (owner app) =================
 // What the law asks of the shop, in one place: requests from customers, finding / exporting / erasing a customer, the clean-up of
 // old data, the breach register, who handles the data, and a checklist of what is still missing.

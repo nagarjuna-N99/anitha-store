@@ -43,7 +43,7 @@ function shopKind(k) { if (k === 'accessory' && !accOn()) k = 'saree'; if (SHOP.
 function visibleProducts() {
   let list = categoryProducts().slice(); const terms = tokenise(SHOP.q), scores = new Map();
   if (terms.length) list = list.filter(p => { const s = searchScore(p, terms); scores.set(p.id, s); return s > 0; });
-  if (SHOP.occasion) list = list.filter(p => occasionsOf(p).includes(SHOP.occasion));
+  if (SHOP.occasion) list = list.filter(p => occHas(p, SHOP.occasion));
   if (SHOP.fabrics.length) list = list.filter(p => SHOP.fabrics.includes(p.fabric));
   if (SHOP.colours.length) list = list.filter(p => (p.colours || []).some(c => SHOP.colours.includes(c)));
   const min = parseInt(SHOP.min, 10), max = parseInt(SHOP.max, 10);
@@ -89,7 +89,7 @@ function shopMeta(n, total) {
   const sort = document.getElementById('shop-sort'); if (sort) { sort.options[0].text = SHOP.q.trim() ? 'Best match' : 'Featured'; if (sort.value !== SHOP.sort) sort.value = SHOP.sort; }
   const chips = [];
   if (SHOP.q.trim()) chips.push(['q', '', `“${SHOP.q.trim()}”`]);
-  if (SHOP.occasion) chips.push(['occasion', '', (OCCASIONS.find(o => o[0] === SHOP.occasion) || [0, 0, SHOP.occasion])[2]]);
+  if (SHOP.occasion) chips.push(['occasion', '', occLabel(SHOP.occasion)]);
   SHOP.fabrics.forEach(v => chips.push(['fabrics', v, v])); SHOP.colours.forEach(v => chips.push(['colours', v, v]));
   if (SHOP.min !== '' || SHOP.max !== '') chips.push(['price', '', `₹${SHOP.min !== '' ? money(SHOP.min) : '0'} – ${SHOP.max !== '' ? '₹' + money(SHOP.max) : 'any'}`]);
   if (SHOP.inStock) chips.push(['stock', '', 'In stock']);

@@ -29,7 +29,7 @@ const { chromium } = require(process.env.PW);
   await p.evaluate(() => { db.settings.siteUrl = 'https://shop.test'; openShare('p3'); });
   ok('with a website address: full link + rich-preview link', await p.evaluate(() => document.getElementById('share-url').value === 'https://shop.test/#/product/pure-maheswari-silk' && document.getElementById('share-rich').value === 'https://shop.test/product/pure-maheswari-silk.html' && !/once your store is online/.test(document.getElementById('shareBody').innerText) && /product%2Fpure-maheswari-silk\.html/.test([...document.querySelectorAll('#shareBody .share-b')][0].href)));
   await p.evaluate(() => { closeModal('shareModal'); closeModal('productModal'); db.settings.siteUrl = ''; });
-  ok('share button on shop cards, favourites and New Arrivals', await p.evaluate(() => { navigateTo('shop'); return document.querySelectorAll('#productGrid .product-share-btn').length === sareeList().length && document.querySelectorAll('.scroll-card .btn-share-sm').length === 2 * sareeList().filter(x => x.isNew).length; }));
+  ok('share button on shop cards, favourites and New Arrivals', await p.evaluate(() => { navigateTo('shop'); return document.querySelectorAll('#productGrid .product-share-btn').length === sareeList().length && document.querySelectorAll('.scroll-card .btn-share-sm').length === 2 * arrivalsPick().length && arrivalsPick().length > 0; }));
   await p.evaluate(() => { closeModal('shareModal'); });
   await p.click('#productGrid .product-share-btn >> nth=0');
   ok('card share does not open the product', await p.evaluate(() => document.getElementById('shareModal').classList.contains('active') && !document.getElementById('productModal').classList.contains('active')));

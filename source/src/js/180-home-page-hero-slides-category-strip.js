@@ -17,7 +17,7 @@ function defaultHome() {
     ] },
     announcements: [{ id: 'an1', enabled: true, text: 'Complimentary Shipping on Orders Above ₹10,000 · Authentic Handloom Guarantee', startAt: '', endAt: '' }],
     shopBanner: { enabled: true, image: '', eyebrow: 'Our collection', title: 'Handloom sarees, handpicked', subtitle: 'Browse by weave, colour and occasion.', btnText: '', link: { type: 'none', value: '' }, pos: 'center', focus: 'center', overlay: 45, zoom: 100, focusX: 50 },
-    arrivals: { show: true, label: 'Handpicked', title: 'New Arrivals', ids: [] },
+    arrivals: { show: true, label: 'Handpicked', title: 'New Arrivals', ids: [], mode: 'auto', days: 30, max: 12 },
     signature: { show: true, label: 'Curated Edits', title: 'The Signature Collection', tiles: [
       { id: 'sg1', title: 'The Bridal Edit', subtitle: 'Pure Kanjeevaram', category: 'Kanjeevaram', image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=1200' },
       { id: 'sg2', title: 'Maheswari Silk', subtitle: 'Timeless Elegance', category: 'Maheswari', image: 'https://images.unsplash.com/photo-1583391733958-e04f9715d184?q=80&w=800' }
@@ -311,7 +311,7 @@ function renderShopBanner() {
   const html = s.enabled === false || !safeImg(s.image) || !(s.title || s.subtitle) ? '' : `<div class="hero-slider shop-banner">${heroSlideHTML(s, -1, true, 'h2')}</div>`;
   if (box._h === html) return; box._h = html; box.innerHTML = html; box.style.display = html ? '' : 'none';
 }
-function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); renderHomeQuote(); renderHomeNotes(); renderHomeChapters(); if (typeof applyBackground === 'function') applyBackground(); homeSaveSoon(); }
+function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); renderHomeQuote(); renderHomeNotes(); renderHomeChapters(); renderOccasions(); if (typeof applyBackground === 'function') applyBackground(); homeSaveSoon(); }
 let HOME_PICK = null;
 function homePick(kind, idx) { HOME_PICK = { kind, idx }; document.getElementById('home-file').click(); }
 async function homeFileChosen(files) {
@@ -359,15 +359,46 @@ function homeCatImage(i, v) { v = String(v).trim(); if (v && !safeImg(v)) { show
 function homeCatAll(on) { db.home.categories.items.forEach(i => i.enabled = on); homeLive(false); renderHomeAdmin(document.getElementById('adminContent')); }
 // ---- admin: sections & signature collection ----
 function homeSecToggle(sec, el) { const o = db.home[sec]; o.show = o.show === false; el.classList.toggle('active', o.show !== false); el.setAttribute('aria-checked', o.show !== false); homeLive(false); }
+// ---- New Arrivals: automatic (the newest sarees that are in stock) or chosen by hand ----
+// "New" means recently ADDED or recently RESTOCKED. The dates are kept on each saree by stockDatesSync (below), whenever the shop data is saved in the owner app.
+const ARR_DAY = 86400000, ARR_MIN = 4;
+const arrCfg = () => { const a = (db.home && db.home.arrivals) || {}, mode = a.mode === 'manual' || a.mode === 'auto' ? a.mode : ((a.ids || []).length ? 'manual' : 'auto'); return { mode, days: [7, 14, 30, 60, 90].includes(+a.days) ? +a.days : 30, max: [6, 8, 12].includes(+a.max) ? +a.max : 12, ids: a.ids || [] }; };
+const arrStamp = p => Math.max(+p.stockedAt || 0, +p.addedAt || 0);
+function arrivalsPick(now = Date.now()) {
+  const c = arrCfg(), list = sareeList();
+  if (c.mode === 'manual' && c.ids.length) return c.ids.map(id => list.find(p => p.id === id)).filter(Boolean);   // nothing chosen yet: the automatic list
+  const idx = new Map(db.products.map((p, i) => [p.id, i])), pool = list.filter(p => p.stock > 0).sort((a, b) => arrStamp(b) - arrStamp(a) || idx.get(b.id) - idx.get(a.id));   // newer first; without dates, the later-added saree first
+  const recent = pool.filter(p => arrStamp(p) >= now - c.days * ARR_DAY), out = recent.slice(0, c.max);
+  for (const p of pool) { if (out.length >= Math.min(ARR_MIN, c.max)) break; if (!out.includes(p)) out.push(p); }   // never an empty or tiny slider: top up with the next newest
+  return out;
+}
+// keeps "when was this saree added / restocked" true, for every way stock can change (a new saree, a draft published, an import, a stock edit)
+function stockDatesSync(now = Date.now()) {
+  if (!db || !Array.isArray(db.products)) return; db.settings = db.settings || {};
+  const first = !db.settings.arrivalsTracking; if (first) db.settings.arrivalsTracking = now;   // the first time: only remember today's stock, nothing is called new
+  for (const p of db.products) {
+    if (typeof p.lastStock !== 'number') { p.lastStock = p.stock; if (!first) { p.addedAt = p.addedAt || now; p.stockedAt = p.stockedAt || now; } continue; }   // a saree we have not seen before is new
+    if (p.stock > p.lastStock) p.stockedAt = now;   // more in stock than before: restocked
+    p.lastStock = p.stock;
+  }
+}
+function arrMode(m) { const a = db.home.arrivals; a.mode = m; buildScrollTrack(); homeLive(false); renderHomeAdmin(document.getElementById('adminContent')); }
+function arrSet(k, v) { db.home.arrivals[k] = +v; buildScrollTrack(); homeLive(false); const e = document.getElementById('arr-now'); if (e) e.innerHTML = arrNowHTML(); }
+function arrNowHTML() { const l = arrivalsPick(); return l.length ? `Right now the slider shows <b>${l.length}</b>: ${l.slice(0, 8).map(p => esc(p.name)).join(', ')}${l.length > 8 ? '…' : ''}` : 'Nothing to show yet: add a saree that is in stock.'; }
 function arrPick(id, on) { const a = db.home.arrivals; a.ids = (a.ids || []).filter(x => x !== id); if (on) a.ids.push(id); buildScrollTrack(); homeLive(false); const n = document.getElementById('arr-count'); if (n) n.textContent = arrCountText(); }
 function arrClear() { db.home.arrivals.ids = []; buildScrollTrack(); homeLive(false); renderHomeAdmin(document.getElementById('adminContent')); }
-function arrCountText() { const n = (db.home.arrivals.ids || []).length; return n ? n + ' chosen — only these show on the website' : 'None chosen — the website shows every product marked new'; }
+function arrCountText() { const n = (db.home.arrivals.ids || []).length; return n ? n + ' chosen: only these show on the website' : 'None chosen yet: until you choose, the newest in-stock sarees show'; }
 function arrPickerHTML() {
+  const c = arrCfg(), sel = (k, vals, cur, fmt) => `<select onchange="arrSet('${k}',this.value)">${vals.map(v => `<option value="${v}" ${v === cur ? 'selected' : ''}>${fmt(v)}</option>`).join('')}</select>`;
+  const modeBar = `<div class="arr-mode" role="radiogroup" aria-label="How the New Arrivals slider is filled"><label class="arr-opt ${c.mode === 'auto' ? 'on' : ''}"><input type="radio" name="arrmode" ${c.mode === 'auto' ? 'checked' : ''} onchange="arrMode('auto')"><span><b>Automatic</b><small>The newest sarees that are in stock: newly added or restocked. Sold-out and accessories never show. Nothing to do when you add stock.</small></span></label><label class="arr-opt ${c.mode === 'manual' ? 'on' : ''}"><input type="radio" name="arrmode" ${c.mode === 'manual' ? 'checked' : ''} onchange="arrMode('manual')"><span><b>I choose</b><small>Only the sarees you tick below.</small></span></label></div>`;
+  const auto = c.mode === 'auto' ? `<div class="hs-grid2"><div class="form-group"><label>“New” means added or restocked in the last</label>${sel('days', [7, 14, 30, 60, 90], c.days, v => v + ' days')}</div><div class="form-group"><label>Show at most</label>${sel('max', [6, 8, 12], c.max, v => v + ' sarees')}</div></div><p class="note" style="margin:0 0 8px">If fewer than ${ARR_MIN} sarees are that new, the next newest fill the slider so it is never empty.</p>` : '';
+  const now = `<p class="note arr-now" id="arr-now" style="margin:0 0 10px">${arrNowHTML()}</p>`;
+  if (c.mode === 'auto') return `<div class="form-group">${modeBar}${auto}${now}</div>`;
   const ids = db.home.arrivals.ids || [], list = sareeList(), cats = db.categories.filter(c => list.some(p => p.category === c));
   return `<div class="form-group"><label>Choose the sarees to show (from all your categories)</label><div id="arr-count" class="note" style="margin:0 0 6px;">${arrCountText()}</div>
     ${cats.map(c => `<details class="arr-cat" ${list.some(p => p.category === c && ids.includes(p.id)) ? 'open' : ''}><summary>${esc(c)} <span class="note" style="margin:0">(${list.filter(p => p.category === c).length})</span></summary>
       <div class="arr-list">${list.filter(p => p.category === c).map(p => `<label class="chk arr-item"><input type="checkbox" ${ids.includes(p.id) ? 'checked' : ''} onchange="arrPick('${p.id}',this.checked)"><span>${esc(p.name)} <span class="note" style="margin:0">₹ ${money(p.price)}</span></span></label>`).join('')}</div></details>`).join('')}
-    <button class="btn-sm btn-info-sm" onclick="arrClear()" ${ids.length ? '' : 'disabled'}>Clear my choice (show all new)</button></div>`;
+    <button class="btn-sm btn-info-sm" onclick="arrClear()" ${ids.length ? '' : 'disabled'}>Clear my choice</button></div>`.replace('<div class="form-group"><label>Choose', `<div class="form-group">${modeBar}${now}<label>Choose`);
 }
 function homeSecText(sec, k, v) { db.home[sec][k] = v; homeLive(false); }
 function sigSet(i, k, v) { const t = db.home.signature.tiles[i]; if (!t) return; if (k === 'image') { v = String(v).trim(); if (v && !safeImg(v)) { showToast('Image link must start with https://', 'error'); return; } } t[k] = v; homeLive(false); if (k === 'image') renderHomeAdmin(document.getElementById('adminContent')); }
@@ -436,6 +467,7 @@ function renderHomeAdmin(container) {
       <div class="hs-grid2"><div class="form-group"><label>Signed by (optional)</label><input type="text" maxlength="60" value="${esc(H.quote.by)}" oninput="quoteSet('by',this.value)"></div><div class="form-group"><label>&nbsp;</label><button type="button" class="btn-sm btn-info-sm" onclick="quoteIdea()">✨ Suggest another quote</button></div></div>
     </div>
 
+    ${occasionsCardHTML()}
     ${backgroundCardHTML()}
     ${chaptersCardHTML()}
     ${themeCardHTML()}

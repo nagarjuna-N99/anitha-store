@@ -119,7 +119,7 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 ## 6. Test suites (all passing on 12 Nov 2026; known slow spots: sign-in timeouts under load and the phone-speed test near its limit pass when rerun alone)
 | Suite | Checks | Covers |
 |---|---|---|
-| `wa-assistant` (`npm test`) | 702 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
+| `wa-assistant` (`npm test`) | 705 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
 | `smoke2.cjs` | 10 | orders, invoices, reports |
 | `studio-test2.cjs` / `studio-test3.cjs` | 50 / 61 | Image Studio, drafts, product form, AI copy |
 | `shop-test.cjs` | 56 | favourites, share links, OTP login, consents, Terms/Privacy |
@@ -139,6 +139,8 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 | `fresh-site-test.cjs` | 14 | no old page, data or photos: waits for the server, never cached, updates itself, build stamp, offline fallback |
 | `product-layout-test.cjs` | 19 | every product page in the reference pattern, similar list on the right / under the photos, eleven categories' facts |
 | `mobile-live-test.cjs` | 41 | admin, owner and public website at phone size through the real server (background, sizes, menus, Orders card, settings) |
+| `occasions-test.cjs` | 24 | Shop by occasion: tiles, words, categories, order, gift tile, AI ideas |
+| `arrivals-auto-test.cjs` | 23 | New Arrivals automatic or chosen, dates kept on save |
 | `background-test.cjs` | 41 | website background builder: art, preview, deploy, saved looks, Claude ideas |
 | `chapters-tools-test.cjs` | 33 | chapter rows: delete, order, hide, collection tick boxes |
 | `how-it-works-test.cjs` | 12 | How it works page for owner and admin, search, do / do-not lists |
@@ -175,6 +177,10 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**6 Nov 2026 (New Arrivals automatic; Find it faster / Shop by occasion with AI ideas)**
+- Owner: "New Arrivals slider should automatically pick from new stock, and an option to admin to select" and "add Find it faster / Shop by occasion AI based customisation in admin". Done (guide 47): the New Arrivals slider is **automatic by default** (newest sarees in stock, added or restocked within a chosen number of days, topped up so it is never empty; sold-out and accessories never show) with an **"I choose"** mode for hand-picking; dates are kept by the owner app on every save. The occasion section now has an admin card: editable heading, tiles with their own words and categories, order, hide, delete, add, gift limit, live match counts, and **✨ AI ideas** (checked, drafts only, built-in ideas without Claude); tiles with nothing in stock are left off the website.
+- Tests: new `tests/arrivals-auto-test.cjs` (23 checks) and `tests/occasions-test.cjs` (24 checks); `arrivals-pick-test.cjs` updated; server 705 (+3 checks for saved dates, home settings and the `occasions` AI task). Not tested: Claude's real tile ideas.
 
 **6 Nov 2026 (Website background: new designs every time; match the page colours)**
 - Owner then added: let Claude suggest backgrounds according to the colours in the page. Done: the background card shows the page's five colours and a button that sends them to Claude (accent, ink, bg, cream, sage) and asks for three ideas in the same hues, preview only; without Claude, three designs are built from the page colours (guide 43). Tests: `background-test.cjs` 41 checks; server prompt checks extended (702).

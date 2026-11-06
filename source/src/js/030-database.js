@@ -85,6 +85,7 @@ let pendingDraftId = null;
 
 
 function saveDB() {
+  if (BUILD !== 'site' && typeof stockDatesSync === 'function') { try { stockDatesSync(); } catch (e) { /* dates are a convenience: never block a save */ } }
   if (BUILD === 'admin') { admQueueSave(); if (typeof waAutoSoon === 'function') waAutoSoon(); return true; }   // the owner app saves to the server, never to this browser
   try { localStorage.setItem('ap_db_v70', JSON.stringify(db)); if (typeof waAutoSoon === 'function') waAutoSoon(); return true; }
   catch (e) { showToast('Storage is full - changes could not be saved. Delete drafts or large images.', 'error'); return false; }

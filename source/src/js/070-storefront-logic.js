@@ -28,8 +28,7 @@ function productCardHTML(p) {
 
 function buildScrollTrack() {
   const track = document.getElementById('scrollTrack');
-  const pickedIds = (db.home && db.home.arrivals && db.home.arrivals.ids) || [], allSarees = sareeList();
-  const shown = pickedIds.length ? pickedIds.map(id => allSarees.find(p => p.id === id)).filter(Boolean) : allSarees.filter(p => p.isNew);
+  const shown = arrivalsPick();   // automatic (newest in-stock sarees) or the owner's own choice
   const cards = shown.map(p => `
     <div class="scroll-card">
       <img src="${esc(p.image)}" class="scroll-card-img" alt="${esc(p.name)}">
