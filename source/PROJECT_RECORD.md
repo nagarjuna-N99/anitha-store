@@ -119,7 +119,7 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 ## 6. Test suites (all passing on 12 Nov 2026; known slow spots: sign-in timeouts under load and the phone-speed test near its limit pass when rerun alone)
 | Suite | Checks | Covers |
 |---|---|---|
-| `wa-assistant` (`npm test`) | 698 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
+| `wa-assistant` (`npm test`) | 702 | webhook security, assistant tools, opt-out, hand-off, orders, cart reminders, payments, Razorpay adapter, discount codes, PIN check, buttons, address change, gifts, tracking, invoice PDF, review request |
 | `smoke2.cjs` | 10 | orders, invoices, reports |
 | `studio-test2.cjs` / `studio-test3.cjs` | 50 / 61 | Image Studio, drafts, product form, AI copy |
 | `shop-test.cjs` | 56 | favourites, share links, OTP login, consents, Terms/Privacy |
@@ -136,6 +136,7 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 | `care-test.cjs` | 9 | Saree Care tabs, wash-care guide, photo link repair |
 | `parts-test.cjs` | 8 | the website source parts and the joined file |
 | `addresses-test.cjs` | 25 | each page and saree has its own address, Back/Forward, old links |
+| `fresh-site-test.cjs` | 14 | no old page, data or photos: waits for the server, never cached, updates itself, build stamp, offline fallback |
 | `product-layout-test.cjs` | 19 | every product page in the reference pattern, similar list on the right / under the photos, eleven categories' facts |
 | `mobile-live-test.cjs` | 41 | admin, owner and public website at phone size through the real server (background, sizes, menus, Orders card, settings) |
 | `background-test.cjs` | 30 | website background builder: art, preview, deploy, saved looks, Claude ideas |
@@ -174,6 +175,10 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**6 Nov 2026 (No old page, data or photos after an update)**
+- Owner (phone screenshot): "after any refresh still the old page and photos being displayed; set that issue and make sure no old data is displayed after". Fixed in layers (guide 46): the website waits for the server's answer instead of painting a saved or sample copy first; the shop data is never cached (`no-store`, a fresh address per request, retries); an open page asks `/public/version` every minute and when the phone wakes, the tab returns, the internet returns or the browser's back/forward memory restores a page; every build has a stamp and an older page reloads itself once; all site files are re-checked with an ETag (304 when unchanged); the owner and admin apps also reload themselves after an update; a first-time visitor who cannot reach the server gets an honest message with Try again, never sample sarees. Also found while testing: the Admin login cannot save product edits (they belong to the Owner login), by design.
+- Tests: server 702 (+4 website cache checks); new `tests/fresh-site-test.cjs` (14 checks, real server and browser). Not tested: a real iPhone or in-app browser with a very old cached page (a phone stuck on a build older than this fix needs the tab closed and the address opened once).
 
 **6 Nov 2026 (Automations: morning summary, stock alerts, automatic encrypted backup)**
 - Owner approved the proposed automations (the first three). Built (guide 45): a **morning summary** to the owner's WhatsApp and email from 8:30 IST (orders to approve, orders to post, low and sold-out stock, chats waiting; nothing to report = no message; once per day); **stock alerts** when a saree reaches its last piece or sells out (grouped, never repeated, silent on first look); an **automatic encrypted backup** every night from 3:10 IST using a password the admin sets (same lock as the manual backup so Restore opens it, newest 14 kept, on the same server disk, so a download and a snapshot are still needed). Owner switches for the first two sit on the Orders card; the backup block is in the Admin's Settings. Ops now counts the automatic backup. Two utility templates to create in Meta (`owner_daily_summary`, `owner_stock_alert`).

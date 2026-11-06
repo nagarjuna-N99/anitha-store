@@ -12,12 +12,17 @@ export function createSiteHost(dir) {
   const root = path.resolve(dir), isFile = f => { try { return fs.statSync(f).isFile(); } catch { return false; } };
   const HEAD = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Frame-Options': 'SAMEORIGIN' };
   const send = (req, res, status, file, extra = {}) => {
-    const ext = path.extname(file).toLowerCase(), html = ext === '.html', buf = fs.readFileSync(file);
-    res.writeHead(status, { 'Content-Type': TYPES[ext] || 'application/octet-stream', 'Content-Length': buf.length, 'Cache-Control': html ? 'no-cache' : 'public, max-age=3600', ...HEAD, ...extra });
+    const ext = path.extname(file).toLowerCase(), st = fs.statSync(file), etag = `"${st.size.toString(36)}-${Math.floor(st.mtimeMs).toString(36)}"`;
+    // everything on the website is checked again on every visit (a saved copy is only reused when the server says it has not changed): after an update nobody keeps seeing the old page or old pictures
+    if (status === 200 && req.headers['if-none-match'] === etag) { res.writeHead(304, { 'Cache-Control': 'no-cache', ETag: etag, ...HEAD }); return res.end(); }
+    const buf = fs.readFileSync(file);
+    res.writeHead(status, { 'Content-Type': TYPES[ext] || 'application/octet-stream', 'Content-Length': buf.length, 'Cache-Control': 'no-cache', ...(status === 200 ? { ETag: etag } : {}), ...HEAD, ...extra });
     res.end(req.method === 'HEAD' ? undefined : buf);
   };
+  let stampAt = 0, stampV = '';
   return {
     root,
+    stamp() { try { const f = path.join(root, 'index.html'), m = fs.statSync(f).mtimeMs; if (m !== stampAt) { stampAt = m; stampV = (/__BUILD_STAMP="([^"]+)"/.exec(fs.readFileSync(f, 'utf8')) || [])[1] || ''; } } catch { stampV = ''; } return stampV; },
     available: () => isFile(path.join(root, 'index.html')),
     // true when it answered
     serve(req, res, url) {

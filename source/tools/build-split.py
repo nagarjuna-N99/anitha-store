@@ -45,9 +45,11 @@ site = common(src)
 site = strip_div(site, r'<div id="adminView"[^>]*>')
 site = strip_div(site, r'<div class="admin-mobile-nav" id="adminMobileNav">')
 site = site.replace('<!-- ================= ADMIN', '<!-- ================= ADMIN')            # comments are harmless
+import datetime
 from urllib.parse import urlparse
 base_path = (urlparse(a.site_url).path.rstrip('/') + '/') if a.site_url else ''
-site = inject(site, "window.__BUILD='site';window.__SHOP_API=%s;%s" % (repr(a.shop_api.rstrip('/')).replace("'", '"'), ("window.__BASE='%s';" % base_path) if base_path else ''), robots=None if a.index else 'noindex, nofollow')
+STAMP = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')   # every build has its own stamp: an old page left open (or cached) can tell it is old and reload itself
+site = inject(site, "window.__BUILD='site';window.__BUILD_STAMP=\"" + STAMP + "\";window.__SHOP_API=%s;%s" % (repr(a.shop_api.rstrip('/')).replace("'", '"'), ("window.__BASE='%s';" % base_path) if base_path else ''), robots=None if a.index else 'noindex, nofollow')
 assert "adminPin: '1234'" not in site and 'HDFC0001234' not in site and '50100123456789' not in site, 'a secret is still in the public site'
 assert 'id="adminView"' not in site and 'id="adminMobileNav"' not in site and 'id="view-toggle"' not in site
 os.makedirs(os.path.join(root, 'build', 'site'), exist_ok=True)
@@ -93,7 +95,7 @@ if site_url:
 
 # ---- the owner app ----
 adm = common(src)
-adm = inject(adm, "window.__BUILD='admin';", title='Owner admin', robots='noindex, nofollow')
+adm = inject(adm, "window.__BUILD='admin';window.__BUILD_STAMP=\"" + STAMP + "\";", title='Owner admin', robots='noindex, nofollow')
 os.makedirs(os.path.join(root, 'wa-assistant', 'public'), exist_ok=True)
 open(os.path.join(root, 'wa-assistant', 'public', 'admin.html'), 'w', encoding='utf-8').write(adm)
 print('built: build/site/index.html (%d KB), wa-assistant/public/admin.html (%d KB)' % (len(site) // 1024, len(adm) // 1024))

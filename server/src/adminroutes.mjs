@@ -14,7 +14,7 @@ import crypto from 'node:crypto';
 import { clientIp } from './clientip.mjs';
 import { adminApiAllowed, dbForRead, TABS, HOME_TAB } from './roles.mjs';
 
-export function adminRoutes({ automation, realcats, orderflow, walog, repair, cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, notes, ops, opsReport, wa, watchRun, watchRead, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
+export function adminRoutes({ siteStamp, automation, realcats, orderflow, walog, repair, cfg, auth, shop, media, social, ig, client, notifyTracking, aiKey, videos, analytics, growth, privacy, Privacy, weborders, notes, ops, opsReport, wa, watchRun, watchRead, sendCode, breachNotices, store, runSweep, notifyOwner, smtpMeta, smtpSave, smtpRemove, smtpSendTest, reportState, prefs, savePrefs, json, readBody, ROOT }) {
   const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY', 'Cross-Origin-Resource-Policy': 'same-origin', 'Cache-Control': 'no-store', ...(auth.secure ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' } : {}) };
   const CSP = "default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'";
   const ipOf = req => clientIp(req, cfg.trustProxy);   // X-Forwarded-For is trusted only when TRUST_PROXY=1 and the connection is from this very machine
@@ -47,7 +47,12 @@ export function adminRoutes({ automation, realcats, orderflow, walog, repair, cf
     // ---------- public, read-only ----------
     if (route === 'GET /public/shop') {
       const o = req.headers.origin, allow = o && cfg.allowedOrigins.includes(o) ? { 'Access-Control-Allow-Origin': o, 'Vary': 'Origin' } : {}; const g = shop.get();
-      json(res, 200, { version: g.version, empty: !g.db, ...publicView(g.db) }, { 'Cache-Control': 'public, max-age=15', 'X-Content-Type-Options': 'nosniff', ...allow }); return true;
+      json(res, 200, { version: g.version, siteBuild: siteStamp ? siteStamp() : '', empty: !g.db, ...publicView(g.db) }, { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', ...allow }); return true;
+    }
+    // a tiny "has anything changed?" check the open website asks every minute (so it costs nothing and shows changes without a refresh)
+    if (route === 'GET /public/version') {
+      const o = req.headers.origin, allow = o && cfg.allowedOrigins.includes(o) ? { 'Access-Control-Allow-Origin': o, 'Vary': 'Origin' } : {};
+      json(res, 200, { version: shop.get().version, siteBuild: siteStamp ? siteStamp() : '' }, { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', ...allow }); return true;
     }
     let m = /^GET \/media\/([0-9a-f]{32})\.jpg$/.exec(route);
     if (m) { const b = media.read(m[1]); if (!b) return json(res, 404, { error: 'not found' }), true; res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Cache-Control': 'public, max-age=86400', 'X-Content-Type-Options': 'nosniff', 'Cross-Origin-Resource-Policy': 'cross-origin' }); res.end(b); return true; }
@@ -121,7 +126,7 @@ export function adminRoutes({ automation, realcats, orderflow, walog, repair, cf
 
       if (route === 'GET /admin/api/db') { const g = shop.get(); send(res, { code: 200, version: g.version, db: dbForRead(role, g.db) }); return true; }
       if (route === 'PUT /admin/api/db') { const b = await body(req, 30_000_000); const r = shop.put(b.db, Number(b.baseVersion), role); if (r.code === 200) { wrote('save', `v${r.version}${r.merged ? ' merged' : ''}`); r.db = dbForRead(role, r.db); } send(res, r); return true; }
-      if (route === 'GET /admin/api/version') { send(res, { code: 200, version: shop.get().version }); return true; }
+      if (route === 'GET /admin/api/version') { let build = ''; try { build = (/__BUILD_STAMP="([^"]+)"/.exec(fs.readFileSync(path.join(ROOT, 'public', 'admin.html'), 'utf8')) || [])[1] || ''; } catch { /* not built */ } send(res, { code: 200, version: shop.get().version, build }); return true; }
       if (route === 'POST /admin/api/import') { const b = await body(req, 30_000_000); const again = b.db && typeof b.db === 'object' ? privacy.applyErasures(b.db) : 0, r = shop.importAll(b.db); if (r.code === 200) { wrote('import', again ? `${again} erased customer(s) removed again` : ''); r.erasedAgain = again; } send(res, r); return true; }
       if (route === 'POST /admin/api/password') { const r = auth.changePassword(await body(req, 5_000), req, ip); send(res, r.code === 200 ? { code: 200, ok: true } : r); return true; }
       if (route === 'POST /admin/api/2fa/start') { send(res, auth.twoFactorStart(await body(req, 5_000), ip, a.session)); return true; }

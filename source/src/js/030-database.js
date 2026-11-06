@@ -71,6 +71,7 @@ function normalizeDB(d) {
 let db = normalizeDB((BUILD === 'admin' ? null : safeParse('ap_db_v70', null)) || JSON.parse(JSON.stringify(defaultDB)));
 // The hosted builds never carry the demo PIN or bank details; the public site never carries demo customers or orders either.
 if (BUILD !== 'dev') { ['adminPin', 'bankName', 'accountNumber', 'ifscCode', 'otpEndpoint', 'aiEndpoint', 'assistantUrl'].forEach(k => { delete db.settings[k]; }); delete db.settings.ai; }
+if (BUILD === 'site' && window.__SHOP_API) document.documentElement.classList.add('shop-wait');   // the page waits for the server's answer instead of showing an old or sample copy first
 if (BUILD === 'site') { const fresh = !safeParse('ap_db_v70', null); if (fresh) { db.users = []; db.orders = []; db.invoices = []; db.logs = []; } }
 let cart = safeParse('ap_cart', []);
 let favourites = safeParse('ap_favourites', []);

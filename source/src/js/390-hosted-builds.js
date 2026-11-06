@@ -2,15 +2,53 @@
 // site: the public website reads what the owner published from the server (read-only).
 // admin: the owner app. Sign-in, saving, security and Instagram all go through the server, never through this browser's storage.
 const SHOP_API = () => String(window.__SHOP_API || ((document.querySelector('meta[name="shop-api"]') || {}).content) || '').replace(/\/+$/, '');
-async function shopSync() {
-  const api = SHOP_API(); if (!api) return;
-  try {
-    const r = await fetch(api + '/public/shop', { cache: 'no-cache' }); if (!r.ok) throw new Error('shop ' + r.status); const p = await r.json(); if (p.empty) return;
+// The public website always shows what the shop saved on the server. A saved copy in the browser is only a fallback for when the server cannot be reached:
+//  - the page is held back (see html.shop-wait) until the first answer arrives, so the OLD copy never flashes up; if the server is silent for 2.5 s the copy is shown;
+//  - the answer is never cached (no-store + a fresh address each time), and a failed try is repeated;
+//  - while the page stays open it asks a tiny "anything changed?" question every minute and when the phone wakes or the tab comes back, and updates itself;
+//  - every build has a stamp: a page that is older than the server's build reloads itself once.
+let SHOP_VER = 0, SHOP_SYNCING = null, SHOP_LAST = 0; const SHOP_HAD_COPY = BUILD === 'site' && !!safeParse('ap_db_v70', null);
+const shopReady = () => { document.documentElement.classList.remove('shop-wait'); };
+function shopBuildCheck(stamp) {
+  const mine = window.__BUILD_STAMP; if (!mine || !stamp || stamp === mine) return false;
+  try { if (sessionStorage.getItem('ap_reloaded_for') === stamp) return false; sessionStorage.setItem('ap_reloaded_for', stamp); } catch (e) { /* no storage: fall through, one reload per page load at most */ }
+  location.reload(); return true;   // this page is from an older build than the server: load the new one
+}
+async function shopSync(force) {
+  const api = SHOP_API(); if (!api) { shopReady(); return; }
+  if (SHOP_SYNCING) return SHOP_SYNCING;
+  if (!force && Date.now() - SHOP_LAST < 5000) return;
+  return (SHOP_SYNCING = (async () => {
+    let p = null;
+    for (let i = 0; i < 3 && !p; i++) {
+      try { const r = await fetch(api + '/public/shop?_=' + Date.now(), { cache: 'no-store' }); if (!r.ok) throw new Error('shop ' + r.status); p = await r.json(); }
+      catch (e) { if (i < 2) await new Promise(r => setTimeout(r, 1200 * (i + 1))); }
+    }
+    if (!p) { shopReady(); if (!SHOP_SYNCED && !SHOP_HAD_COPY) shopLoadError(); return; }   // server not reachable: whatever copy there is stays, nothing is erased
+    if (shopBuildCheck(p.siteBuild)) return;
+    SHOP_LAST = Date.now(); if (p.empty) { shopReady(); return; }
+    const step = f => { try { f(); } catch (e) { console.error('[sync]', e && e.message); } };   // one broken part must never stop the rest from updating
     db.settings = Object.assign({}, db.settings, p.settings); db.categories = p.categories; db.accessoryCategories = p.accessoryCategories; db.products = p.products; if (p.home) db.home = p.home; if (p.pages) db.pages = p.pages; db.bundles = p.bundles; db.coupons = p.coupons; db.accessorySeeded = true;
     const u = currentUser(), mine = u ? (db.reviews || []).filter(x => x.userId === u.id && x.status !== 'approved') : []; db.reviews = [...p.reviews, ...mine];
-    try { localStorage.setItem('ap_db_v70', JSON.stringify(db)); } catch (e) { /* storage full: the page still works from memory */ }
-    ensureProductFields(); syncHomeCats(); pruneCart(); renderProducts(); buildScrollTrack(); renderHome(); renderPublicPages(); updateBadges(); updateFavBadge(); seoRefreshHome(); enhanceLinks(); SHOP_SYNCED = true; routeFromLocation();
-  } catch (e) { /* offline or server down: keep showing the last copy */ }
+    SHOP_VER = p.version || 0; try { localStorage.setItem('ap_db_v70', JSON.stringify(db)); } catch (e) { /* storage full: the page still works from memory */ }
+    step(ensureProductFields); step(syncHomeCats); step(pruneCart); step(renderProducts); step(buildScrollTrack); step(renderHome); step(renderPublicPages); step(updateBadges); step(updateFavBadge); step(seoRefreshHome); step(enhanceLinks); SHOP_SYNCED = true; shopReady(); const er = document.getElementById('shopLoadErr'); if (er) er.remove(); step(routeFromLocation);
+  })().finally(() => { SHOP_SYNCING = null; }));
+}
+function shopLoadError() {
+  if (document.getElementById('shopLoadErr')) return; const d = document.createElement('div'); d.id = 'shopLoadErr'; d.setAttribute('role', 'alert');
+  d.innerHTML = '<div><b>We could not load the latest shop just now.</b><p>Please check your internet connection and try again.</p><button type="button" onclick="this.disabled=true;shopSync(true)">Try again</button></div>'; document.body.appendChild(d);
+}
+// keep an open page fresh: a tiny check every minute, and straight away when the phone wakes or the tab comes back
+async function shopPoll() {
+  const api = SHOP_API(); if (!api || document.hidden) return;
+  try { const r = await fetch(api + '/public/version?_=' + Date.now(), { cache: 'no-store' }); if (!r.ok) return; const v = await r.json(); if (shopBuildCheck(v.siteBuild)) return; if (SHOP_SYNCED && v.version && v.version !== SHOP_VER) shopSync(true); } catch (e) { /* try again next time */ }
+}
+if (BUILD === 'site') {
+  setTimeout(shopReady, 2500);   // never hold the page back longer than this
+  setInterval(shopPoll, +window.__SHOP_POLL_MS || 60000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) { shopPoll(); } });
+  window.addEventListener('pageshow', e => { if (e.persisted) { shopSync(true); } });   // the browser's back/forward cache can hand back an old page
+  window.addEventListener('online', () => shopSync(true));
 }
 
 const ADM_AS = document.documentElement.dataset.as === 'owner' ? 'owner' : 'admin';   // which address this page was opened from (/owner or /admin)
@@ -73,7 +111,8 @@ async function admEnter() {
   ADM.ready = true; document.getElementById('admGate').style.display = 'none'; init(); admApplyRole(); ov2Init(); navRestore();
   isAdminView = true; document.getElementById('storefrontView').classList.add('hidden'); document.getElementById('adminView').classList.add('active'); document.body.classList.add('admin-on', 'adm-app'); switchAdminTab(admHashTab() || (ADM.tabs && ADM.tabs.includes(currentAdminTab) ? currentAdminTab : ADM.home) || 'dashboard');
   if (demo) { ADM.dirty = true; admSetBadge('Starting with demo data. Import your own in Settings → Security & backup, or just edit this.'); admQueueSave(); }
-  clearInterval(ADM.poll); ADM.poll = setInterval(admPoll, 20_000); admSetBadge();
+  clearInterval(ADM.poll); ADM.poll = setInterval(admPoll, +window.__ADM_POLL_MS || 20_000); admSetBadge();
+  if (!window.__admVis) { window.__admVis = true; document.addEventListener('visibilitychange', () => { if (!document.hidden && ADM.signedIn) admPoll(); }); }   // coming back to the tab: check at once
 }
 // ---- saving: debounced, merged on the server, never overwrites newer changes made elsewhere ----
 function admSetBadge(t) { let b = document.getElementById('admSync'); if (!b) { b = document.createElement('div'); b.id = 'admSync'; b.setAttribute('role', 'status'); document.body.appendChild(b); } b.textContent = t || (ADM.dirty || ADM.inflight ? 'Saving…' : '✓ Saved to the server'); b.className = (t && /not saved|offline/i.test(t)) ? 'bad' : ''; }
@@ -94,7 +133,7 @@ function admRefreshView() { if (document.querySelector('.modal.active') || curre
   try { renderAdminContent(currentAdminTab); } catch (e) { /* the tab is not drawn yet */ } }
 async function admPoll() {
   if (!ADM.signedIn || ADM.dirty || ADM.inflight) return;
-  try { const v = await admApi('GET', '/admin/api/version'); if (v.version > ADM.version) { const g = await admApi('GET', '/admin/api/db'); if (ADM.dirty || ADM.inflight) return; ADM.version = g.version; for (const k of Object.keys(db)) delete db[k]; Object.assign(db, normalizeDB(g.db)); admRefreshView(); admSetBadge('Updated: a new order or change arrived'); setTimeout(() => admSetBadge(), 4000); } } catch (e) { /* try again next time */ }
+  try { const v = await admApi('GET', '/admin/api/version'); if (v.build && window.__BUILD_STAMP && v.build !== window.__BUILD_STAMP && !ADM.dirty && !ADM.inflight) { try { if (sessionStorage.getItem('ap_adm_reloaded_for') !== v.build) { sessionStorage.setItem('ap_adm_reloaded_for', v.build); admSetBadge('The app was updated: reloading…'); setTimeout(() => location.reload(), 600); return; } } catch (e) { /* no storage */ } } if (v.version > ADM.version) { const g = await admApi('GET', '/admin/api/db'); if (ADM.dirty || ADM.inflight) return; ADM.version = g.version; for (const k of Object.keys(db)) delete db[k]; Object.assign(db, normalizeDB(g.db)); admRefreshView(); admSetBadge('Updated: a new order or change arrived'); setTimeout(() => admSetBadge(), 4000); } } catch (e) { /* try again next time */ }
 }
 // ---- Settings → Security & backup ----
 function admSecurityHTML() {
