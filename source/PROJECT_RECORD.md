@@ -139,7 +139,7 @@ Owner's guidance: real WhatsApp, Instagram, Razorpay and email accounts are conn
 | `fresh-site-test.cjs` | 14 | no old page, data or photos: waits for the server, never cached, updates itself, build stamp, offline fallback |
 | `product-layout-test.cjs` | 19 | every product page in the reference pattern, similar list on the right / under the photos, eleven categories' facts |
 | `mobile-live-test.cjs` | 41 | admin, owner and public website at phone size through the real server (background, sizes, menus, Orders card, settings) |
-| `background-test.cjs` | 30 | website background builder: art, preview, deploy, saved looks, Claude ideas |
+| `background-test.cjs` | 41 | website background builder: art, preview, deploy, saved looks, Claude ideas |
 | `chapters-tools-test.cjs` | 33 | chapter rows: delete, order, hide, collection tick boxes |
 | `how-it-works-test.cjs` | 12 | How it works page for owner and admin, search, do / do-not lists |
 | `orderflow-test.cjs` | 8 | Orders tab card: auto-approval switch, owner WhatsApp number |
@@ -175,6 +175,11 @@ Run everything with `./run-tests.sh`, or one browser suite with `PW=$(npm root -
 See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
+
+**6 Nov 2026 (Website background: new designs every time; match the page colours)**
+- Owner then added: let Claude suggest backgrounds according to the colours in the page. Done: the background card shows the page's five colours and a button that sends them to Claude (accent, ink, bg, cream, sage) and asks for three ideas in the same hues, preview only; without Claude, three designs are built from the page colours (guide 43). Tests: `background-test.cjs` 41 checks; server prompt checks extended (702).
+- Owner: "new Website background not generating, just those 3 refreshing". The three ideas barely differed (one layout, eight motifs, very faint patterns) and pressing again gave look-alikes. Now (guide 43): five layouts (scatter, edge frame, big corners, flowing vine, repeating pattern), thirteen motifs (adds sun, kolam, mandala, jasmine, mango), **Surprise me** (a brand-new random design with its own harmonious colours, instantly), and **Give me 3 NEW ideas** (Claude is told what was already shown and must use a different layout in each; built-in ideas are new each time too); Claude's ideas are checked and kept at least 20 % visible; motifs in frame, vine and pattern layouts are larger.
+- Tests: `background-test.cjs` now 37 checks (layouts differ, frame/corners placement, new motifs, tall phone shape, Surprise me variety, repeated ideas all different, Claude input and checking); server 702 (background AI prompt checks extended). Not tested: Claude's real new ideas.
 
 **6 Nov 2026 (No old page, data or photos after an update)**
 - Owner (phone screenshot): "after any refresh still the old page and photos being displayed; set that issue and make sure no old data is displayed after". Fixed in layers (guide 46): the website waits for the server's answer instead of painting a saved or sample copy first; the shop data is never cached (`no-store`, a fresh address per request, retries); an open page asks `/public/version` every minute and when the phone wakes, the tab returns, the internet returns or the browser's back/forward memory restores a page; every build has a stamp and an older page reloads itself once; all site files are re-checked with an ETag (304 when unchanged); the owner and admin apps also reload themselves after an update; a first-time visitor who cannot reach the server gets an honest message with Try again, never sample sarees. Also found while testing: the Admin login cannot save product edits (they belong to the Owner login), by design.

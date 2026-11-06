@@ -25,3 +25,14 @@ Type a festival or a feeling (Diwali, wedding season, calm monsoon). Claude prop
 
 ## Phones (fixed 6 Nov 2026)
 The picture is drawn in the **shape of the screen**: a tall 800 x 1400 picture on phones, a wide 1600 x 1000 one on computers and tablets in landscape. Before this, a phone showed only the middle slice of the wide picture, where the art is sparse (most motifs sit near the edges), so the background looked empty or "not updated". Turning the phone sideways redraws it in the wide shape. The preview boxes in the admin app always use the wide shape. On the home page the big banner photo is a solid panel and covers the background; the pattern shows behind everything below it.
+
+## More designs, a new one every time (6 Nov 2026)
+The owner saw the same three ideas "refreshing" instead of new backgrounds. Now:
+- **Five layouts** (the Layout choice): Scattered, Frame around the edges, Big corners, Flowing vine, Repeating pattern. The same motifs look completely different in each.
+- **Thirteen motifs:** paisley, flower, vine, peacock, feather, lotus, lamp, star, **sun, kolam (rangoli), mandala, jasmine, mango**.
+- **Surprise me with a new design** invents a design on the spot (random layout, motifs, a harmonious four-colour palette, fullness and shuffle number): a new look every press, no Claude needed. It goes to the big preview only.
+- **Give me 3 NEW ideas:** each press asks Claude again and tells it the names already shown and the round number, and Claude is told the three ideas must differ from each other (a different layout in each) and from everything shown before. Its answer is checked as before (unknown motifs or layouts are dropped or set to "scattered"; a pattern fainter than 20 % is raised to 20 % so it is visible). Without Claude the built-in ideas are new each time too: ones that match the festival words typed come first, then freshly invented designs, never repeating a name already shown.
+- Previews of ideas show the layout name, so the three are easy to tell apart.
+
+## Match my page colours (6 Nov 2026)
+Under "Ask Claude for a background idea" the card shows the **five colours your page uses** (accent, ink, background, cream, sage: from Home Page → Website colours) and a button **"✨ Suggest backgrounds that match my page colours"**. Claude is sent those real colours (checked: only real hex colours are passed on) with the instruction to keep the same hues so the pattern sits naturally with the page, and to give three different layouts. The ideas appear for **preview only**. Without Claude, three designs are built directly from the page colours (the ink or accent as the line colour, the cream as the soft fill, with a frame, corners and a vine layout).

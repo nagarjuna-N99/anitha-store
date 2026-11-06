@@ -292,3 +292,5 @@ html.ui2.dk .bg-chip, html.ui2.dk .bg-idea { background: #23211d; border-color: 
 /* the website waits for the server's answer before showing anything that could be old */
 html.shop-wait body > #storefrontView .page, html.shop-wait .store-mobile-bar { opacity: 0; } .page { transition: opacity .2s ease; }
 #shopLoadErr { position: fixed; inset: 0; z-index: 9999; background: rgba(250,249,246,.96); display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; } #shopLoadErr button { margin-top: 8px; padding: 12px 22px; border: 0; border-radius: 6px; background: #2c2a26; color: #fff; font: inherit; cursor: pointer; min-height: 44px; }
+
+.bg-pagecol { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 8px 0; font-size: .85rem; } .bg-pc { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(0,0,0,.2); display: inline-block; }
