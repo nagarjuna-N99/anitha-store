@@ -165,3 +165,6 @@ This changes three things in the plan above.
 
 ## 14. Answers of 7 Nov 2026
 No measurements are needed for any design (section 13 point 6 is not used). The assistant may answer **all night**. Hold means keeping one piece for one customer for a short time (guide 50 section 0). The route from Instagram to the website is in guide 50.
+
+## 15. Decision of 7 Nov 2026: everyone goes to the website
+The assistant sends the design's page link **in its first answer** (the page is the answer to "price?"), instead of asking "shall I send the page?" first; orders are placed on the website, chats are for help. Full rules: guide 50 section 11. This changes section 2 point 4 above.

@@ -67,3 +67,35 @@ Instagram: profile visits, link taps, reach of the 3 best reels. Website (our ow
 The day and hour of the weekly drop; the real categories and prices; photos of 20 to 30 pieces; permission to show 5 to 10 "Client love" screenshots (names hidden); the payment ways the shop accepts; and when the 2nd question (the categories list) is answered, I will use it for the wording pass.
 
 Not tested: Instagram's current link and messaging rules (they change; confirm in the app).
+
+
+## 11. Decision of the owner (7 Nov 2026): everyone is routed to the website
+"Everyone should be routed to the website." This **replaces** the softer wording in sections 1 and 5 ("keep DMs", "order on WhatsApp"): from now on **the website is the one place where a design is seen, priced and ordered**. Instagram and WhatsApp are only the doors that lead there.
+
+### The rules (every channel, every hour, assistant and owner)
+1. **Every enquiry gets the design's page as the answer.** "Price?", "Pp", "Available?" on Instagram DM, Instagram comment or WhatsApp: a one-line answer in the customer's language and **the link to that design's page** ("The price, photos and details are on this page: <link>. It is a single piece, so it is shown as available only while it is."). The page shows the price and the real availability.
+2. **No prices or "order here" in DMs or captions.** Captions say "Price and details: link in bio" (captions cannot be tapped) and stories carry a **link sticker** to the design's page. DM and WhatsApp answers carry the price only when the customer insists (the "But price" case in section 12 of guide 48); the page link still goes with it.
+3. **Orders are placed on the website**, using the order flow already built (the owner approves, guide 41). WhatsApp and DMs are for **help**, not for taking orders: "Need help? Message us" on every page names the design in the first line (built).
+4. **The consent step changes.** Guide 48 had the assistant ask "shall I send the page?" before sending a link. For someone who has just asked for a price, the page **is** the answer, so the link is sent in the first reply. Still never sent: to anyone who did not write first, to anyone who sent STOP, or as a promotion. The owner can switch back to "ask first" in one setting if she prefers. *(If this is not what the owner meant, say so and the old rule returns.)*
+5. **Unknown design** (forwarded video, screenshot, "Pp" alone): the assistant sends the **"New this week" page** and asks for the post link or a photo to find the exact design; the owner sees its best 3 matches as a draft (guide 48 section 12).
+6. **Exceptions that go to a person, not the website**: abroad shipping quotes, custom or made-to-order requests, an existing order's problem, a customer who says they cannot use the website (the owner may then take the order by chat and enter it in the owner app so that tracking and the record are the same).
+7. **Old chats and the backlog**: the 29 unread and the archived chats get one polite message from the owner (not the assistant, because they did not just write): "Our website is now open: <link>". Only chats where the customer wrote in the last 24 hours can be answered freely; the rest need the owner's own reply or an approved template.
+
+### Texts to set up this week (no code)
+- **WhatsApp Business greeting**: "Welcome to Anitha Pemmasani 💛 Every design is a single piece. See each piece with its price and order on our website: <link>. Tell us the design name or send the post link and we will help."
+- **WhatsApp away message** (night): the same plus "We reply from 9 am; the website is open all night."
+- **Instagram saved replies** and the DM greeting: the same two sentences; comments: "Sent you the link in DM 💛".
+- **Bio**: "Every piece is one of a kind · Order on our website 👇", link `https://anithapemmasani.com/?src=ig-bio`.
+
+### What the website must do well (because everyone arrives there)
+Open fast on a phone; show **price and availability above the fold**; a clear **Add to bag** and a checkout the owner has tested with a real order; the trust page; delivery and the "made again only on order" line; a WhatsApp help button. A visitor who cannot find the price in 3 seconds will message instead, which is the thing we are removing.
+
+### Measure and keep it honest
+Weekly: link taps, visitors by source tag, design pages opened, orders on the website, **and the number of "Pp/price" chats still arriving** (it should fall). After 4 weeks the owner and I read the numbers: if good customers are lost because of the website step (lost enquiries, abandoned bags), we fix the page first (speed, photos, price placement, checkout), not by going back.
+
+### Build order (replaces section 9 where it differs)
+1. Link-in-bio page ("New this week") and source tags (`?src=`) with the growth report.
+2. Assistant: **link-first answers** on WhatsApp now, Instagram when Meta approves; reel and post link lookup so the link goes to the right design; "unknown design" answer; sold-out answer with the page link.
+3. Drop schedule and "Remind me"; official shop page; hold button.
+4. Orders fully on the website: check the checkout, payment ways, order approval and tracking messages as a single customer test.
+5. The one-time message to the old chats (owner) and the set-up texts above.

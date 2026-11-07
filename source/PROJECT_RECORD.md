@@ -178,6 +178,9 @@ See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
 
+**7 Nov 2026 (plan: everyone is routed to the website)**
+- Owner: "everyone should be routed to the website". Guide 50 section 11 (and guide 48 section 15): every enquiry on Instagram or WhatsApp gets the design's page link as the answer; no prices or ordering in DMs or captions; orders on the website; exceptions to a person (abroad quotes, custom, order problems, no-website customers); the "ask before sending the link" step is dropped for someone who just asked (flagged to the owner to confirm); texts to set up; measuring; new build order. Plan only; nothing built.
+
 **7 Nov 2026 (plan: Instagram to website)**
 - Owner: no measurements needed, assistant may answer all night, hold answered in words; sales are only on Instagram today and the website is being built: "plan to market from Instagram and route people to the website". Guide 50: what Hold means, the window-and-counter idea, minimum website launch, Instagram setup (bio, link, highlights, saved replies), weekly drop with website-first release, the three roads, collecting an own audience, measuring, 8-week timeline, and the build order (link-in-bio page, source tags, drop schedule, official-shop page, reel-link lookup and hold button, wording pass). Plan only; nothing built. Also: guide 48 no longer needs "measurements" (answered: none).
 
