@@ -178,6 +178,9 @@ See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
 
+**7 Nov 2026 (plan: Instagram to website)**
+- Owner: no measurements needed, assistant may answer all night, hold answered in words; sales are only on Instagram today and the website is being built: "plan to market from Instagram and route people to the website". Guide 50: what Hold means, the window-and-counter idea, minimum website launch, Instagram setup (bio, link, highlights, saved replies), weekly drop with website-first release, the three roads, collecting an own audience, measuring, 8-week timeline, and the build order (link-in-bio page, source tags, drop schedule, official-shop page, reel-link lookup and hold button, wording pass). Plan only; nothing built. Also: guide 48 no longer needs "measurements" (answered: none).
+
 **7 Nov 2026 (Instagram name set)**
 - Owner's screenshot of the Instagram page gave the name `anitha_pemmasani` (verified account, 24.9K followers). It is now the default of the Follow us Instagram button (Admin → Home Page → Follow us can change it; empty hides it). Test: `browse-test.cjs` (Instagram link, empty box hides it). Not tested: the live site.
 

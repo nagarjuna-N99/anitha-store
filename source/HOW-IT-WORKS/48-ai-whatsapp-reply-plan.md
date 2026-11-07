@@ -161,3 +161,7 @@ This changes three things in the plan above.
 **New small build for one-of-a-kind (in this order, after the reel-link lookup):** hold-for-24-hours button and the "being confirmed by another customer" answer; made-to-order fields; the morning list; the designer-wear category list and wording pass.
 
 **Answers still needed:** the categories of designer wear (and which need measurements); made-to-order yes/no and days per category; hold time; the night hours the assistant may answer (default all night); the owner's name or brand voice sample (three messages she is proud of).
+
+
+## 14. Answers of 7 Nov 2026
+No measurements are needed for any design (section 13 point 6 is not used). The assistant may answer **all night**. Hold means keeping one piece for one customer for a short time (guide 50 section 0). The route from Instagram to the website is in guide 50.
