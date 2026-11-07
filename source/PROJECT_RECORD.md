@@ -178,6 +178,9 @@ See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
 
+**7 Nov 2026 (plan: what the owner's real chats show)**
+- Owner sent screenshots of real chats (numbers not recorded). Guide 48 section 12: one- or two-word questions from Instagram reels (link, forwarded video, or nothing), 29 unread, "Sold out" then "But price"; new rules (reel link lookup table, picture matching as drafts, "Price only" question back, sold-out still gives the price, abroad numbers, backlog sorter) and the next build order. Plan only, nothing built.
+
 **7 Nov 2026 (plan extended: Instagram messages and professionalising the shop)**
 - Owner: the shop number is on the WhatsApp Business app; family-only start is OK; most chats start from Instagram; wants Instagram replies handled and everything professional, will send screenshots. Guide 48 section 11 now has the one-assistant-two-doors plan (Instagram DMs and comments, bio link with the saree already named, screenshot matching as drafts the owner approves), what Instagram allows, a no-code professional checklist for WhatsApp Business and Instagram, and the build order. Plan only, nothing built. Not tested: Meta's current Instagram messaging rules (to confirm on Meta's pages).
 

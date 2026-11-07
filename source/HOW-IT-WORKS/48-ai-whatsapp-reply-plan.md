@@ -120,3 +120,24 @@ Keep **one brain** (the same assistant, the same catalogue, the same rules as se
 
 ### Still needed from the owner
 Hours when she cannot answer; her Instagram name (also for the Follow us button); whether the Instagram account is already Professional and linked to a Facebook Page; 20 sample conversations.
+
+
+## 12. What the real chats show (owner's screenshots, 7 Nov 2026; no names or numbers are kept here)
+What the screenshots show: **29 unread chats** at about 3 pm and **41 archived**; chats from numbers that are not saved (India and abroad); almost every first message is **one or two words** ("Price", "Pp", "Price pls", "How much these sarees are?", "Are these sarees available and what is the price"); the customer comes **from an Instagram reel** and shares it in one of three ways: (a) the **reel link** with a preview card ("Anitha Pemmasani on Instagram: To place an order WhatsApp ...") followed by "Hi" and the link, (b) the **reel video itself** forwarded into the chat, (c) a **screenshot or nothing at all** ("Pp"). In one chat the owner answered "Sold out" and the customer wrote back "But price": they still wanted the price.
+
+What that means for the assistant (rules added to section 2):
+1. **Most chats are the same 3 questions**: price, is it available, can you send details. That is exactly what the assistant answers fastest; it will clear most of the 29 unread in seconds.
+2. **A reel link tells us the saree.** Every `instagram.com/reel/<code>` (or `/p/<code>`) in a chat is looked up in a small table "Instagram post → saree". The table fills itself for everything posted from the owner app (the app knows the post's address when it publishes, guide 17) and the owner can paste a post link into any saree once for older posts. Then "Hi + link" is answered with that saree's price, availability and the page link question, with no guessing.
+3. **A forwarded video or screenshot has no link.** The assistant shows the owner its 3 best matches from the catalogue (picture matching) as a draft; if the owner is away it answers "Which saree is this? Please send the post link or tap Share → Copy link" in the customer's language. It never states a price for a saree it has not matched.
+4. **"Price" with nothing else** gets one short question back ("Which saree? Please send the post link or a photo") unless the same customer shared a reel earlier in that chat.
+5. **Sold out still answers the price question**: "This saree is sold out. It was ₹X. It can be made again only on order (about N days): shall I note your interest? Here are 3 similar sarees available now." (The owner decides whether to show the old price; the default is to show it, because the customer asked for it.)
+6. **Abroad numbers (+971 and others)**: the assistant answers in English by default, mentions that shipping abroad is quoted separately and hands over to the owner for the quote.
+7. **Backlog**: before switching on, a one-time helper lists the unread chats by what they ask (price / available / photo / other) so the owner can answer the backlog in one go or let the assistant send the first reply (phase 3, drafts).
+8. **The owner's own habits**: save a "Sold out" quick reply that includes the made-on-order sentence; keep the reel caption's order number line (it works: customers do arrive on WhatsApp).
+
+### Next build (in this order, each with tests)
+1. Instagram post address table and the saree link field (website and owner app); the assistant recognises reel links (uses what already exists: catalogue tool, handoff).
+2. The "sold out but price" and "Price only" answers in Telugu, Hindi, English, and the abroad rule.
+3. Picture matching of forwarded videos and screenshots as drafts for the owner.
+4. The backlog sorter.
+All stay in family-only mode first (section 5, phase 2).
