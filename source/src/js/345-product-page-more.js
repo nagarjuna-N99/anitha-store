@@ -20,7 +20,7 @@ function detailsTableHTML(p, inStock) {
   return `<table class="dtable" aria-label="Product details"><tbody>${rows.join('')}</tbody></table>`;
 }
 function trustHTML() {
-  const s = db.settings, rd = +s.returnDays || 0, items = [['🧵', 'Hand-picked, one of a kind', 'Every saree is picked by us, and each one is a single piece. Once it is sold, that exact saree will not be made again.'], ['🚚', `Free shipping above ₹${money(SHIP_FREE_ABOVE)}`, `Below that, shipping is ₹${SHIP_FEE}.`], ['📦', `Dispatch in ${esc(s.dispatchTime || '3–7 business days')}`, 'Track your order in My Account.']];
+  const s = db.settings, rd = +s.returnDays || 0, items = [['🧵', 'Hand-picked, one of a kind', 'Every saree is picked by us, and each one is a single piece. Once it is sold, that exact saree can be made again only on order: ask us on WhatsApp.'], ['🚚', `Free shipping above ₹${money(SHIP_FREE_ABOVE)}`, `Below that, shipping is ₹${SHIP_FEE}.`], ['📦', `Dispatch in ${esc(s.dispatchTime || '3–7 business days')}`, 'Track your order in My Account.']];
   if (rd > 0) items.push(['↩', `${rd}-day returns`, 'The full policy is in our <a onclick="closeModal(\'productModal\');navigateTo(\'terms\')">Terms</a>.']);
   if (s.waNumber || s.phone) items.push(['💬', 'Ask us on WhatsApp', 'Questions about this saree? We reply there.']);
   return `<section class="trust" aria-label="Why shop with us"><h3>Why shop with us</h3><div class="trust-grid">${items.map(([i, t, d]) => `<div class="trust-it"><span aria-hidden="true">${i}</span><div><b>${t}</b><small>${d}</small></div></div>`).join('')}</div></section>`;

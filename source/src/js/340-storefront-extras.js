@@ -92,7 +92,7 @@ function pageExtrasHTML(p, gk, opts) {
   const jumps = [];
   if (vi >= 0) jumps.push(`<button type="button" class="jump-btn" data-jump="video" onclick="galSelect('${gk}',${vi})">▶ Watch it draped</button>`);
   if (p.daylight && imgN > 1) jumps.push(`<button type="button" class="jump-btn" data-jump="daylight" onclick="galSelect('${gk}',${imgN - 1})">☀ See the daylight photo</button>`);
-  return `${oneOfAKind(p) ? '<div class="one-kind">✦ A single designer piece. Once it is sold, this exact saree will not be made again.</div>' : ''}
+  return `${oneOfAKind(p) ? `<div class="one-kind">✦ A single designer piece. Once it is sold, this exact saree can be made again only on order${typeof waChatEnabled === 'function' && waChatEnabled() ? `: <a href="${esc(waChatLink(p))}" target="_blank" rel="noopener">message us on WhatsApp</a> if you would like one` : ': message us on WhatsApp if you would like one'}.</div>` : ''}
     ${jumps.length ? `<div class="jump-row">${jumps.join('')}</div>` : ''}
     ${isAccessory(p) ? '' : `<p class="colour-note">Colours can look slightly different on every screen${p.daylight ? '; the ☀ daylight photo shows the truest colour' : ''}. Message us for a live video of this saree.</p>`}
     ${opts.preview ? '' : bundleTeaserHTML(p)}`;
@@ -317,7 +317,7 @@ function siDownload() {
 function faqItems() {
   const ph = db.settings.phone || '';
   return [
-    ['Is every saree really only one piece?', 'Yes. Most of our sarees are single designer pieces. When a saree is sold, that exact piece will not be made again. If you miss one, tap “Tell me about similar sarees” on its page and we will message you once when a similar one arrives.'],
+    ['Is every saree really only one piece?', 'Yes. Most of our sarees are single designer pieces. Once a saree is sold, that exact saree can be made again only on order: message us on WhatsApp if you would like one. You can also tap “Tell me about similar sarees” on its page and we will message you once when a similar one arrives.'],
     ['Will the colour match the photos?', 'We photograph every saree with care, but screens differ. Many pages have a ☀ daylight photo that shows the truest colour, and we are happy to send a live video on WhatsApp before you buy.'],
     ['How much is delivery, and how long does it take?', `We ship to every PIN code. Delivery is free on orders above ₹${money(SHIP_FREE_ABOVE)}; otherwise it is ₹${SHIP_FEE}. Enter your PIN on a product page to see an estimated delivery date.`],
     ['Can I cancel an order?', 'No. Orders cannot be cancelled once placed, because every piece is unique and prepared for you. Before dispatch you can correct your delivery address from My Account → Track.'],
