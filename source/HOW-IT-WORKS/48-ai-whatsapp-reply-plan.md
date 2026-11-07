@@ -85,3 +85,38 @@ At every phase there is **one switch** in the Admin → WhatsApp page to pause t
 1. Step 1 check (owner, 1 evening).  2. Build `send_product_link` with consent log and tests (1 day).  3. Allow-list mode and the pause switch (half a day).  4. Template drafts for Meta approval (same day as 2).  5. Run phase 2 and 3.  6. Only then phases 4 and 5.
 
 Sources used for the facts above: coexistence notes from 360dialog, Telnyx and Kapso documentation; Meta's pricing page and India price notes from AiSensy and others. These secondary pages disagree on a few rupee figures and on which countries are supported, which is why step 1 and the rate-card check are in the plan.
+
+
+## 11. Owner's answers (7 Nov 2026) and the Instagram side
+Answers: the shop number is on the **WhatsApp Business app** (so way A, coexistence, is the target); starting with only the owner and family is **OK**; the "unavailable hours" question is still open (until told, the plan assumes 10 pm to 9 am and 1 to 2 pm). New: most WhatsApp chats **begin on Instagram** (a saree post, reel or story with the WhatsApp link), and the owner wants Instagram messages handled too and the whole shop to look professional. She will send sample conversations as screenshots or links.
+
+### The idea: Instagram is the shop window, WhatsApp is the counter
+Keep **one brain** (the same assistant, the same catalogue, the same rules as section 2) and give it two doors:
+1. **Instagram messages (DMs)**: the assistant answers simple questions (price, available or sold, fabric, colour, delivery) in the customer's language, then invites the customer to continue on WhatsApp **only if they agree**, because orders, address and payment happen on WhatsApp where the shop already has the order flow.
+2. **Instagram comments** ("price?", "available?"): one short public reply ("Sent you a message 💛") and the details go in a private DM. Never prices in public if the owner prefers not.
+3. **The link in the bio / the posts** goes to the website (saree pages) and to a WhatsApp link with the saree **already named in the first message** ("Hi, I saw *Royal Red Kanjeevaram* on Instagram"). The website already builds this message (`waChatLink`); the same trick is used in the bio link. Then every chat starts with the saree known, and the owner can see which post brought the customer.
+4. **Screenshots**: when a customer sends a screenshot of a saree (from Instagram or anywhere), the assistant must not guess. It tries to **match the picture to a saree in the catalogue and shows the owner its best 3 matches as a draft**; the owner taps the right one and the customer gets that saree's details. If nothing matches, the customer is told "this one is not in stock right now" and offered similar sarees. Never a guessed price.
+
+### What Instagram allows (to be confirmed on Meta's pages, rules change)
+- Automatic replies to DMs are possible only for an **Instagram Professional (Business or Creator) account connected to a Facebook Page**, through Meta's Instagram messaging permissions, which need Meta's app review (days to weeks). The shop already posts to Instagram through Meta (guide 17), so the connection exists; messaging is an extra permission on the same Meta app.
+- The assistant can answer only people who **messaged first**, normally inside **24 hours** (a person, not the assistant, may reply later within a longer window). No cold messages, no mass DMs: this also protects the account from being limited.
+- A comment can be answered once with a private message shortly after it was written.
+- Everything else (STOP, hand-over, drafts, consent) follows section 2. A customer on Instagram who types STOP gets nothing automatic again.
+
+### How to look professional (a checklist the owner can do this week, no code)
+**WhatsApp Business profile:** shop name, logo (the Cases/brand mark, no temple or court-style imagery), address, hours, website link, short description, and the **catalogue** feature with the 8 to 12 best sarees. Turn on **Greeting message** (first time a customer writes), **Away message** (outside hours: "We reply from 9 am; here is the page with all sarees: link"), and **Quick replies** (type `/` to use: price list, delivery, return policy, payment details, address). Use **Labels**: New enquiry, Asked price, Order placed, Paid, Posted, Follow up.
+**Instagram profile:** switch to a Professional account, one clear bio line ("Handloom sarees from Hyderabad · single designer pieces · order on WhatsApp"), the website link, **Saved replies** for the same questions as WhatsApp, Highlights called Kanjeevaram, Banarasi, New arrivals, Delivery, Reviews. Every post: saree name, fabric, price range or "DM for price", "only 1 piece", and the link.
+**One voice:** the same greeting, the same signature and the same words for "sold out" and "made again only on order" on the website, WhatsApp and Instagram (the persona file `wa-assistant/knowledge/persona.md` holds it).
+**One page per saree:** every post links to that saree's page on the website (`/product/<name>/`), not to the home page.
+**Answer times:** reply to a new enquiry within 10 minutes in hours (assistant + owner), and say the next reply time out of hours.
+
+### Build order for the Instagram side (after WhatsApp phase 2)
+1. Owner sends 20 real conversations (screenshots) with names and numbers hidden. They become the test list (nothing personal goes into the code).
+2. Ask Meta for the Instagram messaging permission on the existing app (owner action; I will list the exact steps and the screens to record for review).
+3. Build an Instagram door into the same assistant (same catalogue tool, same rules) and an **inbox for both WhatsApp and Instagram** in the owner app, labelled by source.
+4. Screenshot matching as drafts (owner approves).
+5. Same phases as WhatsApp: family only, drafts, after-hours, full.
+6. Add "which post brought this customer" to the weekly report (growth page, guide 18).
+
+### Still needed from the owner
+Hours when she cannot answer; her Instagram name (also for the Follow us button); whether the Instagram account is already Professional and linked to a Facebook Page; 20 sample conversations.
