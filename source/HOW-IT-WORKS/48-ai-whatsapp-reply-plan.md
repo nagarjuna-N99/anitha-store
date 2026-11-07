@@ -141,3 +141,23 @@ What that means for the assistant (rules added to section 2):
 3. Picture matching of forwarded videos and screenshots as drafts for the owner.
 4. The backlog sorter.
 All stay in family-only mode first (section 5, phase 2).
+
+
+## 13. We are a designer-wear brand, every piece is one of a kind, and replies are needed all day and night (owner, 7 Nov 2026)
+This changes three things in the plan above.
+
+**A. "All-time replies" means the assistant answers first, always (24 hours), not only after hours.** Phases 1 to 3 stay (family only, then drafts), but the target is phase 5 with a night rule: from 10 pm to 8 am the assistant answers fully and writes a **morning list for the owner** (who is waiting, what they asked, what needs a person). The owner is never required to reply at night. Hand-over rules stay (custom orders, alterations, angry customers, money, photos that cannot be matched).
+
+**B. One piece per model changes what "available" means.**
+1. **Availability is checked at the moment of the answer** and is only ever "available right now" or "sold". Two customers asking about the same piece at the same time: the first to confirm gets it, the second hears "someone is confirming this piece; I will tell you at once if it comes back, or I can show similar designs".
+2. **No automatic holds.** The assistant never promises to keep a piece. The owner can press **Hold for 24 hours** for one customer in the owner app (the assistant then says the piece is on hold for that customer until a stated time, and nobody else is told it is "available"). Decision for the owner: default hold time (suggested 24 hours, paid-order first).
+3. **Sold is the normal case.** The sold answer is warm and useful, not a dead end: "This design was a single piece and is now with its owner. We can make this design again **only on order** (about N days, price from ₹X): shall I note your interest? Here are 3 designs in the same mood that are available now." The price is shown (customers ask "but price").
+4. **"Notify me when something like this arrives"** is the main follow-up (already built as "Tell me about similar", guide 14): consent is asked, one message only.
+5. **Made-to-order is a product too.** The owner sets, per design or per category: made-to-order yes/no, extra days, price note, measurements needed. The assistant uses only what is set, never invents a delivery time.
+6. **Designer wear needs measurements and fit.** For blouses, lehengas, kurtas and similar the assistant asks the few things the owner defined (size or measurements, occasion date, city) and passes them to the owner as one clean note; it never promises a fit or an alteration.
+
+**C. Wording on the website and in the assistant.** The shop is a designer-wear brand, but the website text and categories still say "sarees" in many places (the real categories are saree weaves). Before the assistant goes live, one pass should change the shop's words to "designs / pieces" where it means every product, keep "sarees" where it means sarees, and add the designer-wear categories the owner names. Owner to send the list of categories and what each needs (size, made-to-order days). This is a copy-and-categories change with tests, not new code.
+
+**New small build for one-of-a-kind (in this order, after the reel-link lookup):** hold-for-24-hours button and the "being confirmed by another customer" answer; made-to-order fields; the morning list; the designer-wear category list and wording pass.
+
+**Answers still needed:** the categories of designer wear (and which need measurements); made-to-order yes/no and days per category; hold time; the night hours the assistant may answer (default all night); the owner's name or brand voice sample (three messages she is proud of).
