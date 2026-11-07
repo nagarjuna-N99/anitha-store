@@ -178,6 +178,9 @@ See `HOW-IT-WORKS/11-go-live-checklist.md`.
 
 ## 8. Change log (newest first)
 
+**7 Nov 2026 (Instagram name set)**
+- Owner's screenshot of the Instagram page gave the name `anitha_pemmasani` (verified account, 24.9K followers). It is now the default of the Follow us Instagram button (Admin → Home Page → Follow us can change it; empty hides it). Test: `browse-test.cjs` (Instagram link, empty box hides it). Not tested: the live site.
+
 **7 Nov 2026 (plan: designer wear, one piece each, replies all day and night)**
 - Owner: "we are a designer-wear brand, every product only one piece, need support for all-time replies". Guide 48 section 13: assistant answers first at all hours with a morning list for the owner; availability checked at the moment of the answer; no automatic holds (owner's Hold for 24 hours button); sold answers keep the price and offer made-to-order and similar designs; measurements for fitted wear; wording pass from "sarees" to "designs/pieces" where it means every product. Plan only, nothing built.
 

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta name="robots" content="noindex, nofollow"><script>window.__BUILD='admin';window.__BUILD_STAMP="2026-11-07T09:53:06Z";</script>
+<head><meta name="robots" content="noindex, nofollow"><script>window.__BUILD='admin';window.__BUILD_STAMP="2026-11-07T09:59:53Z";</script>
 <script>document.documentElement.classList.add('js')</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -8762,7 +8762,8 @@ document.addEventListener('mouseout', e => {
 
 // ---------- Follow us ----------
 const FB_DEFAULT = 'https://www.facebook.com/profile.php?id=100086623513019';
-const followCfg = () => ({ show: true, facebook: FB_DEFAULT, instagram: '', ...((db.home && db.home.follow) || {}) });
+const IG_DEFAULT = 'anitha_pemmasani';   // the shop's Instagram name (the owner can change it in Admin → Home Page → Follow us)
+const followCfg = () => ({ show: true, facebook: FB_DEFAULT, instagram: IG_DEFAULT, ...((db.home && db.home.follow) || {}) });
 function followLinks() {
   const f = followCfg(), out = []; if (f.show === false) return out;
   const fb = String(f.facebook || '').trim(); if (/^https:\/\/(www\.|m\.)?(facebook\.com|fb\.com|fb\.me)\//i.test(fb)) out.push({ k: 'facebook', label: 'Facebook', href: fb });
