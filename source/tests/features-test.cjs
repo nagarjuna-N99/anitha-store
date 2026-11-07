@@ -68,7 +68,7 @@ const { chromium } = require(process.env.PW);
 
   // ===== back-in-stock alerts =====
   await ev(() => { db.products.find(x => x.id === 'p3').stock = 0; renderProducts(); buildScrollTrack(); navigateTo('shop'); });
-  ok('sold-out card offers Notify me', /notify/i.test(await ev(() => document.querySelector('#productGrid .btn-notify').textContent)));
+  ok('sold-out card offers Notify me', /notify/i.test(await ev(() => document.querySelector('#productGrid .pc-bell').title)));
   await logout();
   await ev(() => openStockAlert('p3'));
   ok('guest is asked to sign in first', await ev(() => document.getElementById('authModal').classList.contains('active')));
@@ -78,7 +78,7 @@ const { chromium } = require(process.env.PW);
   ok('consent required', await ev(() => db.stockAlerts.length === 0));
   await p.check('#al-consent'); await p.click('#alertBody button:has-text("Notify me")');
   ok('alert saved with consent row', await ev(() => db.stockAlerts.length === 1 && db.consentLog.some(c => c.type === 'stockAlert' && c.granted && c.ref === 'p3')));
-  ok('card shows "on the list" state', await ev(() => /list|waiting|alert/i.test(document.querySelector('#productGrid .btn-notify').textContent)));
+  ok('card shows "on the list" state', await ev(() => /list|waiting|alert/i.test(document.querySelector('#productGrid .pc-bell').title)));
   await ev(() => openStockAlert('p3'));
   ok('second subscribe impossible (cancel offered)', /Cancel this alert/.test(await p.textContent('#alertBody')));
   await ev(() => closeModal('alertModal'));

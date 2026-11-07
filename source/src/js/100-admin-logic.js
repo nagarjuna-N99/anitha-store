@@ -71,6 +71,7 @@ function renderAdminContent(tab) {
         <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;margin:0;">Product Catalog</h3>
         <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn-sm btn-info-sm" onclick="bulkCsvTemplate()">⬇ CSV template</button><button class="btn-sm btn-info-sm" id="bulk-open" onclick="openBulk()">⬆ Bulk upload</button><button class="btn-sm btn-primary-sm" onclick="openProductForm()">+ Add New Product</button></div>
       </div>
+      ${sampleNoticeHTML()}
       <div class="admin-card" style="overflow-x:auto;">
         <table class="admin-table" style="min-width:860px;">
           <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>SEO</th><th>Actions</th></tr></thead>

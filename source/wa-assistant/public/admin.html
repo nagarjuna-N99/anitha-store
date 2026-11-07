@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta name="robots" content="noindex, nofollow"><script>window.__BUILD='admin';window.__BUILD_STAMP="2026-11-07T05:14:57Z";</script>
+<head><meta name="robots" content="noindex, nofollow"><script>window.__BUILD='admin';window.__BUILD_STAMP="2026-11-07T06:45:55Z";</script>
 <script>document.documentElement.classList.add('js')</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -1437,6 +1437,172 @@ html.ui2.dk .arr-opt { background: #23211d; border-color: #3a362f; } html.ui2.dk
 .occ-row-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; } .occ-icon { width: 58px; text-align: center; font-size: 1.2rem; } .occ-name { flex: 1; min-width: 140px; } .occ-n { font-size: .78rem; color: #6b6558; } .occ-w { display: flex; flex-direction: column; gap: 3px; font-size: .78rem; color: #6b6558; margin-top: 6px; } .occ-w input, .occ-row-top input, .occ-max { font: inherit; padding: 7px 9px; border: 1px solid #d8d2c4; border-radius: 6px; background: #fff; } .occ-max { width: 110px; } .occ-cats summary { cursor: pointer; font-size: .8rem; margin-top: 6px; }
 html.ui2.dk .occ-row { background: #23211d; border-color: #3a362f; } html.ui2.dk .occ-pv { background: #23211d; border-color: #3a362f; }
 @media (max-width: 640px) { .occ-icon { width: 52px; } .occ-n { flex-basis: 100%; } }
+/* ===== Browsing upgrade (7 Nov 2026): cards, search panel, filter bar, Quick View, saree page, hover effects, Follow us ===== */
+
+/* ---- a saree opens as a real PAGE, not a pop-up window ---- */
+#productModal { z-index: 900; background: var(--ivory); padding: 0; align-items: stretch; justify-content: stretch; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+#productModal .modal-content, #productModal.modal .modal-content { max-width: none; width: 100%; max-height: none; height: auto; min-height: 100%; border-radius: 0; overflow: visible; background: var(--ivory); box-shadow: none; }
+.pp-bar { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 12px; padding: 8px 20px; background: rgba(250,249,246,.96); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+#productModal .pp-bar .modal-close { position: static; width: auto; height: 44px; min-height: 44px; border-radius: 22px; padding: 0 18px; font-size: 13px; letter-spacing: .04em; font-weight: 600; color: var(--charcoal); background: transparent; box-shadow: none; border: 1px solid var(--border); display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; transition: background .2s, color .2s, border-color .2s; }
+#productModal .pp-bar .modal-close:hover { background: var(--charcoal); color: var(--ivory); border-color: var(--charcoal); }
+.pp-bar-name { flex: 1 1 auto; min-width: 0; text-align: center; font-family: 'Cormorant Garamond', serif; font-size: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pp-bar-bag { flex: 0 0 auto; min-height: 44px; padding: 0 16px; border: 1px solid var(--border); border-radius: 22px; background: transparent; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.pp-bar-bag b { display: inline-block; min-width: 20px; padding: 1px 6px; margin-left: 4px; border-radius: 10px; background: var(--gold); color: #fff; font-size: 11px; text-align: center; }
+.pp-bar-bag:hover { border-color: var(--gold); }
+/* one scroll for the whole page: the "similar sarees" column no longer scrolls on its own */
+@media (min-width: 1100px) {
+  #productModal .modal-content { max-width: none; }
+  .pp-layout { max-width: 1480px; margin: 0 auto; padding: 8px 24px 0; }
+  .pp-similar { max-height: none; overflow: visible; }
+}
+.pp-layout { padding-top: 4px; }
+@media (max-width: 640px) { .pp-bar { padding: 6px 10px; gap: 8px; } .pp-bar-name { display: none; } .pp-bar-bag { margin-left: auto; } #productModal .pp-bar .modal-close { padding: 0 14px; } }
+
+/* ---- the shop grid: 4 across on a computer ---- */
+@media (min-width: 1100px) { .product-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px 22px; max-width: 1480px; } }
+@media (min-width: 700px) and (max-width: 1099px) { .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px 16px; } }
+
+/* ---- the card ---- */
+.product-card.pc2 { box-shadow: none; background: transparent; border-radius: 0; cursor: pointer; overflow: visible; display: flex; flex-direction: column; }
+.product-card.pc2:hover { transform: none; box-shadow: none; }
+.product-card.pc2:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+.pc2 .product-img-wrap { position: relative; overflow: hidden; border-radius: 3px; background: #f3ede1; aspect-ratio: 3 / 4; height: auto; }
+.pc2 .product-img-wrap img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .55s ease, transform .9s cubic-bezier(.2,.7,.2,1); }
+.pc2 .pc-alt { opacity: 0; }
+@media (hover: hover) {
+  .pc2.has-alt:hover .pc-alt { opacity: 1; }
+  .pc2:hover .product-img-wrap img { transform: scale(1.045); }
+  .pc2 .pc-acts { opacity: 0; transform: translateY(8px); pointer-events: none; }
+  .pc2:hover .pc-acts, .pc2:focus-within .pc-acts { opacity: 1; transform: none; pointer-events: auto; }
+  .pc2 .product-fav-btn { opacity: 0; transition: opacity .25s; } .pc2:hover .product-fav-btn, .pc2:focus-within .product-fav-btn, .pc2 .product-fav-btn.active { opacity: 1; }
+}
+.pc2 .pc-acts { position: absolute; right: 10px; bottom: 10px; display: flex; flex-direction: column; gap: 8px; z-index: 3; transition: opacity .25s ease, transform .25s ease; }
+.pc2 .pc-act { position: relative; width: 42px; height: 42px; min-width: 42px; border-radius: 50%; border: 0; background: rgba(255,255,255,.96); color: var(--charcoal); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 17px; box-shadow: 0 2px 10px rgba(0,0,0,.18); transition: background .2s, color .2s, transform .2s; padding: 0; }
+.pc2 .pc-act svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.pc2 .pc-act:hover, .pc2 .pc-act:focus-visible { background: var(--charcoal); color: #fff; transform: scale(1.08); }
+.pc2 .pc-act::after { content: attr(title); position: absolute; right: 52px; top: 50%; transform: translateY(-50%); background: var(--charcoal); color: #fff; font-size: 11px; letter-spacing: .04em; padding: 5px 9px; border-radius: 4px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .15s; }
+.pc2 .pc-act:hover::after { opacity: 1; }
+@media (hover: none) { .pc2 .pc-acts { flex-direction: row; right: 6px; bottom: 6px; gap: 6px; } .pc2 .pc-act { width: 40px; height: 40px; min-width: 40px; } .pc2 .pc-act::after { display: none; } .pc2 .pc-act.product-share-btn { display: none; } }
+.pc2 .product-fav-btn { top: 10px; right: 10px; left: auto; z-index: 3; width: 42px; height: 42px; min-width: 42px; }
+.pc2 .stock-badge { top: 10px !important; left: 10px !important; z-index: 3; }
+.pc2 .vid-badge { z-index: 3; }
+.pc2 .product-body { padding: 12px 2px 4px; text-align: left; }
+.pc2 .product-tag { font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: #6b6558; margin-bottom: 3px; }
+.pc2 .product-name { font-family: 'Cormorant Garamond', serif; font-size: 19px; line-height: 1.2; cursor: pointer; background-image: linear-gradient(currentColor, currentColor); background-repeat: no-repeat; background-position: 0 100%; background-size: 0 1px; transition: background-size .35s ease; display: inline; }
+.pc2:hover .product-name { background-size: 100% 1px; }
+.pc2 .product-price { font-size: 14px; margin-top: 6px; font-weight: 600; }
+.pc2 .pc-soldtxt { color: #8b3a3a; font-weight: 600; }
+.pc2.is-sold .pc-main { filter: grayscale(.55); opacity: .9; }
+.img-ph { object-fit: cover !important; }
+
+/* ---- search: a professional bar with the results directly under it ---- */
+.nav-search { align-items: flex-start; padding: 14px 16px 16px; }
+.ns-wrap { position: relative; flex: 1 1 auto; max-width: 760px; min-width: 0; }
+.nav-search .shop-search { max-width: none; width: 100%; box-sizing: border-box; background: #fff; border: 1.5px solid #d9d2c3; border-radius: 12px; padding: 0 8px 0 16px; box-shadow: 0 2px 10px rgba(0,0,0,.06); transition: border-color .2s, box-shadow .2s; }
+.nav-search .shop-search:focus-within { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(138,96,56,.14); }
+.ns-ic { width: 20px; height: 20px; flex: 0 0 20px; fill: none; stroke: #6b6558; stroke-width: 2; stroke-linecap: round; }
+.nav-search .shop-search input { padding: 16px 10px; font-size: 16px; }
+.nav-search .shop-q-clear { min-width: 40px; min-height: 40px; border-radius: 50%; }
+.nav-search-close { min-height: 44px; align-self: flex-start; margin-top: 4px; }
+.search-drop { position: absolute; left: 0; right: 0; top: calc(100% + 6px); background: #fff; border: 1px solid #e3dccd; border-radius: 12px; box-shadow: 0 18px 40px rgba(0,0,0,.18); overflow: hidden; max-height: min(72vh, 560px); overflow-y: auto; z-index: 5; }
+.search-drop[hidden] { display: none; }
+.sd-h { padding: 12px 16px 6px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #6b6558; }
+.sd-row { display: flex; align-items: center; gap: 14px; padding: 8px 16px; cursor: pointer; border-top: 1px solid #f1ece0; min-height: 64px; transition: background .15s; }
+.sd-row:first-of-type { border-top: 0; }
+.sd-row:hover, .sd-row.on { background: #f7f2e8; }
+.sd-pic { flex: 0 0 46px; width: 46px; height: 58px; border-radius: 4px; overflow: hidden; background: #f3ede1; }
+.sd-pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sd-t { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.sd-t b { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sd-t small { font-size: 12px; color: #6b6558; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .sd-t small i { color: #8b3a3a; font-style: normal; }
+.sd-p { flex: 0 0 auto; font-weight: 600; font-size: 14px; }
+.search-drop mark { background: #f6e4c4; color: inherit; border-radius: 2px; padding: 0 1px; }
+.sd-all { display: block; width: 100%; padding: 14px 16px; border: 0; border-top: 1px solid #ece6d8; background: #faf7f0; font: inherit; font-size: 13px; font-weight: 600; letter-spacing: .03em; color: var(--gold); cursor: pointer; text-align: left; min-height: 48px; }
+.sd-all:hover { background: var(--charcoal); color: #fff; }
+.sd-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 16px 14px; }
+.sd-chip { border: 1px solid #d9d2c3; background: #fff; border-radius: 20px; padding: 0 16px; min-height: 40px; font: inherit; font-size: 13px; cursor: pointer; transition: all .2s; }
+.sd-chip:hover { background: var(--charcoal); color: #fff; border-color: var(--charcoal); }
+.sd-hint, .sd-empty { padding: 4px 16px 16px; font-size: 13px; color: #6b6558; } .sd-empty { display: flex; flex-direction: column; gap: 4px; padding-top: 16px; } .sd-empty b { color: var(--charcoal); font-size: 15px; }
+@media (max-width: 640px) { .nav-search { padding: 10px 10px 12px; gap: 6px; } .search-drop { max-height: 64vh; position: fixed; left: 10px; right: 10px; top: auto; margin-top: 6px; } .sd-row { gap: 10px; padding: 8px 12px; } }
+
+/* ---- the filter bar ---- */
+.fbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding-top: 10px; padding-bottom: 10px; margin-top: 8px; max-width: 1480px; }
+.fbar .btn-filters { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; border-radius: 4px; padding: 0 16px; letter-spacing: .08em; }
+.fbar .btn-filters svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+.fdd { display: flex; gap: 8px; flex-wrap: wrap; }
+.fdd-w { position: relative; }
+.fdd-b { min-height: 44px; padding: 0 14px; border: 1px solid transparent; background: transparent; font: inherit; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; color: var(--charcoal); border-radius: 4px; transition: border-color .2s, background .2s; }
+.fdd-b:hover, .fdd-b[aria-expanded="true"], .fdd-b.has { border-color: var(--charcoal); }
+.fdd-b .car { display: inline-block; transition: transform .2s; font-size: 10px; margin-left: 2px; } .fdd-b[aria-expanded="true"] .car { transform: rotate(180deg); }
+.fdd-b small { color: var(--gold); font-weight: 700; }
+.fdd-pop { position: absolute; left: 0; top: calc(100% + 6px); min-width: 230px; max-width: 86vw; max-height: 340px; overflow-y: auto; background: #fff; border: 1px solid #e3dccd; border-radius: 8px; box-shadow: 0 16px 34px rgba(0,0,0,.16); padding: 10px; z-index: 40; }
+.fdd-pop[hidden] { display: none; }
+.fdd-o { display: block; width: 100%; text-align: left; padding: 0 12px; min-height: 42px; border: 0; background: transparent; font: inherit; font-size: 14px; cursor: pointer; border-radius: 4px; } .fdd-o:hover { background: #f7f2e8; } .fdd-o.on { background: #f1e8d6; font-weight: 600; }
+.fdd-r { display: flex; align-items: center; gap: 6px; padding: 8px 4px 2px; } .fdd-r input { width: 84px; min-height: 42px; padding: 0 8px; border: 1px solid #d9d2c3; border-radius: 4px; font-size: 14px; } .fdd-go { min-height: 42px; padding: 0 14px; border: 0; border-radius: 4px; background: var(--charcoal); color: #fff; cursor: pointer; }
+.fdd-pop .swatches { padding: 4px; } .fdd-pop .chk-line { min-height: 40px; }
+.fbar-r { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.items-n { font-size: 12px; letter-spacing: .12em; color: #6b6558; margin-right: 6px; }
+.sort-l { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #6b6558; }
+.fbar select { min-height: 44px; border-radius: 4px; border: 1px solid transparent; background: transparent; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; } .fbar select:hover { border-color: var(--charcoal); }
+@media (max-width: 640px) { .fbar { padding: 8px 12px; gap: 6px; } .fbar .btn-filters { flex: 1 1 100%; justify-content: center; } .fdd { flex: 1 1 100%; } .fdd-b { flex: 1 1 auto; border-color: var(--border); } .fdd-w { flex: 1 1 0; } .fdd-w .fdd-b { width: 100%; padding: 0 6px; } .fdd-pop { position: fixed; left: 12px; right: 12px; top: auto; max-width: none; } .fbar-r { margin-left: 0; width: 100%; justify-content: space-between; } .fbar select { flex: 1; font-size: 16px; } }
+.shop-panel { max-width: 1480px; }
+
+/* ---- Quick View ---- */
+.qv { position: fixed; inset: 0; z-index: 1100; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(20,18,14,.62); backdrop-filter: blur(2px); }
+.qv.active { display: flex; animation: qvIn .22s ease; } @keyframes qvIn { from { opacity: 0; } to { opacity: 1; } }
+html.qv-open { overflow: hidden; }
+.qv-box { position: relative; background: #fff; width: min(900px, 100%); max-height: min(92vh, 640px); overflow-y: auto; border-radius: 10px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); box-shadow: 0 30px 70px rgba(0,0,0,.35); animation: qvUp .28s cubic-bezier(.2,.7,.2,1); }
+@keyframes qvUp { from { transform: translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
+.qv-x { position: absolute; top: 8px; right: 8px; z-index: 3; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255,255,255,.95); font-size: 26px; line-height: 1; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.18); }
+.qv-pics { background: #f3ede1; display: flex; flex-direction: column; }
+.qv-main { aspect-ratio: 3 / 4; overflow: hidden; } .qv-main img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.qv-th { display: flex; gap: 8px; padding: 10px; overflow-x: auto; } .qv-th button { flex: 0 0 56px; height: 70px; padding: 0; border: 2px solid transparent; border-radius: 4px; overflow: hidden; cursor: pointer; background: none; } .qv-th button.on { border-color: var(--gold); } .qv-th img { width: 100%; height: 100%; object-fit: cover; }
+.qv-info { padding: 34px 28px 26px; display: flex; flex-direction: column; gap: 10px; }
+.qv-name { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 500; margin: 0; line-height: 1.1; }
+.qv-price { font-size: 20px; font-weight: 600; } .qv-av { font-size: 13px; color: var(--sage); font-weight: 600; } .qv-av.out { color: #8b3a3a; }
+.qv-desc { margin: 0; font-size: 14px; line-height: 1.6; color: #4a463e; }
+.qv-btns { display: flex; flex-direction: column; gap: 10px; margin-top: auto; padding-top: 10px; } .qv-btns .btn-full, .qv-btns .btn-outline { min-height: 48px; margin: 0; width: 100%; }
+.qv-fav { min-height: 44px; border: 0; background: none; font: inherit; font-size: 14px; cursor: pointer; color: var(--charcoal); } .qv-fav.active { color: #b3262c; }
+@media (max-width: 720px) { .qv { padding: 0; align-items: flex-end; } .qv-box { grid-template-columns: 1fr; max-height: 92dvh; width: 100%; border-radius: 16px 16px 0 0; } .qv-main { aspect-ratio: 4 / 3; } .qv-info { padding: 18px 18px 22px; } .qv-name { font-size: 26px; } }
+
+/* ---- hover effects: underline that grows, tiles that lift, photos that change ---- */
+.nav-links a, .footer-links a, .fl, .care-tab, .kind-tab, .mobile-nav-list li { background-image: linear-gradient(currentColor, currentColor); background-repeat: no-repeat; background-position: 0 100%; background-size: 0 1.5px; transition: background-size .3s ease, color .3s; padding-bottom: 3px; }
+.nav-links a:hover, .footer-links a:hover, .fl:hover, .care-tab:hover, .kind-tab:hover { background-size: 100% 1.5px; }
+.filter-btn { position: relative; transition: background .25s, color .25s, transform .25s, box-shadow .25s; } .filter-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0,0,0,.12); }
+.category-item { transition: transform .35s ease, box-shadow .35s ease; } .category-item:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(0,0,0,.14); }
+.category-item .category-name { position: relative; display: inline-block; background-image: linear-gradient(var(--gold), var(--gold)); background-repeat: no-repeat; background-position: 50% 100%; background-size: 0 2px; transition: background-size .35s ease, color .3s; padding-bottom: 4px; }
+.category-item:hover .category-name { background-size: 100% 2px; color: var(--gold); }
+.category-item img, .chap-tile img { transition: transform .8s cubic-bezier(.2,.7,.2,1); }
+img.swap { animation: tileFade .6s ease; } @keyframes tileFade { from { opacity: .15; } to { opacity: 1; } }
+.chap-tile { background: linear-gradient(135deg, #e8dcc6, #cdb892); transition: transform .35s ease, box-shadow .35s ease; overflow: hidden; } .chap-tile:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(0,0,0,.18); } .chap-tile:hover img { transform: scale(1.08); }
+.chap-tile span { background-image: linear-gradient(#fff, #fff); background-repeat: no-repeat; background-position: 0 100%; background-size: 0 2px; transition: background-size .35s ease; padding-bottom: 3px; } .chap-tile:hover span { background-size: 100% 2px; }
+.chap-enter { background-image: linear-gradient(currentColor, currentColor); background-repeat: no-repeat; background-position: 0 100%; background-size: 0 1.5px; transition: background-size .3s; } .chap-enter:hover { background-size: 100% 1.5px; }
+.occ-tile { transition: transform .3s ease, box-shadow .3s ease, border-color .3s, background .3s; } .occ-tile:hover { transform: translateY(-4px); background: #fffaf0; } .occ-tile .occ-ic { transition: transform .3s; } .occ-tile:hover .occ-ic { transform: scale(1.2) rotate(-6deg); } .occ-tile:hover .occ-t { text-decoration: underline; text-underline-offset: 4px; }
+.scroll-card { transition: transform .35s ease, box-shadow .35s ease; } .scroll-card:hover { transform: translateY(-5px); box-shadow: 0 14px 30px rgba(0,0,0,.14); }
+.sc-pic { position: relative; overflow: hidden; } .sc-pic img { display: block; width: 100%; transition: opacity .55s ease, transform .9s cubic-bezier(.2,.7,.2,1); } .sc-pic .sc-alt { position: absolute; inset: 0; height: 100%; object-fit: cover; opacity: 0; }
+@media (hover: hover) { .scroll-card:hover .sc-alt { opacity: 1; } .scroll-card:hover .sc-pic img { transform: scale(1.05); } }
+.scroll-card-name { background-image: linear-gradient(currentColor, currentColor); background-repeat: no-repeat; background-position: 0 100%; background-size: 0 1px; transition: background-size .35s; } .scroll-card:hover .scroll-card-name { background-size: 100% 1px; }
+.rel-card { transition: transform .3s ease; } .rel-card:hover { transform: translateY(-3px); } .rel-card .rel-name { background-image: linear-gradient(currentColor, currentColor); background-repeat: no-repeat; background-position: 0 100%; background-size: 0 1px; transition: background-size .3s; } .rel-card:hover .rel-name { background-size: 100% 1px; }
+.recent-card { transition: transform .3s ease; } .recent-card:hover { transform: translateY(-3px); }
+@media (prefers-reduced-motion: reduce) { .pc2 *, .category-item, .chap-tile, .occ-tile, .scroll-card, img.swap, .qv-box, .qv.active { transition: none !important; animation: none !important; } }
+
+/* ---- Follow us ---- */
+.follow { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px; padding: 22px 20px 6px; border-top: 1px solid rgba(255,255,255,.12); margin-top: 20px; }
+.follow-t { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-style: italic; color: var(--ivory); margin-right: 8px; }
+.follow-a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border: 1px solid rgba(255,255,255,.35); border-radius: 24px; color: var(--ivory); text-decoration: none; font-size: 13px; letter-spacing: .06em; transition: background .25s, color .25s, border-color .25s, transform .25s; }
+.follow-a svg { width: 20px; height: 20px; }
+.follow-a:hover, .follow-a:focus-visible { background: var(--ivory); color: var(--charcoal); border-color: var(--ivory); transform: translateY(-2px); }
+
+/* search field: only our own clear button, no native one; Share button inside the photo buttons is a normal round button */
+.nav-search .shop-search input { -webkit-appearance: none; appearance: none; } .nav-search .shop-search input::-webkit-search-cancel-button, .nav-search .shop-search input::-webkit-search-decoration { -webkit-appearance: none; display: none; }
+.pc2 .pc-acts .product-share-btn { position: relative; top: auto; right: auto; left: auto; bottom: auto; }
+.nav-search { z-index: 120; }   /* above the page's own breadcrumb bar, which is also a <nav> */
+.nav-search .shop-search input:focus, .nav-search .shop-search input:focus-visible { outline: none !important; box-shadow: none !important; }
+@media (max-width: 699px) { .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } .product-card.pc2 { min-width: 0; contain-intrinsic-size: auto 330px; } .pc2 .product-name { font-size: 17px; } }
+#productModal.active { display: block; }   /* a block, not a flex box: the sticky Back bar needs a container as tall as the whole page */
+.pc2 .stock-badge { max-width: calc(100% - 66px); white-space: normal !important; line-height: 1.25; }
+.one-kind a { display: inline-block; padding: 13px 3px; margin: -13px 0; }
+body:has(#productModal.active) .tabbar, body:has(#productModal.active) #view-toggle { display: none !important; }   /* the saree page is a full page: no bottom tab bar or admin switch on top of it */
 </style>
 <style>.nav-toggle{position:fixed;top:14px;left:268px;z-index:60;width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--ivory);color:var(--charcoal);cursor:pointer;display:none;align-items:center;justify-content:center;font-size:18px;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.08)}body.admin-on .nav-toggle{display:flex}body.nav-closed .nav-toggle{left:14px}body.nav-closed .admin-sidebar{display:none}body.nav-closed .admin-main{margin-left:0;padding-left:64px}body.studio-focus .nav-toggle{display:none!important}@media (max-width:900px){body.admin-on .nav-toggle{display:none}}html.ui2 .nav-toggle{background:var(--o-glass-2);color:var(--o-ink);border-color:var(--o-line)}.pg-item{border:1px solid var(--border);border-radius:14px;padding:14px;margin:12px 0}.pg-item.pg-off{opacity:.7}.pg-head{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.pg-head b{flex:1;min-width:140px}.pg-tools{display:inline-flex;gap:6px}.pg-tip{border-top:1px dashed var(--border);padding:10px 0}.pg-sec>summary{cursor:pointer;min-height:40px;display:flex;align-items:center}.pg-item textarea,.pg-tip textarea{width:100%}</style>
 </head>
@@ -1576,6 +1742,7 @@ html.ui2.dk .occ-row { background: #23211d; border-color: #3a362f; } html.ui2.dk
       <div><div class="footer-title">Support</div><ul class="footer-links"><li><a onclick="openAccount()">My Account &amp; Orders</a></li><li><a onclick="navigateTo('faq')">FAQ</a></li><li><a onclick="openNotice()">Privacy notice</a></li><li><a onclick="openRights()">Your privacy rights</a></li><li><a onclick="openLegal('terms','shipping')">Shipping Policy</a></li><li><a onclick="openLegal('terms','returns')">Returns &amp; Exchanges</a></li><li><a onclick="openLegal('terms')">Terms &amp; Conditions</a></li><li><a onclick="openLegal('privacy')">Privacy Policy</a></li><li><a onclick="navigateTo('care')">Saree Care Guide</a></li></ul></div>
       <div><div class="footer-title">Contact</div><ul class="footer-links"><li><a>Hyderabad, Telangana, India</a></li><li><a href="tel:+919849646440">+91 98496 46440</a></li><li><a id="footWa" href="https://wa.me/919849646440">WhatsApp Support</a></li></ul></div>
     </div>
+    <div class="follow" id="followUs" aria-label="Follow us"></div>
     <div class="footer-bottom"><div>© 2026 Anitha Pemmasani. All rights reserved.</div><div class="footer-legal"><a class="fl" onclick="openLegal('terms')">Terms</a><a class="fl" onclick="openLegal('privacy')">Privacy</a></div></div>
   </footer>
 <div class="tabbar" id="tabBar" role="navigation" aria-label="Main">
@@ -1645,7 +1812,7 @@ html.ui2.dk .occ-row { background: #23211d; border-color: #3a362f; } html.ui2.dk
 <div class="overlay" id="overlay" onclick="closeAllDrawers()"></div>
 <div class="drawer" id="cartDrawer"><div class="drawer-header"><h3>Your Selection</h3><button class="drawer-close" onclick="closeAllDrawers()">×</button></div><div class="drawer-body" id="cartBody"></div><div class="drawer-footer"><div class="checkout-summary" id="cartSummary"></div><div id="cartDeliv"></div><div id="cartRemRow"></div><button class="btn-full" onclick="openCheckout()">Proceed to Checkout</button><button class="btn-outline" onclick="closeAllDrawers()">Continue Shopping</button></div></div>
 
-<div class="modal" id="productModal"><div class="modal-content"><button class="modal-close" onclick="closeModal('productModal')" aria-label="Close">×</button><div id="productModalBody"></div></div></div>
+<div class="modal" id="productModal" role="dialog" aria-modal="true" aria-label="Saree"><div class="modal-content"><div class="pp-bar"><button type="button" class="modal-close" onclick="closeModal('productModal')" aria-label="Close">← Back to the collection</button><span class="pp-bar-name" id="ppBarName"></span><button type="button" class="pp-bar-bag" onclick="openCart()" aria-label="Open my bag">Bag <b id="ppBarCount">0</b></button></div><div id="productModalBody"></div></div></div>
 
 <div class="modal" id="checkoutModal"><div class="modal-content" style="max-width:540px;"><button class="modal-close" onclick="closeModal('checkoutModal')" aria-label="Close">×</button><div style="padding:34px 38px;">
   <h2 style="font-family:'Cormorant Garamond',serif;font-size:28px;margin-bottom:8px;">Secure Checkout</h2>
@@ -1978,35 +2145,39 @@ function stockBadge(p) {
   const s = p.stock === 0 ? 'Sold Out' : oneOfAKind(p) ? 'One of a kind' : p.stock <= 2 ? `Only ${p.stock} Left` : '';
   return s ? `<div class="stock-badge" style="position:absolute;top:15px;left:15px;background:${p.stock === 0 ? 'var(--charcoal)' : 'var(--gold)'};color:white;padding:4px 10px;border-radius:4px;font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:600;">${s}</div>` : '';
 }
+// A card is ONE big link: pressing anywhere on it opens the saree's page. On a computer the photo changes to another photo of the same saree when the mouse is over it, and
+// little round buttons (bag, Quick View, share) appear on the photo. On a phone those buttons are always there. Most sarees are a single piece, so the card says so.
+const pcPics = p => { const m = [p.image, ...(p.images || [])].filter(u => u && safeImg(u)); return [...new Set(m)]; };
 function productCardHTML(p) {
-  const isFav = favourites.includes(p.id);
+  const isFav = favourites.includes(p.id), pics = pcPics(p), alt = pics[1] || '', sold = p.stock === 0, nm = esc(p.name);
   return `
-  <div class="product-card">
+  <div class="product-card pc2${alt ? ' has-alt' : ''}${sold ? ' is-sold' : ''}" role="link" tabindex="0" aria-label="${nm}, ${p.price ? '₹ ' + money(p.price) : ''}" onclick="cardGo(event,'${p.id}')" onkeydown="if(event.key==='Enter'&&event.target===this)openProductDetail('${p.id}')">
     <div class="product-img-wrap">
-      <img src="${esc(p.image)}" alt="${esc(p.altText || p.name)}" loading="lazy" decoding="async">${(videoInfo(p.video) || {}).type ? '<span class="vid-badge">▶ Video</span>' : ''}
-      <button class="product-fav-btn ${isFav ? 'active' : ''}" aria-label="Toggle favourite" onclick="toggleFavourite('${p.id}', event)">${isFav ? '♥' : '♡'}</button>
-      <button class="product-share-btn" aria-label="Share this saree" title="Share" onclick="openShare('${p.id}', event)">🔗</button>
+      <img class="pc-main" src="${esc(p.image)}" alt="${esc(p.altText || p.name)}" loading="lazy" decoding="async">${alt ? `<img class="pc-alt" src="${esc(alt)}" alt="" aria-hidden="true" loading="lazy" decoding="async">` : ''}${(videoInfo(p.video) || {}).type ? '<span class="vid-badge">▶ Video</span>' : ''}
+      <button type="button" class="product-fav-btn ${isFav ? 'active' : ''}" aria-label="Toggle favourite" aria-pressed="${isFav}" onclick="toggleFavourite('${p.id}', event)">${isFav ? '♥' : '♡'}</button>
+      <div class="pc-acts">
+        ${sold ? `<button type="button" class="pc-act pc-bell ${myAlert(p.id) ? 'set' : ''}" aria-label="${esc(notifyLabel(p.id))}" title="${esc(notifyLabel(p.id))}" onclick="event.stopPropagation();openStockAlert('${p.id}')">🔔</button>` : `<button type="button" class="pc-act pc-bag" aria-label="Add ${nm} to bag" title="Add to bag" onclick="event.stopPropagation();addToCart('${p.id}')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2"/></svg></button>`}
+        <button type="button" class="pc-act pc-qv" aria-label="Quick View of ${nm}" title="Quick View" onclick="qvOpen('${p.id}', event)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        <button type="button" class="pc-act product-share-btn" aria-label="Share this saree" title="Share" onclick="openShare('${p.id}', event)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4m0 0L8 8m4-4 4 4M5 13v6h14v-6"/></svg></button>
+      </div>
       ${stockBadge(p)}
     </div>
     <div class="product-body">
       <div class="product-tag">${esc(p.category)}</div>
-      <div class="product-name" onclick="openProductDetail('${p.id}')">${esc(p.name)}</div>
-      <div class="product-price">₹ ${money(p.price)}</div>
+      <div class="product-name">${nm}</div>
+      <div class="product-price">${sold ? '<span class="pc-soldtxt">Sold out</span>' : p.price ? '₹ ' + money(p.price) : ''}</div>
       ${p.reviews > 0 ? `<div class="card-rating">${starsHTML(p.rating)} <small>${p.rating} (${p.reviews})</small></div>` : ''}
-      <div class="product-actions">
-        <button class="btn-card btn-view" onclick="openProductDetail('${p.id}')">View Details</button>
-        ${p.stock === 0 ? `<button class="btn-card btn-notify ${myAlert(p.id) ? 'set' : ''}" onclick="openStockAlert('${p.id}')">${notifyLabel(p.id)}</button>` : `<button class="btn-card btn-cart" onclick="addToCart('${p.id}')">Add to Cart</button>`}
-      </div>
     </div>
   </div>`;
 }
+function cardGo(e, id) { if (e.target.closest && e.target.closest('button,a,input,select')) return; openProductDetail(id); }
 
 function buildScrollTrack() {
   const track = document.getElementById('scrollTrack');
   const shown = arrivalsPick();   // automatic (newest in-stock sarees) or the owner's own choice
   const cards = shown.map(p => `
     <div class="scroll-card">
-      <img src="${esc(p.image)}" class="scroll-card-img" alt="${esc(p.name)}">
+      <div class="sc-pic"><img src="${esc(p.image)}" class="scroll-card-img" alt="${esc(p.name)}">${pcPics(p)[1] ? `<img src="${esc(pcPics(p)[1])}" class="sc-alt" alt="" aria-hidden="true" loading="lazy">` : ''}</div>
       <div class="scroll-card-body">
         <div class="scroll-card-tag">${esc(p.category)}</div>
         <div class="scroll-card-name">${esc(p.name)}</div>
@@ -2076,8 +2247,8 @@ function openProductDetail(id) {
   const p = db.products.find(x => x.id === id); if (!p) return;
   recentAdd(id); trackHit('view', { p: 'product' }); trackHit('product', { id });
   RV.open = false; RV.draft = null; RV.shown = 5; RV.photosOnly = false; RV.sort = 'new';
-  renderProductModal(p);
-  document.getElementById('productModal').classList.add('active');
+  renderProductModal(p); const bn = document.getElementById('ppBarName'); if (bn) bn.textContent = p.name; if (typeof qvClose === 'function') qvClose();
+  document.getElementById('productModal').classList.add('active'); const pm = document.getElementById('productModal'); pm.scrollTop = 0; const mc = pm.querySelector('.modal-content'); if (mc) mc.scrollTop = 0;
   updateSeo(p);
 }
 
@@ -2114,7 +2285,7 @@ function closeAllDrawers() { document.querySelectorAll('.drawer').forEach(d => d
 function updateBadges() {
   const n = cartLines().reduce((s, c) => s + c.qty, 0);
   document.getElementById('cartCount').textContent = n;
-  document.getElementById('mobileCartCount').textContent = n;
+  document.getElementById('mobileCartCount').textContent = n; const pb = document.getElementById('ppBarCount'); if (pb) pb.textContent = n;
 }
 const cartMobile = () => window.matchMedia('(max-width: 640px)').matches;
 let CART_WAS_MOBILE = null;
@@ -2716,6 +2887,7 @@ function renderAdminContent(tab) {
         <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;margin:0;">Product Catalog</h3>
         <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn-sm btn-info-sm" onclick="bulkCsvTemplate()">⬇ CSV template</button><button class="btn-sm btn-info-sm" id="bulk-open" onclick="openBulk()">⬆ Bulk upload</button><button class="btn-sm btn-primary-sm" onclick="openProductForm()">+ Add New Product</button></div>
       </div>
+      ${sampleNoticeHTML()}
       <div class="admin-card" style="overflow-x:auto;">
         <table class="admin-table" style="min-width:860px;">
           <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>SEO</th><th>Actions</th></tr></thead>
@@ -4924,7 +5096,7 @@ function renderShopBanner() {
   const html = s.enabled === false || !safeImg(s.image) || !(s.title || s.subtitle) ? '' : `<div class="hero-slider shop-banner">${heroSlideHTML(s, -1, true, 'h2')}</div>`;
   if (box._h === html) return; box._h = html; box.innerHTML = html; box.style.display = html ? '' : 'none';
 }
-function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); renderHomeQuote(); renderHomeNotes(); renderHomeChapters(); renderOccasions(); if (typeof applyBackground === 'function') applyBackground(); homeSaveSoon(); }
+function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); renderHomeQuote(); renderHomeNotes(); renderHomeChapters(); renderOccasions(); renderFollow(); if (typeof applyBackground === 'function') applyBackground(); homeSaveSoon(); }
 let HOME_PICK = null;
 function homePick(kind, idx) { HOME_PICK = { kind, idx }; document.getElementById('home-file').click(); }
 async function homeFileChosen(files) {
@@ -5081,6 +5253,7 @@ function renderHomeAdmin(container) {
     </div>
 
     ${occasionsCardHTML()}
+    ${followCardHTML()}
     ${backgroundCardHTML()}
     ${chaptersCardHTML()}
     ${themeCardHTML()}
@@ -5188,10 +5361,13 @@ function visibleProducts() {
 }
 const shopFilterCount = () => (SHOP.occasion ? 1 : 0) + SHOP.fabrics.length + SHOP.colours.length + (SHOP.min !== '' || SHOP.max !== '' ? 1 : 0) + (SHOP.inStock ? 1 : 0);
 function initShopToolbar() {
-  const nsb = document.getElementById('navSearch'); if (nsb) nsb.innerHTML = `<div class="shop-search"><span aria-hidden="true">🔍</span><input id="shop-q" type="search" placeholder="Search sarees — try “kanchipuram”, “red silk”, “wedding”" oninput="shopSearch(this.value)" onkeydown="if(event.key==='Enter'){closeNavSearch();}" aria-label="Search sarees" autocomplete="off"><button type="button" class="shop-q-clear" id="shop-q-clear" aria-label="Clear search" onclick="shopSearch('',true)" style="display:none;">×</button></div><button type="button" class="nav-search-close" aria-label="Close search" onclick="closeNavSearch()">Close</button>`;
+  if (typeof renderFollow === 'function') renderFollow();
+  const nsb = document.getElementById('navSearch'); if (nsb) nsb.innerHTML = `<div class="ns-wrap"><div class="shop-search"><svg class="ns-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg><input id="shop-q" type="search" placeholder="Search sarees — try “kanchipuram”, “red silk”, “wedding”" oninput="searchInput(this.value)" onkeydown="searchKey(event)" aria-label="Search sarees" autocomplete="off" enterkeyhint="search" role="combobox" aria-expanded="false" aria-controls="searchDrop" aria-autocomplete="list"><button type="button" class="shop-q-clear" id="shop-q-clear" aria-label="Clear search" onclick="shopSearch('',true);searchInput('');document.getElementById('shop-q').focus()" style="display:none;">×</button></div><div class="search-drop" id="searchDrop" role="listbox" aria-label="Search results" hidden></div></div><button type="button" class="nav-search-close" aria-label="Close search" onclick="closeNavSearch()">Close</button>`;
   const box = document.getElementById('shopToolbar'); if (!box) return;
-  box.innerHTML = `<div class="shop-bar"><button type="button" class="btn-filters" id="shop-filter-btn" onclick="shopTogglePanel()" aria-expanded="false">Filter &amp; sort <span class="fcount" id="shop-fcount"></span></button></div>
-    <div class="shop-panel" id="shop-panel"><div class="shop-sortrow"><label for="shop-sort">Sort by</label><select id="shop-sort" onchange="shopSort(this.value)" aria-label="Sort sarees"><option value="featured">Featured</option><option value="new">Newest first</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="name">Name A–Z</option><option value="rating">Top rated</option></select></div><div id="shop-panel-body"></div></div>
+  box.innerHTML = `<div class="shop-bar fbar"><button type="button" class="btn-filters" id="shop-filter-btn" onclick="shopTogglePanel()" aria-expanded="false" aria-controls="shop-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span id="shop-filter-lbl">Show Filters</span> <span class="fcount" id="shop-fcount"></span></button>
+      <div class="fdd" id="fdd">${[['price', 'Price'], ['colour', 'Colour'], ['fabric', 'Fabric']].map(([k, l]) => `<div class="fdd-w"><button type="button" class="fdd-b" id="fdd-b-${k}" aria-haspopup="true" aria-expanded="false" onclick="fddToggle('${k}')">${l} <span class="car" aria-hidden="true">▾</span></button><div class="fdd-pop" id="fdd-p-${k}" hidden></div></div>`).join('')}</div>
+      <div class="fbar-r"><span class="items-n" id="items-n" aria-live="polite"></span><label class="sort-l" for="shop-sort">Sort</label><select id="shop-sort" onchange="shopSort(this.value)" aria-label="Sort sarees"><option value="featured">Featured</option><option value="new">Newest first</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="name">Name A–Z</option><option value="rating">Top rated</option></select></div></div>
+    <div class="shop-panel" id="shop-panel"><div id="shop-panel-body"></div></div>
     <div class="shop-meta"><div id="shop-active" class="chips"></div></div>`;}
 function renderShopPanel() {
   const body = document.getElementById('shop-panel-body'); if (!body) return;
@@ -5210,8 +5386,10 @@ function shopMeta(n, total) {
   const c = document.getElementById('shop-count'); if (!c) return;
   const f = shopFilterCount() + (SHOP.q.trim() ? 1 : 0);
   c.textContent = f ? `Showing ${n} of ${total} ${kindWord(total)}` : `${total} ${kindWord(total)}`;
+  const itn = document.getElementById('items-n'); if (itn) itn.textContent = `${n} ${n === 1 ? 'ITEM' : 'ITEMS'}`;
   const fc = document.getElementById('shop-fcount'); if (fc) { fc.textContent = shopFilterCount() ? shopFilterCount() : ''; fc.style.display = shopFilterCount() ? 'inline-block' : 'none'; }
   const sort = document.getElementById('shop-sort'); if (sort) { sort.options[0].text = SHOP.q.trim() ? 'Best match' : 'Featured'; if (sort.value !== SHOP.sort) sort.value = SHOP.sort; }
+  if (typeof fddRefresh === 'function') fddRefresh();
   const chips = [];
   if (SHOP.q.trim()) chips.push(['q', '', `“${SHOP.q.trim()}”`]);
   if (SHOP.occasion) chips.push(['occasion', '', occLabel(SHOP.occasion)]);
@@ -5227,7 +5405,7 @@ function shopEmptyHTML() {
 let SHOP_T = null;
 function shopSearch(v, now) { if (v && !document.getElementById('page-shop').classList.contains('active')) navigateTo('shop'); SHOP.q = v; const i = document.getElementById('shop-q'); if (now && i) i.value = v; document.getElementById('shop-q-clear').style.display = v ? '' : 'none'; clearTimeout(SHOP_T); SHOP_T = setTimeout(renderProducts, now ? 0 : 120); }
 function shopSort(v) { SHOP.sort = v; renderProducts(); }
-function shopTogglePanel() { SHOP.open = !SHOP.open; document.getElementById('shop-panel').classList.toggle('open', SHOP.open); document.getElementById('shop-filter-btn').setAttribute('aria-expanded', SHOP.open); if (SHOP.open) renderShopPanel(); }
+function shopTogglePanel() { SHOP.open = !SHOP.open; if (typeof fddCloseAll === 'function') fddCloseAll(); const lb = document.getElementById('shop-filter-lbl'); if (lb) lb.textContent = SHOP.open ? 'Hide Filters' : 'Show Filters'; document.getElementById('shop-panel').classList.toggle('open', SHOP.open); document.getElementById('shop-filter-btn').setAttribute('aria-expanded', SHOP.open); if (SHOP.open) renderShopPanel(); }
 function shopToggle(kind, val, el) { const a = SHOP[kind], i = a.indexOf(val); if (i >= 0) a.splice(i, 1); else a.push(val); if (el) { el.classList.toggle('on'); el.setAttribute('aria-pressed', i < 0); } renderProducts(); }
 function shopPrice() { SHOP.min = document.getElementById('shop-min').value; SHOP.max = document.getElementById('shop-max').value; if (SHOP.min !== '' && SHOP.max !== '' && +SHOP.min > +SHOP.max) { [SHOP.min, SHOP.max] = [SHOP.max, SHOP.min]; document.getElementById('shop-min').value = SHOP.min; document.getElementById('shop-max').value = SHOP.max; } renderProducts(); }
 function shopPreset(min, max) { SHOP.min = min === '' ? '' : String(min); SHOP.max = max === '' ? '' : String(max); document.getElementById('shop-min').value = SHOP.min; document.getElementById('shop-max').value = SHOP.max; renderProducts(); }
@@ -5242,8 +5420,8 @@ function shopRemove(kind, val) {
 function shopClearAll() { SHOP.occasion = ''; SHOP.fabrics = []; SHOP.colours = []; SHOP.min = ''; SHOP.max = ''; SHOP.inStock = false; shopSearch('', true); if (SHOP.open) renderShopPanel(); }
 function shopResetFilters() { SHOP.sort = 'featured'; shopClearAll(); }
 // The one search of the website lives in the top bar on every page: the 🔍 opens a search bar under the header; typing shows the results on the Collection page.
-function openNavSearch() { const p = document.getElementById('navSearch'), nv = document.querySelector('nav'); if (!p || !nv) return; p.style.top = Math.round(nv.getBoundingClientRect().bottom) + 'px'; p.hidden = false; setTimeout(() => { const i = document.getElementById('shop-q'); if (i) { i.focus(); i.select(); } }, 30); }
-function closeNavSearch() { const p = document.getElementById('navSearch'); if (p) p.hidden = true; }
+function openNavSearch() { const p = document.getElementById('navSearch'), nv = document.querySelector('nav'); if (!p || !nv) return; p.style.top = Math.round(nv.getBoundingClientRect().bottom) + 'px'; p.hidden = false; if (typeof searchDropRender === 'function') searchDropRender((document.getElementById('shop-q') || {}).value || ''); setTimeout(() => { const i = document.getElementById('shop-q'); if (i) { i.focus(); i.select(); } }, 30); }
+function closeNavSearch() { const p = document.getElementById('navSearch'); if (p) p.hidden = true; const d = document.getElementById('searchDrop'); if (d) d.hidden = true; }
 function shopFocusSearch() { const p = document.getElementById('navSearch'); if (p && !p.hidden) { closeNavSearch(); return; } openNavSearch(); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeNavSearch(); });
 document.addEventListener('click', e => { const p = document.getElementById('navSearch'); if (p && !p.hidden && !p.contains(e.target) && !(e.target.closest && e.target.closest('.nav-icon[aria-label="Search"]'))) closeNavSearch(); });
@@ -7862,7 +8040,7 @@ async function shopSync(force) {
     db.settings = Object.assign({}, db.settings, p.settings); db.categories = p.categories; db.accessoryCategories = p.accessoryCategories; db.products = p.products; if (p.home) db.home = p.home; if (p.pages) db.pages = p.pages; db.bundles = p.bundles; db.coupons = p.coupons; db.accessorySeeded = true;
     const u = currentUser(), mine = u ? (db.reviews || []).filter(x => x.userId === u.id && x.status !== 'approved') : []; db.reviews = [...p.reviews, ...mine];
     SHOP_VER = p.version || 0; try { localStorage.setItem('ap_db_v70', JSON.stringify(db)); } catch (e) { /* storage full: the page still works from memory */ }
-    step(ensureProductFields); step(syncHomeCats); step(pruneCart); step(renderProducts); step(buildScrollTrack); step(renderHome); step(renderPublicPages); step(updateBadges); step(updateFavBadge); step(seoRefreshHome); step(enhanceLinks); SHOP_SYNCED = true; shopReady(); const er = document.getElementById('shopLoadErr'); if (er) er.remove(); step(routeFromLocation);
+    step(ensureProductFields); step(syncHomeCats); step(pruneCart); step(renderProducts); step(buildScrollTrack); step(renderHome); step(renderPublicPages); step(updateBadges); step(updateFavBadge); step(seoRefreshHome); step(enhanceLinks); step(renderFollow); SHOP_SYNCED = true; shopReady(); const er = document.getElementById('shopLoadErr'); if (er) er.remove(); step(routeFromLocation);
   })().finally(() => { SHOP_SYNCING = null; }));
 }
 function shopLoadError() {
@@ -8453,6 +8631,178 @@ async function occAi() {
 function occRedraw() { const c = el_('occ-card'); if (c) c.outerHTML = occasionsCardHTML(); }
 function occUse(i) { const d = OCC_AI.drafts[i], o = occW(); if (!d) return; if (o.items.length >= 10) return showToast('Up to 10 tiles. Delete one first.', 'error'); o.items.push(d); OCC_AI.drafts.splice(i, 1); OCC_AI.msg = 'Added. You can still change any word.'; occLive(true); }
 function occUseAll() { const o = occW(); while (OCC_AI.drafts.length && o.items.length < 10) o.items.push(OCC_AI.drafts.shift()); OCC_AI.msg = 'Added. You can still change any word.'; occLive(true); }
+// ================= BROWSING UPGRADE (7 Nov 2026) =================
+// 1. a photo that cannot load shows a calm "photo coming soon" card instead of broken alt text
+// 2. search: results appear in a panel directly under the search bar (photo, name, price), with the keyboard and tap both working
+// 3. Nalli-style filter bar: Show Filters, Price / Colour / Fabric drop-downs, "N ITEMS", Sort
+// 4. Quick View: a small window with the photos, price and Add to bag, without leaving the page
+// 5. hover effects: the photo of a category tile changes while the mouse is over it
+// 6. Follow us links (Facebook, Instagram) at the bottom of every page; the owner edits them in Home page → Follow us
+const IMG_PH = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400"><rect width="300" height="400" fill="#f3ede1"/><g fill="none" stroke="#c96a11" stroke-width="2" opacity=".55"><path d="M110 150h80l10 120H100z"/><path d="M130 150v-14a20 20 0 0 1 40 0v14"/></g><text x="150" y="320" text-anchor="middle" font-family="Georgia,serif" font-size="17" fill="#6b6558">Photo coming soon</text></svg>');
+document.addEventListener('error', e => {
+  const t = e.target; if (!t || t.tagName !== 'IMG' || t.dataset.ph) return;
+  if (t.matches('.brand-logo,.soc-av') || t.closest('.admin-shell,#adminApp')) return;
+  if (t.classList.contains('pc-alt') || t.classList.contains('sc-alt')) { t.remove(); return; }   // a second photo that will not load is simply not used
+  t.dataset.ph = '1'; t.classList.add('img-ph'); t.removeAttribute('srcset'); t.src = IMG_PH;
+}, true);
+
+// ---------- search under the search bar ----------
+const SD = { i: -1, list: [], n: 0 };
+const sdTerms = q => String(q || '').toLowerCase().split(/[^a-z0-9]+/).filter(t => t.length > 1 && !STOP_WORDS.has(t));
+function sdHl(text, q) {
+  const ts = sdTerms(q); const raw = String(text || ''); if (!ts.length) return esc(raw);
+  const re = new RegExp('(' + ts.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'ig');
+  return raw.split(re).map((part, k) => k % 2 ? `<mark>${esc(part)}</mark>` : esc(part)).join('');
+}
+function searchResults(q) {
+  const terms = tokenise(q); if (!terms.length) return [];
+  return db.products.filter(p => !isAccessory(p) || accOn()).map(p => [p, searchScore(p, terms)]).filter(x => x[1] > 0)
+    .sort((a, b) => b[1] - a[1] || (b[0].stock > 0) - (a[0].stock > 0)).map(x => x[0]);
+}
+function searchDropRender(q) {
+  const d = document.getElementById('searchDrop'), inp = document.getElementById('shop-q'); if (!d) return;
+  q = String(q || '').trim(); SD.i = -1; SD.list = [];
+  const chips = db.categories.slice(0, 8).map(c => `<button type="button" class="sd-chip" data-cat="${esc(c)}" onclick="closeNavSearch();filterAndShowShop(this.dataset.cat)">${esc(c)}</button>`).join('');
+  let h;
+  if (!q) h = `<div class="sd-h">Browse by type</div><div class="sd-chips">${chips}</div><div class="sd-hint">Or type a word: a place (kanchipuram), a colour (red), an occasion (wedding).</div>`;
+  else {
+    const all = searchResults(q); SD.list = all.slice(0, 6); SD.n = all.length;
+    h = all.length ? `<div class="sd-h">${all.length} ${all.length === 1 ? 'saree' : 'sarees'} found</div>` + SD.list.map((p, k) => {
+      const pic = pcPics(p)[0] || '';
+      return `<div class="sd-row" role="option" id="sd-${k}" tabindex="-1" aria-selected="false" data-id="${esc(p.id)}" onclick="searchOpen(this.dataset.id)"><span class="sd-pic">${pic ? `<img src="${esc(pic)}" alt="" loading="lazy">` : ''}</span><span class="sd-t"><b>${sdHl(p.name, q)}</b><small>${esc(p.category)}${p.fabric ? ' · ' + esc(p.fabric) : ''}${p.stock === 0 ? ' · <i>Sold out</i>' : oneOfAKind(p) ? ' · single piece' : ''}</small></span><span class="sd-p">${p.price ? '₹ ' + money(p.price) : ''}</span></div>`;
+    }).join('') + `<button type="button" class="sd-all" onclick="searchAll()">See all ${all.length} ${all.length === 1 ? 'result' : 'results'} for “${esc(q)}” →</button>`
+      : `<div class="sd-empty"><b>No sarees match “${esc(q)}”.</b><span>Try a fabric (silk, cotton), a place (kanchipuram, banarasi) or a colour.</span></div><div class="sd-chips">${chips}</div>`;
+  }
+  d.innerHTML = h; d.hidden = false; if (inp) { inp.setAttribute('aria-expanded', 'true'); inp.removeAttribute('aria-activedescendant'); }
+}
+function searchInput(v) {
+  const c = document.getElementById('shop-q-clear'); if (c) c.style.display = v ? '' : 'none';
+  SHOP.q = v; if (document.getElementById('page-shop').classList.contains('active')) { clearTimeout(SHOP_T); SHOP_T = setTimeout(renderProducts, 150); }
+  searchDropRender(v);
+}
+function searchAll() { const v = (document.getElementById('shop-q') || {}).value || ''; closeNavSearch(); shopSearch(v, true); if (v && !document.getElementById('page-shop').classList.contains('active')) navigateTo('shop'); }
+function searchOpen(id) { closeNavSearch(); openProductDetail(id); }
+function searchKey(e) {
+  const n = SD.list.length, inp = e.target;
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    if (!n) return; e.preventDefault(); SD.i = e.key === 'ArrowDown' ? (SD.i + 1) % n : (SD.i - 1 + n) % n;
+    SD.list.forEach((_, k) => { const r = document.getElementById('sd-' + k); if (r) { r.classList.toggle('on', k === SD.i); r.setAttribute('aria-selected', k === SD.i); } });
+    inp.setAttribute('aria-activedescendant', 'sd-' + SD.i); const r = document.getElementById('sd-' + SD.i); if (r && r.scrollIntoView) r.scrollIntoView({ block: 'nearest' });
+  } else if (e.key === 'Enter') { e.preventDefault(); if (SD.i >= 0 && SD.list[SD.i]) searchOpen(SD.list[SD.i].id); else if (inp.value.trim()) searchAll(); }
+}
+
+// ---------- filter drop-downs (Price / Colour / Fabric) ----------
+const FDD = { open: '' };
+function fddData() {
+  const prods = categoryProducts().length ? categoryProducts() : kindProducts(), count = arr => { const m = {}; arr.forEach(v => { m[v] = (m[v] || 0) + 1; }); return Object.entries(m).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])); };
+  return { fabrics: count(prods.map(p => p.fabric).filter(Boolean)), colours: count(prods.flatMap(p => p.colours || [])) };
+}
+function fddHTML(k) {
+  const D = fddData(), act = (a, b) => (+SHOP.min || 0) === a && (b === '' ? SHOP.max === '' : +SHOP.max === b) && (SHOP.min !== '' || SHOP.max !== '');
+  if (k === 'price') {
+    const pre = [['Any price', '', ''], ['Under ₹20,000', '', 20000], ['₹20,000 – ₹50,000', 20000, 50000], ['Above ₹50,000', 50000, '']];
+    return pre.map(([l, a, b]) => { const on = a === '' && b === '' ? SHOP.min === '' && SHOP.max === '' : (SHOP.min === String(a) || (a === '' && SHOP.min === '')) && (SHOP.max === String(b) || (b === '' && SHOP.max === '')); return `<button type="button" class="fdd-o ${on ? 'on' : ''}" onclick="fddPrice(${a === '' ? "''" : a},${b === '' ? "''" : b})">${l}</button>`; }).join('')
+      + `<div class="fdd-r"><input id="fdd-min" type="number" min="0" inputmode="numeric" placeholder="Min ₹" value="${esc(SHOP.min)}" aria-label="Minimum price"><span>to</span><input id="fdd-max" type="number" min="0" inputmode="numeric" placeholder="Max ₹" value="${esc(SHOP.max)}" aria-label="Maximum price"><button type="button" class="fdd-go" onclick="fddRange()">Go</button></div>`;
+  }
+  if (k === 'colour') return D.colours.length ? `<div class="swatches">${D.colours.map(([c, n]) => `<button type="button" class="swatch ${SHOP.colours.includes(c) ? 'on' : ''}" data-v="${esc(c)}" style="background:${colourCss(c)}" title="${esc(c)} (${n})" aria-label="${esc(c)} (${n})" aria-pressed="${SHOP.colours.includes(c)}" onclick="shopToggle('colours',this.dataset.v);fddRefresh()"></button>`).join('')}</div>` : '<p class="note">No colours set on products yet.</p>';
+  return D.fabrics.length ? D.fabrics.map(([f, n]) => `<label class="chk-line"><input type="checkbox" ${SHOP.fabrics.includes(f) ? 'checked' : ''} data-v="${esc(f)}" onchange="shopToggle('fabrics',this.dataset.v);fddRefresh()"> ${esc(f)} <small>(${n})</small></label>`).join('') : '<p class="note">No fabric set on products yet.</p>';
+}
+function fddCloseAll() { FDD.open = ''; ['price', 'colour', 'fabric'].forEach(k => { const b = document.getElementById('fdd-b-' + k), p = document.getElementById('fdd-p-' + k); if (p) p.hidden = true; if (b) b.setAttribute('aria-expanded', 'false'); }); }
+function fddToggle(k) { const was = FDD.open === k; fddCloseAll(); if (was) return; FDD.open = k; const p = document.getElementById('fdd-p-' + k), b = document.getElementById('fdd-b-' + k); if (!p) return; p.innerHTML = fddHTML(k); p.hidden = false; b.setAttribute('aria-expanded', 'true'); }
+function fddRefresh() {
+  const n = { price: SHOP.min !== '' || SHOP.max !== '' ? 1 : 0, colour: SHOP.colours.length, fabric: SHOP.fabrics.length }, L = { price: 'Price', colour: 'Colour', fabric: 'Fabric' };
+  for (const k of Object.keys(L)) { const b = document.getElementById('fdd-b-' + k); if (b) { b.classList.toggle('has', !!n[k]); b.innerHTML = `${L[k]}${n[k] ? ` <small>(${n[k]})</small>` : ''} <span class="car" aria-hidden="true">▾</span>`; } }
+  if (FDD.open) { const p = document.getElementById('fdd-p-' + FDD.open); if (p && !p.hidden) p.innerHTML = fddHTML(FDD.open); }
+}
+function fddPrice(a, b) { SHOP.min = a === '' ? '' : String(a); SHOP.max = b === '' ? '' : String(b); renderProducts(); if (SHOP.open) renderShopPanel(); fddRefresh(); }
+function fddRange() { let a = document.getElementById('fdd-min').value, b = document.getElementById('fdd-max').value; if (a !== '' && b !== '' && +a > +b) [a, b] = [b, a]; SHOP.min = a; SHOP.max = b; renderProducts(); if (SHOP.open) renderShopPanel(); fddRefresh(); }
+document.addEventListener('click', e => { if (FDD.open && !e.composedPath().some(n => n.classList && n.classList.contains('fdd-w'))) fddCloseAll(); });   // composedPath: the menu redraws itself on a choice, so the pressed button is already detached when this runs
+
+// ---------- Quick View ----------
+const QV = { id: '', i: 0, from: null };
+function qvEl() {
+  let el = document.getElementById('quickView'); if (el) return el;
+  el = document.createElement('div'); el.id = 'quickView'; el.className = 'qv'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Quick View');
+  el.addEventListener('click', e => { if (e.target === el) qvClose(); }); document.body.appendChild(el); return el;
+}
+function qvHTML(p) {
+  const pics = pcPics(p), fav = favourites.includes(p.id), sold = p.stock === 0;
+  const avail = sold ? 'Sold out' : oneOfAKind(p) ? 'A single designer piece: only 1 available' : p.stock <= 2 ? `Only ${p.stock} left` : 'In stock';
+  const chips = [p.fabric, ...(p.colours || []).slice(0, 3)].filter(Boolean).map(c => `<span class="pp-chip">${esc(c)}</span>`).join('');
+  const desc = String(p.description || '').replace(/\s+/g, ' ').trim().slice(0, 220);
+  return `<button type="button" class="qv-x" aria-label="Close Quick View" onclick="qvClose()">×</button>
+    <div class="qv-pics"><div class="qv-main"><img id="qvMain" src="${esc(pics[QV.i] || p.image)}" alt="${esc(p.altText || p.name)}"></div>${pics.length > 1 ? `<div class="qv-th">${pics.map((u, k) => `<button type="button" class="${k === QV.i ? 'on' : ''}" aria-label="Photo ${k + 1}" onclick="qvPick(${k})"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join('')}</div>` : ''}</div>
+    <div class="qv-info"><div class="product-tag">${esc(p.category)}</div><h3 class="qv-name">${esc(p.name)}</h3><div class="qv-price">${p.price ? '₹ ' + money(p.price) : ''}</div><div class="qv-av ${sold ? 'out' : ''}">${esc(avail)}</div>${chips ? `<div class="pp-chips">${chips}</div>` : ''}${desc ? `<p class="qv-desc">${esc(desc)}${String(p.description || '').length > 220 ? '…' : ''}</p>` : ''}
+      <div class="qv-btns">${sold ? `<button type="button" class="btn-full" onclick="qvClose();openStockAlert('${p.id}')">${notifyLabel(p.id)}</button>` : `<button type="button" class="btn-full" onclick="qvClose();addToCart('${p.id}')">Add to bag</button>`}<button type="button" class="btn-outline" onclick="openProductDetail('${p.id}')">View full details</button><button type="button" class="qv-fav ${fav ? 'active' : ''}" aria-label="Toggle favourite" aria-pressed="${fav}" onclick="toggleFavourite('${p.id}', event);qvRedraw()">${fav ? '♥' : '♡'} Wishlist</button></div></div>`;
+}
+function qvRedraw() { const p = db.products.find(x => x.id === QV.id), el = document.getElementById('quickView'); if (p && el && el.classList.contains('active')) el.innerHTML = `<div class="qv-box">${qvHTML(p)}</div>`; }
+function qvOpen(id, e) {
+  if (e) { e.stopPropagation(); e.preventDefault(); } const p = db.products.find(x => x.id === id); if (!p) return;
+  QV.id = id; QV.i = 0; QV.from = document.activeElement; trackHit('view', { p: 'quick' });
+  const el = qvEl(); el.innerHTML = `<div class="qv-box">${qvHTML(p)}</div>`; el.classList.add('active'); document.documentElement.classList.add('qv-open');
+  const x = el.querySelector('.qv-x'); if (x) x.focus();
+}
+function qvPick(k) { QV.i = k; qvRedraw(); const t = document.querySelector('#quickView .qv-th button.on'); if (t) t.focus(); }
+function qvClose() { const el = document.getElementById('quickView'); if (!el || !el.classList.contains('active')) return; el.classList.remove('active'); el.innerHTML = ''; document.documentElement.classList.remove('qv-open'); try { if (QV.from && document.contains(QV.from)) QV.from.focus(); } catch (e) { /* the button is gone */ } }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { if (document.documentElement.classList.contains('qv-open')) qvClose(); else if (FDD.open) fddCloseAll(); } });
+
+// ---------- the photo of a category tile changes while the mouse is over it ----------
+const TILE_T = new WeakMap(), TILE_SEL = '.category-item,.chap-tile';
+document.addEventListener('mouseover', e => {
+  const t = e.target.closest && e.target.closest(TILE_SEL); if (!t || TILE_T.has(t) || !(window.matchMedia && matchMedia('(hover: hover)').matches)) return;
+  const img = t.querySelector('img'); if (!img || !t.dataset.cat) return; const cur = img.getAttribute('src');
+  const pics = sareeList().filter(p => p.category === t.dataset.cat && p.stock > 0).flatMap(pcPics).filter((u, k, a) => u !== cur && a.indexOf(u) === k).slice(0, 8); if (!pics.length) return;
+  let i = 0; const step = () => { img.classList.remove('swap'); void img.offsetWidth; img.src = pics[i++ % pics.length]; img.classList.add('swap'); };
+  step(); TILE_T.set(t, { timer: setInterval(step, 1200), img, cur });
+});
+document.addEventListener('mouseout', e => {
+  const t = e.target.closest && e.target.closest(TILE_SEL); if (!t || !TILE_T.has(t) || t.contains(e.relatedTarget)) return;
+  const s = TILE_T.get(t); clearInterval(s.timer); s.img.classList.remove('swap'); s.img.src = s.cur; TILE_T.delete(t);
+});
+
+// ---------- Follow us ----------
+const FB_DEFAULT = 'https://www.facebook.com/profile.php?id=100086623513019';
+const followCfg = () => ({ show: true, facebook: FB_DEFAULT, instagram: '', ...((db.home && db.home.follow) || {}) });
+function followLinks() {
+  const f = followCfg(), out = []; if (f.show === false) return out;
+  const fb = String(f.facebook || '').trim(); if (/^https:\/\/(www\.|m\.)?(facebook\.com|fb\.com|fb\.me)\//i.test(fb)) out.push({ k: 'facebook', label: 'Facebook', href: fb });
+  let ig = String(f.instagram || '').trim().replace(/^@/, ''); const m = ig.match(/^https:\/\/(www\.)?instagram\.com\/([A-Za-z0-9._]+)/i); if (m) ig = m[2];
+  if (/^[A-Za-z0-9._]{2,30}$/.test(ig)) out.push({ k: 'instagram', label: 'Instagram', href: 'https://www.instagram.com/' + ig + '/' });
+  return out;
+}
+const FOLLOW_SVG = {
+  facebook: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8.5V7c0-.8.2-1.2 1.3-1.2H17V3h-2.4C12 3 10.8 4.5 10.8 6.8v1.7H9v2.9h1.8V21H14v-9.6h2.4L17 8.5Z" fill="currentColor"/></svg>',
+  instagram: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17" cy="7" r="1.1" fill="currentColor"/></svg>'
+};
+function renderFollow() {
+  const el = document.getElementById('followUs'); if (!el) return; const L = followLinks();
+  el.style.display = L.length ? '' : 'none';
+  el.innerHTML = L.length ? `<span class="follow-t">Follow us</span>${L.map(l => `<a class="follow-a ${l.k}" href="${esc(l.href)}" target="_blank" rel="noopener noreferrer" aria-label="${l.label} (opens in a new tab)">${FOLLOW_SVG[l.k]}<span>${l.label}</span></a>`).join('')}` : '';
+}
+// admin: Home page → Follow us
+function followSet(k, v) { if (!db.home.follow) db.home.follow = {}; if (k === 'show') db.home.follow.show = db.home.follow.show === false; else db.home.follow[k] = String(v || '').replace(/[<>"\s]/g, '').slice(0, 200); renderFollow(); homeSaveSoon(); if (k === 'show') { const c = el_('adminContent'); if (c) renderHomeAdmin(c); } }
+function followCardHTML() {
+  const f = followCfg(), tog = `<div class="toggle ${f.show !== false ? 'active' : ''}" role="switch" tabindex="0" aria-checked="${f.show !== false}" onclick="followSet('show')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"></div>`;
+  return `<div class="admin-card" id="follow-card"><h3 style="margin:0 0 4px">🔗 Follow us (bottom of every page)</h3><p class="note" style="margin:0 0 10px">The Facebook and Instagram buttons shown at the bottom of the website. Paste the link of your page. For Instagram you can also type just the name, like <b>anithapemmasani</b>. Leave a box empty to hide that button.</p>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><b>Show the buttons</b>${tog}</div>
+    <label class="note" for="fol-fb">Facebook page link</label><input id="fol-fb" type="url" value="${esc(f.facebook)}" placeholder="https://www.facebook.com/…" onchange="followSet('facebook',this.value)" style="width:100%;min-height:44px;margin-bottom:10px;box-sizing:border-box;padding:0 10px">
+    <label class="note" for="fol-ig">Instagram name or link</label><input id="fol-ig" type="text" value="${esc(f.instagram)}" placeholder="yourname  or  https://www.instagram.com/yourname" onchange="followSet('instagram',this.value)" style="width:100%;min-height:44px;box-sizing:border-box;padding:0 10px">
+    ${f.instagram ? '' : '<p class="note" style="margin:8px 0 0;color:#8a4b0f">The Instagram button is hidden until you type your Instagram name here.</p>'}</div>`;
+}
+
+// ---------- the starter demo sarees (admin) ----------
+// They carry stock-photo links and exist only to show how the shop looks. The server never sends them to customers; this lets the owner see them and remove them in one press.
+const isSampleProd = p => !!p && /^p\d{1,2}$/.test(String(p.id)) && (() => { const u = [p.image, ...(p.images || [])].filter(Boolean); return u.length > 0 && u.every(x => /^https:\/\/images\.unsplash\.com\//.test(String(x))); })();
+function sampleNoticeHTML() {
+  const n = db.products.filter(isSampleProd).length; if (!n) return '';
+  return `<div class="admin-card" id="sample-note" style="border:2px solid #C96A11;margin-bottom:14px"><h3 style="margin:0 0 4px">🧵 ${n} sample ${n === 1 ? 'saree' : 'sarees'} (demo photos)</h3><p class="note" style="margin:0 0 10px">These came with the app only to show how the shop looks. <b>Customers do not see them</b> and the WhatsApp assistant never offers them. Remove them when you are ready to post your own sarees.</p><button type="button" class="btn-sm btn-primary-sm" onclick="removeSamples()">Remove the ${n} sample ${n === 1 ? 'saree' : 'sarees'}</button></div>`;
+}
+function removeSamples() {
+  const ids = db.products.filter(isSampleProd).map(p => p.id); if (!ids.length) return; if (!confirm(`Remove ${ids.length} sample sarees? Your own sarees are not touched.`)) return;
+  db.products = db.products.filter(p => !ids.includes(p.id)); db.stockAlerts.forEach(a => { if (ids.includes(a.productId) && a.status === 'waiting') a.status = 'cancelled'; });
+  cart = cart.filter(c => !ids.includes(c.id)); favourites = favourites.filter(f => !ids.includes(f)); saveCart(); saveFavs();
+  saveDB(); renderAdminContent('products'); renderProducts(); buildScrollTrack(); updateBadges(); updateFavBadge(); showToast('Sample sarees removed', 'success');
+}
 // ================= Privacy & DPDP (owner app) =================
 // What the law asks of the shop, in one place: requests from customers, finding / exporting / erasing a customer, the clean-up of
 // old data, the breach register, who handles the data, and a checklist of what is still missing.

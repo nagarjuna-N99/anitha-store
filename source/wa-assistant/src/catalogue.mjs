@@ -1,4 +1,5 @@
 // Product catalogue as uploaded from the store admin. Read-only for the assistant.
+import { isSampleProduct } from './shopdata.mjs';   // the starter demo sarees are never offered to customers
 const SYN = { kanchipuram: 'kanjeevaram', kanchi: 'kanjeevaram', kanjivaram: 'kanjeevaram', benarasi: 'banarasi', benaras: 'banarasi', banaras: 'banarasi', paithni: 'paithani', mysore: 'mysore', tussar: 'tussar', tusser: 'tussar', maheshwari: 'maheswari', maheshwari_: 'maheswari', cotton: 'cotton', khadi: 'khadi', pochampally: 'pochampally', ikat: 'ikat' };
 const STOP = new Set(['a', 'an', 'the', 'saree', 'sarees', 'sari', 'saris', 'for', 'in', 'with', 'and', 'or', 'of', 'to', 'me', 'show', 'want', 'need', 'looking', 'please', 'have', 'you', 'any', 'do', 'is', 'there', 'some']);
 const norm = s => String(s || '').toLowerCase().normalize('NFKD').replace(/[^\p{L}\p{N}\s-]/gu, ' ');
@@ -14,7 +15,7 @@ export function brief(p) {
 
 export class Catalogue {
   // `held` = { productId: quantity } already spoken for by open payment links / unimported paid orders.
-  constructor(data, held = {}) { this.data = data || { products: [], shop: {}, policies: {} }; this.products = (this.data.products || []).filter(p => p && p.id && p.name).map(p => held[p.id] ? { ...p, stock: Math.max(0, (Number(p.stock) || 0) - held[p.id]) } : p); }
+  constructor(data, held = {}) { this.data = data || { products: [], shop: {}, policies: {} }; this.products = (this.data.products || []).filter(p => p && p.id && p.name && !isSampleProduct(p)).map(p => held[p.id] ? { ...p, stock: Math.max(0, (Number(p.stock) || 0) - held[p.id]) } : p); }
   get shop() { return this.data.shop || {}; }
   get policies() { return this.data.policies || {}; }
   get exportedAt() { return this.data.exportedAt || null; }

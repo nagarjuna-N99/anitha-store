@@ -37,7 +37,8 @@
   {
    "open": "<style id=\"dsfix\">\n",
    "files": [
-    "css/190-design-fixes.css"
+    "css/190-design-fixes.css",
+    "css/200-browse-upgrade.css"
    ],
    "close": "</style>\n"
   },
@@ -107,6 +108,7 @@
     "js/425-admin-menu-groups.js",
     "js/426-how-it-works-page.js",
     "js/427-occasions-admin.js",
+    "js/428-browse-upgrade.js",
     "js/430-privacy-dpdp.js",
       "js/435-repair-assistant.js",
       "js/438-whatsapp-promotions.js"

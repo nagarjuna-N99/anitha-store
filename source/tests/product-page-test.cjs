@@ -27,7 +27,7 @@ const { chromium } = require(process.env.PW);
   const bar = await ev(() => { const b = document.querySelector('#productModalBody .buy-bar'), c = getComputedStyle(b); return { pos: c.position, price: /₹/.test(b.textContent), btn: /Add to cart/i.test(b.textContent), last: b === document.getElementById('productModalBody').lastElementChild }; });
   ok('a sticky bar with the price and Add to cart stays at the bottom of the page', bar.pos === 'sticky' && bar.price && bar.btn && bar.last);
   await sleep(300); ok('the sticky bar stays out of the way while the page\'s own Add to cart button is on screen', await ev(() => { const b = document.querySelector('#productModalBody .buy-bar'), m = document.querySelector('#productModalBody .buy-btn'); const r = m.getBoundingClientRect(), vis = r.bottom > 0 && r.top < innerHeight; return !vis || getComputedStyle(b).display === 'none'; }));
-  await ev(() => { const l = [...document.querySelectorAll('.modal.active .modal-content,.modal.active')].pop(); l.scrollTo(0, 1e6); window.scrollTo(0, 1e6); }); await sleep(300);
+  await ev(() => { [...document.querySelectorAll('.modal.active .modal-content,.modal.active')].forEach(l => l.scrollTo(0, 1e6)); window.scrollTo(0, 1e6); }); await sleep(300);
   ok('...and it appears once that button has scrolled out of sight', await ev(() => getComputedStyle(document.querySelector('#productModalBody .buy-bar')).display !== 'none'));
   await ev(() => { cart = []; saveCart(); }); await p.click('#productModalBody .bb-btn'); await sleep(300);
   ok('Add to cart on the bar adds the saree and closes the page', await ev(() => cart.length === 1 && !document.getElementById('productModal').classList.contains('active')));

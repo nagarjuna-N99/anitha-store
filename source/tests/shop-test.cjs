@@ -31,7 +31,7 @@ const { chromium } = require(process.env.PW);
   await p.evaluate(() => { closeModal('shareModal'); closeModal('productModal'); db.settings.siteUrl = ''; });
   ok('share button on shop cards, favourites and New Arrivals', await p.evaluate(() => { navigateTo('shop'); return document.querySelectorAll('#productGrid .product-share-btn').length === sareeList().length && document.querySelectorAll('.scroll-card .btn-share-sm').length === 2 * arrivalsPick().length && arrivalsPick().length > 0; }));
   await p.evaluate(() => { closeModal('shareModal'); });
-  await p.click('#productGrid .product-share-btn >> nth=0');
+  await p.hover('#productGrid .product-card >> nth=0'); await p.click('#productGrid .product-share-btn >> nth=0');
   ok('card share does not open the product', await p.evaluate(() => document.getElementById('shareModal').classList.contains('active') && !document.getElementById('productModal').classList.contains('active')));
   await p.evaluate(() => closeModal('shareModal'));
 

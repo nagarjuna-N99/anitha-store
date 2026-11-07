@@ -311,7 +311,7 @@ function renderShopBanner() {
   const html = s.enabled === false || !safeImg(s.image) || !(s.title || s.subtitle) ? '' : `<div class="hero-slider shop-banner">${heroSlideHTML(s, -1, true, 'h2')}</div>`;
   if (box._h === html) return; box._h = html; box.innerHTML = html; box.style.display = html ? '' : 'none';
 }
-function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); renderHomeQuote(); renderHomeNotes(); renderHomeChapters(); renderOccasions(); if (typeof applyBackground === 'function') applyBackground(); homeSaveSoon(); }
+function homeLive(redrawHero) { if (redrawHero) renderHero(); renderHomeCategories(); renderArrivalsHead(); renderSignature(); renderShopBanner(); renderHomeQuote(); renderHomeNotes(); renderHomeChapters(); renderOccasions(); renderFollow(); if (typeof applyBackground === 'function') applyBackground(); homeSaveSoon(); }
 let HOME_PICK = null;
 function homePick(kind, idx) { HOME_PICK = { kind, idx }; document.getElementById('home-file').click(); }
 async function homeFileChosen(files) {
@@ -468,6 +468,7 @@ function renderHomeAdmin(container) {
     </div>
 
     ${occasionsCardHTML()}
+    ${followCardHTML()}
     ${backgroundCardHTML()}
     ${chaptersCardHTML()}
     ${themeCardHTML()}

@@ -63,10 +63,13 @@ function visibleProducts() {
 }
 const shopFilterCount = () => (SHOP.occasion ? 1 : 0) + SHOP.fabrics.length + SHOP.colours.length + (SHOP.min !== '' || SHOP.max !== '' ? 1 : 0) + (SHOP.inStock ? 1 : 0);
 function initShopToolbar() {
-  const nsb = document.getElementById('navSearch'); if (nsb) nsb.innerHTML = `<div class="shop-search"><span aria-hidden="true">🔍</span><input id="shop-q" type="search" placeholder="Search sarees — try “kanchipuram”, “red silk”, “wedding”" oninput="shopSearch(this.value)" onkeydown="if(event.key==='Enter'){closeNavSearch();}" aria-label="Search sarees" autocomplete="off"><button type="button" class="shop-q-clear" id="shop-q-clear" aria-label="Clear search" onclick="shopSearch('',true)" style="display:none;">×</button></div><button type="button" class="nav-search-close" aria-label="Close search" onclick="closeNavSearch()">Close</button>`;
+  if (typeof renderFollow === 'function') renderFollow();
+  const nsb = document.getElementById('navSearch'); if (nsb) nsb.innerHTML = `<div class="ns-wrap"><div class="shop-search"><svg class="ns-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg><input id="shop-q" type="search" placeholder="Search sarees — try “kanchipuram”, “red silk”, “wedding”" oninput="searchInput(this.value)" onkeydown="searchKey(event)" aria-label="Search sarees" autocomplete="off" enterkeyhint="search" role="combobox" aria-expanded="false" aria-controls="searchDrop" aria-autocomplete="list"><button type="button" class="shop-q-clear" id="shop-q-clear" aria-label="Clear search" onclick="shopSearch('',true);searchInput('');document.getElementById('shop-q').focus()" style="display:none;">×</button></div><div class="search-drop" id="searchDrop" role="listbox" aria-label="Search results" hidden></div></div><button type="button" class="nav-search-close" aria-label="Close search" onclick="closeNavSearch()">Close</button>`;
   const box = document.getElementById('shopToolbar'); if (!box) return;
-  box.innerHTML = `<div class="shop-bar"><button type="button" class="btn-filters" id="shop-filter-btn" onclick="shopTogglePanel()" aria-expanded="false">Filter &amp; sort <span class="fcount" id="shop-fcount"></span></button></div>
-    <div class="shop-panel" id="shop-panel"><div class="shop-sortrow"><label for="shop-sort">Sort by</label><select id="shop-sort" onchange="shopSort(this.value)" aria-label="Sort sarees"><option value="featured">Featured</option><option value="new">Newest first</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="name">Name A–Z</option><option value="rating">Top rated</option></select></div><div id="shop-panel-body"></div></div>
+  box.innerHTML = `<div class="shop-bar fbar"><button type="button" class="btn-filters" id="shop-filter-btn" onclick="shopTogglePanel()" aria-expanded="false" aria-controls="shop-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span id="shop-filter-lbl">Show Filters</span> <span class="fcount" id="shop-fcount"></span></button>
+      <div class="fdd" id="fdd">${[['price', 'Price'], ['colour', 'Colour'], ['fabric', 'Fabric']].map(([k, l]) => `<div class="fdd-w"><button type="button" class="fdd-b" id="fdd-b-${k}" aria-haspopup="true" aria-expanded="false" onclick="fddToggle('${k}')">${l} <span class="car" aria-hidden="true">▾</span></button><div class="fdd-pop" id="fdd-p-${k}" hidden></div></div>`).join('')}</div>
+      <div class="fbar-r"><span class="items-n" id="items-n" aria-live="polite"></span><label class="sort-l" for="shop-sort">Sort</label><select id="shop-sort" onchange="shopSort(this.value)" aria-label="Sort sarees"><option value="featured">Featured</option><option value="new">Newest first</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="name">Name A–Z</option><option value="rating">Top rated</option></select></div></div>
+    <div class="shop-panel" id="shop-panel"><div id="shop-panel-body"></div></div>
     <div class="shop-meta"><div id="shop-active" class="chips"></div></div>`;}
 function renderShopPanel() {
   const body = document.getElementById('shop-panel-body'); if (!body) return;
@@ -85,8 +88,10 @@ function shopMeta(n, total) {
   const c = document.getElementById('shop-count'); if (!c) return;
   const f = shopFilterCount() + (SHOP.q.trim() ? 1 : 0);
   c.textContent = f ? `Showing ${n} of ${total} ${kindWord(total)}` : `${total} ${kindWord(total)}`;
+  const itn = document.getElementById('items-n'); if (itn) itn.textContent = `${n} ${n === 1 ? 'ITEM' : 'ITEMS'}`;
   const fc = document.getElementById('shop-fcount'); if (fc) { fc.textContent = shopFilterCount() ? shopFilterCount() : ''; fc.style.display = shopFilterCount() ? 'inline-block' : 'none'; }
   const sort = document.getElementById('shop-sort'); if (sort) { sort.options[0].text = SHOP.q.trim() ? 'Best match' : 'Featured'; if (sort.value !== SHOP.sort) sort.value = SHOP.sort; }
+  if (typeof fddRefresh === 'function') fddRefresh();
   const chips = [];
   if (SHOP.q.trim()) chips.push(['q', '', `“${SHOP.q.trim()}”`]);
   if (SHOP.occasion) chips.push(['occasion', '', occLabel(SHOP.occasion)]);
@@ -102,7 +107,7 @@ function shopEmptyHTML() {
 let SHOP_T = null;
 function shopSearch(v, now) { if (v && !document.getElementById('page-shop').classList.contains('active')) navigateTo('shop'); SHOP.q = v; const i = document.getElementById('shop-q'); if (now && i) i.value = v; document.getElementById('shop-q-clear').style.display = v ? '' : 'none'; clearTimeout(SHOP_T); SHOP_T = setTimeout(renderProducts, now ? 0 : 120); }
 function shopSort(v) { SHOP.sort = v; renderProducts(); }
-function shopTogglePanel() { SHOP.open = !SHOP.open; document.getElementById('shop-panel').classList.toggle('open', SHOP.open); document.getElementById('shop-filter-btn').setAttribute('aria-expanded', SHOP.open); if (SHOP.open) renderShopPanel(); }
+function shopTogglePanel() { SHOP.open = !SHOP.open; if (typeof fddCloseAll === 'function') fddCloseAll(); const lb = document.getElementById('shop-filter-lbl'); if (lb) lb.textContent = SHOP.open ? 'Hide Filters' : 'Show Filters'; document.getElementById('shop-panel').classList.toggle('open', SHOP.open); document.getElementById('shop-filter-btn').setAttribute('aria-expanded', SHOP.open); if (SHOP.open) renderShopPanel(); }
 function shopToggle(kind, val, el) { const a = SHOP[kind], i = a.indexOf(val); if (i >= 0) a.splice(i, 1); else a.push(val); if (el) { el.classList.toggle('on'); el.setAttribute('aria-pressed', i < 0); } renderProducts(); }
 function shopPrice() { SHOP.min = document.getElementById('shop-min').value; SHOP.max = document.getElementById('shop-max').value; if (SHOP.min !== '' && SHOP.max !== '' && +SHOP.min > +SHOP.max) { [SHOP.min, SHOP.max] = [SHOP.max, SHOP.min]; document.getElementById('shop-min').value = SHOP.min; document.getElementById('shop-max').value = SHOP.max; } renderProducts(); }
 function shopPreset(min, max) { SHOP.min = min === '' ? '' : String(min); SHOP.max = max === '' ? '' : String(max); document.getElementById('shop-min').value = SHOP.min; document.getElementById('shop-max').value = SHOP.max; renderProducts(); }
@@ -117,8 +122,8 @@ function shopRemove(kind, val) {
 function shopClearAll() { SHOP.occasion = ''; SHOP.fabrics = []; SHOP.colours = []; SHOP.min = ''; SHOP.max = ''; SHOP.inStock = false; shopSearch('', true); if (SHOP.open) renderShopPanel(); }
 function shopResetFilters() { SHOP.sort = 'featured'; shopClearAll(); }
 // The one search of the website lives in the top bar on every page: the 🔍 opens a search bar under the header; typing shows the results on the Collection page.
-function openNavSearch() { const p = document.getElementById('navSearch'), nv = document.querySelector('nav'); if (!p || !nv) return; p.style.top = Math.round(nv.getBoundingClientRect().bottom) + 'px'; p.hidden = false; setTimeout(() => { const i = document.getElementById('shop-q'); if (i) { i.focus(); i.select(); } }, 30); }
-function closeNavSearch() { const p = document.getElementById('navSearch'); if (p) p.hidden = true; }
+function openNavSearch() { const p = document.getElementById('navSearch'), nv = document.querySelector('nav'); if (!p || !nv) return; p.style.top = Math.round(nv.getBoundingClientRect().bottom) + 'px'; p.hidden = false; if (typeof searchDropRender === 'function') searchDropRender((document.getElementById('shop-q') || {}).value || ''); setTimeout(() => { const i = document.getElementById('shop-q'); if (i) { i.focus(); i.select(); } }, 30); }
+function closeNavSearch() { const p = document.getElementById('navSearch'); if (p) p.hidden = true; const d = document.getElementById('searchDrop'); if (d) d.hidden = true; }
 function shopFocusSearch() { const p = document.getElementById('navSearch'); if (p && !p.hidden) { closeNavSearch(); return; } openNavSearch(); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeNavSearch(); });
 document.addEventListener('click', e => { const p = document.getElementById('navSearch'); if (p && !p.hidden && !p.contains(e.target) && !(e.target.closest && e.target.closest('.nav-icon[aria-label="Search"]'))) closeNavSearch(); });

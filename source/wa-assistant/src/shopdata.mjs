@@ -48,10 +48,12 @@ export function publicPages(pg) {
   out.custom = (Array.isArray(pg.custom) ? pg.custom : []).filter(vis).map(c => { const d = { ...(c.data || {}) }; if (Array.isArray(d.sections)) d.sections = d.sections.filter(vis); if (Array.isArray(d.posts)) d.posts = d.posts.filter(vis); return { ...c, data: d }; });
   return out;
 }
+// The starter demo sarees (ids p1–p99 with stock-photo links) are only there to show the owner how the shop looks. They are never shown to customers.
+export const isSampleProduct = p => process.env.SHOW_SAMPLES !== '1' && !!p && /^p\d{1,2}$/.test(String(p.id)) && [p.image, ...(p.images || [])].filter(Boolean).length > 0 && [p.image, ...(p.images || [])].filter(Boolean).every(u => /^https:\/\/images\.unsplash\.com\//.test(String(u)));
 export function publicView(db) {
   const d = db || {}, pick = (o, ks) => Object.fromEntries(ks.filter(k => o && o[k] !== undefined).map(k => [k, o[k]]));
   return {
-    settings: pick(d.settings, PUBLIC_SETTINGS), categories: d.categories || [], accessoryCategories: d.accessoryCategories || [], products: d.products || [], home: d.home || null, pages: publicPages(d.pages),
+    settings: pick(d.settings, PUBLIC_SETTINGS), categories: d.categories || [], accessoryCategories: d.accessoryCategories || [], products: (d.products || []).filter(p => !isSampleProduct(p)), home: d.home || null, pages: publicPages(d.pages),
     bundles: (d.bundles || []).filter(b => b.active), coupons: (d.coupons || []).filter(c => c.active && c.announce).map(c => pick(c, ['code', 'type', 'discount', 'active', 'description', 'minOrder', 'expiresAt', 'announce', 'firstOrderOnly', 'oncePerCustomer', 'channel'])),
     reviews: (d.reviews || []).filter(r => r.status === 'approved').map(r => ({ id: r.id, productId: r.productId, name: String(r.name || '').split(' ')[0], rating: r.rating, title: r.title, text: r.text, photos: r.photos || [], status: 'approved', createdAt: r.createdAt, reply: r.reply || '', replyAt: r.replyAt || null })),
   };

@@ -56,7 +56,7 @@
 <div class="overlay" id="overlay" onclick="closeAllDrawers()"></div>
 <div class="drawer" id="cartDrawer"><div class="drawer-header"><h3>Your Selection</h3><button class="drawer-close" onclick="closeAllDrawers()">×</button></div><div class="drawer-body" id="cartBody"></div><div class="drawer-footer"><div class="checkout-summary" id="cartSummary"></div><div id="cartDeliv"></div><div id="cartRemRow"></div><button class="btn-full" onclick="openCheckout()">Proceed to Checkout</button><button class="btn-outline" onclick="closeAllDrawers()">Continue Shopping</button></div></div>
 
-<div class="modal" id="productModal"><div class="modal-content"><button class="modal-close" onclick="closeModal('productModal')" aria-label="Close">×</button><div id="productModalBody"></div></div></div>
+<div class="modal" id="productModal" role="dialog" aria-modal="true" aria-label="Saree"><div class="modal-content"><div class="pp-bar"><button type="button" class="modal-close" onclick="closeModal('productModal')" aria-label="Close">← Back to the collection</button><span class="pp-bar-name" id="ppBarName"></span><button type="button" class="pp-bar-bag" onclick="openCart()" aria-label="Open my bag">Bag <b id="ppBarCount">0</b></button></div><div id="productModalBody"></div></div></div>
 
 <div class="modal" id="checkoutModal"><div class="modal-content" style="max-width:540px;"><button class="modal-close" onclick="closeModal('checkoutModal')" aria-label="Close">×</button><div style="padding:34px 38px;">
   <h2 style="font-family:'Cormorant Garamond',serif;font-size:28px;margin-bottom:8px;">Secure Checkout</h2>

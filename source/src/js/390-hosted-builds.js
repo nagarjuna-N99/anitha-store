@@ -31,7 +31,7 @@ async function shopSync(force) {
     db.settings = Object.assign({}, db.settings, p.settings); db.categories = p.categories; db.accessoryCategories = p.accessoryCategories; db.products = p.products; if (p.home) db.home = p.home; if (p.pages) db.pages = p.pages; db.bundles = p.bundles; db.coupons = p.coupons; db.accessorySeeded = true;
     const u = currentUser(), mine = u ? (db.reviews || []).filter(x => x.userId === u.id && x.status !== 'approved') : []; db.reviews = [...p.reviews, ...mine];
     SHOP_VER = p.version || 0; try { localStorage.setItem('ap_db_v70', JSON.stringify(db)); } catch (e) { /* storage full: the page still works from memory */ }
-    step(ensureProductFields); step(syncHomeCats); step(pruneCart); step(renderProducts); step(buildScrollTrack); step(renderHome); step(renderPublicPages); step(updateBadges); step(updateFavBadge); step(seoRefreshHome); step(enhanceLinks); SHOP_SYNCED = true; shopReady(); const er = document.getElementById('shopLoadErr'); if (er) er.remove(); step(routeFromLocation);
+    step(ensureProductFields); step(syncHomeCats); step(pruneCart); step(renderProducts); step(buildScrollTrack); step(renderHome); step(renderPublicPages); step(updateBadges); step(updateFavBadge); step(seoRefreshHome); step(enhanceLinks); step(renderFollow); SHOP_SYNCED = true; shopReady(); const er = document.getElementById('shopLoadErr'); if (er) er.remove(); step(routeFromLocation);
   })().finally(() => { SHOP_SYNCING = null; }));
 }
 function shopLoadError() {

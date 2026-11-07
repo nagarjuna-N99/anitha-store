@@ -12,7 +12,7 @@ const { chromium } = require(process.env.PW);
     await p.evaluate(() => navigateTo('shop')); ok(`${W}px shop: no sideways scroll`, await sw() <= W);
     ok(`${W}px two products per row`, await p.evaluate(() => { const c = [...document.querySelectorAll('#productGrid .product-card')].slice(0, 3).map(x => Math.round(x.getBoundingClientRect().top)); return c[0] === c[1] && c[2] > c[1]; }));
     ok(`${W}px category chips on one scrollable row`, await p.evaluate(() => { const t = [...document.querySelectorAll('#filterContainer .filter-btn')].map(x => Math.round(x.getBoundingClientRect().top)); return new Set(t).size === 1; }));
-    ok(`${W}px header icons & card buttons are finger-sized (>=40px)`, await p.evaluate(() => [...document.querySelectorAll('nav .nav-icon[aria-label=Search], nav .hamburger-btn, #productGrid .btn-card, .product-fav-btn, .product-share-btn')].every(e => { const r = e.getBoundingClientRect(); return r.width >= 39.5 && r.height >= 39.5; })));
+    ok(`${W}px header icons & card buttons are finger-sized (>=40px)`, await p.evaluate(() => [...document.querySelectorAll('nav .nav-icon[aria-label=Search], nav .hamburger-btn, #productGrid .pc-bag, #productGrid .pc-qv, .product-fav-btn')].every(e => { const r = e.getBoundingClientRect(); return r.width >= 39.5 && r.height >= 39.5; })));
     ok(`${W}px search & selects use 16px text (no iOS zoom)`, await p.evaluate(() => ['#shop-q', '#shop-sort'].every(s => parseFloat(getComputedStyle(document.querySelector(s)).fontSize) >= 16)));
     await p.evaluate(() => shopTogglePanel()); ok(`${W}px filter panel: no sideways scroll`, await sw() <= W);
     await p.evaluate(() => { shopTogglePanel(); openProductDetail('p3'); });

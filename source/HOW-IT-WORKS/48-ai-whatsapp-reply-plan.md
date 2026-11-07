@@ -1,0 +1,87 @@
+# 48 · Action plan: the AI WhatsApp assistant that answers customers from the real stock (7 Nov 2026)
+
+This is a **plan**, written in plain words. Nothing here changes the shop until the owner agrees to a step. The assistant itself already exists (`wa-assistant/src/assistant.mjs`, guide 15); this plan is about **how to put it on the number every customer already has**, safely.
+
+## 0. The one decision to make first: the existing WhatsApp number
+Your customers all know **one** number, and you do not want to lose it or its chats. WhatsApp has three ways to connect a number to an assistant:
+
+| Way | What it means | Verdict |
+|---|---|---|
+| **A. Keep the WhatsApp Business app AND connect the assistant to the same number ("coexistence")** | You keep chatting on your phone as today. The assistant answers on the same number through Meta's Cloud API. Old chats stay on the phone. | **Recommended**, if Meta allows it for your number (see step 1). |
+| **B. Move the number fully to the Cloud API** | The number stops working in the WhatsApp Business app; all chatting happens in the owner app / a web inbox. | Works, but you lose the phone app. Only if A is not available. |
+| **C. A new second number for the AI** | Customers must learn a new number. | **Not recommended**: customers keep using the old number, so the AI never sees their questions. |
+
+Things to know about A (from the providers' documents, to be confirmed on Meta's own page for your number): the number stays registered in the Business app (never delete or re-register it there); the app must be an up-to-date version; the app and the assistant each have their **own** 24-hour window and billing; the blue-tick verification does not carry over; availability depends on country and on how the number was created. **Step 1 below checks this before anything is changed.**
+
+## 1. Check (no risk, 1 evening)
+1. Open the WhatsApp Business app on the shop phone: Settings → **Business tools**. A number that shows the green "Business" badge can usually be connected; a normal personal WhatsApp must first be switched to the Business app (it keeps its chats).
+2. In Meta's developer account (the one already used for the owner alerts, guide 39), run **"Connect an existing WhatsApp Business app number"** (Embedded Signup → coexistence). It shows at once whether your number is eligible.
+3. Write down: eligible yes/no, business name shown to customers, and who owns the Meta Business account (it must be the shop, not a person who may leave).
+**If it says no:** use B (move the number) only after the owner has exported or screenshotted the chats she needs, and only on a quiet day.
+
+## 2. What the assistant must do (the rules)
+1. **Answer from the real stock only.** The assistant reads the shop's catalogue (price, category, fabric, colours, **stock**). It never invents a saree. If a saree is sold out it says so, offers 2 or 3 similar ones that are in stock, and offers "tell me about similar sarees" / "make again on order".
+2. **Most sarees are single pieces.** So it always says "only 1 piece" when that is true, and does not promise a second one. "Made again only on order" is the same sentence as the website (guide 44).
+3. **Language.** It answers in the language the customer writes: **Telugu, Hindi or English**, and also when they type Telugu or Hindi in English letters ("saree entha price?", "yeh kitne ka hai?"). It keeps prices as ₹18,500. Language is chosen **per message**, so a customer can switch.
+4. **The link only after the customer says yes.** The assistant first describes the saree and asks, in the customer's language: "Shall I send you the page with all photos and the price?" Only after a clear yes (yes / avunu / haan / ok / send) does it send **one** link, `https://anithapemmasani.com/product/<name>/`. A customer who says no, or never answers, gets no link. This keeps to the rule that nothing is pushed to customers without their consent.
+5. **Photos in the chat** (the tool `send_product_photos` already exists) can be sent together with the question, because the customer asked about that saree.
+6. **Never**: promise views or sales, give a delivery date that the PIN-code check has not confirmed, offer a cancel (customers have no cancel option), refuse a PIN code, or say a discount the system does not hold.
+7. **Hand-over to the owner** (tool `handoff_to_owner` already exists) when: the customer asks for a person, sends a photo of a saree they want matched, is angry, asks about a custom order, returns, money or health topics, or when the assistant is not sure. After hand-over the assistant stays silent in that chat until the owner presses "give back to assistant".
+8. **STOP always works** (already built): STOP / unsubscribe ends all automatic messages to that number; START turns them on again.
+9. **Draft, never silent changes**: the assistant can take an **order request**, but the owner still approves it (YES/NO flow, guide 41) unless she switched on auto-approval.
+
+## 3. The 24-hour rule and templates
+- When a customer writes to the number, a **24-hour window** opens: inside it the assistant can answer freely (no template needed).
+- After 24 hours of silence only an **approved template** can be sent, and only to someone who **opted in**. Templates are approved by Meta in about a day. The ones already prepared are in guide 39. For this plan add two small utility templates: *"Your saree is still available: {{1}}. Reply YES and I will send the page"* and *"Back in stock: {{1}}"* (only for people who tapped "tell me when similar arrives").
+- Website visitors who tap "Chat with us" opt in by starting the chat.
+
+## 4. How the assistant knows the stock (it already does; two small gaps)
+- The catalogue is pushed from the owner app each time shop data is saved. Sold = stock 0 = "sold out" in WhatsApp at the same moment as on the website.
+- **Gap 1:** while a customer is looking at a single piece, another customer may buy it. Before saying "yes it is available" the assistant must re-check the stock for that saree **at that moment** (the `get_product` tool does this) and say "available right now".
+- **Gap 2 (new work):** a tool `send_product_link` that only works after a recorded "yes" from the customer in that chat, logs the consent, and sends the page link. Today the assistant can only send photos. This is the main build for this plan (about 1 day with tests).
+
+## 5. Roll-out in 5 safe phases
+| Phase | What happens | Who sees it | Done when |
+|---|---|---|---|
+| **1. Check** | Step 1 above. No change to the shop. | Nobody | Eligibility known |
+| **2. Practice** | Assistant connected, but **answers only the owner's own number and 2 or 3 family numbers** (allow-list). Test 40 real questions: 15 Telugu, 10 Hindi, 15 English, including English-letter Telugu, sold-out sarees, wrong spellings. | Owner + family | 95 of 100 answers judged correct by the owner; no invented sarees |
+| **3. Owner-in-the-loop** | Assistant writes the answer as a **draft**; the owner taps "send" in the owner app (WhatsApp → Waiting). Measure how often she changes the draft. | Customers (after owner approval) | Fewer than 1 in 10 drafts edited, for a full week |
+| **4. After-hours only** | Assistant replies by itself only **when the owner is not answering** (night, lunch, or after 10 minutes of no reply). The owner can still reply any time and the assistant steps back. | Customers | A week with no complaint; hand-overs arrive correctly |
+| **5. Full** | Assistant answers first, always, hand-over rules as in step 2. Owner reads the daily summary (already built, guide 45). | Everyone | Review monthly |
+
+At every phase there is **one switch** in the Admin → WhatsApp page to pause the assistant instantly; the number then behaves as a normal Business-app number.
+
+## 6. Tests to run before each phase (the shop's own rule: every change is tested)
+- 100-question list in Telugu / Hindi / English with the **expected** saree each time; any answer that names a saree not in stock fails the phase.
+- A link is **never** sent after "no", after silence, or before a clear yes (automatic test).
+- STOP, START, quiet hours, hand-over and "give back" (automatic tests, mostly already there).
+- Two customers asking about the same single piece at the same time: only one gets "available".
+- A photo, a voice note and a sticker arrive: hand over politely, never a wrong guess.
+
+## 7. Cost (rough, check Meta's current rate card before you rely on it)
+- **The customer asking and the assistant answering inside 24 hours: free** on Meta's side (service conversations are free).
+- **Templates** (outside 24 hours): paid per message; utility ones cost a few paise to about 15 paise, marketing ones roughly ₹0.8 to ₹1.1 in India. The Admin → WhatsApp report (guide 39) shows the real spend.
+- **The AI itself** (Claude): about ₹1 to ₹3 for a normal chat of 6 to 10 messages. A daily cap per customer is already built; set an overall daily limit too.
+- Typical month for a small shop (500 chats): a few hundred rupees for AI, about ₹0 to ₹300 for templates.
+
+## 8. Risks and what we do about them
+| Risk | What we do |
+|---|---|
+| The AI says a wrong price or a sold saree is available | Price and stock are read from the catalogue by a tool, never from memory; re-check right before "available"; the owner reviews drafts in phases 3 and 4. |
+| A customer feels spammed | Link only after yes; STOP always; no promotion without opt-in; quiet hours. |
+| Telugu or Hindi mistakes | Phase 2 and 3 test sets; the owner marks bad answers and they are added to the assistant's notes (`knowledge/`). |
+| The number is blocked or rated low by WhatsApp | Never send to people who did not message first or opt in; low volume; Meta quality score shown in the Admin page. |
+| The owner loses chats while connecting | Never delete or re-register the number in the Business app; take a chat backup first (WhatsApp → Settings → Chats → Chat backup). |
+| The Meta account belongs to one person | Make the shop the owner of the Meta Business account and add a second admin. |
+| Personal data | No customer names or phone numbers in git, logs are kept on the shop server only, the privacy notice names WhatsApp and the AI provider (already in the notice). |
+
+## 9. What I need from the owner (4 answers)
+1. Is the shop number on the **WhatsApp Business app** or a normal WhatsApp?
+2. Is it OK that the assistant first runs only for the owner and family (phase 2)?
+3. Which hours is the owner usually unavailable (for phase 4)?
+4. Three sample questions customers really ask, in Telugu, so the test list is real.
+
+## 10. Order of work for the developer side
+1. Step 1 check (owner, 1 evening).  2. Build `send_product_link` with consent log and tests (1 day).  3. Allow-list mode and the pause switch (half a day).  4. Template drafts for Meta approval (same day as 2).  5. Run phase 2 and 3.  6. Only then phases 4 and 5.
+
+Sources used for the facts above: coexistence notes from 360dialog, Telnyx and Kapso documentation; Meta's pricing page and India price notes from AiSensy and others. These secondary pages disagree on a few rupee figures and on which countries are supported, which is why step 1 and the rate-card check are in the plan.

@@ -55,7 +55,7 @@ const { chromium } = require(process.env.PW);
   ok('Saved Drafts tab is grouped the same way', await ev(() => document.querySelectorAll('.dbc-group').length === 4));
   // add to cart animation
   await ev(() => { toggleView(); db.drafts = []; navigateTo('shop'); cart = []; });
-  await p.click('#productGrid .btn-cart >> nth=0');
+  await p.hover('#productGrid .product-card >> nth=0'); await p.click('#productGrid .pc-bag >> nth=0');
   ok('add to cart plays the success animation with the cart count', await ev(() => { const a = document.getElementById('atcPop'); return a && /1\s*in your cart/.test(a.textContent) && !!a.querySelector('.atc-check') && !!a.querySelector('.atc-fill'); }));
   ok('the pressed button turns green with the check', await ev(() => !!document.querySelector('.atc-btn-done')));
   ok('the cart still opens at the same time', await ev(() => document.getElementById('cartDrawer').classList.contains('active')));

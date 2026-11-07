@@ -3,35 +3,39 @@ function stockBadge(p) {
   const s = p.stock === 0 ? 'Sold Out' : oneOfAKind(p) ? 'One of a kind' : p.stock <= 2 ? `Only ${p.stock} Left` : '';
   return s ? `<div class="stock-badge" style="position:absolute;top:15px;left:15px;background:${p.stock === 0 ? 'var(--charcoal)' : 'var(--gold)'};color:white;padding:4px 10px;border-radius:4px;font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:600;">${s}</div>` : '';
 }
+// A card is ONE big link: pressing anywhere on it opens the saree's page. On a computer the photo changes to another photo of the same saree when the mouse is over it, and
+// little round buttons (bag, Quick View, share) appear on the photo. On a phone those buttons are always there. Most sarees are a single piece, so the card says so.
+const pcPics = p => { const m = [p.image, ...(p.images || [])].filter(u => u && safeImg(u)); return [...new Set(m)]; };
 function productCardHTML(p) {
-  const isFav = favourites.includes(p.id);
+  const isFav = favourites.includes(p.id), pics = pcPics(p), alt = pics[1] || '', sold = p.stock === 0, nm = esc(p.name);
   return `
-  <div class="product-card">
+  <div class="product-card pc2${alt ? ' has-alt' : ''}${sold ? ' is-sold' : ''}" role="link" tabindex="0" aria-label="${nm}, ${p.price ? '₹ ' + money(p.price) : ''}" onclick="cardGo(event,'${p.id}')" onkeydown="if(event.key==='Enter'&&event.target===this)openProductDetail('${p.id}')">
     <div class="product-img-wrap">
-      <img src="${esc(p.image)}" alt="${esc(p.altText || p.name)}" loading="lazy" decoding="async">${(videoInfo(p.video) || {}).type ? '<span class="vid-badge">▶ Video</span>' : ''}
-      <button class="product-fav-btn ${isFav ? 'active' : ''}" aria-label="Toggle favourite" onclick="toggleFavourite('${p.id}', event)">${isFav ? '♥' : '♡'}</button>
-      <button class="product-share-btn" aria-label="Share this saree" title="Share" onclick="openShare('${p.id}', event)">🔗</button>
+      <img class="pc-main" src="${esc(p.image)}" alt="${esc(p.altText || p.name)}" loading="lazy" decoding="async">${alt ? `<img class="pc-alt" src="${esc(alt)}" alt="" aria-hidden="true" loading="lazy" decoding="async">` : ''}${(videoInfo(p.video) || {}).type ? '<span class="vid-badge">▶ Video</span>' : ''}
+      <button type="button" class="product-fav-btn ${isFav ? 'active' : ''}" aria-label="Toggle favourite" aria-pressed="${isFav}" onclick="toggleFavourite('${p.id}', event)">${isFav ? '♥' : '♡'}</button>
+      <div class="pc-acts">
+        ${sold ? `<button type="button" class="pc-act pc-bell ${myAlert(p.id) ? 'set' : ''}" aria-label="${esc(notifyLabel(p.id))}" title="${esc(notifyLabel(p.id))}" onclick="event.stopPropagation();openStockAlert('${p.id}')">🔔</button>` : `<button type="button" class="pc-act pc-bag" aria-label="Add ${nm} to bag" title="Add to bag" onclick="event.stopPropagation();addToCart('${p.id}')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2"/></svg></button>`}
+        <button type="button" class="pc-act pc-qv" aria-label="Quick View of ${nm}" title="Quick View" onclick="qvOpen('${p.id}', event)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        <button type="button" class="pc-act product-share-btn" aria-label="Share this saree" title="Share" onclick="openShare('${p.id}', event)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4m0 0L8 8m4-4 4 4M5 13v6h14v-6"/></svg></button>
+      </div>
       ${stockBadge(p)}
     </div>
     <div class="product-body">
       <div class="product-tag">${esc(p.category)}</div>
-      <div class="product-name" onclick="openProductDetail('${p.id}')">${esc(p.name)}</div>
-      <div class="product-price">₹ ${money(p.price)}</div>
+      <div class="product-name">${nm}</div>
+      <div class="product-price">${sold ? '<span class="pc-soldtxt">Sold out</span>' : p.price ? '₹ ' + money(p.price) : ''}</div>
       ${p.reviews > 0 ? `<div class="card-rating">${starsHTML(p.rating)} <small>${p.rating} (${p.reviews})</small></div>` : ''}
-      <div class="product-actions">
-        <button class="btn-card btn-view" onclick="openProductDetail('${p.id}')">View Details</button>
-        ${p.stock === 0 ? `<button class="btn-card btn-notify ${myAlert(p.id) ? 'set' : ''}" onclick="openStockAlert('${p.id}')">${notifyLabel(p.id)}</button>` : `<button class="btn-card btn-cart" onclick="addToCart('${p.id}')">Add to Cart</button>`}
-      </div>
     </div>
   </div>`;
 }
+function cardGo(e, id) { if (e.target.closest && e.target.closest('button,a,input,select')) return; openProductDetail(id); }
 
 function buildScrollTrack() {
   const track = document.getElementById('scrollTrack');
   const shown = arrivalsPick();   // automatic (newest in-stock sarees) or the owner's own choice
   const cards = shown.map(p => `
     <div class="scroll-card">
-      <img src="${esc(p.image)}" class="scroll-card-img" alt="${esc(p.name)}">
+      <div class="sc-pic"><img src="${esc(p.image)}" class="scroll-card-img" alt="${esc(p.name)}">${pcPics(p)[1] ? `<img src="${esc(pcPics(p)[1])}" class="sc-alt" alt="" aria-hidden="true" loading="lazy">` : ''}</div>
       <div class="scroll-card-body">
         <div class="scroll-card-tag">${esc(p.category)}</div>
         <div class="scroll-card-name">${esc(p.name)}</div>
@@ -101,8 +105,8 @@ function openProductDetail(id) {
   const p = db.products.find(x => x.id === id); if (!p) return;
   recentAdd(id); trackHit('view', { p: 'product' }); trackHit('product', { id });
   RV.open = false; RV.draft = null; RV.shown = 5; RV.photosOnly = false; RV.sort = 'new';
-  renderProductModal(p);
-  document.getElementById('productModal').classList.add('active');
+  renderProductModal(p); const bn = document.getElementById('ppBarName'); if (bn) bn.textContent = p.name; if (typeof qvClose === 'function') qvClose();
+  document.getElementById('productModal').classList.add('active'); const pm = document.getElementById('productModal'); pm.scrollTop = 0; const mc = pm.querySelector('.modal-content'); if (mc) mc.scrollTop = 0;
   updateSeo(p);
 }
 
@@ -139,7 +143,7 @@ function closeAllDrawers() { document.querySelectorAll('.drawer').forEach(d => d
 function updateBadges() {
   const n = cartLines().reduce((s, c) => s + c.qty, 0);
   document.getElementById('cartCount').textContent = n;
-  document.getElementById('mobileCartCount').textContent = n;
+  document.getElementById('mobileCartCount').textContent = n; const pb = document.getElementById('ppBarCount'); if (pb) pb.textContent = n;
 }
 const cartMobile = () => window.matchMedia('(max-width: 640px)').matches;
 let CART_WAS_MOBILE = null;
